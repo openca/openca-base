@@ -1,0 +1,651 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: startAutoCRL
+##       Brief: start Auto (On-Line) CRL Daemon
+##     Version: $Revision: 1.19 $
+## Description: this script starts the On-Line CRL Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStartAutoCRL 
+{
+	my $clientSock = shift;
+	my $pidfile = undef;
+	my $ret = undef;
+
+	## Parameters used by the issuing certificate process
+	our ($DEBUG, %AUTOCONF);
+	our (%AUTOCONF);
+
+	## Uncomment this to get detailed DEBUG information
+	## $DEBUG = 1;
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl.pid";
+	$ret = start_process(	PIDFILE => $pidfile, 
+												FUNCTION => \&AutoCrlDaemon,
+												HUP_FUNCTION => \&closeAutoCRL,
+												GET_CA_TOKEN => 1,
+												CLIENT_SOCK => $clientSock );
+
+	## If the returned value is lt 0 -> we got an error!
+	if ($ret < 0)
+	{
+		generalError( "ERROR, can not spawn new processes!\n" );
+	}
+	else
+	{
+		print STDERR "cmdStartAutoCRL()->Auto CRL Daemon Started Successfully (pid $ret).\n";
+	}
+
+	## exit (1); ## This exit() cmd seems to prevent the startup script to complete successfully if daemons are enabled
+	1;
+}
+
+sub closeAutoCRL
+{
+	my $reason = shift;
+	my $statusfile = undef;
+
+	our ($crlDB, %AUTOCONF);
+	$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl_status.txt";
+	close_process(STATUSFILE => $statusfile, DB => $crlDB);
+
+	## Print out some info
+	print STDERR "closeAutoCA()::Terminating Auto CRL Issuing Daemon process.";
+
+	exit(1);
+}
+
+sub	AutoCrlDaemon
+{
+	my $func_params = { @_ };
+	my $ca_token = undef;
+	my $crypto_shell = undef;
+	my $locDB = undef;
+
+	## Get the CA Token
+	## $ca_token = $func_params->{CA_TOKEN};
+	## if ((not defined ($func_params->{CA_TOKEN})) or ($ca_token eq ""))
+	## {
+	## 	print STDERR "AutoCrlProcess()::Error::No CA Token passed!";
+	## 	exit (1);
+	## }
+
+	## Get the CA Token
+	## $crypto_shell = $func_params->{CRYPTO_SHELL};
+	## if ((not defined ($func_params->{CRYPTO_SHELL})) or ($crypto_shell eq ""))
+	## {
+	## 	print STDERR "AutoCrlProcess()::Error::No CryptoShell Available!";
+	## 	exit (1);
+	## }
+
+	# Load the Parameters
+	my $params = startAutoCRL_loadParams();
+
+	# Guesses the Sleep period
+	if ($params->{'period_type'} =~ /seconds/i)
+	{
+		$params->{'SLEEP'} = $params->{'period'};
+	} 
+	elsif ($params->{'period_type'} =~ /(minutes|hours)/i)
+	{
+		$params->{'SLEEP'} = 60;
+	} 
+	elsif ($params->{'period_type'} =~/days/i)
+	{
+		$params->{'SLEEP'} = 3600;
+	}
+	else
+	{
+		$params->{'SLEEP'} = 30;
+	};
+
+	$params->{'SLEEP'} = 20 if ($DEBUG);
+
+	if (not($locDB = newConnectDB()))
+	{
+		print STDERR "ERROR::Can not create new DB connect!\n";
+		exit(1);
+	}
+	else
+	{
+		print STDERR "newConnectDB()->Ok.\n" if ($DEBUG);
+	}
+
+	if ($params->{debug})
+	{
+		print STDERR "cmdStartAutoCRL()->Enabling Extended Logging (DEBUG).\n";
+		$DEBUG = 1;
+	}
+
+	## Main Loop
+	while (1)
+	{
+		# Only way I have found to get rid of perl modules memory leaks is to fork
+		my $subpid = fork();
+		if (not defined $subpid) {
+			print STDERR "Can not fork. Resources not available\n";
+		} elsif ($subpid == 0) {
+			# Child
+
+			my $retVal = 0;
+
+			if($DEBUG)
+			{
+			   print STDERR "On-Line CRL::Cycle Start!\n";
+			   print STDERR "On-Line CRL::DB=>$locDB\n";
+			   print STDERR "On-Line CRL::CRYPTO=>$ca_token\n";
+			};
+
+			if (not $locDB->connect())
+			{
+				print STDERR "On-Line CRL::DB CONNECT ERROR::" . 
+					$locDB->{errno} . " - " .
+					$locDB->{errval} . "\n";
+
+				print STDERR "On-Line CRL::SLEEPING for " . $params->{SLEEP} . "\n";
+				sleep( $params->{SLEEP} );
+				next;
+			}
+			else
+			{
+				print STDERR "On-Line CRL::DB CONNECT Ok\n" if ($DEBUG);
+			}
+
+			## Call the core function
+			$params->{CA_TOKEN} = $ca_token;
+			$params->{CRYPTO_SHELL} = $crypto_shell;
+			$params->{DB} = $locDB;
+
+			$retVal = autoCRLProcess(%{$params});
+			if ($retVal > 0)
+			{
+				$locDB->commit();
+			}
+			else
+			{
+				print STDERR "On-Line CRL::ERROR, autoCRLProcess returned $retVal.";
+			}
+
+			if (not $locDB->disconnect())
+			{
+				print STDERR "On-Line CRL::DB DISCONNECT ERR::". 
+					$locDB->{errno} . " - " .
+					$locDB->{errval} . "\n";
+			}
+			else
+			{
+				print STDERR "On-Line CRL::DB DISCONNECT Ok\n" if ($DEBUG);
+			} 
+
+			exit(0);
+		} else {
+			# Parent
+			waitpid($subpid,0);
+		}
+
+		print STDERR "On-Line CRL::SLEEPING for " . $params->{SLEEP} . " secs.\n" if ($DEBUG);
+		sleep($params->{SLEEP});
+	}
+}
+
+sub autoCRLProcess
+{
+    ## get the parameters
+    ## Get the parameters
+    my $func_params	 = { @_ };
+		my $params = undef;
+
+    our ($crlDB, $query, $errno, $errval, $ca_token, $DEBUG);
+
+    my ($request, $operator_cert, $operator_serial, $signature,
+        $role_sig, $cert);
+
+		## Check we have something here
+    if(not $func_params )
+		{
+    	print STDERR "On-Line CRL::autoCRLProcess()::Unrecoverable Error\n";
+			return (-1);
+    }
+
+    ## Get required parameters from the configuration file
+    my $cacert    = getRequired( 'CACertificate' );
+    my $crlDir    = getRequired( 'CRLDir' );
+
+		## Use the CRL Daemon DB Handler
+    $crlDB = $func_params->{DB};
+		if ((not defined($func_params->{DB})) or ($crlDB eq ""))
+		{
+    	print STDERR "On-Line CRL::autoCRLProcess()::No DB handle available!\n";
+			return (-1);
+		};
+
+    ### unique DN?
+    my $nouniqueDN = 0;
+    if (getRequired ('UNIQUE_DN') =~ /NO|N|OFF/i)
+		{
+    	$nouniqueDN = 1;
+    }
+
+    if ($DEBUG)
+		{
+      print STDERR "On-Line CRL::autoCRLProcess() started\n";
+      print STDERR "On-Line CRL::Params::CA_TOKEN=>" . $func_params->{CA_TOKEN} ."\n";
+    };
+
+    ## my $chainDir = getRequired('ChainDir');
+    ## my $tempDir = getRequired ('TempDir');
+
+    ## loop
+    ## there can never be a request 0
+    my $key = 0;
+    my $dataType = "VALID_CRL";
+    my $issueCRL = 1;
+
+    print STDERR "On-Line CRL::autoCRLProcess()::Start Request Listing.\n" if ($DEBUG);
+
+    ## Get the list of CRLs (VALID)
+    my @list = $crlDB->searchItems(DATATYPE => $dataType, MODE => "KEYLIST");
+
+    ## We need only the last valid issued CRL
+    my $lastCRLSerial = $list[$#list];
+
+    @list = undef;
+    ## Refresh the autoCRL Parameters from the configuration file
+
+		if (($params = startAutoCRL_loadParams()) == undef)
+		{
+			print STDERR "On-Line CRL::autoCRLProcess()::Can not get configuration params! Exiting!\n";
+			return undef;
+    };
+
+    ## Convert the issuing period in seconds and put it into a
+    ## new value - sec_period 
+		my $multiplier = 1;
+    if ($params->{'period_type'} =~ /seconds/i)
+		{
+			$multiplier = 1;
+    }
+    elsif ($params->{'period_type'} =~ /minutes/i)
+		{
+			$multiplier = 60;
+    }
+		elsif ($params->{'period_type'} =~ /hours/i)
+		{
+			$multiplier = 3600;
+    } 
+		elsif ($params->{'period_type'} =~ /days/i)
+		{
+			$multiplier = 86400;
+    }
+		else
+		{
+			$multiplier = 60; ## Default multiplier is minutes (60)
+		}
+
+		$params->{'sec_period'} = $params->{'period'} * $multiplier;
+
+		print STDERR "On-Line CRL::autoCRLProcess()::Issuing period in seconds => " . $params->{'sec_period'} .
+			"; original was " . $params->{'period_type'} . " => " . $params->{'period'} . "\n" if ($DEBUG);
+
+    ## Convert the validitiy period in seconds and put it into a
+    ## new value - sec_validity. Unfortunately the smallest unit
+    ## we can use is hours (openssl shell limitation)
+    
+    $params->{'hours_validity'} = 1;
+
+    if ( $params->{'validity_type'} =~ /hours/i )
+		{
+			$params->{'hours_validity'} = $params->{'validity'};
+    }
+		elsif ($params->{'validity_type'} =~ /days/i)
+		{
+			$params->{'hours_validity'} = $params->{'validity'} * 24;
+    };
+
+    ## If no VALID CRL is found, we definitely have to issue a new one,
+    ## therefore the default value of $issueCRL is 1
+    
+    if ($lastCRLSerial)
+		{
+			## If lastCRL is available then let's see if it is time to issue
+			## a new CRL by looking at the last_update field
+	
+			my $today = gmtime();
+			my $numLastUpdate = 0;
+			my $numToday = 0;
+
+			my $lastCRL = $crlDB->getItem( DATATYPE => "VALID_CRL", KEY => $lastCRLSerial);
+			if (not defined ($lastCRL))
+			{
+				print STDERR "On-Line CRL::autoCRLProcess()::ERROR, ca not " .
+					"get $lastCRLSerial CRL from DB!\n";
+				return 1;
+			}
+
+    	my $lastCRL_lastUpdate = $lastCRL->getParsed()->{LAST_UPDATE};
+
+			$numLastUpdate = $cryptoShell->getNumericDate ( $lastCRL_lastUpdate );
+			$numToday = $cryptoShell->getNumericDate ( $today );
+
+			# my $diff = $numToday - $numLastUpdate;
+
+			use Time::Local;
+
+			my ($yyyy,$mm,$dd,$HH,$MM,$SS) = ();
+			($yyyy,$mm,$dd,$HH,$MM,$SS) = ( $numLastUpdate =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/);
+
+			my $secnumLastUpdate = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+			($yyyy,$mm,$dd,$HH,$MM,$SS) = ( $numToday =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/);
+
+			my $secnumToday = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+
+			my $diff = $secnumToday - $secnumLastUpdate;
+			if ($DEBUG) 
+			{
+				print STDERR "On-Line CRL::autoCRLProcess()::CRL last " .
+					# "update = " .  $numLastUpdate . " ( " . 
+					"update = " .  $secnumLastUpdate . 's: ' . $numLastUpdate . " ( " .
+					$lastCRL_lastUpdate . " ) - CRL Serial [$lastCRLSerial]\n";
+
+				# print STDERR "On-Line CRL::autoCRLProcess()::Today = $numToday ($today)\n";
+				print STDERR "On-Line CRL::autoCRLProcess()::Today = ${secnumToday}s: $numToday ($today)\n";
+			}
+
+			if ($diff >= $params->{'sec_period'})
+			{
+				print STDERR "On-Line CRL::autoCRLProcess()::Time " .
+					"to issue a new CRL ( " .  ($diff) . " > " .  $params->{'sec_period'} . ")\n" if ($DEBUG);
+				$issueCRL = 1;
+			}
+			else
+			{
+				print STDERR "On-Line CRL::autoCRLProcess()::No CRL ".
+					"to issue ($diff < " .  $params->{'sec_period'} . ")\n" if ($DEBUG);
+
+				$issueCRL = 0;
+			}
+		}
+
+		if ($issueCRL ne 1)
+		{
+			return 1;
+    };
+
+    my $exts = $params->{'crl_ext'};
+
+    if ($exts =~ /^(none|off)$/i)
+		{
+			print STDERR "On-Line CRL::autoCRL::No extension selected for CRL ($exts)\n" if ($DEBUG);
+			$exts = "";
+    }
+		else
+		{
+			print STDERR "On-Line CRL::autoCRL::Extensions selected for CRL are ($exts)\n" if ($DEBUG);
+    }
+
+    ## Now let's generate the CRL
+    my $CRL = new OpenCA::CRL (
+                           SHELL      => $ca_token,
+                           HOURS      => $params->{'hours_validity'},
+                           EXTS       => $exts,
+                           GETTEXT    => \&i18nGettext,
+                           NOUNIQUEDN => $nouniqueDN );
+
+    ## We need to save the default PEM format
+    if (open(FD, ">$crlDir/${$}_cacrl.pem"))
+		{
+			print FD $CRL->getPEM();
+			close(FD);
+    }
+		else
+		{
+			print STDERR "On-Line CRL::CRL saving Error " .
+					"($crlDir/${$}_cacrl.pem)!\n";
+			return undef;
+    }
+
+    ## Let's store the new CRL in the DB
+
+    if(not $crlDB->storeItem( DATATYPE=>"VALID_CRL", OBJECT=>$CRL, MODE=>"INSERT")) 
+		{
+			print STDERR "On-Line CRL::ERROR::Can not store CRL in DB!\n";
+			return undef;
+    };
+
+    ## Now save all the default formats PEM, DER, CRL, TXT
+    if(not ($tools->saveFile (FILENAME => "$crlDir/cacrl.pem", DATA => $CRL->getPEM())))
+		{
+			print STDERR "On-Line CRL::ERROR::Can not save CRL to " .
+				"$crlDir/cacrl.pem\n";
+    };
+
+    if(not ($tools->saveFile (FILENAME => "$crlDir/cacrl.der", DATA => $CRL->getDER())))
+		{
+			print STDERR "On-Line CRL::ERROR::Can not save CRL to " .
+				"$crlDir/cacrl.der\n";
+    };
+
+    if(not ($tools->saveFile (FILENAME => "$crlDir/cacrl.crl", DATA => $CRL->getDER())))
+		{
+			print STDERR "On-Line CRL::ERROR::Can not save CRL to " .
+				"$crlDir/cacrl.crl\n";
+    };
+
+    if (not $tools->saveFile (FILENAME => "$crlDir/cacrl.txt", DATA => $CRL->getTXT()))
+		{
+			print STDERR "On-Line CRL::ERROR::Can not save CRL to " .
+				"$crlDir/cacrl.txt\n";
+    };
+
+    return 1;
+}
+
+sub getParamsStartAutoCRL 
+{
+	our ($query, $DEBUG);
+
+	my $result = "";
+
+	my $pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl.pid";
+	my $status = libGetPidProcessStatus ( $pidfile );
+
+	if ($status gt 0)
+	{
+		return undef;
+	};
+
+	if (not $_[0])
+	{
+		my %labels = undef;
+		my $params = startAutoCRL_loadParams();
+
+		my $html_startup = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'startup',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-disabled=> '1',
+					-checked=>$params->{'startup'} );
+
+		my $html_debug = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'debug',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-checked=>$params->{'debug'} );
+
+		my $crlPeriod = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'period',
+				-regx   => 'numeric',
+				-class  => 'small',
+				-default => $params->{'period'},
+				 );
+
+		%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours'),
+		    'Minutes'  => gettext ('Minutes'),
+		    'Seconds'  => gettext ('Seconds') );
+
+		my $crlPeriodType = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'period_type',
+				-regx    => '*',
+				-default => $params->{'period_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours','Minutes', 
+					      'Seconds' ],
+				-labels  => \%labels );
+
+		%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours') );
+
+		my $crlValidityType = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'validity_type',
+				-regx    => '*',
+				-default => $params->{'validity_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours' ],
+				-labels  => \%labels );
+
+		%labels = ('crl_ext'=> gettext('Default'), 'None' => gettext('None') );
+		my $crlExtensions = $query->newInput (
+                		-regx=>'LETTERS',
+                		-intype=>'popup_menu',
+                		-name=>'crl_ext',
+                		-default=> $params->{'crl_ext'},
+                		-values=>[ 'crl_ext', 'None'],
+                		-labels=>\%labels );
+
+		my $crlValidity = $query->newInput (
+				-regx=>'NUMERIC',
+				-intype=>'textfield',
+				-name=>'validity',
+				-class=>'small',
+				-default=>$params->{'validity'} );
+
+		$result = "<table class=\"getParams\">\n";
+		$result .= "<tr><td colspan=\"2\">\n";
+		$result .= "<center><div style='font-size: 120%;'><h3>" . 
+					gettext("Auto CRL Issuing System")."</h3>" .
+					"</div></center>";
+
+		$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+		    "The following information will be used by the " .
+		    "automatic CRL issuing system in order to issue CRLs " .
+		    "according to your needs. " .
+		    "Remeber that although the configuration options are ".
+		    "stored on your system, if the OpenCA server is " .
+		    "rebooted you will need to activate the system again."
+		    ) .
+		    "</div>";
+		$result .= "</td></tr>\n";
+
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Automatically at Startup")."</td>\n".
+                   "    <td>".$html_startup."</td>\n".
+                   "  </tr>\n";
+
+		$result .= "<tr><td colspan=\"2\">\n";
+		$result .= "<center><h3>" . 
+			gettext("CRL Issuing Details") . "</h3>" .
+		   "</center>";
+		$result .= "</td></tr>\n";
+
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Issue CRL Every")."</td>\n".
+                   "    <td>".$crlPeriod . " " . $crlPeriodType ."</td>\n".
+                   "  </tr>\n";
+
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("CRL Validity")."</td>\n".
+                   "    <td>". $crlValidity . " " . $crlValidityType."</td>\n".
+                   "  </tr>\n";
+
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("CRL Extensions")."</td>\n".
+                   "    <td>" . $crlExtensions . "</td>\n".
+                   "  </tr>\n";
+
+		## DEBUG Checkbox
+		$result .= "<tr><td colspan=\"2\">";
+		$result .= "<br /><center><h3>".
+			gettext("Debugging Information") . "</h3>" .
+		   "</div></center></td></tr>";
+		$result .= "<tr><td colspan=\"2\">";
+		$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext ( "You can enable extra logging by enabling the DEBUG " .
+		    "logging here. Keep in mind that enabling this option is only " .
+		    "for testing or debugging issues with the system as it produces lots of information. " .
+		    "Disable this option in production systems.") .
+		    "</div><br />";
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Extended Logging (DEBUG)")."</td>\n".
+                   "    <td>".$html_debug."</td>\n".
+                   "  </tr>\n";
+
+		$result .= "</table>\n";
+
+	} 
+	else
+	{
+		# We do have the parameters, let's save them!
+		startAutoCRL_saveParams ();
+	};
+
+	return $result;
+}
+
+
+sub startAutoCRL_saveParams
+{
+	my $ret = undef;
+
+	our ($query, %AUTOCONF);
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autocrl.cnf";
+	return libSaveCgiParams($conf);
+
+	return ($ret);
+}
+
+sub startAutoCRL_loadParams
+{
+	my $ret = undef
+	my $savedQuery = undef;
+	my $defaults = undef;
+
+	# $defaults->{'period'} = '1';
+	# $defaults->{'period_type'} = [ gettext('Days') ];
+	# $defaults->{'validity'} = '1';
+	# $defaults->{'validity_type'} = [ gettext ('Days') ];
+	# $defaults->{'crl_ext'} = [ 'crl_ext'];
+	# $defaults->{'debug'} = '0';
+	# $defaults->{'startup'} = [ '0' ];
+
+	$defaults->{'period'} = '1';
+	$defaults->{'period_type'} = gettext('Days');
+	$defaults->{'validity'} = '1';
+	$defaults->{'validity_type'} = gettext ('Days');
+	$defaults->{'crl_ext'} = 'crl_ext';
+	$defaults->{'debug'} = '0';
+	$defaults->{'startup'} = '0';
+
+	our ( $query, %AUTOCONF );
+
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autocrl.cnf";
+
+	return libLoadCgiParams($conf, $defaults);
+}
+
+1;

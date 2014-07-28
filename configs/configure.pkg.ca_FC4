@@ -1,0 +1,51 @@
+
+# Get the Build Root from the first argument
+if [ "x$1" != "x" ] ; then
+	build_dir="$1"
+else
+	if [ "x$RPM_BUILD_ROOT" != "x" ] ; then
+		build_dir=$RPM_BUILD_ROOT
+	fi
+fi
+
+prefix="/var/openca"
+openca_prefix="${prefix}"
+
+./configure \
+  --with-engine=no \
+  --prefix="${prefix}" \
+  --with-build-dir="${build_dir}" / \
+  --with-openca-prefix="${openca_prefix}" \
+  --with-httpd-user=apache \
+  --with-httpd-group=apache \
+  --with-openca-user=root \
+  --with-openca-group=nobody \
+  --with-httpd-fs-prefix="${prefix}/www" \
+  --with-cgi-url-prefix=/cgi-bin \
+  --with-web-host=localhost \
+  --with-ca-organization="OpenCA PKI Services" \
+  --with-ca-country="IT" \
+  --with-ldap-port="389" \
+  --with-ldap-root="cn=Manager,o=OpenCA,c=IT" \
+  --with-ldap-root-pwd="openca" \
+  --with-module-prefix="${openca_prefix}/perl-modules" \
+  --with-openssl-prefix=/usr \
+  --disable-db \
+  --enable-dbi \
+  --enable-rbac \
+  --enable-openscep \
+  --with-db-type=mysql \
+  --with-db-name=openca \
+  --with-db-host=localhost \
+  --with-db-port=3306 \
+  --with-db-user=openca \
+  --with-db-passwd="openca" \
+  --with-service-mail-account="pki@openca.org" \
+  --with-language=en_EN \
+  --with-hierarchy-level=ca
+
+##  --enable-package-build \
+##  --with-openssl-engine=LunaCA3 \
+##  --with-hsm-utility=/usr/luna/bin/ca3util \
+##  --with-hsm-slot=1 \
+##  --with-hsm-appid=10:11 \

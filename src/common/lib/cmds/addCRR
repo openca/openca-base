@@ -1,0 +1,130 @@
+## OpenCA - Public Web-Gateway Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: addCRR
+##       Brief: store the revreq to the DB
+## Description: store the revreq to the DB for RA Operator approval
+##  Parameters: head, text, signature
+
+use strict;
+
+sub cmdAddCRR {
+
+    our ($tools, $query, $db, $cryptoShell);
+    my ($text, $head) = ("", "");
+
+    ## Reserved variables
+    my ( $cert, @search, $certTable );
+
+    ## Get required configuration parametes
+    my $message	= i18nGettext ("Your revocation request has been accepted and is now <B>waiting to be processed</B>.\n If you want to check out if the request has been correctly received, you can see the __BEGIN_LINK__ Approved Revocation Requests List __END_LINK__.",
+                               "__BEGIN_LINK__", "<a href=\"?cmd=listCRR;dataType=NEW_CRR\">",
+                               "__END_LINK__", "</a>");
+    my $chainDir	= getRequired( 'ChainDir' );
+
+    ## To aprove a Request, we need it signed by the RA operator
+    my $beginHeader = "-----BEGIN HEADER-----";
+    my $endHeader = "-----END HEADER-----";
+
+    ## Get the parameters
+    my $serial 		= $query->param('serial');
+    my $crl_reason	= $query->param('crl_reason');
+    my $description	= $query->param('description');
+
+    ## Strip html and \n\r code from reason
+    $description =~ s/<[^\>]*>/ /g;
+    $description =~ s/(\n|\r)/ /g;
+    $description =~ s/^\s+//g;
+    $description =~ s/[\s]+/ /g;
+
+    ## load the affected cert
+    my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $serial );
+    if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	my $basedoc = getRequired ('db_error');
+	print $tools->getFile ( $basedoc );
+	return undef;
+    }
+
+    if ( $cert->getStatus() =~ /SUSPENDED|REVOKED|EXPIRED/ ) {
+	generalError ( i18nGettext ("Sorry, the certificate is already " .
+			"__STATUS__. Please contact the CA administrators " .
+			"for further instruction on how to proceed.",
+			"__STATUS__", $cert->getStatus() ));
+    }
+
+    my $parsed = $cert->getParsed();
+
+    my $last_crr = libDBGetLastItem ("CRR");
+    my $crr_serial = 0;
+    $crr_serial    = $last_crr->getSerial("CRR") if ($last_crr);
+    $crr_serial  >>= getRequired ("ModuleShift");
+    if (not $serial) {
+	##// it's not good to show the user the detailed problem
+	## this is a security problem here !!!
+	print STDERR "SECURITY ALERT BY PKI: correct CRR cannot be stored because of DB-error (certificate: $serial)\n";
+	configError (gettext ("A databaseerror occurs during counting the existing CRRs!"));
+    }
+    $crr_serial++;
+    $crr_serial = ($crr_serial << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+
+    ## Set Text to sign
+    $head  = "$beginHeader\n";
+    $head .= "TYPE = CRR\n";
+    $head .= "SERIAL = $crr_serial\n";
+    $head .= "NOTBEFORE = " . $tools->getDate() . "\n";
+    $head .= "$endHeader\n";
+
+    $text .= "SUBMIT_DATE = " . $tools->getDate() . "\n";
+    $text .= "REVOKE_REASON = $crl_reason\n";
+    $text .= "REVOKE_DESCRIPTION = $description\n";
+    $text .= "REVOKE_CERTIFICATE_DN = " . $parsed->{DN} . "\n";
+    $text .= "REVOKE_CERTIFICATE_NOTBEFORE = " . $parsed->{NOTBEFORE} . "\n";
+    $text .= "REVOKE_CERTIFICATE_NOTAFTER = " . $parsed->{NOTAFTER} . "\n";
+    $text .= "REVOKE_CERTIFICATE_SERIAL = " . $cert->getSerial(). "\n";
+    $text .= "REVOKE_CERTIFICATE_ISSUER_DN = " . $parsed->{ISSUER} . "\n";
+    $text .= "REVOKE_CERTIFICATE_KEY_DIGEST = " . $parsed->{KEY_DIGEST} . "\n";
+
+    my $req_txt = $head . $text;
+
+    ## Try to build the REQ object
+    my $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                DATA    => $req_txt );
+
+    # print $req_txt."<br>\n";
+    if( not $req ) {
+	configError( gettext("Error while creating the request."));
+    }
+
+    $db->{DEBUG} = 1;
+    if ( not $db->storeItem( OBJECT=>$req, DATATYPE=>"NEW_CRR", 
+						MODE => "INSERT" )) {
+	configError( i18nGettext("Error while storing the request (__ERRNO__). Sometimes this happens if you try to enter a reason with special characters but your database does not support these special characters. __ERRVAL__",
+                                 "__ERRNO__", $db->errno,
+                                 "__ERRVAL__", $db->errval));
+	print STDERR "SECURITY ALERT BY PKI: database failed during storing a correct CRR which follows\n".
+		$req_txt."\n";
+	return undef;
+    }
+
+    if ( not $db->updateItem (  OBJECT => $cert, 
+				DATATYPE => "SUSPENDED_CERTIFICATE",
+				INVALIDITY_REASON => "$crl_reason" )) {
+	print STDERR "SECURITY ALERT BY PKI: database failed during storing a correct CRR which follows\n".
+		$req_txt."\n";
+	configError( gettext("Failed to change the certificate's state."));
+    }
+
+    libSendReply (
+              "NAME"        => gettext ("Successful storage of revocation request"),
+              "EXPLANATION" => $message,
+              "TIMESTAMP"   => 1
+             );
+
+    return 1;
+
+}
+
+1;
+

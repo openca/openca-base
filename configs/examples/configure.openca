@@ -1,0 +1,45 @@
+# host and port are senseless for IBM DB2 UDB 7.1
+
+./configure \
+  --with-engine=no \
+  --enable-ocspd=yes \
+  --enable-scep=yes \
+  --with-httpd-user=httpd \
+  --with-httpd-group=websrc \
+  --with-ext-prefix=/usr/local/openca.0.9.2 \
+  --with-ca-htdocs-fs-prefix=/home/httpd/htdocs/htdocs-ca \
+  --with-ca-cgi-fs-prefix=/home/httpd/cgi-bin/cgi-ca \
+  --with-ca-htdocs-url-prefix=/htdocs-ca \
+  --with-ca-cgi-url-prefix=/cgi-bin/cgi-ca \
+  --with-ra-prefix=/usr/local/openca/RAServer \
+  --with-ra-htdocs-fs-prefix=/home/httpd/htdocs/htdocs-ra \
+  --with-ra-cgi-fs-prefix=/home/httpd/cgi-bin/cgi-ra \
+  --with-ra-htdocs-url-prefix=/htdocs-ra \
+  --with-ra-cgi-url-prefix=/cgi-bin/cgi-ra \
+  --with-pub-htdocs-fs-prefix=/home/httpd/htdocs/htdocs-public \
+  --with-pub-cgi-fs-prefix=/home/httpd/cgi-bin/cgi-public \
+  --with-pub-htdocs-url-prefix=/htdocs-public \
+  --with-pub-cgi-url-prefix=/cgi-bin/cgi-public \
+  --with-web-host=www.openca.org \
+  --with-ca-organization="OpenCA" \
+  --with-ca-locality="Modena" \
+  --with-ca-country="IT" \
+  --with-ldap-url=ldap.openca.org \
+  --with-ldap-port=389 \
+  --with-ldap-root="cn=Manager,o=OpenCA,c=IT" \
+  --with-ldap-root-pwd="secret" \
+  --with-module-prefix=/usr/local/openca/modules \
+  --with-openssl-prefix=/usr/local/ssl \
+  --enable-db \
+  --disable-dbi \
+  --disable-rbac \
+  --prefix=/usr/local/openca \
+  --with-hierarchy-level=ca \
+  --with-service-mail-account="pki@openca.org"
+#   --with-db-type=DB2 \
+#   --with-db-name=openca \
+#   --with-db-host=dbms.openca.org \
+#   --with-db-port=6789 \
+#   --with-db-user=openca \
+#   --with-db-passwd="secret" \
+

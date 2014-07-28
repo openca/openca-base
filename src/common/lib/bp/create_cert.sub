@@ -1,0 +1,132 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: create_cert.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: create a cert
+## Description: create a cert from a checked csr
+
+use strict;
+
+sub workflow_create_cert
+{
+    ## general global stuff
+    our $state_machine;
+    our ($db, $tools, $xml_cache, $cryptoShell, $ca_token);
+    our ($errno, $errval);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "create_cert";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ###############################################
+    ##          check necessary tokens           ##
+    ###############################################
+
+    if (not $ca_token or not $ca_token->keyOnline())
+    {
+        my $msg = gettext ("The CA token is not usable.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -105, $msg ];
+    }
+
+    ###############################################
+    ## load the request object from the database ##
+    ###############################################
+
+    ## 1. load all known request serials
+    ## 2. try to load the last request
+
+    ## load all known request serials
+
+    my $serial_file = $tools->getFile ($home."/public/csrList");
+    if (not $serial_file)
+    {
+        my $msg = gettext ("The file with the serials of the CSRs cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -110, $msg ];
+    }
+    my @serials = split /\n+/, $serial_file;
+    if (not scalar @serials)
+    {
+        my $msg = gettext ("There are no known serials of any request for this workflow.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -115, $msg ];
+    }
+
+    ## try to load the last request
+
+    my $csr = undef;
+    @serials = reverse sort @serials;
+    $csr = $db->getItem (DATATYPE => "APPROVED_REQUEST", KEY => $serials[0]);
+    if (not $csr)
+    {
+        my $msg = gettext ("The request for the newest serial cannot be loaded from the database.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+    my $parsed_csr  = $csr->getParsed();
+
+    ###########################################
+    ##        issue the certificate          ##
+    ###########################################
+
+    my $cert = libIssueCertificate (KEY      => $csr->getSerial(),
+                                    DATATYPE => "APPROVED_REQUEST");
+    if (not $cert) {
+        my $msg = i18nGettext ("Cannot issue the certificate (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $errno,
+                               "__ERRVAL__", $errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+
+    ##################
+    ## change state ##
+    ##################
+
+    $journal->{message} .= gettext ("Certificate issued successfully.");
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "new_cert" ],
+                                "UNSET"   => [ "checked_csr" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -210, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Certificate issued successfully.") ];
+}
+
+1;

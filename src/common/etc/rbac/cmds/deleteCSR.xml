@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>deleteCSR</name>
+            <operation>csr delete</operation>
+            <owner_method>CSR_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

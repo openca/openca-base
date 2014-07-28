@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>renewCSR</name>
+            <operation>csr renew</operation>
+            <owner_method>CSR_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

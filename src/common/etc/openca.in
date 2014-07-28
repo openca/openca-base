@@ -1,0 +1,76 @@
+#!@SHELL@
+#
+# openca       Startup script for the OpenCA Server
+#
+# chkconfig: - 85 15
+# description: The OpenCA Server is a complete Certificate Management
+#              system capable to issue X.509 digital certificates
+# processname: openca
+# config: /@etc_prefix@/config.xml
+
+export LD_LIBRARY_PATH=@openssl_prefix@/lib:$LD_LIBRARY_PATH
+
+openca_start=@etc_prefix@/openca_start
+openca_stop=@etc_prefix@/openca_stop
+
+openca_etc_conf=@etc_prefix@/configure_etc.sh
+
+if ! [ -x "${openca_etc_conf}" ] ; then
+	echo "ERROR::Missing script file ${openca_etc_conf}!";
+	exit 1
+fi
+
+stty=`type -path 'stty'`
+
+export LD_LIBRARY_PATH="@openssl_prefix@/lib"
+export LD_RUN_PATH="@openssl_prefix@/lib"
+export PATH="@openssl_prefix@/bin:$PATH"
+
+case "$1" in
+    start)
+	echo -n "Starting OpenCA ... "
+	ret=`grep "@default_web_password@" "@etc_prefix@/config.xml"`;
+        if ! [ "x$ret" = "x" ] ; then
+		echo
+		echo -n "Please provide the default password for web interface:"
+		if ! [[ "$stty" = "" ]] ; then
+			$stty -echo
+		fi
+		read pwd
+		if ! [[ "$stty" = "" ]] ; then
+			$stty echo
+		fi
+		echo
+		@prefix@/bin/openca-setpasswd $pwd
+	fi
+	if [ -f "@var_prefix@/log/openca-start.log" ] ; then
+		mv "@var_prefix@/log/openca-start.log" \
+			"@var_prefix@/log/openca-start-log.bak"
+	fi
+	${openca_etc_conf} > "@var_prefix@/log/openca-start.log"
+	$openca_start
+	ret=$?
+        if [ $ret > 0 ] ; then
+            echo OK;
+        else
+            echo FAILED;
+        fi
+	if [ -f "0" ] ; then
+		rm -f "0";
+	fi
+    ;;
+    stop)
+	echo "Shutting down OpenCA ... "
+	$openca_stop
+    ;;
+    restart)
+	$0 stop
+	$0 start
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit 0;
+

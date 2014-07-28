@@ -1,0 +1,226 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: create_pin.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: create a pin
+## Description: 
+
+use strict;
+
+sub workflow_create_pin
+{
+    ## general global stuff
+    our $state_machine;
+    our ($tools, $xml_cache, $cryptoShell, $bp_token);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "create_pin";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## the token of the batch system must be activated
+
+    if (not $bp_token)
+    {
+        my $msg = gettext ("The crypto token of the batch system was not activated.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -105, $msg ];
+    }
+
+    ## is there a private area for this workflow ?
+
+    if (not -e $home."/private")
+    {
+        my $umask = umask (0077);
+        if (not mkdir $home."/private")
+        {
+            umask ($umask);
+            my $msg = i18nGettext ("The private directory __DIR__ for the workflow cannot be created.",
+                                   "__DIR__", $home."/private");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -110, $msg ];
+        }
+        $journal->{message} .= gettext ("Created private directory for workflow.");
+        umask ($umask);
+    }
+
+    ## is there a public area for this workflow ?
+
+    if (not -e $home."/public")
+    {
+        my $umask = umask (0077);
+        if (not mkdir $home."/public")
+        {
+            umask ($umask);
+            my $msg = i18nGettext ("The public directory __DIR__ for the workflow cannot be created.",
+                                   "__DIR__", $home."/public");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -115, $msg ];
+        }
+        $journal->{message} .= gettext ("Created public directory for workflow.");
+        umask ($umask);
+    }
+
+    ## is there already a pin ?
+
+    if (-f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is already a PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+
+    ## remove old pin
+
+    if (-f $home."/public/hashedPIN")
+    {
+        if (not rename ($home."/public/hashedPIN",
+                $home."/public/hashedPIN.".
+                    strftime ("%Y-%m-%d-%H-%M-%S", gmtime(time))))
+        {
+            my $msg = i18nGettext ("The old hashed PIN __FILE__ cannot be moved away.",
+                                   "__FILE__", $home."/public/hashedPIN");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -130, $msg ];
+        }
+        $journal->{message} .= gettext ("Removed old hashed PIN.");
+    }
+
+    ## create new PIN
+
+    my $hashed_pin;
+    my $pin;
+    my $pin_length    = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_pin/secure_pin_length" ],
+           COUNTER  => [ 0 ]);
+    my $random_length = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_pin/secure_pin_random" ],
+           COUNTER  => [ 0 ]);
+
+    if ($pin_length) {
+        if ($random_length) {
+            $pin = $cryptoShell->getPIN (
+                       PIN_LENGTH    => $pin_length,
+                       RANDOM_LENGTH => $random_length
+                                        );
+        } else {
+            $pin = $cryptoShell->getPIN (
+                       PIN_LENGTH    => $pin_length
+                                        );
+        }
+    } elsif ($random_length) {
+        $pin = $cryptoShell->getPIN (
+                   RANDOM_LENGTH => $random_length
+                                    );
+    } else {
+        my $msg = gettext ("You must configure the PIN length.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+    if (not $pin) {
+        my $msg = i18nGettext (
+                      "Cannot create PIN! OpenCA::OpenSSL returns errorcode __ERRNO__.",
+                      "__ERRNO__", $cryptoShell->errno).
+                  " (".$cryptoShell->errval.")";
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+
+    ## hash PIN
+
+    $hashed_pin = $cryptoShell->getDigest (
+                      DATA =>      $pin,
+                      ALGORITHM => "sha1");
+    if (not $hashed_pin) {
+        my $msg = i18nGettext (
+                      "Cannot hash PIN! OpenCA::OpenSSL returns errorcode __ERRNO__.",
+                      "__ERRNO__", $cryptoShell->errno).
+                  " (".$cryptoShell->errval.")";
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -160, $msg ];
+    }
+
+    ## encrypt and store PIN
+
+    if (not $bp_token->encrypt (
+                DATA         => $pin,
+                OUTFILE      => $home."/private/purePIN"))
+    {
+	unlink ($home."/private/purePIN");
+        my $msg = i18nGettext (
+                      "Cannot write PIN to file __FILE__.",
+                     "__FILE__", "$home/private/purePIN");
+        $journal->{message} .= $msg;
+        $msg = i18nGettext ("Error __ERRNO__: __ERRVAL__",
+                            "__ERRNO__", $bp_token->errno,
+                            "__ERRVAL__", $bp_token->errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -170, $msg ];
+    }
+
+    ## store hashed PIN
+
+    if (not $tools->saveFile (FILENAME => $home."/public/hashedPIN", DATA => $hashed_pin)) {
+	unlink ($home."/private/purePIN");
+	unlink ($home."/public/hashedPIN");
+        my $msg = i18nGettext (
+                      "Cannot write hashed PIN to file __FILE__.",
+                     "__FILE__", "$home/public/hashedPIN");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -180, $msg ];
+    }
+
+    $journal->{message} .= gettext ("PIN created, hashed and stored.");
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "new_pin" ],
+                                "UNSET"   => [ "error_create_pin", "new_process" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("PIN created.") ];
+}
+
+1;

@@ -1,0 +1,37 @@
+
+## OpenCA - RA Server Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: removeFiles
+##       Brief: Remove tempory files
+## Description: Remove Temporary files in the 'tmpcertsdir' (now unused?)
+##  Parameters: 
+
+use strict;
+
+sub cmdRemoveFiles {
+
+	my $ret;
+	my $certDir = getRequired( "CertDir" ); 
+	my $file = "$certDir/lastImport.txt";
+
+	print startLogPage( gettext ("temporary Files Removal") );
+
+	print addLogSection( gettext ("Moving lastImport.txt to lastImport.txt.bak ..."));
+	if (-e "$file.bak") {
+		unlink ("$file.bak");
+	}
+
+	$tools->moveFiles( SRC=>"$file", DEST=>"$file.bak" );
+
+	$tools->saveFile( FILENAME=>"$file", DATA=>"" ); 
+
+	print addLogLine(gettext("Ok."));
+	print addPreLogLine($ret);
+	print closeLogSection();
+
+	closePage();
+}
+
+1;

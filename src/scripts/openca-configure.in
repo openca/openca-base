@@ -1,0 +1,64 @@
+#! @PERL@
+
+@perl_use_lib@
+
+($VERSION = '$Revision: 1.3 $' )=~ s/(?:^.*: (\d+))|(?:\s+\$$)/defined $1?"0\.9":""/eg;
+
+use OpenCA::Tools;
+my $year = (localtime())[5] + 1900;
+
+## configure a file
+
+if (scalar @ARGV != 3) {
+    print "Usage: openca-configure config template target\n";
+    print "       config   - the xml software configuration file\n";
+    print "       template - the file which should be translated\n";
+    print "       target   - the translated file\n";
+    exit 0;
+}
+
+## start tools
+my $tools = OpenCA::Tools->new (CONFIG => $ARGV[0], GETTEXT => \&gettext);
+if (not $tools) {
+    print "Error:   ".$OpenCA::TRIStateCGI::errno."\n";
+    print "Message: ".$OpenCA::TRIStateCGI::errval."\n";
+    exit 0;
+}
+
+## load and translate file
+my @stat = stat $ARGV[1];
+my $file = $tools->getFile ($ARGV[1], "utf8");  ## "utf8" without "-" is essential here (perldoc Encode)
+if (not $file) {
+    print "Error:   ".$OpenCA::TRIStateCGI::errno."\n";
+    print "Message: ".$OpenCA::TRIStateCGI::errval."\n";
+    exit 0;
+}
+
+## save file
+if (not $tools->saveFile (FILENAME => $ARGV[2], DATA => $file, ENCODING => "utf8")) { ## "utf8" without "-" is essential 
+                                                                                      ## here (perldoc Encode)
+    print "Error:   ".$OpenCA::TRIStateCGI::errno."\n";
+    print "Message: ".$OpenCA::TRIStateCGI::errval."\n";
+    exit 0;
+}
+
+## fix permissions
+if (not chown $stat[4], $stat[5], $ARGV[2]) {
+    print "Error:   $!\n";
+    print "Message: Cannot change the owner and group of the configured file\n";
+    unlink $ARGV[2];
+    exit 0;
+}
+if (not chmod $stat[2], $ARGV[2]) {
+    print "Error:   $!\n";
+    print "Message: Cannot change the permissions of the configured file\n";
+    unlink $ARGV[2];
+    exit 0;
+}
+
+sub gettext
+{
+    return $_[0];
+}
+
+exit 0;

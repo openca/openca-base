@@ -1,0 +1,67 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: test_cert
+##       Brief: test a certificate
+## Description: test and verify an existing certificate which was used 
+##              for loading this page
+##  Parameters: 
+
+use strict;
+
+sub cmdTest_cert {
+
+    # Text to sign
+# To be fixed later:
+# Calling gettext here crashes "Test certificate" stage when using MS IE
+#    my $text = gettext ("You are going to sign this simple text. Be sure\n Javascript is enabled and your certificate gets\n correctly verified in your browser.\n");
+    my $text = "You are going to sign this simple text. Be sure\n Javascript is enabled and your certificate gets\n correctly verified in your browser.\n";
+  
+
+    my ($cmd_panel, $hidden_list, $info_list) = (undef, undef, undef);
+
+    $hidden_list->{"text"}      = $text;
+    $hidden_list->{"signature"} = "";
+    $hidden_list->{"cmd"}       = "verifySignature";
+
+    $cmd_panel->[0] = '<input type=button name="sign" value="'.
+                      gettext ("Sign").
+                      '" onClick="signForm( this.form, window)" >';
+
+    $info_list->{HEAD}->[0] = gettext("Variable");
+    $info_list->{HEAD}->[1] = gettext("Value");
+
+    my $dn =  $query->param('OPENCA_AC_CHANNEL_SSL_SERVER_S_DN');
+    my $dn2 = $query->param('OPENCA_AC_CHANNEL_SSL_CLIENT_S_DN');
+
+    $dn =~ s/^\///;
+    $dn =~ s/\/(?=[A-Za-z0-9\-]+=)/<BR>/g;
+
+    $dn2 =~ s/^\///;
+    $dn2 =~ s/\/(?=[A-Za-z0-9\-]+=)/<BR>/g;
+
+    $info_list->{BODY}->[0]->[0] = gettext("Session Protocol");
+    $info_list->{BODY}->[0]->[1] = $query->param('OPENCA_AC_CHANNEL_SSL_PROTOCOL');
+    $info_list->{BODY}->[1]->[0] = gettext("Session Cipher");
+    $info_list->{BODY}->[1]->[1] = $query->param('OPENCA_AC_CHANNEL_SSL_CIPHER');
+    $info_list->{BODY}->[2]->[0] = gettext("Session Key Size");
+    $info_list->{BODY}->[2]->[1] = $query->param('OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE');
+    $info_list->{BODY}->[3]->[0] = gettext("Server Distinguished Name");
+    $info_list->{BODY}->[3]->[1] = $dn;
+    $info_list->{BODY}->[4]->[0] = gettext("Client Authentication");
+    $info_list->{BODY}->[4]->[1] = $query->param('OPENCA_AC_CHANNEL_SSL_CLIENT_VERIFY');
+    $info_list->{BODY}->[5]->[0] = gettext("Client Distinguished Name");
+    $info_list->{BODY}->[5]->[1] = $dn2;
+
+    return libSendReply (
+                         "NAME"        => gettext ("Certificate Test"),
+                         "EXPLANATION" => gettext ("The relevant data about the certificate presented by the browser is the following."),
+                         "HIDDEN_LIST" => $hidden_list,
+                         "INFO_LIST"   => $info_list,
+                         "CMD_PANEL"   => $cmd_panel,
+                         "SIGN_FORM"   => 1
+                        );
+}
+
+1;

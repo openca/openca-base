@@ -1,0 +1,874 @@
+# Below is the stub of documentation for your module. You better edit it!
+
+=head1 NAME
+
+OpenCA::DBI - Perl Certificates DBI Extension.
+
+=head1 SYNOPSIS
+
+use OpenCA::DBI;
+
+=head1 DESCRIPTION
+
+This module makes available a lot of low level database functionality to 
+the OpenCA-scripts. The interface is like the OpenCA::DB-module's interface.
+
+Nevertheless the configuration is completely different because this
+module tries to support several databases and not only one. The
+documentation is devided into 
+
+=over
+
+=item *
+configuration for use with OpenCA
+
+=item *
+supported databases
+
+=item * 
+dependencies
+
+=item * 
+configuration - new ()
+
+=item * 
+public functions
+
+=item * 
+private functions
+
+=back
+
+The modules name comes from the DBI module which is used for the
+databaseconnectivity.
+
+=head2 Configuration for use with OpenCA
+
+The configuration files which are used to configure OpenCA::DBI are named
+DBI.conf and placed in the cgi-directories in the sub-directory conf/.
+
+The file knows the following options:
+
+=over
+
+=item *
+DEBUG 0
+
+This is a very nice switch. It activates all the debuggingcode
+of the module and that's a lot.
+
+If you have problems with your database or some other problems
+please activate this option and send the output to one of the
+mailinglists. 
+
+=item *
+DB_Type   "DB2"
+
+=item *
+DB_Name   "openca"
+
+be warned this string is a must for every databasesystem! Several 
+databases does not need the setting of host or port because the 
+information is stored in an interfaces-file like on Sybase. So the
+"database_name" is the string needed by the databasedrivers of the 
+different vendors. For more information please look at the
+documentation of the DBD::vendor_name drivers (e.g. Informix,
+Interbase, mSQL, MySQL, Oracle, Pg, Sybase)
+
+=item *
+DB_Host   "localhost"
+
+host where the database is located - so remote has only a logical 
+meaning. Actually until you use no VPN-software it is strongly 
+recommended that the database is on your local machine. The use 
+of DNS is not necessary and not recommended because the use of pure
+IP protects you against DNS spoofing. Alternatively you can insert 
+the used hostname in your /etc/hosts
+
+=item *
+DB_Port   6789
+
+=item *
+DB_User   "openca"
+
+=item *
+DB_Passwd "openca"
+ 
+=item *
+DB_ENV_DB2_OPTIONS 4
+
+How many options must be transfered into the environment if
+you want to use IBM DB2 UDB?
+
+=item *
+DB_ENV_Pg_OPTIONS 0
+
+=item *
+DB_ENV_mysql_OPTIONS 0
+
+=item *
+DB_ENV_Oracle_OPTIONS 0
+ 
+=item *
+DB_ENV_DB2_OPTION_1 CLASSPATH
+
+Name of the first option for DB2.
+
+=item *
+DB_ENV_DB2_VALUE_1 "/home/db2inst1/sqllib/java/sqlj.zip:/home/db2inst1/sqllib/function:/home/db2inst1/sqllib/java/db2java.zip:/home/db2inst1/sqllib/java/runtime.zip"
+
+Value of the first option of DB2.
+
+=head2 Supported Databases
+
+The supported databases are:
+
+=over 8
+
+=item
+DB2
+
+=item
+MySQL
+
+=item
+Oracle
+
+=item
+PostgreSQL
+
+=back
+
+=back
+
+=head2 DEPENDENCIES
+
+the module use the following other modules
+
+=over
+
+=item *
+OpenCA::REQ
+
+=item *
+OpenCA::X509
+
+=item *
+OpenCA::CRL
+
+=item *
+OpenCA::OpenSSL
+
+=item *
+OpenCA::Tools
+
+=item *
+DBI
+
+=back
+
+=head2 USAGE
+
+$new_object = new OpenCA::DBI (option1 => $value1, ...);
+
+=head2 All names are case sensitive !!!
+
+=head2 CONFIGURATION - new ()
+
+This is perhaps the most complicated part for the users of this
+module.
+
+You configure and init a new object of the class OpenCA::DBI by
+calling the function new. The usage is:
+
+The often used remote and local means  remote database and local 
+database.
+
+Actually OpenCA does not have a sync-module so the use of a local
+database insteed of the central remote database makes absolut no sense.
+The code for the documented options is written but deactivated by 
+enforcing special settings of the options.
+
+=over 4
+
+=item
+SHELL => $object
+
+object of class OpenCA::OpenSSL
+
+=item
+The other attributes are exactly so like described in the first
+chapter.
+
+
+=head2 PUBLIC FUNCTIONS
+
+The supported public functions are:
+
+=over
+
+=item * 
+new - see CONFIGURATION -new ()
+
+Please see the description of the configuration of OpenCA::DBI which describe
+the "new" function.
+
+=item * 
+initDB
+
+This function initializes the databases. It knows the following options:
+
+=over 4
+
+=item
+DB => @databases
+
+You can pass an array which can include "remote", "local" or "remote" and 
+"local". If nothing is included then the value is set to "remote". The 
+databases will then initialized.
+
+This means the function tries to do all the sql-create commands which are
+needed for operation of the OpenCA::DBI module.
+
+These tables are:
+
+	request
+        ca_certificate
+	certificate
+	crr
+	crl
+	log
+	signature
+
+=item
+MODE => (NONE|FORCE|FORCE_LOCAL|FORCE_REMOTE|FORCE_ALL)
+
+=back
+
+=item
+
+If successful then the function returns a 1. If not successfull then undef is 
+returned. Please read this section carefully because I perhaps switch to
+returnvalue 1 for success. Comments are welcome.
+
+=item * 
+storeItem
+
+=over 4
+
+=item
+DATATYPE => (old_type|basic_type)
+
+The old_types which are accepted are the same like in the OpenCA::DB module.
+These are strings like PENDING_REQUEST or REVOKED_CERTIFICATE.
+
+The basic_type means you can enter normal basic types like:
+
+	REQUEST
+	CA_CERTIFICATE
+	CERTIFICATE
+	CRR
+	CRL
+
+If you use basic types and you not set the option "status" status is setting
+to "VALID". If you use old_types then the status will be extracted from the
+string via the private function getStatus.
+
+=item
+STATUS => (VALID|RENEWED|UPDATED|PENDING|APPROVED|
+           SUSPENDED|REVOKED|DELETED|ARCHIVED|EXPIRED|)
+
+The status can be any of the above terms. If status is not seeded I use first
+the DATATYPE if it is an old_type and if not not then the status is "VALID".
+
+=item
+INFORM => (PEM|DER|SPKAC|)
+
+This option is actually a little bit unclear because I get the data via objects
+so I don't need the format because I get the data directly from the object.
+If the format is not detectable I use PEM.
+
+RE<eacute>sumE<eacute>: this is waste!
+
+=item
+OBJECT => $openca_object
+
+This is an OpenCA object which has to be stored. This could be
+	OpenCA::REQ
+        OpenCA::X509
+	OpenCA::CRL
+
+=item
+MODULETYPE => (CA|PKIManager|RA|WebGateway|)
+
+This for logging only. If you set it you can read the log in the database and 
+can verify via OpenCA::DBI::MODULETYPE->{number_from_db} the moduletype which
+has done this action.
+
+=item
+MODULE => module_name
+
+This is for logging only. If you set it you can read the log in the database 
+and can verify which module has done this action (it is stored as ascii so
+it is humanreadable - means you can read it as databaseadmin).
+
+=back
+
+=item * 
+getItem
+
+=over 4
+
+=item
+DATATYPE => (old_type|basic_type)
+
+The old_types which are accepted are the same like in the OpenCA::DB module.
+These are strings like PENDING_REQUEST or REVOKED_CERTIFICATE.
+
+The basic_type means you can enter normal basic types like:
+
+	REQUEST
+	CERTIFICATE
+	CRR
+	CRL
+
+If you use basic types and you not set the option "status" status is setting
+to "VALID". If you use old_types then the status will be extracted from the
+string via the private function getStatus.
+
+=item
+STATUS => (VALID|RENEWED|UPDATED|PENDING|APPROVED|
+           SUSPENDED|REVOKED|DELETED|ARCHIVED|EXPIRED|)
+
+The status can be any of the above terms. If status is not seeded I use first
+the DATATYPE if it is an old_type and if not then the status is ignored.
+
+=item
+KEY => key
+
+This is the key (the unique identifier) of this special requested object.
+So this can be a serial number or a md5 etc..
+
+If KEY is not given then I return the last element. This feature is useful
+for CRLs and only actually allowed for CRLs!!! If you search the latest one 
+you have only to call:
+
+$openca_dbi->getItem (DATATYPE => "CRL");
+
+I think this is a good feature.
+
+If you need this feature for other objects you must uncomment the following
+line in getItem:
+
+return if ((not $serial) && ($table ne "CRL"));
+
+=item
+MODE => (RAW|)
+
+RAW causes the return of the plain text of stored data. Nothing causes the
+return of an object.
+
+=back
+
+=item * 
+getNextItem
+
+The same options like getItem except MODE which is not supported. An object
+will be returned at every time. The function determines only the next key
+itself and then passes the request to the function getItem. The option KEY
+is required.
+
+=item * 
+getPrevItem
+
+The same options like getItem except MODE which is not supported. An object
+will be returned at every time. The function determines only the next key
+itself and then passes the request to the function getItem. The option KEY
+is required.
+
+=item * 
+destroyItem
+
+=over 4
+
+=item
+DATATYPE => (old_style|basic_type)
+
+=item
+KEY => key
+
+=back
+
+=item
+
+destroyItem really delete the request from the database. Attention this function
+is reserved for a fututre recovery algorithm! therefore the operation will not
+be logged!
+
+So please "hands off" if you not very shure what you are doing!!!
+
+Use deleteItem (which do nothing ;-)) or better (best)
+
+B<storeItem (DATATYPE=> xyz, MODE=>"UPDATE", STATUS=>"DELETED", OBJECT=>xyz);>
+
+=item * 
+deleteItem
+
+This is a dummy to be proof against old codeparts which think they must remove
+the object from VALID_CERTIFICATE after they store the certificate to
+REVOKED_CERTIFICATE.
+
+=item * 
+elements
+
+=over 4
+
+=item
+DATATYPE => (old_type|basic_type)
+
+The old_types which are accepted are the same like in the OpenCA::DB module.
+These are strings like PENDING_REQUEST or REVOKED_CERTIFICATE.
+
+The basic_type means you can enter normal basic types like:
+
+	REQUEST
+	CERTIFICATE
+	CRR
+	CRL
+
+If you use basic types and you not set the option "status" the function returns
+the number of all elements of this table.
+
+=item
+STATUS => (VALID|RENEWED|UPDATED|PENDING|APPROVED|
+           SUSPENDED|REVOKED|DELETED|ARCHIVED|EXPIRED|)
+
+If not used the scan performs on the hole table.
+
+=back
+
+=item
+
+This function counts the elements which are in the same table and have the same 
+status (if status is set via STATUS or DATATYPE).
+
+=item * 
+searchItem
+
+The options are the well known options DATATYPE, MODE and STATUS (please see 
+above).
+
+The new options are all possible searchattributes. To get them please use the
+new function getAttributes! The old functions support some types not. The 
+function getAttribute don't return the unique identifiers, but you can get the
+unique identifiers of the tables via 
+OpenCA::DBI::SQL->{VARIABLE}->{tablename."_SERIAL"}[0] 
+(Attention - the tablename is stored in big letters!)
+
+=item * 
+getTimeString
+
+This function returns an ISO-timestring (2001-01-14 18:24:06).
+
+=back
+
+Unchanged public functions (from OpenCA::DB v0.8.7a):
+
+=over 4
+
+=item * 
+rows
+
+Same options like searchItem. The function calls searchItem and count the 
+returned objects. Simple but errorproof
+
+=back
+
+Working but unclear status (private or public???)
+(directly taken from OpenCA::DB v0.8.7a)
+
+=over 4
+
+=item * 
+listItem
+
+This function is directly taken over from OpenCA::DB v0.8.7a. Because I don't
+know for what it is used I don't change and use it.
+
+=back
+
+The following unsupported functions are not supported because they perform
+operations which are not necessary or possible for RDBMSs (Relational
+DataBase Management Systems). These systems take care by themselves on
+things like number of elements, locks, next and preview operators etc..
+
+=item *
+commit and rollback
+
+These functions can be used to commit or rollback any actions. If the module
+will be destroyed then the module checks the state of the last operation.
+If the last operation was successful then commit is called elsewhere rollback.
+
+=head2 PRIVATE FUNCTIONS
+
+The new private functions are:
+
+=over 4
+
+=item *
+storeItem_getArguments
+
+is called from storeItem and returns a hash with all needed variables
+
+=item *
+storeItem_checkData
+
+checks the data which will be transmitted to storeItem
+
+=item *
+storeItem_update
+
+performs the update-operations
+
+=item *
+storeItem_insert
+
+performs the insert operations
+
+=item *
+storeItem_logging
+
+build the data for the log and store the data into database
+
+=item *
+storeItem_signing
+
+if logsignng is activated then this function performs the signing
+and store the signatur einto the database
+
+=item * 
+getTable
+
+It extract from a datatype (old or new) the tableand return it.
+
+=item * 
+getStatus
+
+It extracts from STATUS and DATATYPE the status. If STATUS is present 
+DATATYPE will be ignored.
+
+=item * 
+getSequence
+
+This function has the job to return a new ACTION_NUMBER for the table log.
+This is done by a function to keep the vendordependent code away from the not
+vendordependent code. Sequences, sequence generators etc. are not 
+standardized. The option is a db_hash_write called hash. Pleae see B<doConnect>
+for a detailed description of this code.
+
+=item *
+doQuery
+
+The options are:
+
+B<QUERY> this is the actual query which you have only to set for doQuery.
+
+B<BIND_VALUES> this is the actual array of binded values which you have only 
+to set for doQuery.
+
+=back
+
+=over 4
+
+=item * 
+getBaseType
+
+=item * 
+listItems           (not used but perhaps not private!!!)
+
+=item * 
+byKey               (not used)
+
+=item * 
+getSearchAttributes
+
+The only argument is the tablename via getiSearchAttributes ("REQUEST");
+The returned value is an array with the available attributes.
+
+=item * 
+hash2txt
+
+=item * 
+txt2hash (not used)
+
+=back
+
+=head1 SUPPORTED DATABASES
+
+Every subscribed item has the same behaviour for remoteXYZ and localXYZ.
+
+=head2 PostgreSQL
+
+ option     |  default  |  required
+ ----------------------------------
+ Type       |    Pg     |    yes
+ Name       |    -      |    yes
+ Host       | localhost |    no
+ Port       |   5432    |    no
+ User       |    -      |    yes
+ Passwd     |    -      |    yes
+
+If you would not set the remoteUser then DBD::Pg would use the username of the
+processowner. Because this is special for the Pg-driver this feature is not
+supported or used by the OpenCA::DBI-module and cause an undef return value for
+the new () call.
+
+Be sure that YOU set a password!
+
+You can test this with nessus (http://www.nessus.org).
+
+This was and is the most common error of us (some
+anonymous people of the staff of the datacenter of
+the Humboldt-University of Berlin ;-D).
+
+------------------------------------------------------------------------
+
+=head3 OpenCA with PostgreSQL HOWTO
+
+=head4 Files
+
+The postgres files that probably need modification are in the postgres
+data directory, on SuSE Linux that is C</var/lib/pgsql/data>. The
+files are C<pg_hba.conf> and probably C<pg_ident.conf>
+
+The OpenCA config files are below the openca root, which on my system
+is C</usr/local/openca.0.9.2>. The files that must be modified are in
+the C<openca/etc/servers> subdirectory.
+
+=head4 Postgres initialization
+
+Allow access to the C<openca> database by modifying C<pg_hba.conf>:
+insert the following line (unless there are already lines allowing
+password access from localhost to all databases)
+
+  host  openca 127.0.0.1 255.255.255.255 password
+
+Then open C<pgsql> or C<psql> which can be done with
+
+  pgsql template1 postgres
+
+and execute the following commands, thus creating a user named
+"openca" with the password "opencapw" that owns the new database also
+named "openca":
+
+  CREATE USER openca WITH PASSWORD 'opencapw' CREATEDB;
+  \connect - openca
+  CREATE DATABASE openca;
+
+You can check the correct function by connecting to the new database
+with pgaccess after restarting postgres.
+
+=head4 Option: using ident for authentication
+
+I prefer ident for localhost authentication to plaintext passwords in
+config files. As the webserver on my computer runs as user C<wwwrun>,
+I appended the following line to C<pg_ident.conf>:
+
+  openca     wwwrun    openca
+
+And changed the entry in pg_hba.conf to read
+
+  host  openca 127.0.0.1 255.255.255.255 ident openca
+
+This can be checked by using pgaccess under the wwwrun userid.
+
+=head4 Configure OpenCA
+
+=over 4
+
+=item *
+
+In the general section of ca.conf, modify the C<DBmodule> line:
+  DBmodule                "DBI"
+
+=item *
+
+Edit C<DBI.conf>. You B<must> set a password even if you use ident for
+authentication (and don't use '0' as a password). If the password does
+not contain a value that evaluates to true in perl, the whole thing
+fails without telling you why
+(which is the reason I wrote this howto :-)
+Example for C<DBI.conf>:
+
+  DB_Type   "Pg"
+  DB_Name   "openca"
+  DB_Host   "localhost"
+  DB_Port   5432
+  DB_User   "openca"
+  DB_Passwd "opencapw"
+
+=back
+
+Now you can start the database initialisation in the CA web interface.
+
+=head2 MySQL
+
+Attention the name which you must enter is mysql!!!
+
+ option     |  default  |  required
+ ----------------------------------
+ Type       |   mysql   |    yes
+ Name       |    -      |    yes
+ Host       | localhost |    no
+ Port       |    ?      |    no
+ User       |    -      |    yes
+ Passwd     |    -      |    yes
+
+Because I have not the time to test MySQL please write any mistake in this
+documentation suddenly to me. I don't know the standard MySQL-Port so I
+hope the DBD::mysql module knows it ;-)
+
+We use BDB-tables to get support for transactions. If you have problems
+with this please check the version of MySQL (>= v3.23) and the version of the
+driver DBD::mysql (>= v1.2216)
+
+=head2 DB2
+
+ option     |  default  |  required
+ ----------------------------------
+ Type       |    DB2    |    yes
+ Name       |    -      |    yes
+ Host       |    -      |    no
+ Port       |    -      |    no
+ User       |    -      |    yes
+ Passwd     |    -      |    yes
+
+If you get the error "The total environment is not set ..."
+Please read the CAVEATS-file like recommended by
+IBM. If this not help then you must do the following:
+
+$HOME is the home of the db2-instance
+
+cp $HOME/sqllib/db2profile $HOME_OF_HTTPD_USER/
+
+vi /etc/init.d/apache (or where ever your apache-
+startupscript is placed)
+> . $HOME_OF_HTTPD_USER/db2profile
+
+vi /etc/httpd/httpd.conf
+go to the position of your virtual host or 
+otherwise enter it in the right global context
+>PassEnv LD_LIBRARY_PATH
+>PassEnv PATH
+>PassEnv LIBPATH
+>PassEnv CLASSPATH
+>PassEnv DB2INSTANCE
+>PassEnv DB2DIR
+>PassEnv INSTHOME
+
+Perhaps you don't need some of the environmentvariables
+but my installation works with this environment and
+this should only be a point where you can start.
+
+=head2 Oracle
+
+ option     |  default  |  required
+ ----------------------------------
+ Type       |  Oracle   |    yes
+ Name       |    -      |    yes
+ Host       |    -      |    no
+ Port       |    -      |    no
+ User       |    -      |    yes
+ Passwd     |    -      |    yes
+
+Warning, this port is completely untested. It was only added because
+of a user request but I get never a feedback.
+
+=head1 LICENSE
+
+This library is free for commercial and non-commercial use as long as
+the following conditions are aheared to.  The following conditions
+apply to all code found in this distribution, be it the RC4, RSA,
+lhash, DES, etc., code; not just the SSL code.  The documentation
+included with this distribution is covered by the same copyright terms
+
+Copyright remains Massimiliano Pala's and Michael Bell's, and as such any
+Copyright notices in the code are not to be removed.
+If this package is used in a product, Massimiliano Pala and Michael Bell
+should be given attribution as the author of the parts of the library used.
+This can be in the form of a textual message at program startup or
+in documentation (online or textual) provided with the package.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. All advertising materials mentioning features or use of this software
+   must display the following acknowledgement:
+   "This product includes OpenCA software written by Massimiliano Pala
+    (madwolf@openca.org) and the OpenCA Group (www.openca.org)"
+4. If you include any Windows specific code (or a derivative thereof) from 
+   some directory (application code) you must include an acknowledgement:
+   "This product includes OpenCA software (www.openca.org)"
+
+THIS SOFTWARE IS PROVIDED BY OPENCA DEVELOPERS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+The licence and distribution terms for any publically available version or
+derivative of this code cannot be changed.  i.e. this code cannot simply be
+copied and put under another distribution licence
+[including the GNU Public Licence.]
+
+=head1 AUTHORS
+
+ Massimiliano Pala <madwolf@openca.org> (OpenCA::DB)
+ Michael Bell <michael.bell@web.de> (OpenCA::DBI)
+ Alex Rhomberg alex.rhomberg@schweiz.org (PostgreSQL part of OpenCA::DBI)
+
+=head1 SEE ALSO
+
+OpenCA::OpenSSL, OpenCA::X509, OpenCA::CRL, OpenCA::REQ,
+OpenCA::TRIStateCGI, OpenCA::Configuration, OpenCA::Tools,
+OpenCA::OpenSSL::Configuration
+
+=head1 P.S. EXAMPLE
+
+	Block: {
+	doConnect
+	  if doConnect returns negative then last BLOCK 
+	  (final error, all options failsafe or 
+	  second_chance did not help.)
+	  best thing is now to say return -1; insteed of
+      	  last BLOCK;
+	doQuery until the first returncode is -1
+        then doRollback
+             doDisconnect
+	if never doQery fails 
+	then doCommit
+	if returnvalue is -1
+	then doRollback
+     	     doDisconnect
+	else doDisconnect
+
+	if somethig fails except doConnect "next BLOCK"
+	}
+
+you can repeat this block so often as you want until the first time
+doConnect returns undef. So long this not happens you can try to get a 
+successful transaction.
+
+=cut
+

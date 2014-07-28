@@ -1,0 +1,202 @@
+* May 10 2014 Massimiliano Pala <madwolf@openca.org>
+- Fixed 'ii' typo in mail-utils.lib that caused issues when sending e-mails
+
+* Oct 15 2013 Massimiliano Pala <madwolf@openca.org>
+- Fixed startAuto* scripts to allow for auto-startup of CA daemons
+- Fixed issue with DBI (MySQL/MariaDB) NUMERIC data type issue
+- Added the auto revocation daemon to the list of auto-startup daemons list
+
+* Sep 27 2013 Massimiliano Pala <madwolf@openca.org>
+-Integrated a patch from Carlos that fixes a bug in DBI.pm
+
+* Aug  3 2013 Massimiliano Pala <madwolf@openca.org>
+-Fixed memory leaks in OpenSSL module
+-Fixed autoCRL daemon period (hours)
+-Removed debugging messages from memory in DBI module
+-Fixed displaying SubjectAltNames in CSRs
+-Fixed recognizing DECIMAL values in DBI module
+-Added support for "NEW CERTIFICATE REQUEST" armors in req_pkcs10 command
+-Added a fork when daemons are called to add a safe container (gets rid of memory leaks inside daemons)
+-Fixed a missing "!" in the startup script (<PREFIX>/etc/init/openca)
+-Fixed a variable reference in AC.pm (self vs $self)
+-Fixed name of the variable "LogConfigurationStartup" vs "LogConfiguration" in initLogStartup()
+-Fixed the use of close when BATCH is used for the interface
+-Fixed an error in startAutoCRL and startAutoRevoke that prevented the openca service to start
+-Added the Auto Revocation Daemon to the list of started daemons in initServer
+-Updated several modules to allow for compiling on new platforms
+-Patched DB_File module to correctly work with libdb4/db.h and libdb4/db.so on newer systems
+
+* Apr  8 2012 Massimiliano Pala <madwolf@openca.org>
+-Updated installation script to check for PERL requirements
+-Fixed processing wrong logins when starting Auto** daemons
+
+* Apr  5 2012 Massimiliano Pala <madwolf@openca.org>
+-Fixed CRL daemon when Days was used as Period type
+-Fixed error in DBI module that caused automatic rollbacks messages
+-New Daemon utils for centralized management of spawned processes
+-Fixed initialization issues in initServer
+-Added initial support for auto-starting daemons (not fully implemented yet)
+
+* Apr  4 2012 Massimiliano Pala <madwolf@openca.org>
+-Updated default configuration file for CA interface (missing verifyEmailAddress keyword)
+-Fixed an error for LOA when its value is 0 (test loa)
+-Fixed LOA processing in Auto CA Daemon
+-Fixed Signed CRS processing in Auto CA Daemon
+-Added first version of Auto Revocation Daemon
+
+* Feb 14 2011 Massimiliano Pala <madwolf@openca.org>
+-Updated Spanish translation
+
+* Feb 13 2011 Massimiliano Pala <madwolf@openca.org>
+-Added Email verification system for browser request(s)
+-Fixed error in HTML output
+-Simplified JS installation (by grouping util scripts in C/ lang only)
+-Added verifyEmail command
+
+* Dec 13 2010 Massimiliano Pala <madwolf@openca.org>
+- Added select/deselect all in listCSR command
+- Added tools.js script
+- Fixed missing initialization of curr_user in initServer
+- Fixed syntax error in initServer (line 757)
+- Fixed error in ieVistaCSR.js script (keyUsage, keyProtection, and webObj.CreateObject call)
+- Fixed bare word usage in User.pm module
+
+* Oct 31 2010 Massimiliano Pala <madwolf@openca.org>
+- Fixed error in User.pm module (ERR_USER_UNKNOWN)
+- Fixed parsing error in OpenSSL.pm module
+
+* Sep 01 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed error when enabling EMAIL in Subject of certificates
+
+* Apr 02 2010 Massimiliano Pala <madwolf@openca.org>
+-Applied patch to get around a cast problem in MySQL
+-Fixed getNextItem and getPrevItem functions in DBI.pm
+-Updated libGetLastItem and libGetFirstItem in misc-utils
+
+* Mar 20 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed issues with UTF-8 managing
+-Modified rpm building target to generate source packages
+
+* Mar 16 2010 Massimiliano Pala <madwolf@openca.org>
+-Added new openca-user module for user management
+-Added new openca-useradmin script
+-Fixed missing link in UI for Node Init (Upgrade DB)
+-Fixed required config keywords in server's config for cert requests when NO
+or EXIST is used for DN_TYPE_REQUIRED
+
+* Mar 12 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed Email link in UI (fixed HTML.pm and initServer files)
+-Fixed missing setHeaderAttributes() in CRL.pm
+-Fixed utf8 display in DBI.pm
+
+* Mar 10 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed default language support in web interfaces
+-Fixed error in HTML.pm that prevented hidden tags to be closed (IE detected
+it and would not post XSRF tokens correctly)
+
+* Mar  7 2010 Massimiliano Pala <madwolf@openca.org>
+-Cleaned up DB module (not used anymore - only DBI)
+-Fixed Installation bug for .bin files (missing etc/includes directory)
+-Fixed a bug in HTML module that prevented the right Charset to be sent to the
+browser
+
+* Feb 22 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed startAutoCA, startAutoCRL, and startAutoEmail (lost db handler)
+-Fixed fingerprint matching in CA_CERTIFICATE table
+-Added updateKey in DBI (used in upgradeDB)
+
+* Feb 21 2010 Massimilinao Pala <madwolf@openca.org>
+-Fixed problem with export/import certificates w/ private keys
+
+* Feb 20 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed an error in DB storage of CA_CERTIFICATE
+-Fixed an error in DB storage of Server-Side generated requests w/ keys
+
+* Feb 19 2010 Massimiliano Pala <madwolf@openca.org>
+-Added getRandomBytes to OpenSSL.pm to support random serial number generation
+on old OpenSSL versions (not supporting `openssl rand -hex ... '
+
+* Feb 18 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed incompatibility with old CGI module (incorrect type for Javascript)
+
+* Feb 14 2010 Massimiliano Pala <madwolf@openca.org>
+-Added rowid columns to each table
+-Fixed "Extra References" building routines
+
+* Feb 12 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed problem when retrieving newly issued CA certs from the DB
+-Added Self Signed CA profile
+-Added the possibility to select profile when self-signing CA certificate
+-Added the possibility to use subjectAltNames in self-signed CA
+
+* Feb  8 2010 Massimiliano Pala <madwolf@openca.org>
+-Added configuration options to manage the homepage aspect (TITLE, BODY,
+NOTICES PANEL, EASY PANEL)
+-Added new ETC_PREFIX/includes/ directory for static HTML includes
+-Added example home_body.inc include file
+-Installation feature: old config files are now renamed with .old extension
+
+* Feb  7 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed new menus for IE
+-Cleaned up HTML module's code
+-Fixed an HTML bug when sending static page (libSendStatic)
+
+* Feb  6 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed dynamic menu generation bugs
+-Added Fade in/Fade out effects to menues
+-Added Footer Links/Menu
+-Added UI initial support for USERS (*feature not working yet*)
+-Added initial stats page (*to be expanded*)
+-Fixed CRL links (installation bug)
+
+* Jan 21 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed missing expired certs support in 'lists' command
+-Added multi-CSR delete on RA/CA interfaces
+-Fixed LOA and PolicyID bug (thanks to Ralf Hornik)
+-Fixed visualization of CRLs
+-Fixed error in retrieving EXPIRED_CRL objects
+
+* Jan 18 2010 Massimiliano Pala <madwolf@openca.org>
+-Updated PERL modules
+-Fixed OpenCA-OpenSSL module to work with OpenSSL 1.0.0
+-Fixed Net-SSLeay module to work with OpenSSL 1.0.0
+-Fixed module installation dir bug (when using --with-build-dir=..)
+-Fixed RPM building script
+-Dropped distribution of OpenSSL together with the bin packages
+
+* Jan 16 2010 Massimiliano Pala <madwolf@openca.org>
+-Fixed missing links in installation of ra/ca interfaces
+
+* Oct 27 2009 Massimiliano Pala <madwolf@openca.org>
+-Added SCEP capability to understand 'Level of Assurance' or 'loa' (1.3.6.1.4.1.18227.50.1) extension from PKCS#10 request.
+
+* Jun 28 2009 Massimiliano Pala <madwolf@openca.org>
+-Fixed parsing of Browser's Request allowing concatenation of variables in the value (eg. $ADDIIONAL_...EMAIL$ADDITIONA_.. without spaces between variables' names)
+
+* May  4 2009 Massimiliano Pala <madwolf@openca.org>
+-Fixed scepPKIOperation: added check for openca-scep command
+-Added support for "Certificate Template" attribute support in requests
+
+* May  4 2009 Massimiliano Pala <madwolf@openca.org>
+-Switched to ChangeLog file from CHANGES file
+
+* Mar  9 2009 Massimiliano Pala <madwolf@openca.org>
+-Small Bug fix in DBI module
+
+* Dec 22 2008 Massimiliano Pala <madwolf@openca.org>
+-Fixed DBI problem
+-Fixed Email English language
+
+* Oct 24 2008 Massimiliano Pala <madwolf@openca.org>
+-Fixed an error in signed CRR building
+
+* Oct 23 2008 Massimiliano Pala <madwolf@openca.org>
+-Added subjectAltName specific input types for pkcs10 request (server) form
+-Fixed viewCert and send_email_cert commands to correctly send CA certificates
+-Fixed a bug that prevented the signed approval of CRS on RA
+
+* Oct 21 2008 Massimiliano Pala <madwolf@openca.org>
+-Fixed the 'make clean' command
+-Fixed the non-root build (defaulting to the user's user/group)
+-Fixed an installation error when using the --with-$iface-prefix
+

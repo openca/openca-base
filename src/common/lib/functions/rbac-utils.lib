@@ -1,0 +1,160 @@
+## Written by Michael Bell for the OpenCA project 2000
+## Copyright (C) 2000-2004 The OpenCA Project
+##
+
+## the access control itself is now in OpenCA::AC
+
+sub loadRoles {
+
+    my $twig = loadConfigXML ('RoleConfiguration');
+
+    my @list = ();
+
+    my @roles = $twig->get_xpath ('access_control/roles/role');
+    configError ( gettext ("There are no roles specified.")) if (not scalar @roles);
+
+    foreach my $role (@roles)
+    {
+        push @list, $role->field;
+    }
+
+    return @list;
+}
+
+sub loadModules {
+
+    my $twig = loadConfigXML ('ModuleConfiguration');
+
+    my %list;
+
+    my @modules = $twig->get_xpath ('access_control/modules/module');
+    configError (gettext ("There are no permissions specified.")) if (not scalar @modules);
+
+    foreach my $module (@modules)
+    {
+        $list {($module->first_child ('id'))->field} = ($module->first_child ('description'))->field;
+    }
+
+    return %list;
+}
+
+sub loadACL {
+
+    our ($xml_cache);
+
+    my @list = ();
+
+    ## load the complete list
+    my $all = $xml_cache->get_xpath_count (
+                   FILENAME => $access_control->{acl_file},
+                   XPATH    => 'access_control/acl/permission');
+    configError ( gettext ("There are no permissions specified.")) if (not scalar $all);
+
+    my $ok = 0;
+    ## check each entry
+    for (my $i=0; $i<$all; $i++) {
+        $list[$i]{module} = $xml_cache->get_xpath (
+                         FILENAME => $access_control->{acl_file},
+                         XPATH    => [ 'access_control/acl/permission', 'module' ],
+                         COUNTER  => [ $i, 0 ]);
+        $list[$i]{role} = $xml_cache->get_xpath (
+                         FILENAME => $access_control->{acl_file},
+                         XPATH    => [ 'access_control/acl/permission', 'role' ],
+                         COUNTER  => [ $i, 0 ]);
+        $list[$i]{operation} = $xml_cache->get_xpath (
+                         FILENAME => $access_control->{acl_file},
+                         XPATH    => [ 'access_control/acl/permission', 'operation' ],
+                         COUNTER  => [ $i, 0 ]);
+        $list[$i]{owner} = $xml_cache->get_xpath (
+                         FILENAME => $access_control->{acl_file},
+                         XPATH    => [ 'access_control/acl/permission', 'owner' ],
+                         COUNTER  => [ $i, 0 ]);
+    }
+
+    return @list;
+}
+
+sub loadOperations {
+
+    my %list;
+
+    ## load all filenames from cmd directory
+    configError ( gettext ("The access control configuration was not initialized."))
+        if (not $access_control->{twig});
+    configError ( gettext ("The XPath access_control/acl_config/command_dir does not exist in the access control configuration."))
+        if (not $access_control->{twig}->get_xpath ('access_control/acl_config/command_dir'));
+    my $cmd_dir = ($access_control->{twig}->get_xpath ('access_control/acl_config/command_dir'))[0]->field;
+    configError (gettext ("Configuration directory for the command is missing."))
+        if (not opendir DIR, $cmd_dir);
+    my @configs = grep /.*\.xml$/, readdir DIR;
+    closedir DIR;
+
+    ## check every command
+    foreach my $config (@configs)
+    {
+        ## load config
+        my $twig = loadConfigXML (FILENAME => $cmd_dir."/".$config);
+
+        ## is operation present?
+        configError ( i18nGettext ("There is a misconfigured command in __FILE__.The operation is missing.",
+                                   "__FILE__", $cmd_dir."/".$config))
+            if (not $twig->get_xpath ('command_config/command/operation'));
+
+        ## store operation
+        $list {($twig->get_xpath ('command_config/command/operation'))[0]->field} = 1;
+    }
+
+    ## get list
+    return sort keys %list;
+}
+
+sub loadConfigXML {
+
+    use XML::Twig;
+
+    my $twig_config = new XML::Twig;
+
+    configError(gettext ("XML::Twig cannot be created")) if (not $twig_config);
+
+    my $filename;
+    if (scalar @_ == 1)
+    {
+        $filename = getRequired ($_[0]);
+    } else {
+        my $keys = { @_ };
+        $filename = $keys->{FILENAME};
+    }
+
+    if (not $twig_config->safe_parsefile($filename))
+    {
+        configError ( i18nGettext ("XML::Twig cannot parse configuration file __FILE__. XML::Parser returned errormessage: __MSG__",
+                                   "__FILE__", $filename,
+                                   "__MSG__",  $@));
+    }
+
+    return $twig_config;
+}
+
+sub writeConfigXML {
+
+    my ($twig, $filename);
+    if (scalar @_ == 2)
+    {
+        $twig     = $_[0];
+        $filename = getRequired ($_[1]);
+    } else {
+        my $keys  = { @_ };
+        $twig     = $keys->{TWIG};
+        $filename = $keys->{FILENAME};
+    }
+
+    generalError ( gettext ("No XML::Twig object specified.") )
+        if (not $twig);
+
+    $twig->set_pretty_print ('record');
+    generalError ( i18nGettext ("Cannot write XML configurationfile __FILE__.", "__FILE__", $filename))
+        if (not $tools->saveFile (FILENAME => $filename, DATA => $twig->sprint));
+
+}
+
+1;

@@ -1,0 +1,251 @@
+
+=head1 NAME
+
+OpenCA::OpenSSL::SMIME - Sign, verify, encrypt and decrypt S/MIME
+
+=head1 SYNOPSIS
+
+    $shell = OpenCA::OpenSSL->new();
+    $smime = OpenCA::OpenSSL::SMIME->new(
+		 DATA => \*STDIN,
+		 SHELL => $shell);
+    $smime->sign(CERTIFICATE => $my_x509,
+		 PRIVATE_KEY => $my_key);
+    $mime = $msg->get_mime();
+    $mime->smtpsend();
+
+=head1 DESCRIPTION
+
+A Perl module for handling S/MIME entities: encrypting, decrypting, signing
+and verifying. Uses L<MIME::Entity|MIME::Entity> for easy parsing of complex structures and
+optionally for input and output of data.
+
+=head1 CONSTRUCTORS
+
+=head2 new I<ARGS>
+
+Creates a new I<OpenCA::OpenSSL::SMIME> object.
+If invoked as a instance method, inherits the values of SHELL, CA_CERTS,
+TMPDIR and DEBUG from creator.
+
+Parameters:
+
+=over
+
+=item SHELL
+
+A blessed reference to an L<OpenCA::OpenSSL|OpenCA::OpenSSL> object. Required argument.
+
+=item INFILE
+
+A filename containing MIME data to be processed.
+
+=item DATA
+
+An array reference, a string or a filehandle (as a reference to a glob), containing 
+actual MIME data to be processed
+
+=item ENTITY
+
+A blessed reference to an L<MIME::Entity|MIME::Entity> object to be processed. One of
+DATA or ENTITY should be present.
+
+=item CA_CERTS
+
+Optional list of certificates of CAs for signing and verifying.
+
+Accepts a list of blessed references to L<OpenCA::X509|OpenCA::X509> objects
+
+=item TMPDIR
+
+Sets directory to store various temporary files.
+
+=item DEBUG
+
+Sets debugging on when assigned a true value.
+
+=back
+
+=head1 METHODS
+
+=head2 set_params I<ARGS>
+
+Sets or resets object parameters. Takes the same arguments as new().
+
+=head2 errno
+
+Returns the last error in numeric form.
+Could be called as class method, to retrieve the last error regardless of the instance.
+
+=head2 err
+
+Returns the last error in literal form.
+Could be called as class method, to retrieve the last error regardless of the instance.
+
+=head2 sign I<ARGS>
+
+Signs the message, replaces original content with signed content.
+
+Arguments:
+
+=over
+
+=item CERTIFICATE
+
+Blessed reference to an OpenCA::X509 object containing the signer's certificate.
+
+=item PRIVATE_KEY
+
+The private key of the signer. Should be a string containing the textual data or a open filehandle reference.
+
+=item KEY_PASSWORD
+
+Password to decrypt the private key, if necessary.
+
+=item INCLUDE_CERTS
+
+If true, the signer's certificate and the chain of trust (if present) will be
+included in the message.
+
+=item NO_COPY_HEADERS
+
+If true, the original message headers won't be copied to the external envelope.
+
+=item NO_STRIP_HEADERS
+
+If true, the original message headers won't be stripped off before signing.
+
+=back
+
+=head2 verify I<ARGS>
+
+Verifies the message for integrity and non-repudiation. Can use the embedded
+certificate in the message (if present) or a user-supplied expected signer.
+
+Arguments:
+
+=over
+
+=item USES_EMBEDDED_CERT
+
+If true, uses the certificate included in the message, if any, instead of
+a user-supplied certificate for verifying.
+
+=item CERTIFICATE
+
+Blessed reference to an OpenCA::X509 object containing the user-supplied
+certificate for verifying.
+
+=item NO_COPY_HEADERS
+
+If true, the original message headers won't be copied to the extracted verified message.
+
+=back
+
+=head2 encrypt I<ARGS>
+
+Encrypts the message, replaces original content with crypted content.
+
+Arguments:
+
+=over
+
+=item CERTIFICATE
+
+Blessed reference to an OpenCA::X509 object containing the receiver's certificate.
+
+=item NO_COPY_HEADERS
+
+If true, the original message headers won't be copied to the external envelope.
+
+=item NO_STRIP_HEADERS
+
+If true, the original message headers won't be stripped off before encrypting.
+
+=item CIPHER
+
+Which cipher algorithm to use.
+
+Currently supports:
+des3, des, rc2-40, rc2-64 and rc2-128.
+
+=back
+
+=head2 decrypt I<ARGS>
+
+Decrypts the message, replaces it with original unencrypted data.
+
+Arguments:
+
+=over
+
+=item CERTIFICATE
+
+Blessed reference to an OpenCA::X509 object containing the recipient's certificate.
+
+=item PRIVATE_KEY
+
+The private key of the recipient. Should be a string containing the textual data or a open filehandle reference.
+
+=item KEY_PASSWORD
+
+Password to decrypt the private key, if necessary.
+
+=item NO_COPY_HEADERS
+
+If true, the original message headers won't be copied to the decrypted message.
+
+=back
+
+=head2 get_mime
+
+Extracts the processed message. If called in scalar context, returns a
+MIME::Entity object. In list context, returns a MIME::Entity object and
+a filename containing the textual form of the message.
+
+=head2 get_last_signer
+
+Returns OpenCA::X509 object of embedded certificate from last verify operation,
+if it was successful and contained the signer's certificate.
+
+Returns undef it there wasn't any certificate saved.
+
+=head2 status
+
+Returns status text from last verify/decrypt operation, or undef if it
+was successful.
+
+=head2 status_code
+
+Returns status code from last verify/decrypt operation, or zero if it
+was successful.
+
+NOTE: when status/status_code are set, err/errno are not; and viceversa.
+
+Currently defined status values after verifying:
+
+  1100	message not signed
+  1110	invalid certificate chain
+  1111	no chain of trust supplied
+  1112	certificate has expired
+  1113	certificate is not yet valid
+  1119	unknown certificate problem
+
+Currently defined status values after decrypting:
+
+  1300	message not encrypted
+  1301	this certificate can't decrypt this message
+
+=head1 SEE ALSO
+
+L<OpenCA::OpenSSL|OpenCA::OpenSSL>, L<OpenCA::X509|OpenCA::X509>, L<MIME::Tools|MIME::Tools>, L<MIME::Entity|MIME::Entity>
+
+=head1 AUTHOR
+
+Martín Ferrari <yo@martinferrari.com.ar>.
+
+=head1 VERSION
+
+$Revision: 1.1.1.1 $ $Date: 2007/11/07 19:52:53 $
+
+=cut

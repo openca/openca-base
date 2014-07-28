@@ -1,0 +1,142 @@
+## OpenCA - RAServer Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: editCRR
+##       Brief: edit CRR
+##     Version: $Revision: 1.2 $
+## Description: edit a given pending CRR
+##  Parameters: dataType, key
+
+use strict;
+
+sub cmdEditCRR {
+
+our ($query, $db);
+
+my ( $def, $lnk, $sigInfo );
+
+my $key      = $query->param('key');
+
+configError (gettext ("Error, needed dB key!")) if ( not $key );
+
+my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+$cmd_panel->[0] = '<input type="submit" value="'.gettext ("OK").'">';
+$cmd_panel->[1] = '<input type="reset" name="reset" value="'.gettext ("Reset").'">';
+
+my $req = $db->getItem( DATATYPE=>"NEW_CRR", KEY=>$key );
+my $dataType = "NEW_CRR";
+$dataType = "PENDING_CRR"
+    if (not $req);
+$req = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+configError (gettext ("Request not present in DB or the status of the request was changed!")) if ( not $req );
+
+## Get the parsed Request
+my $parsed_req = $req->getParsed();
+my $head   	= $req->getParsed()->{HEADER};
+
+$info_list->{HEAD}->[0] = gettext ("Variable");
+$info_list->{HEAD}->[1] = gettext ("Value");
+
+## If the Request is signed
+if ( $parsed_req->{TYPE} =~ /with .*? Signature/i ) {
+
+        my $tmp;
+	$lnk = new CGI({cmd=>"viewSignature", dataType=>$dataType, key=>$key});
+	if( libCheckSignature( OBJECT=>$req ) ) {
+		$tmp = $query->img({src=>getRequired ('ValidSigImage'),
+					border=>"0", align=>"MIDDLE"});
+	} else {
+		$tmp = $query->img({-src=>getRequired ('SigErrorImage'),
+					-border=>"0", -align=>"MIDDLE"});
+	}
+
+	$sigInfo = $lnk->a({-href=>"?".$lnk->query_string()}, $tmp );
+	
+} else {
+	$def = "<FONT COLOR=\"RED\">".gettext ("Not Signed")."</FONT>";
+	$parsed_req->{OPERATOR} = $def;
+}
+
+my $reason;
+
+my $tmp = $parsed_req->{REVOKE_REASON};
+
+my $crl_reason = $query->newInput (
+                                -regx=>'LETTERS',
+                                -intype=>'popup_menu',
+                                -name=>'crl_reason',
+				-default=>"$tmp",
+                                -values=>[ 'unspecified', 'keyCompromise', 'CACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL']);
+
+$tmp = $parsed_req->{REVOKE_DESCRIPTION};
+
+my $description = $query->newInput( -regx=>'*',
+			-intype=>'textarea',
+			-name=>'description',
+			-rows=>6,
+			-columns=>35,
+			-default=>$tmp);
+
+$tmp = $head->{OPERATOR_DN};
+$tmp =~ s/(,|\/)/<br>/g;
+
+my $submit;
+if ($parsed_req->{SIGNATURE}) {
+	## signature-based revocation
+	if (my $sig = libGetSignatureObject ( OBJECT => $req )) {
+		if (my $cert = libGetSignerCertificateDB( SIGNATURE=> $sig )) {
+			$submit = $cert->getParsed()->{DN};
+		} else {
+			$submit = gettext ("Cannot determine certificate from signature!");
+			print STDERR "Cannot determine certificate from signature (CRR: ".$req->getSerial().")\n";
+		}
+	} else {
+		$submit = gettext ("Cannot build object from signature!");
+		print STDERR "Cannot build object from signature (CRR: ".$req->getSerial().")\n";
+	}
+} elsif ($parsed_req->{REVOKE_CERTIFICATE_DN}) {
+	## pin-based revocation
+	$submit = $parsed_req->{REVOKE_CERTIFICATE_DN};
+} else {
+	## last chance by strong ssl-authentication
+	$submit = $head->{SSL_CERT_DN};
+	print STDERR i18nGettext ("submitter of CRR not determinable (CRR: __SERIAL__).",
+                                  "__SERIAL__", $key)."\n";
+}
+my $pos = 0;
+
+$info_list->{BODY}->[$pos]->[0] = gettext ("Request Version");
+$info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{VERSION} or gettext ("n/a"));
+$info_list->{BODY}->[$pos]->[0] = gettext ("CRR Serial Number");
+$info_list->{BODY}->[$pos++]->[1] = ($req->getSerial() or gettext ("n/a"));
+$info_list->{BODY}->[$pos]->[0] = gettext ("Request Type");
+$info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{TYPE} or gettext ("n/a"));
+$info_list->{BODY}->[$pos]->[0] = gettext ("Submission Date");
+$info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{SUBMIT_DATE} or gettext ("n/a"));
+$info_list->{BODY}->[$pos]->[0] = gettext ("Submitter");
+$info_list->{BODY}->[$pos++]->[1] = ($submit or gettext ("n/a"));
+$info_list->{BODY}->[$pos]->[0] = gettext ("Subject");
+$info_list->{BODY}->[$pos++]->[1] = $parsed_req->{REVOKE_CERTIFICATE_DN};
+$info_list->{BODY}->[$pos]->[0] = gettext ("Reason");
+$info_list->{BODY}->[$pos++]->[1] = $crl_reason;
+$info_list->{BODY}->[$pos]->[0] = gettext ("Description");
+$info_list->{BODY}->[$pos++]->[1] = $description;
+$info_list->{BODY}->[$pos]->[0] = gettext ("Used CRIN");
+$info_list->{BODY}->[$pos++]->[1] = ($head->{PIN} or gettext ("n/a"));
+
+$hidden_list->{"cmd"} = "changeCRR";
+$hidden_list->{"key"} = $req->getSerial();  
+
+return libSendReply (
+                     "NAME"        => gettext ("Revocation Request Waiting for Approval"),
+                     "EXPLANATION" => gettext ("Now you can edit the data of the CRR."),
+                     "INFO_LIST"   => $info_list,
+                     "HIDDEN_LIST" => $hidden_list,
+                     "CMD_PANEL"   => $cmd_panel,
+                     "SIGINFO"     => $sigInfo
+                    );
+}
+
+1;

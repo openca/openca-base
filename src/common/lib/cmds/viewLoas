@@ -1,0 +1,138 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: viewLoas
+##       Brief: Display LOA
+##     Version: $Revision: 1.1 $
+## Description: Display requested LOA
+##  Parameters: dataType, key
+
+use strict;
+
+sub cmdViewLoas {
+
+    our ( $query, $DEBUG );
+
+    my $info_list = undef;
+    my $hidden_list = undef;
+    my $cmd_list = undef;
+    my $pos = 0;
+
+    my $loaTwig = loadConfigXML ('LOAConfiguration');
+
+    if (not $loaTwig) {
+	generalError (gettext ("Cannot load menu configration"));
+    }
+
+    foreach my $loa ( $loaTwig->get_xpath("loa") ) {
+
+	my $name = getField ( $loa, "name" );
+	my $description = getField ( $loa, "description" );
+
+	my $algs = getLoaAlgorithms( "$name" );
+	
+	my $text = undef;
+
+        $text = "<table class=\"getParams\">\n";
+        $text .= "<tr><td colspan=\"2\">\n";
+	$text .= "<center><div style='font-size: 120%;'><h3>" . 
+		       gettext("$name")."</h3>" .
+		   "</div></center>";
+
+	$text .=  "<tr><td colspan=\"2\">\n" .
+		  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext ( $description) .  "</div>";
+
+        $text .= "</td></tr>\n";
+
+        $text .= "  <tr>\n".
+                   "    <td><h4>".
+			gettext ("Supported Key Generation Mode(s)") .
+		   "    </h4></td>" .
+                   "    <td></td>".
+		   "    </tr>";
+	$text .= "<tr><td colspan='2'>";
+
+	# my @genModes = loadKeygenMode ( "$name" );
+
+	foreach my $j ( loadKeygenMode ("$name") ) {
+		$text .= gettext ("$j") . "<br />\n";
+	}
+
+	$text .= "</td></tr>";
+
+        $text .= "  <tr>\n".
+                   "    <td><h4>".
+			gettext ("Supported KeyStrength(s)") .
+		   "    </h4></td>" .
+                   "    <td><h4>".
+			gettext ("Supported Algorithm(s) and Min Keysize") .
+		   "    </h4></td>";
+	$text .= "</tr>";
+
+	foreach my $j ( keys %$algs ) {
+		$text .= "<tr><td class='desclabel'>";
+		$text .= $j . "</td>";
+		$text .= "<td style='min-width: 20em;'>";
+		foreach my $k ( keys %{ $algs->{$j}} ) {
+			if ( $k =~ /ID-ECPUBLICKEY/ ) {
+				next;
+			};
+			$text .= $k . " (" . $algs->{$j}->{$k} . " bits)<br />";
+		}
+		$text .= "</td></tr>";
+	}
+	
+	$text .= "</td></tr>\n";
+	$text .= "</table>";
+
+	$info_list->{BODY}->[$pos]->[0] = "";
+	$info_list->{BODY}->[$pos]->[1] = "$text";
+
+	$pos++;
+    }
+
+    # $info_list->{BODY}->[0]->[0] = gettext ("LOA Serial");
+    # $info_list->{BODY}->[0]->[1] = ( $serial );
+    # $info_list->{BODY}->[0]->[0] = gettext ("LOA Version");
+    # $info_list->{BODY}->[0]->[1] = ( $parsed->{VERSION} or gettext("n/a") );
+    # $info_list->{BODY}->[1]->[0] = gettext ("LOA Algorithm");
+    # $info_list->{BODY}->[1]->[1] = ( $parsed->{ALGORITHM} or gettext("n/a") );
+    # $info_list->{BODY}->[2]->[0] = gettext ("Issuer");
+    # $info_list->{BODY}->[2]->[1] = ( $issuer or gettext("n/a") );
+    # $info_list->{BODY}->[3]->[0] = gettext ("Last Update");
+    # $info_list->{BODY}->[3]->[1] = ( $parsed->{LAST_UPDATE} or gettext("n/a") );
+    # $info_list->{BODY}->[4]->[0] = gettext ("Next Update");
+    # $info_list->{BODY}->[4]->[1] = ( $parsed->{NEXT_UPDATE} or gettext("n/a") );
+
+    # my $pos = 0;
+    # $item_list->{HEAD}->[0] = gettext ("Serial");
+    # $item_list->{HEAD}->[1] = gettext ("Revoked On");
+    # foreach my $rev ( @{$crl->getParsed()->{LIST}} )
+    # {
+    #     if( $rev->{SERIAL} ) {
+    #         $item_list->{BODY}->[$pos]->[0] = '<a href="'.
+    #                                           '?cmd=viewCert;dataType=REVOKED_CERTIFICATE;key='.
+    #                                           $rev->{SERIAL}.'">'. 
+    #                                           ( $rev->{SERIAL} or gettext("n/a")) .'</a>';
+    #     } else {
+    #         $item_list->{BODY}->[$pos]->[0] = ($rev->{SERIAL} or gettext("n/a"));
+    #     }
+    #     $item_list->{BODY}->[$pos]->[1] = ($rev->{DATE} or gettext("n/a"));
+    # }
+
+    return libSendReply (
+                         "NAME"        => gettext ("View LOA"),
+                         "EXPLANATION" => gettext ("Following you can find ". 
+				"the list of supported Level of Assurance ".
+				"(LOA) of the CA."),
+                         "TIMESTAMP"   => 1,
+                         "INFO_LIST"   => $info_list,
+                         # "CMD_LIST"    => $cmd_list,
+                         "HIDDEN_LIST" => $hidden_list
+                        );
+}
+
+1;
+

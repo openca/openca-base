@@ -1,0 +1,137 @@
+#! @PERL@
+
+$|=1;
+
+@perl_use_lib@
+use OpenCA::OpenSSL;
+use OpenCA::X509;
+use OpenCA::@dbmodule@;
+
+my $VER = '0.2.01';
+
+print "\nRequests Import - Version $VER\n";
+print "(c) 1999/2000 by Massimiliano Pala and OpenCA Team\n\n";
+
+my $srcDir    = $ARGV[0];
+my $type      = $ARGV[1];
+my $dataType;
+
+my $opencaDir = ( $ARGV[2] or "@ca_prefix@" );
+my $sslPath   = ( $ARGV[3] or "@OPENSSL@" or "/usr/bin/openssl" );
+
+if( (not $ARGV[0]) or (not $ARGV[1]) ) {
+	usage();
+}
+
+     if ( $type =~ /pending/ ) {
+	$dataType = "PENDING_REQUEST";
+} elsif ( $type =~ /archivied/i ) {
+	$dataType = "ARCHIVIED_REQUEST";
+} elsif ( $type =~ /deleted/i ) {
+	$dataType = "DELETED_REQUEST";
+} elsif ( $type =~ /approved/i ) {
+	$dataType = "APPROVED_REQUEST";
+} else {
+	print "\nError: type not recognized!\n\n";
+	usage();
+}
+
+
+print " * Initializing crypto shell ... ";
+my $openssl = new OpenCA::OpenSSL ( SHELL => $sslPath );
+if( not $openssl ) {
+	print "Error!\n\n";
+	exit 1;
+} else {
+	print "Ok.\n";
+}
+
+$openssl->setParams( CONFIG=>"$opencaDir/conf/openssl/openssl.cnf",
+		    STDERR=>"/dev/null" );
+
+print " * Initializing dB object ... ";
+my $db = new OpenCA::DB( SHELL=>$openssl, DB_DIR=>"@var_prefix@/db" );
+
+if( not $db ) {
+        print "Error!\n\n";
+        exit 1;
+} else {
+	print "Ok.\n\n";
+}
+
+opendir( DIR, "$srcDir" ) or die "Error, cannot open $srcDir!\n\n";
+	my @list = grep( /(_req)$/i , readdir( DIR ) );
+closedir( DIR );
+
+foreach $tmpREQ ( @list ) {
+
+	my $data, $REQ;
+
+	open( FD, "<$srcDir/$tmpREQ" ) or next;
+	while ( not eof (FD) ) {
+		$data .= <FD>;
+	}
+	close( FD );
+
+	if( -e "$srcDir/$tmpREQ.sig" ) {
+		open( FD, "<$srcDir/$tmpREQ.sig" ) or die "Error!";
+		while ( not eof( FD ) ) {
+			$data .= <FD>;
+		}
+		close( FD );
+	};
+
+	$REQ = new OpenCA::REQ( DATA    => $data,
+                                GETTEXT => \&gettext,
+                                SHELL   => $openssl );
+        if ( not $REQ ) {
+                print "ERROR: Failed adding request to dB ($tmpREQ)!";
+                next;
+        }
+
+        print " [ " . $parsed->{TYPE} . " ] " . $parsed->{CN} . " " .
+                                        " (" . $parsed->{EMAIL} . ") ... ";
+
+	print "Storing Request to dB ... ";
+	if( not $db->storeItem( DATATYPE => $dataType,
+				OBJECT   => $REQ,
+                                MODE     => "INSERT" ) ) {
+  		print "Error!\n\n";
+   		next;
+	} else {
+		print "Ok.\n\n";
+	}
+
+}
+
+print "\n * New dB Status:\n\n";
+print "   STATUS   => " . $db->getItem( DATATYPE =>$dataType,
+				     KEY=>STATUS ) . "\n";
+print "   INIT     => " . $db->getItem( DATATYPE =>$dataType,
+				     KEY=>INIT ) . "\n";
+print "   MODIFIED => " . $db->getItem( DATATYPE =>$dataType,
+				     KEY=>MODIFIED ) . "\n";
+print "   DELETED  => " . $db->getItem( DATATYPE =>$dataType,
+				     KEY=>DELETED ) . "\n";
+print "   ELEMENTS => " . $db->elements( DATATYPE => $dataType ) . "\n";
+print "   NEXT ITEM SERIAL   => " . $db->getSerial(DATATYPE => $dataType).
+									 "\n\n";
+sub usage {
+
+	print "      Usage: importreqs dir type [openca-dir] [openssl-path]\n\n";
+	print "  dir          - Directory where PEM certificates are stored\n";
+	print "  type         - Request Type (appr, pend, del or arch)\n";
+	print "  openca-dir   - OpenCA directory (def. @ca@)\n";
+	print "  openssl-path - Path to the openssl command (def. $sslPath)\n";
+	print "\n";
+
+	exit 0;
+}
+
+sub gettext
+{
+    return $_[0];
+}
+
+exit 0; 
+

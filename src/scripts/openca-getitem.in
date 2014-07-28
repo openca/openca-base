@@ -1,0 +1,148 @@
+#! @PERL@
+
+$VER = '0.010a';
+
+## GetCert DB - Version $VER
+## (c) 1999 by Massimiliano Pala
+## OpenCA Core Developer
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This Program let you get a certificate from the DB of the issued
+## by your CA ( issued certificates ).
+
+use OpenCA::@dbmodule@;
+use OpenCA::OpenSSL;
+use OpenCA::REQ;
+use OpenCA::X509;
+
+print "\n";
+print "  GetCert DB - Version $VER\n";
+print "  (c) 1999/2000 by Massimiliano Pala and OpenCA Group\n";
+print "  OpenCA Licensed software\n\n";
+
+my @keys = @ARGV;
+
+my $certSerial = $keys[0];
+my $OPENCA_DIR = ( $keys[1] or $ENV{'ca_prefix'} );
+my $OPENSSL = ( $keys[2] or "@OPENSSL@" or $ENV{'OPENSSL'} );
+
+print "Enter The OpenCA dir ( @ca_prefix@ ) ? ";
+$OPENCA_DIR = <STDIN>;
+chop($OPENCA_DIR);
+
+if( "$OPENCA_DIR" eq "" ) {
+	$OPENCA_DIR = '@ca_prefix@';
+}
+
+print "Enter The Export dir ( $OPENCA_DIR/outbound/certs ) ? ";
+$EXPORT_DIR = <STDIN>;
+chop($EXPORT_DIR);
+if( "$EXPORT_DIR" eq "" ) {
+	$EXPORT_DIR = "$OPENCA_DIR/outbound/certs";
+}
+
+print "Enter the datatype for searching:\n\n";
+print "  1 - Request\n";
+print "  2 - Certificate\n\n";
+print ": ";
+$tmp = <STDIN>;
+chop($tmp);
+
+if( $tmp eq "1" ) {
+	$dataType = "REQUEST";
+} elsif ( $tmp eq "2" ) {
+	$dataType = "CERTIFICATE";
+} else {
+	print "ERROR: dataType is required!\n\n";
+	exit 1;
+}
+
+print "Enter the Parameter to search onto:\n\n";
+print "1 - Serial\n";
+print "2 - CN\n\n";
+print ": ";
+
+$tmp = <STDIN>;
+chop($tmp);
+
+if( $tmp eq "1" ) {
+	$param = "SERIAL";
+} elsif ( $tmp eq "2" ) {
+	$param = "CN";
+} else {
+	print "ERROR: parameter is required!\n\n";
+	exit 1;
+}
+
+
+print "Enter the Value to search for:\n\n";
+$parVal = <STDIN>;
+chop($parVal);
+
+if( $parVal eq "" ) {
+	print "ERROR: ${par} value is required!\n\n";
+	exit 1;
+}
+
+## Initialize the crypto shell;
+my $cryptoShell = new OpenCA::OpenSSL( SHELL=>"$OPENSSL" );
+
+$cryptoShell->setParams( CONFIG=>"$OPENCA_DIR/conf/openssl/openssl.cnf",
+                         TMPDIR=>"$OPENCA_DIR/tmp",
+                         STDERR=>"/dev/null" );
+
+
+if ( not $cryptoShell ) {
+        configError( "Cannot initialize Crypto Shell ($shellPath)!" );
+        exit 1;
+}
+
+## Initialize the DB support
+my $db = new OpenCA::@dbmodule@( SHELL=>$cryptoShell,
+				 DB_DIR=>"@var_prefix@/db" );
+if ( not $db ) {
+        configError( "Cannot initialize @dbmodule@ class!" );
+        exit 1;
+}
+
+## Main Section
+## ============
+
+my $certFile = "${OPENCA_DIR}/outbound/certs/${certSerial}.pem";
+my $reqFile  = "${OPENCA_DIR}/tmp/${certSerial}_req.pem";
+
+my $file;
+
+if( $EXPORT_ALL == 0 ) {
+	print "\nSearching for $dataType: $param => $parVal\n\n";
+	@searchList = $db->searchItems( DATATYPE=>$dataType,
+					$param=>$parVal );
+	print "Found $#searchList items.\n\n";
+	foreach $item ( @searchList ) {
+		if( $item->{DATATYPE} =~ "CERTIFICATE" ) {
+			$file = $item->getParsed()->{SERIAL} . ".pem";
+		} elsif (  $item->{DATATYPE} =~ "REQUEST" ) {
+			$file = $item->getParsed()->{SERIAL};
+			if ( $item->getParsed()->{TYPE} =~ "PKCS" ) {
+				$file .= "_req.pem";
+			} else {
+				$file .= "_gen.req"
+			}
+		}
+
+		print "Exporting $file ... ";
+		open( FD, ">${EXPORT_DIR}/${file}" );
+			print FD $item->{item};
+		close( FD );
+		print "Ok.\n";
+	}
+} else {
+	print "Function not Implemented yet.\n\n";
+	exit 1;
+}
+
+exit 0;

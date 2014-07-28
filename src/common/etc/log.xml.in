@@ -1,0 +1,28 @@
+<openca>
+    <debug>0</debug>
+    <stderr>@var_prefix@/log/stderr.log</stderr>
+    <log>
+        <debug>0</debug>
+        <slots>
+	<!--
+            <slot>
+                <name>sys_syslog</name>
+                <class>*</class>
+                <level>*</level>
+                <logger>Syslog</logger>
+                <type>Sys</type>
+                <prefix>OpenCA PKI Log Message</prefix>
+                <facility>local6</facility>
+                <socket_type>unix</socket_type>
+            </slot>
+	-->
+            <slot>
+                <name>xml</name>
+                <class>*</class>
+                <level>*</level>
+                <logger>XML</logger>
+                <dir>@var_prefix@/log/xml</dir>
+            </slot>
+        </slots>
+    </log>
+</openca>

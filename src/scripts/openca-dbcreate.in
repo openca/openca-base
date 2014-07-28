@@ -1,0 +1,43 @@
+#! @PERL@
+## Create CertificateDB - Version $VER
+## (c) 1999 by Massimiliano Pala 
+## OpenCA Core Team
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This program creates a DB of the certificates where the
+## programs will look for certificates. You need to run
+## this script BEFORE starting the CA only when you issue
+## certificate through the scritps in the bin/ directory and
+## not using the Web interface.
+##
+## For Any clarifications, please refer to:
+##
+##	o Documentation;
+##	o openca-devel@openca.org;
+##
+## 14 Apr 2000 - Addedd support for OpenCA::DB module.
+##               Massimiliano Pala (madwolf@openca.org)
+
+@perl_use_lib@
+use OpenCA::OpenSSL;
+use OpenCA::DB;
+
+my $VER 	= '0.4.0';
+
+my $DIR 	= $ARGV[0];
+my $shell 	= ( $ARGV[1] or "@OPENSSL@" or $ENV{CRYPTO_SHELL});
+
+exit 1 if ( not $backend = 
+	new OpenCA::OpenSSL( SHELL=>$shell, STDERR=>"/dev/null" ));
+
+exit 1 if ( not $db = 
+	new OpenCA::DB( SHELL=>$shell, DB_DIR=>$DIR ));
+
+$db->initDB( MODE=>"FORCE" );
+## $db->initDB( MODE=>"NORMAL" );
+
+exit;

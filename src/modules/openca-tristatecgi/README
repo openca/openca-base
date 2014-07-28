@@ -1,0 +1,67 @@
+=======================================================================
+               TRIState CGI Manager - Version 1.0.0
+                (c) 1998/1999 by Massimiliano Pala
+=======================================================================
+
+COPYRIGHT
+=========
+
+   Copyright (c) 1998/1999 Massimiliano Pala. All rights reserved.
+   This program is released under the reported licence Terms in the
+   LICENCE file distributed in the archive and therefore you are
+   encouraged to read them before using this software.
+
+
+INTRODUCTION
+============
+
+   This software is a Perl5 module that helps in managing config
+   files: it gives you functions capable of retrieving files, stripping
+   comments and blank lines, parsing function, etc...
+   
+
+REQUIREMENTS
+============
+
+   Any system running Perl5 ( nearly every know! ) there is no specific
+   platform code ( at least it should ). Required is the CGI.pm module.
+
+INSTALLATION
+============
+
+   After extracting the archive, simply type the following:
+
+      $ perl Makefile.PL
+
+   You will be prompted with a few questions, after initialization
+   the installation will proceed with creating needed directories and
+   copying module files (you probably need to become root first).
+
+EXAMPLES
+========
+
+   No Examples Available at the moment.
+
+FEEDBACK
+========
+
+   This is a very early pre-release, anyway it works fine and it's
+   quite useful yet, so here it comes. Many things should be added
+   in the near future, so stay tuned for future releases.
+
+TO DO
+=====
+
+   This TODO list is constantly updated, please refer to the last
+   version:
+
+      * Nothing at the moment.
+
+BUGS
+====
+
+--
+Author: Massimiliano Pala
+email:  madwolf@comune.modena.it
+        madwolf@openca.org
+web:    http://www.openca.org/

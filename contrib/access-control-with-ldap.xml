@@ -1,0 +1,132 @@
+<openca>
+    <access_control>
+        <channel>
+            <type>mod_ssl</type>
+            <protocol>ssl</protocol>
+            <source>.*</source>
+            <asymmetric_cipher>.*</asymmetric_cipher>
+            <asymmetric_keylength>0</asymmetric_keylength>
+            <symmetric_cipher>.*</symmetric_cipher>
+            <symmetric_keylength>128</symmetric_keylength>
+        </channel>
+        <login>
+            <type>passwd</type>
+	    <!-- with the following database you can use LDAP for 
+                 Login to OpenCA interfaces. This makes sense if
+                 you manage your user with LDAP or Active Directory -->
+            <database>ldap</database>
+            <ldapdata>
+               <!-- first you have to specify the LDAP server used: -->
+	       <host>openca.org</host>
+	       <port>636</port>
+	       <base>dc=openca,dc=org</base>
+	       <binddn>cn=myname,cn=users,dc=openca,dc=org</binddn>
+	       <bindpw>sEcReT</bindpw>
+               <!-- should the communication to the ldap server be encrypted
+                    via TLS? If so you need to store the cacertificate 
+                    for authentiocating the LDAP server into the directory
+                    specified here -->
+	       <usetls>yes</usetls>
+               <cacertpath>/opt</cacertpath>
+               <!-- What is the attribute to search the name/ID for? 
+                    A good choice would be uid -->
+	       <searchattr>proxyAddresses</searchattr>
+               <!-- Some LDAP/AD Attributes have some characters in front
+                    of the actual value that should be ignored in searches,
+		    e.g. the attribute proxyAddresses has strings determing
+                    the protocol like "SMTP:misterx@foo.bar". In this case you 
+                    would want to configure SMTP: in searchvalueprefix, so 
+                    your users will not have to care about it -->   
+               <searchvalueprefix>SMTP:</searchvalueprefix>
+               <!-- there are different methods for authenticating with 
+                    LDAP. This module supports two by now. 
+                    1.) bind (using the password stored in attribute 
+                        userPassword. 
+                    2.) pwattr (using the password stored in a freely 
+                        configurable attribute, see below)
+                    You can use both methods in paralel, but then the 
+                    module must know which method to use for which entries.
+                    This can be defined by values of a certain attribute,
+                    which can be defined in the configuration as 
+                    ldapauthmethattr: --> 
+               <responsibleraattr>company</responsibleraattr>
+               <ldapauthmethattr>objectClass</ldapauthmethattr>
+               <!-- Then you must define which values of that attribute 
+                  should lead to which authentication method. A good example
+                  would be to take the attribute objectClass as 
+                  ldapauthmethattr and say if the entry contains the 
+                  objectclass posixaccount to use the ldap bind method, if 
+	       <ldapauthmethmapping>
+		 <ldapauthmethattrvalue>contact</ldapauthmethattrvalue>
+		 <ldapauthmeth>pwattr</ldapauthmeth>
+	       </ldapauthmethmapping>
+	       <ldapauthmethmapping>
+                 <ldapauthmethattrvalue>organizationalPerson</ldapauthmethattrvalue>
+                 <ldapauthmeth>bind</ldapauthmeth>
+               </ldapauthmethmapping>
+	       <!-- if none of the conditions configured here are fulfiled 
+                    by an entry, a default mechanism has to be used, which 
+                    is configured here: -->
+	       <ldapdefaultauthmeth>bind</ldapdefaultauthmeth>
+	       <!-- For the pwattr method you need to specify which 
+                    attribute contains the passwords to use. This is 
+                    done here:  -->
+               <ldappwattr>extensionAttribute14</ldappwattr>
+	       <!-- The values in that attribute can and should be stored as 
+                    hash values. If so, the module needs to know which 
+                    hashing algorithm was used. 
+                    supported are: sha1, md5, crypt and none (=clear text) -->
+	       <ldappwattrhash>sha1</ldappwattrhash>
+            </ldapdata>
+	    <!-- you might want to have an self defined headline 
+	         in stead of "Login to OpenCA". You can specify the new 
+                 string here: -->
+            <loginheadline>Login to OpenCA PKI Service</loginheadline>
+	    <!-- you might also want to have a different text for prompting
+                 the login name of the user in stead of "login", indicating
+                 what type of ID info is requested: --> 
+	    <loginprompt>SMTP Email-Adress</loginprompt>
+            <passwd>
+               <!-- The LDAP Login module also provides for role mapping, 
+	            where certain values of a certain attribute map 
+                    to certain OpenCA roles -->
+               <!-- first you have to specify which LDAP attribute contains
+                  the role mapping information: -->
+	       <roleattribute>memberOf</roleattribute>
+               <!-- now you can easily define the mappings (as known from the 
+                    above authmethmapping: -->
+               <rolemapping>
+	          <roleattributevalue>CN=OpenCA_RA,OU=UserGroups_universal,DC=openca,DC=org</roleattributevalue>
+		  <role>RA Operator</role>
+	       </rolemapping>
+               <rolemapping>
+	           <roleattributevalue>CN=OpenCA_User,OU=UserGroups_universal,DC=openca,DC=org</roleattributevalue>
+		  <role>User</role>
+	      </rolemapping>
+
+                <!--
+                    the initial user root has the passphrase root
+                    you can use the script openca-digest to create the passphrases
+                    if you want to add another user simply create a second user structure
+                    <user>...</user>
+                -->
+ <!--               <user>
+                    <name>root</name>
+                    <algorithm>sha1</algorithm>
+                    <digest>upF71NxSsbgJZdkCtq+JqrOeJVQ</digest>
+                    <role>CA Operator</role>
+                </user>
+-->
+            </passwd>
+        </login>
+        <acl_config>
+            <acl>yes</acl>
+            <list>/opt/OpenCA/etc/rbac/acl.xml</list>
+            <command_dir>/opt/OpenCA/etc/rbac/cmds</command_dir>
+            <module_id>1</module_id>
+            <map_role>yes</map_role>
+            <map_operation>yes</map_operation>
+        </acl_config>
+    </access_control>
+    <token_config_file>/opt/OpenCA/etc/token.xml</token_config_file>
+</openca>

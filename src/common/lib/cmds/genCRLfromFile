@@ -1,0 +1,203 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: genCRLfromFile
+##       Brief: Issue a CRL from file
+## Description: Issue a new CRL from file in CSV format
+##  Parameters: passwd
+## Cfg KeyWord: OpenCADir,TempDir
+
+use strict;
+
+sub cmdGenCRLfromFile {
+
+## This function exports the CRL in DER format (preferred
+## to the default PEM format for its smaller size: CRL
+##// can get very long in a medium CAs' life cycle).
+				  
+## Get required parameters from the configuration file
+my $dir       = getRequired( 'TempDir' );
+my $crlDir    = getRequired( 'CRLDir' );
+my $sslindex  = getRequired( 'sslindex' );
+
+## unique DN?
+my $nouniqueDN = 0;
+if (getRequired ('UNIQUE_DN') =~ /NO|N|OFF/i) {
+	$nouniqueDN = 1;
+}
+
+my $ca_token = $crypto_layer->getToken ('CA');
+if (not $ca_token)
+{
+	print startLogPage(gettext("CRL Issuing"));
+	print addLogSection(gettext ("Loading CA token ... "));
+	print addLogLine ("<FONT color=#ff0000>".gettext ("FAILED")."</FONT>");
+	print addPreLogLine (i18nGettext ("OpenCA::Crypto errorcode: __ERRNO__", "__ERRNO__", $crypto_layer->errno));
+	print addPreLogLine (i18nGettext ("OpenCA::Crypto errormessage: __ERRVAL__", "__ERRVAL__", $crypto_layer->errval));
+	print closeLogSection ();
+	closePage();
+	return undef;
+}
+if (not ($ca_token->keyOnline || $ca_token->login))
+{
+	print startLogPage(gettext("CRL Issuing"));
+	print addLogSection(gettext ("Initializing CA token ... "));
+	print addLogLine ("<FONT color=#ff0000>".gettext ("FAILED")."</FONT>");
+	print addPreLogLine (i18nGettext ("OpenCA::Token errorcode: __ERRNO__", "__ERRNO__", $ca_token->errno));
+	print addPreLogLine (i18nGettext ("OpenCA::Token errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval));
+	closePage();
+	return undef;
+}
+
+if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i) {
+	generalError (gettext ("This command is only usable with forms which are using POST as METHOD!"));
+};
+my $days    = $query->param( 'days' );
+my $exts    = $query->param( 'exts' );
+
+my $filename 	= $query->param('upload');
+my $fh 		= $query->upload('upload');
+my $csv_file = "";
+my $tmp;
+
+if ((!($fh)) || ($query->cgi_error)) {
+    generalError(gettext ("ERROR: request retrival failed!"));
+} else {
+    while( $tmp = <$fh>) {
+        $csv_file .= $tmp;
+    }
+}
+
+print startLogPage(gettext("CRL Issuing From CSV-File"));
+
+print addLogSection(gettext ("Building list of serials ... "));
+my @csv = split ",", $csv_file;
+print addLogLine(gettext("Ok."));
+print closeLogSection();
+
+print addLogSection(gettext ("Adding revoked certificates ... "));
+my @rev_certs = $db->searchItems (DATATYPE => "REVOKED_CERTIFICATE");
+foreach my $h (@rev_certs)
+{
+    push @csv, $h->getSerial();
+    print addPreLogLine( i18nGettext ("Load certificate __SERIAL__.",
+                                      "__SERIAL__", $h));
+}
+print closeLogSection();
+
+print addLogSection(gettext ("Checking certificate serials ... "));
+my @h_csv = sort @csv;
+@csv = ();
+my $last = -1;
+foreach my $h (@h_csv)
+{
+    next if ($h == $last);
+    push @csv, $h;
+    $last = $h;
+}
+print addLogLine (gettext ("OK"));
+print closeLogSection();
+
+print addLogSection(gettext ("Building list of certificates ... "));
+my @csv_certs = ();
+foreach my $h (@csv) {
+    my $cert = $db->getItem (DATATYPE => "CERTIFICATE", KEY => $h);
+    if ($cert) {
+        print addPreLogLine( i18nGettext ("Load certificate __SERIAL__.",
+                                          "__SERIAL__", $h));
+        push @csv_certs, $cert;
+    } else {
+        print addPreLogLine( "<font color=#ff0000>".
+                             i18nGettext ("Cannot load certificate __SERIAL__.",
+                                          "__SERIAL__", $h).
+                             "</font>");
+    }
+}
+print closeLogSection();
+
+print addLogSection(gettext ("Building special index.txt ... "));
+my @index;
+my $max = 0;
+my @list;
+foreach my $value (@csv_certs) {
+    my %hash;
+    $hash {DATE_1} = $ca_token->getOpenSSLDate ($value->getParsed ()->{NOTBEFORE});
+    if ($value->getSerial() < 16) {
+        $hash {SERIAL} = "0";
+    } else {
+        $hash {SERIAL} = "";
+    }
+    $hash {SERIAL} .= sprintf ("%lX", $value->getSerial());
+    $hash {DN}     = $value->getParsed ()->{DN};
+    my @result = $db->searchItems ( DATATYPE => "ARCHIVED_CRR",
+                                    REVOKE_CERTIFICATE_DN => $hash {DN} );
+    $hash {DATE_2} = "991231235959Z";
+    my $h = 99991231235959;
+    foreach my $value (@result) {
+        if ($h > $ca_token->getNumericDate ($value->getParsed ()->{SUBMIT_DATE})) {
+            $h = $ca_token->getNumericDate ($value->getParsed ()->{SUBMIT_DATE});
+            $hash {DATE_2} = $ca_token->getOpenSSLDate ($value->getParsed ()->{SUBMIT_DATE});
+        }
+    }
+    $index [$value->getSerial()] = \%hash;
+    $max = $value->getSerial() if ($value->getSerial() > $max);
+}
+my $i;
+$tools->moveFiles (SRC => $sslindex, DEST => $dir."/".$$.".index.txt");
+open FD, ">$sslindex";
+foreach $i (@index) {
+	next if (not $i->{DN});
+    $i->{DN} =~ s/, *([A-Za-z0-9\-]+)=/\/$1=/g;
+    $i->{DN} = "/".$i->{DN};
+    print FD "R\t".
+             $i->{DATE_1}."\t".
+             $i->{DATE_2}."\t".
+             $i->{SERIAL}."\tunknown\t".
+             $i->{DN}."\n";
+    print addPreLogLine ( "R ".
+                          $i->{DATE_1}." ".
+                          $i->{DATE_2}." ".
+                          $i->{SERIAL}." unknown ".
+                          $i->{DN} );
+}
+close(FD);
+print closeLogSection ();
+
+print addLogSection(gettext ("Generating Certificate Revocation List ... "));
+
+## Generate a new CRL object
+my $CRL = new OpenCA::CRL (
+                           SHELL      => $ca_token,
+                           DAYS       => $days,
+                           EXTS       => $exts,
+                           GETTEXT    => \&i18nGettext,
+                           NOUNIQUEDN => $nouniqueDN );
+$tools->moveFiles (SRC => $dir."/".$$.".index.txt", DEST => $sslindex);
+
+if ( not $CRL ) {
+	print addErrorLog   (gettext ("ERROR: Cannot initialize a new CRL Object!"));
+	print addPreLogLine ($CRL);
+	print addPreLogLine (i18nGettext ("OpenCA::Crypto errorcode: __ERRNO__", "__ERRNO__", $ca_token->errno));
+	print addPreLogLine (i18nGettext ("OpenCA::Crypto errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval));
+	closePage();
+	return undef;
+}
+
+# 2004-12-20 FIXME Martin Bartosch: unused variable?
+# $ret = $CRL->getTXT();
+
+print addLogLine(gettext("Ok."));
+print addPreLogLine( $CRL->getTXT() );
+print addPreLogLine( $CRL->getPEM() );
+print closeLogSection();
+
+print addLogSection("<font color=#ff0000>".gettext ("Warning: This CRL is not tracked in our databases!")."</font>");
+print closeLogSection();
+
+closePage();
+
+}
+
+1;
+

@@ -1,0 +1,161 @@
+#! @PERL@
+
+## (C) 2005 by Julia Dubenskaya for OpenCA project
+## For licensing refer to www.openca.org, www.openca.info
+
+## This script sets option $ARGV[2] to value $ARGV[3] 
+## in section $ARGV[1] of OpenSSL configuration file $ARGV[0].
+## If option had been pre-set MANUALLY to another value, 
+## then the line is commented out and a new line with required value
+## is added and marked as added by this script. 
+## If option had been pre-set by this script, then the line is 
+## re-written. 
+
+$ENV{'LD_LIBRARY_PATH'} = "@openssl_prefix@/lib:" . $ENV{'LD_LIBRARY_PATH'};
+
+if (scalar @ARGV != 4) {
+   print "Usage: configure_openssl infile section option value\n";
+   print "       infile   - the openssl configuration file\n";
+   print "       section  - the section of the infile to add data to\n";
+   print "       option   - the openssl option, which value should be set\n";
+   print "       value    - the new value of the option\n";
+   exit 1;
+}
+
+ my %status = (
+       SECTION_NOT_FOUND => 0,
+       IN_SECTION        => 1,
+       SECTION_FINISHED  => 2
+    );
+ 
+ my $option_set=0;
+ my $current_status=$status{SECTION_NOT_FOUND};
+ my $comment_string = '';
+
+ my $infile  = $ARGV[0];
+ my $section = $ARGV[1];
+ my $option  = $ARGV[2];
+ my $value   = $ARGV[3];
+
+ open(OLD,"<$infile");
+ open(NEW,">$infile.tmp");
+
+ while (<OLD>){
+   chomp;
+   if (string_is_comment($_)) {$comment_string .= $_."\n"} 
+   else {  
+     if ($current_status == $status{SECTION_NOT_FOUND}) { check_string_section_not_found($_) }
+     elsif ($current_status == $status{IN_SECTION}) { check_string_in_section($_)}
+     else { check_string_section_finished($_) }
+   } # else  
+ } # while
+
+ print_data("$option = $value     # automatically added\n")
+            if ($current_status == $status{IN_SECTION})&&(!$option_set);
+ close(OLD);
+ close(NEW);
+  print_error("ERROR: File \'$infile\' does not have section [$section].\n Please provide correct copy from OpenCA distribution.\n")
+            if ($current_status == $status{SECTION_NOT_FOUND}); 
+ rename($infile,"$infile.orig");
+ rename("$infile.tmp",$infile);
+ unlink("$infile.tmp"); 
+ exit 0;
+
+
+ sub check_string_section_not_found {
+   $current_status = $status{IN_SECTION} if (the_section_begins($_[0]));
+   print_data("$_[0]\n"); 
+ }
+
+ sub check_string_in_section {
+   if (string_contains_option($_[0])) { process_string_with_option($_[0]) }
+   else { process_string_without_option($_[0]) } 
+ }
+
+ sub check_string_section_finished {
+   print_error("ERROR: Please remove double definition of section [$section] in file \'$infile\'\n")
+               if (the_section_begins($_[0]));
+   print_data("$_[0]\n"); 
+ }
+
+ sub process_string_with_option {
+   print_error("ERROR: Please remove double definition of option $option in section [$section] in file \'$infile\'\n")
+               if ($option_set);
+  $old_option_value = get_old_value($_[0]);
+
+  if ($old_option_value eq $value) { print_data("$_[0]\n") }
+  else {              # if ($old_option_value ne $value)
+    comment_old_value($_[0]) if (string_was_not_auto_added($_[0]));
+    print_data("$option = $value     # automatically added\n");
+  }
+  $option_set = 1;
+ }
+
+ sub process_string_without_option {
+   if (any_section_begins($_[0])) { 
+     print_error("ERROR: Please remove double definition of section [$section] in file \'$infile\'\n")
+                 if  (the_section_begins($_[0]));
+     if (!$option_set) {
+       print NEW "$option = $value     # automatically added\n\n";
+       check_comments();
+       $option_set = 1;
+     }
+     $current_status = $status{SECTION_FINISHED};
+   } 
+   print_data("$_[0]\n");
+ }
+
+ sub string_is_comment {
+   if ($_[0] =~ m/^\s*#/) {return 1}
+   else {return 0}
+ }
+
+ sub check_comments {
+   print NEW $comment_string if (length($comment_string) > 0);
+   $comment_string = '';
+   return 0;
+ }
+ 
+ sub print_data {
+   check_comments();
+   print NEW $_[0];  
+ }
+
+ sub string_contains_option {
+   if ($_[0] =~ m/^\s*$option\s*=/) {return 1}
+   else {return 0}
+ }
+
+ sub the_section_begins {
+   if ($_[0] =~ m/^\s*\[\s*$section\s*\]\s*$/) {return 1}
+   else {return 0}
+ }
+ 
+ sub any_section_begins {
+   if ($_[0] =~ m/^\s*\[/) {return 1}
+   else {return 0}
+ }
+
+ sub string_was_not_auto_added {
+   if ($_[0] !~ m/#\s*automatically added/) {return 1}
+   else {return 0}
+ }
+
+ sub comment_old_value {
+   print_data("# $_[0]\n");
+   return 0;
+ }
+
+ sub get_old_value {
+   my $local_value = $_[0];
+   $local_value =~ s/^\s*$option\s*=\s*//;
+   $local_value =~ s/\s*$//;
+   $local_value =~ s/\s*#+.*$//;
+   return $local_value;
+ }
+
+ sub print_error {
+   print $_[0];
+   unlink("$infile.tmp"); 
+   exit 1; 
+ } 

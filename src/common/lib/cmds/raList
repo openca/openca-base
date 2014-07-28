@@ -1,0 +1,90 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: raList
+##       Brief: List available RAs
+## Description: Filter Requests Lists on RA Basis
+##  Parameters: dataType
+
+use strict;
+
+sub cmdRaList {
+
+    my ($info_list, $cmd_panel, $hidden_list) = (undef, undef, undef);
+
+    our ( $query );
+
+    if ( $query->param('dataType') =~ /CRR$/ ) {
+    	$hidden_list->{"cmd"}      = "listCRR";
+    } else {
+    	$hidden_list->{"cmd"}      = "listCSR";
+    }
+
+    $hidden_list->{"dataType"} = $query->param('dataType');
+    $cmd_panel->[0]   = '<input type="submit" value="'.gettext ("Search").'">';
+
+    ## Get List of RAs Available (adding the ALL value)
+    my @ra_list = ();
+
+    foreach my $list_item (getRequiredList ('RegistrationAuthority')) {
+        push @ra_list, gettext ($list_item);
+    }
+    $info_list->{BODY}->[0]->[0] = gettext ("Registration Authority");
+    $info_list->{BODY}->[0]->[1] = $query->newInput(
+                                               -regx=>'*', 
+                                               -intype=>'popup_menu',
+                                               -name=>'ra',
+					       -default=>"",
+                                               -values=>[ gettext ("All"),
+							  @ra_list ]);
+
+    ## get list of the LOAs type 
+    $info_list->{BODY}->[1]->[0] = gettext ("Level of Assurance");
+    my  $loaOption = getRequired('USE_LOAS');
+    if ($loaOption =~ m/yes/i) {
+        my ($loaTwig, $xmlLOA, %LOALevels, );
+
+        $loaTwig = loadConfigXML ('LOAConfiguration');
+        if (not $loaTwig) {
+            generalError (gettext ("Cannot load menu configration"));
+        }
+
+        my @loaList;
+        push ( @loaList, "" );
+        for my $al ($loaTwig->get_xpath("loa")) {
+            $xmlLOA = gettext(($al->first_child('level'))->field);
+            $LOALevels{$xmlLOA}=gettext(($al->first_child('name'))->field);
+            push (@loaList, $xmlLOA);
+        }
+        $LOALevels{""} = gettext ("All");
+        $info_list->{BODY}->[1]->[1] = $query->newInput(
+                                                   -regx=>'*', 
+                                                   -intype=>'popup_menu',
+                                                   -name=>'loa',
+						   -default=>'',
+                                                   -values=>[ @loaList ],
+                                                   -labels=>\%LOALevels);
+
+    $info_list->{BODY}->[2]->[0] = gettext ("Requested Role");
+    $info_list->{BODY}->[2]->[1] = $query->newInput(
+                                               -regx=>'*', 
+                                               -intype=>'popup_menu',
+                                               -name=>'role',
+						-default=>'',
+                                               -values=>[ gettext ("All"),
+							  loadRoles() ]);
+
+    } else {
+        $info_list->{BODY}->[1]->[1] = gettext ("n/a");
+    }
+
+    return libSendReply (
+                         "NAME"        => gettext ("Filter displayed requests 3"),
+                         "INFO_LIST"   => $info_list,
+                         "HIDDEN_LIST" => $hidden_list,
+                         "CMD_PANEL"   => $cmd_panel
+                        );
+}
+
+1;

@@ -1,0 +1,181 @@
+## OpenCA - CA Command
+## (c) 1998-2004 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: bpRevokeCertificate
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: Revoke certificates
+## Description: Revoke certificates if the CRRs are signed by an
+##              operator with a special role
+##  Parameters: operator, role, passwd
+
+use strict;
+
+sub cmdBpRevokeCertificate {
+
+    our ($db, $query, $errno, $errval, $cryptoShell);
+
+    ## get the parameters
+    ## Get the parameters
+    my $operator = $query->param('operator');
+    my $role     = $query->param('role');
+
+    my $tempDir  = getRequired ("TempDir");
+    my $chainDir = getRequired ( 'ChainDir' );
+
+    my ($request, $crr_cert, $operator_cert, $operator_serial, $signature, $role_sig, $cert);
+
+    configError ("The operator role must be specified") if (not $operator);
+    configError ("The requested role must be specified") if (not $role);
+    generalError ($errval, $errno) if (not crypto_get_ca_token ());
+
+    print startLogPage (gettext ("Revoke Certificate Batch Processor"));
+
+    print addLogSection (gettext ("Operator's role ... "));
+    print addLogLine    ($operator);
+    print closeLogSection ();
+
+    print addLogSection (gettext ("Revoked certificate's role ... "));
+    print addLogLine    ($role);
+    print closeLogSection ();
+
+    print addLogSection (gettext ("Running batch processor ..."));
+
+    ## loop
+    ## there can never be a request 0
+    my $key = 0;
+    while ($request = $db->getNextItem(DATATYPE => "APPROVED_CRR", KEY => $key)) {
+
+	$key = $request->getSerial();
+
+	## load the affected certificate
+	$crr_cert = $db->getItem (DATATYPE => "CERTIFICATE",
+				KEY => $request->getParsed()->{REVOKE_CERTIFICATE_SERIAL});
+	if (not $crr_cert) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+                  "CRR __CRR_SERIAL__ ingored because cannot load the affected certificate __CERT_SERIAL__",
+                  "__CRR_SERIAL__", $request->getSerial(),
+				  "__CERT_SERIAL__", $request->getParsed()->{REVOKE_CERTIFICATE_SERIAL}).
+				"</FONT>");
+		next;
+	}
+
+	## check the role of the affected certificate
+	if ($crr_cert->getParsed()->{HEADER}->{ROLE} !~ /^$role$/) {
+		print addPreLogLine (
+                i18nGettext (
+                  "CRR __CRR_SERIAL__ ingored because the requested role is __ROLE__.",
+                  "__CRR_SERIAL__", $request->getSerial(),
+				  "__ROLE__", $request->getParsed()->{HEADER}->{ROLE}));
+		next;
+	}
+
+	## is there a signature?
+	$signature = libGetSignatureObject (OBJECT => $request);
+	if (not $signature) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+                i18nGettext (
+				  "CRR __CRR_SERIAL__ ingored because there is no signature.",
+                  "__CRR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+	}
+
+	## check the signature
+	if (not libCheckSignature (OBJECT => $request, SIGNATURE => $signature)) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+                i18nGettext (
+				  "CRR __CRR_SERIAL__ ingored because the verification of the signature fails.",
+                  "__CRR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+        }
+
+	##// load the signer's cert
+	$operator_cert = libGetSignerCertificateDB (SIGNATURE => $signature);
+	if (not $operator_cert) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+                i18nGettext (
+				  "CRR __CRR_SERIAL__ ingored because the signer's certificate is not loadable.",
+                  "__CRR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+	}
+
+	## check role of signer
+	if ($operator_cert->getParsed()->{HEADER}->{ROLE} !~ /^$operator$/) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+                i18nGettext (
+				  "CRR __CRR_SERIAL__ ingored because the signer's role is __ROLE__.",
+				  "__ROLE__", $operator_cert->getParsed()->{HEADER}->{ROLE},
+                  "__CRR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+	}
+
+	## revoke certificate
+	$cert = libRevokeCertificate (KEY => $request->getSerial());
+	if (not $cert) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext ("CRR __CRR_SERIAL__ failed.", "__CRR_SERIAL__", $request->getSerial()).
+				"<br>\n".
+                i18nGettext ("Errorcode: __ERRNO__.", "__ERRNO__", $errno).
+                "<br>\n".
+                i18nGettext ("Errormessage: __ERRVAL__.", "__ERRVAL__", $errval).
+				"</FONT>");
+	} else {
+		print addPreLogLine ("<FONT COLOR=#00FF00>".
+				i18nGettext (
+                  "Certificate __CERT_SERIAL__ revoked from certificate revocation request __CRR_SERIAL__",
+                  "__CERT_SERIAL__", $cert->getSerial(),
+				  "__CRR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+	}
+    }
+
+    print addLogLine (gettext ("Batch processor finished"));
+    print closeLogSection ();
+
+    print closePage();
+
+}
+
+sub getParamsBpRevokeCertificate
+{
+    our ($query);
+    my $result = undef;
+
+    if (not $_[0])
+    {
+        ## set values
+	my $html_operator = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'popup_menu',
+					-name=>'operator',
+					-values=>[loadRoles()]);
+	my $html_role = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'popup_menu',
+					-name=>'role',
+					-values=>[loadRoles()]);
+
+        $result = "<table>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Operator's role")."</td>\n".
+                   "    <td>".$html_operator."</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Requested role")."</td>\n".
+                   "    <td>".$html_role."</td>\n".
+                   "  <tr>\n";
+
+        $result .= "</table>\n";
+    }
+
+    return $result;
+}
+
+1;

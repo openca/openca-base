@@ -1,0 +1,37 @@
+=head1 NAME
+
+OpenCA::REQ - Perl extension to easily manage Cert REQUESTs
+
+=head1 SYNOPSIS
+
+  use OpenCA::REQ;
+
+=head1 DESCRIPTION
+
+Sorry, no help available. The REQ module is capable of importing
+request like this:
+
+	-----BEGIN HEADER-----
+	VAR = NAME
+	VAR = NAME
+	...
+	-----END HEADER-----
+	(real request text here)
+	-----BEGIN PKCS7-----
+	(pkcs#7 signature here
+	-----END PKCS7-----
+
+The Real request text can be a request in every form ( DER|PEM ) or
+textual (called SPKAC|RENEW|REVOKE datatype). The syntax of the latters
+is VAR = NAME on each line (just like the HEADER section).
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+OpenCA::OpenSSL, OpenCA::X509, OpenCA::CRL, OpenCA::Configuration,
+OpenCA::TRIStateCGI, OpenCA::Tools
+
+=cut

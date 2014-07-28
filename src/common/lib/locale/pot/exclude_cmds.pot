@@ -1,0 +1,5135 @@
+
+#: common/lib/cmds/show_prepared_role:11 common/lib/cmds/show_prepared_role:22
+msgid "new_role"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:18
+#: common/lib/cmds/show_prepared_right:24
+#: common/lib/cmds/show_prepared_module:19
+msgid "next_cmd"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:19 common/lib/cmds/show_prepared_role:22
+#: common/lib/cmds/submit_revreq:102 common/lib/cmds/show_prepared_right:25
+#: common/lib/cmds/show_prepared_right:28 common/lib/cmds/setPasswd:22
+#: common/lib/cmds/listReqs:242 common/lib/cmds/basic_csr:266
+#: common/lib/cmds/basic_csr:366 common/lib/cmds/getParams:35
+#: common/lib/cmds/show_prepared_module:20
+#: common/lib/cmds/show_prepared_module:23 common/lib/cmds/editCRR:39
+#: common/lib/cmds/editCRR:109 common/lib/cmds/editCSR:37
+#: common/lib/cmds/editCSR:65 common/lib/cmds/editCSR:74
+#: common/lib/cmds/editCSR:448 common/lib/cmds/bpRevokeCertificate:44
+#: common/lib/cmds/getStaticPage:282 common/lib/cmds/getStaticPage:315
+#: common/lib/cmds/getStaticPage:348 common/lib/cmds/changePasswd:26
+#: common/lib/cmds/add_role:16 common/lib/cmds/viewSignature:43
+#: common/lib/cmds/viewSignature:47 common/lib/cmds/viewSignature:92
+#: common/lib/cmds/viewSignature:101 common/lib/cmds/raList:14
+#: common/lib/cmds/bpApproveRenewedCSR:43 common/lib/cmds/search:114
+#: common/lib/cmds/search:128 common/lib/cmds/search:158
+#: common/lib/cmds/search_rights:61 common/lib/cmds/verifySignature:100
+#: common/lib/cmds/writeCertMail:50 common/lib/cmds/viewCRL:35
+#: common/lib/cmds/viewCRR:124 common/lib/cmds/viewCRR:130
+#: common/lib/cmds/viewCRR:139 common/lib/cmds/viewCRR:179
+#: common/lib/cmds/viewCSR:225 common/lib/cmds/viewCSR:233
+#: common/lib/cmds/viewCSR:272 common/lib/cmds/viewCSR:281
+#: common/lib/cmds/viewCSR:327 common/lib/cmds/revoke_req:20
+#: common/lib/cmds/add_script:35 common/lib/cmds/bpApprovePendingCSR:44
+#: common/lib/cmds/removeKey:26 common/lib/cmds/test_cert:20
+#: common/lib/cmds/viewCert:94 common/lib/cmds/add_right:47
+#: common/lib/cmds/pkcs10_req:26 common/lib/cmds/pkcs10_req:179
+#: common/lib/cmds/confirm_revreq:95 common/lib/cmds/confirm_revreq:208
+msgid "cmd"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:19
+msgid "delete_role"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:20 common/lib/cmds/show_prepared_role:23
+#: common/lib/cmds/show_prepared_right:26
+#: common/lib/cmds/show_prepared_right:29 common/lib/cmds/basic_csr:270
+#: common/lib/cmds/basic_csr:379 common/lib/cmds/getParams:56
+#: common/lib/cmds/show_prepared_module:21
+#: common/lib/cmds/show_prepared_module:24 common/lib/cmds/getStaticPage:290
+#: common/lib/cmds/getStaticPage:323 common/lib/cmds/getStaticPage:354
+msgid "<input type=submit value=\""
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:20 common/lib/cmds/show_prepared_role:23
+#: common/lib/cmds/show_prepared_right:26
+#: common/lib/cmds/show_prepared_right:29 common/lib/cmds/getParams:56
+#: common/lib/cmds/getParams:57 common/lib/cmds/show_prepared_module:21
+#: common/lib/cmds/show_prepared_module:24
+msgid "\">\n"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:27 common/lib/cmds/submit_revreq:107
+#: common/lib/cmds/submit_revreq:132 common/lib/cmds/show_prepared_right:52
+#: common/lib/cmds/setPasswd:39 common/lib/cmds/setPasswd:60
+#: common/lib/cmds/setPasswd:66 common/lib/cmds/listReqs:394
+#: common/lib/cmds/basic_csr:273 common/lib/cmds/basic_csr:383
+#: common/lib/cmds/basic_csr:627 common/lib/cmds/show_rights:74
+#: common/lib/cmds/crlList:90 common/lib/cmds/approveCRRnotSigned:79
+#: common/lib/cmds/getParams:60 common/lib/cmds/show_prepared_module:28
+#: common/lib/cmds/show_modules:30 common/lib/cmds/genDB:32
+#: common/lib/cmds/lists:227 common/lib/cmds/editCRR:113
+#: common/lib/cmds/editCSR:353 common/lib/cmds/editCSR:451
+#: common/lib/cmds/bpRevokeCertificate:48 common/lib/cmds/getStaticPage:303
+#: common/lib/cmds/getStaticPage:336 common/lib/cmds/getStaticPage:363
+#: common/lib/cmds/getStaticPage:395 common/lib/cmds/genCAReq:75
+#: common/lib/cmds/addCRR:72 common/lib/cmds/show_roles:31
+#: common/lib/cmds/changePasswd:39 common/lib/cmds/genSKey:57
+#: common/lib/cmds/getcert:107 common/lib/cmds/add_role:21
+#: common/lib/cmds/serverInfo:34 common/lib/cmds/viewSignature:135
+#: common/lib/cmds/listCerts:90 common/lib/cmds/raList:62
+#: common/lib/cmds/bpApproveRenewedCSR:47 common/lib/cmds/search:168
+#: common/lib/cmds/search_rights:64 common/lib/cmds/verifySignature:138
+#: common/lib/cmds/writeCertMail:53 common/lib/cmds/viewCRL:83
+#: common/lib/cmds/viewCRR:315 common/lib/cmds/viewCSR:565
+#: common/lib/cmds/viewLog:23 common/lib/cmds/approveCRR:93
+#: common/lib/cmds/approveCSR:88 common/lib/cmds/add_module:23
+#: common/lib/cmds/revoke_req:36 common/lib/cmds/add_script:57
+#: common/lib/cmds/bpViewUser:257 common/lib/cmds/bpApprovePendingCSR:48
+#: common/lib/cmds/approveCSRnotSigned:71 common/lib/cmds/deletePasswd:23
+#: common/lib/cmds/deletePasswd:26 common/lib/cmds/removeKey:39
+#: common/lib/cmds/test_cert:52 common/lib/cmds/bpListUser:59
+#: common/lib/cmds/viewCert:366 common/lib/cmds/add_right:57
+#: common/lib/cmds/pkcs10_req:140 common/lib/cmds/pkcs10_req:232
+#: common/lib/cmds/pkcs10_req:343 common/lib/cmds/confirm_revreq:100
+#: common/lib/cmds/confirm_revreq:211
+msgid "NAME"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:28 common/lib/cmds/submit_revreq:108
+#: common/lib/cmds/submit_revreq:133 common/lib/cmds/setPasswd:40
+#: common/lib/cmds/basic_csr:274 common/lib/cmds/basic_csr:384
+#: common/lib/cmds/basic_csr:628 common/lib/cmds/crlList:91
+#: common/lib/cmds/approveCRRnotSigned:80 common/lib/cmds/getParams:61
+#: common/lib/cmds/show_prepared_module:29 common/lib/cmds/show_modules:31
+#: common/lib/cmds/genDB:33 common/lib/cmds/editCRR:114
+#: common/lib/cmds/editCSR:452 common/lib/cmds/bpRevokeCertificate:49
+#: common/lib/cmds/getStaticPage:304 common/lib/cmds/getStaticPage:337
+#: common/lib/cmds/getStaticPage:364 common/lib/cmds/getStaticPage:396
+#: common/lib/cmds/genCAReq:76 common/lib/cmds/addCRR:73
+#: common/lib/cmds/show_roles:32 common/lib/cmds/changePasswd:40
+#: common/lib/cmds/genSKey:58 common/lib/cmds/getcert:108
+#: common/lib/cmds/add_role:22 common/lib/cmds/viewSignature:136
+#: common/lib/cmds/listCerts:91 common/lib/cmds/bpApproveRenewedCSR:48
+#: common/lib/cmds/search_rights:65 common/lib/cmds/verifySignature:139
+#: common/lib/cmds/viewCRL:84 common/lib/cmds/viewCRR:316
+#: common/lib/cmds/viewCSR:566 common/lib/cmds/viewLog:24
+#: common/lib/cmds/approveCRR:94 common/lib/cmds/approveCSR:89
+#: common/lib/cmds/add_module:24 common/lib/cmds/revoke_req:37
+#: common/lib/cmds/add_script:58 common/lib/cmds/bpViewUser:259
+#: common/lib/cmds/bpApprovePendingCSR:49
+#: common/lib/cmds/approveCSRnotSigned:72 common/lib/cmds/removeKey:40
+#: common/lib/cmds/test_cert:53 common/lib/cmds/bpListUser:60
+#: common/lib/cmds/viewCert:367 common/lib/cmds/add_right:58
+#: common/lib/cmds/pkcs10_req:344 common/lib/cmds/confirm_revreq:101
+#: common/lib/cmds/confirm_revreq:212
+msgid "EXPLANATION"
+msgstr ""
+#: common/lib/cmds/show_prepared_role:30 common/lib/cmds/submit_revreq:109
+#: common/lib/cmds/show_prepared_right:54 common/lib/cmds/setPasswd:41
+#: common/lib/cmds/basic_csr:277 common/lib/cmds/basic_csr:385
+#: common/lib/cmds/getParams:62 common/lib/cmds/show_prepared_module:32
+#: common/lib/cmds/editCRR:116 common/lib/cmds/editCSR:454
+#: common/lib/cmds/bpRevokeCertificate:50 common/lib/cmds/getStaticPage:305
+#: common/lib/cmds/getStaticPage:338 common/lib/cmds/getStaticPage:365
+#: common/lib/cmds/changePasswd:41 common/lib/cmds/getcert:109
+#: common/lib/cmds/add_role:23 common/lib/cmds/raList:64
+#: common/lib/cmds/bpApproveRenewedCSR:49 common/lib/cmds/search_rights:67
+#: common/lib/cmds/verifySignature:140 common/lib/cmds/writeCertMail:55
+#: common/lib/cmds/viewCRL:88 common/lib/cmds/viewCRR:320
+#: common/lib/cmds/viewCSR:570 common/lib/cmds/add_module:26
+#: common/lib/cmds/revoke_req:39 common/lib/cmds/add_script:59
+#: common/lib/cmds/bpViewUser:261 common/lib/cmds/bpApprovePendingCSR:50
+#: common/lib/cmds/removeKey:41 common/lib/cmds/test_cert:54
+#: common/lib/cmds/viewCert:372 common/lib/cmds/add_right:59
+#: common/lib/cmds/pkcs10_req:141 common/lib/cmds/pkcs10_req:233
+#: common/lib/cmds/confirm_revreq:102 common/lib/cmds/confirm_revreq:213
+msgid "HIDDEN_LIST"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:31 common/lib/cmds/submit_revreq:111
+#: common/lib/cmds/show_prepared_right:55 common/lib/cmds/setPasswd:43
+#: common/lib/cmds/listReqs:396 common/lib/cmds/basic_csr:278
+#: common/lib/cmds/basic_csr:387 common/lib/cmds/basic_csr:629
+#: common/lib/cmds/crlList:93 common/lib/cmds/getParams:64
+#: common/lib/cmds/show_prepared_module:33 common/lib/cmds/lists:229
+#: common/lib/cmds/editCRR:117 common/lib/cmds/bpRevokeCertificate:52
+#: common/lib/cmds/getStaticPage:306 common/lib/cmds/getStaticPage:339
+#: common/lib/cmds/getStaticPage:366 common/lib/cmds/show_roles:34
+#: common/lib/cmds/changePasswd:43 common/lib/cmds/add_role:25
+#: common/lib/cmds/listCerts:94 common/lib/cmds/raList:65
+#: common/lib/cmds/bpApproveRenewedCSR:51 common/lib/cmds/search:171
+#: common/lib/cmds/search_rights:66 common/lib/cmds/verifySignature:142
+#: common/lib/cmds/writeCertMail:56 common/lib/cmds/add_module:27
+#: common/lib/cmds/revoke_req:40 common/lib/cmds/add_script:61
+#: common/lib/cmds/bpApprovePendingCSR:52 common/lib/cmds/removeKey:43
+#: common/lib/cmds/test_cert:56 common/lib/cmds/viewCert:371
+#: common/lib/cmds/add_right:61 common/lib/cmds/pkcs10_req:143
+#: common/lib/cmds/pkcs10_req:235 common/lib/cmds/pkcs10_req:345
+#: common/lib/cmds/confirm_revreq:104
+msgid "CMD_PANEL"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_role:32
+#: common/lib/cmds/show_prepared_right:56 common/lib/cmds/listReqs:397
+#: common/lib/cmds/show_rights:76 common/lib/cmds/crlList:94
+#: common/lib/cmds/approveCRRnotSigned:78 common/lib/cmds/show_modules:33
+#: common/lib/cmds/lists:230 common/lib/cmds/addCRR:74
+#: common/lib/cmds/show_roles:35 common/lib/cmds/add_role:20
+#: common/lib/cmds/serverInfo:36 common/lib/cmds/viewSignature:137
+#: common/lib/cmds/listCerts:93 common/lib/cmds/search:170
+#: common/lib/cmds/viewCRL:85 common/lib/cmds/viewCRR:317
+#: common/lib/cmds/viewCSR:567 common/lib/cmds/approveCRR:92
+#: common/lib/cmds/approveCSR:87 common/lib/cmds/add_module:22
+#: common/lib/cmds/add_script:56 common/lib/cmds/bpViewUser:258
+#: common/lib/cmds/approveCSRnotSigned:70 common/lib/cmds/bpListUser:58
+#: common/lib/cmds/viewCert:368 common/lib/cmds/add_right:56
+msgid "TIMESTAMP"
+msgstr ""
+
+#: common/lib/cmds/genCACert:16 common/lib/cmds/rebuildChain:13
+#: common/lib/cmds/importCACert:17
+msgid "MakePath"
+msgstr ""
+
+#: common/lib/cmds/genCACert:21 common/lib/cmds/send_cert_key_openssl:17
+#: common/lib/cmds/send_cert_key_pkcs12:19 common/lib/cmds/genCAReq:20
+#: common/lib/cmds/bpRecoverCert:26 common/lib/cmds/signConfig:13
+#: common/lib/cmds/bpApproveRenewedCSR:16
+#: common/lib/cmds/bpApprovePendingCSR:16 common/lib/cmds/viewCert:96
+msgid "passwd"
+msgstr ""
+
+#: common/lib/cmds/genCACert:24 common/lib/cmds/exportCAReqCert:20
+#: common/lib/cmds/genCAReq:28
+msgid "ReqDir"
+msgstr ""
+
+#: common/lib/cmds/genCACert:24 common/lib/cmds/genCAReq:28
+msgid "/careq.pem"
+msgstr ""
+
+#: common/lib/cmds/genCACert:25 common/lib/cmds/exportCAReqCert:22
+#: common/lib/cmds/send_cert_key_pkcs12:20 common/lib/cmds/bpRecoverCert:24
+#: common/lib/cmds/getcert:82 common/lib/cmds/genCRL:17
+#: common/lib/cmds/signConfig:47 common/lib/cmds/signConfig:76
+#: common/lib/cmds/bpExportPKCS12:71 common/lib/cmds/sendcert:43
+#: common/lib/cmds/importCACert:20
+msgid "CACertificate"
+msgstr ""
+
+#: common/lib/cmds/genCACert:26 common/lib/cmds/exportCAReqCert:23
+#: common/lib/cmds/importCACert:21
+msgid "CACertificateDER"
+msgstr ""
+
+#: common/lib/cmds/genCACert:27 common/lib/cmds/importCACert:22
+msgid "CACertificateCRT"
+msgstr ""
+
+#: common/lib/cmds/genCACert:28 common/lib/cmds/importCACert:23
+msgid "CACertificateTXT"
+msgstr ""
+
+#: common/lib/cmds/genCACert:29 common/lib/cmds/genSKey:18
+#: common/lib/cmds/signConfig:45 common/lib/cmds/signConfig:74
+msgid "CAKey"
+msgstr ""
+
+#: common/lib/cmds/genCACert:30 common/lib/cmds/submit_revreq:15
+#: common/lib/cmds/rebuildChain:12 common/lib/cmds/bpRevokeCertificate:18
+#: common/lib/cmds/scepPKIOperation:29 common/lib/cmds/scepGetCACert:20
+#: common/lib/cmds/addCRR:18 common/lib/cmds/bpIssueCertificate:16
+#: common/lib/cmds/verifySignature:17 common/lib/cmds/importCACert:24
+#: common/lib/cmds/confirm_revreq:17
+msgid "ChainDir"
+msgstr ""
+#: common/lib/cmds/genCACert:35 common/lib/cmds/genSKey:23#: common/lib/cmds/genCACert:38 common/lib/cmds/genCACert:39#: common/lib/cmds/genCACert:39 common/lib/cmds/genSKey:24
+#: common/lib/cmds/rebuildOpenSSLindexDB:19
+#: common/lib/cmds/rebuildOpenSSLindexDB:31 common/lib/cmds/removeFiles:23
+#: common/lib/cmds/genCRLfromFile:133 common/lib/cmds/genCRLfromFile:162
+#: common/lib/cmds/importCACert:33
+msgid "SRC"
+msgstr ""
+
+#: common/lib/cmds/genCACert:40 common/lib/cmds/genSKey:24
+#: common/lib/cmds/rebuildOpenSSLindexDB:20
+#: common/lib/cmds/rebuildOpenSSLindexDB:32 common/lib/cmds/removeFiles:23
+#: common/lib/cmds/genCRLfromFile:133 common/lib/cmds/genCRLfromFile:162
+#: common/lib/cmds/importCACert:34
+msgid "DEST"
+msgstr ""
+#: common/lib/cmds/genCACert:44 common/lib/cmds/genCAReq:33
+#: common/lib/cmds/bpDoStep:22 common/lib/cmds/genSKey:31
+#: common/lib/cmds/genCRL:26 common/lib/cmds/genCRLfromFile:27
+msgid "CA"
+msgstr ""
+
+#: common/lib/cmds/genCACert:48 common/lib/cmds/bpCreateCSR:18
+#: common/lib/cmds/bpCreateKey:18 common/lib/cmds/bpCreatePIN:18
+#: common/lib/cmds/bpBackupKey:19 common/lib/cmds/bpBackupKey:28
+#: common/lib/cmds/genCAReq:37 common/lib/cmds/bpRecoverCert:16
+#: common/lib/cmds/genCRL:31 common/lib/cmds/bpExportPKCS12:20
+#: common/lib/cmds/bpExportPIN:20 common/lib/cmds/bpRecoverKey:16
+#: common/lib/cmds/genCRLfromFile:32
+msgid "<FONT color=#ff0000>"
+msgstr ""
+
+#: common/lib/cmds/genCACert:48 common/lib/cmds/bpCreateCSR:18
+#: common/lib/cmds/bpCreateKey:18 common/lib/cmds/bpCreatePIN:18
+#: common/lib/cmds/bpBackupKey:19 common/lib/cmds/bpBackupKey:28
+#: common/lib/cmds/genCAReq:37 common/lib/cmds/bpRecoverCert:16
+#: common/lib/cmds/bpExportPKCS12:20 common/lib/cmds/bpExportPIN:20
+#: common/lib/cmds/bpRecoverKey:16
+msgid "</FONT><br>\n"
+msgstr ""
+#: common/lib/cmds/genCACert:57
+msgid "REQFILE"
+msgstr ""
+
+#: common/lib/cmds/genCACert:58 common/lib/cmds/genCACert:72
+#: common/lib/cmds/basic_csr:480 common/lib/cmds/bpCreateKey:132
+#: common/lib/cmds/bpCreatePIN:97 common/lib/cmds/bpBackupKey:154
+#: common/lib/cmds/genCAReq:50 common/lib/cmds/scepGetCACert:38
+#: common/lib/cmds/importCACert:63
+msgid "OUTFILE"
+msgstr ""
+
+msgid "DAYS"
+msgstr ""
+
+msgid "<BR>"
+msgstr ""
+
+msgid "DATATYPE"
+msgstr ""
+
+msgid "INFILE"
+msgstr ""
+msgid "OUTFORM"
+msgstr ""
+
+msgid "TXT"
+msgstr ""
+
+#: common/lib/cmds/genCACert:126
+msgid " name="
+msgstr ""
+
+#: common/lib/cmds/genCACert:126
+msgid " value="
+msgstr ""
+
+
+#: common/lib/cmds/hsmLogin:14
+msgid "HSM_LOGIN_CMD"
+msgstr ""
+#: common/lib/cmds/send_email_cert:13
+msgid "2.1.01"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:17 common/lib/cmds/getcert:12
+msgid "type"
+msgstr ""
+
+msgid "key"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:18 common/lib/cmds/submit_revreq:27
+#: common/lib/cmds/send_cert_key_openssl:15 common/lib/cmds/changeCRR:19
+#: common/lib/cmds/send_cert_key_pkcs12:17 common/lib/cmds/addCRR:30
+#: common/lib/cmds/send_cert_key_pkcs8:15 common/lib/cmds/getcert:13
+#: common/lib/cmds/confirm_revreq:24 common/lib/cmds/confirm_revreq:206
+msgid "serial"
+msgstr ""
+
+msgid "dataType"
+msgstr ""
+
+
+#: common/lib/cmds/send_email_cert:22
+msgid "-----BEGIN CERTIFICATE-----"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:23
+msgid "-----END CERTIFICATE-----"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:36
+msgid "<PRE>\n"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:40 common/lib/cmds/basic_csr:656
+#: common/lib/cmds/getcert:77
+msgid "HTTP_USER_AGENT"
+msgstr ""
+
+#: common/lib/cmds/send_email_cert:41 common/lib/cmds/scepGetCACert:37
+msgid "DER"
+msgstr ""
+
+msgid "KEY"
+msgstr ""
+#: common/lib/cmds/bpDeletePIN:15 common/lib/cmds/bpImportUpdateUser:32
+#: common/lib/cmds/bpCreateCSR:26 common/lib/cmds/bpCreateKey:26
+#: common/lib/cmds/bpCreatePIN:26 common/lib/cmds/bpBackupKey:36
+#: common/lib/cmds/bpImportACL:32 common/lib/cmds/bpRecoverCert:22
+#: common/lib/cmds/getcert:26 common/lib/cmds/bpApproveRenewedCSR:82
+#: common/lib/cmds/bpExportPKCS12:28 common/lib/cmds/bpExportPIN:28
+#: common/lib/cmds/bpRecoverKey:24 common/lib/cmds/bpViewUser:16
+#: common/lib/cmds/bpApprovePendingCSR:83
+msgid "BP_DIR"
+msgstr ""
+
+#: common/lib/cmds/bpDeletePIN:19
+msgid "bpDeletePIN"
+msgstr ""
+
+#: common/lib/cmds/bpDeletePIN:33 common/lib/cmds/bpDeletePIN:44
+#: common/lib/cmds/bpImportUpdateUser:97 common/lib/cmds/bpCreateCSR:44
+#: common/lib/cmds/bpCreateCSR:61 common/lib/cmds/bpCreateKey:44
+#: common/lib/cmds/bpCreateKey:64 common/lib/cmds/bpCreateKey:74
+#: common/lib/cmds/bpCreateKey:91 common/lib/cmds/bpCreateKey:100
+#: common/lib/cmds/bpCreateKey:110 common/lib/cmds/bpCreateKey:124
+#: common/lib/cmds/bpCreateKey:138 common/lib/cmds/bpCreateKey:152
+#: common/lib/cmds/bpCreateKey:157 common/lib/cmds/bpCreatePIN:44
+#: common/lib/cmds/bpCreatePIN:104 common/lib/cmds/bpCreatePIN:133
+#: common/lib/cmds/bpCreatePIN:137 common/lib/cmds/bpCreatePIN:144
+#: common/lib/cmds/bpCreatePIN:147 common/lib/cmds/bpCreatePIN:154
+#: common/lib/cmds/bpBackupKey:53 common/lib/cmds/bpBackupKey:61
+#: common/lib/cmds/bpBackupKey:83 common/lib/cmds/bpBackupKey:101
+#: common/lib/cmds/bpBackupKey:130 common/lib/cmds/bpBackupKey:144
+#: common/lib/cmds/bpBackupKey:161 common/lib/cmds/bpBackupKey:171
+#: common/lib/cmds/bpBackupKey:176 common/lib/cmds/bpImportACL:97
+#: common/lib/cmds/getcert:39 common/lib/cmds/bpImportNewUser:95
+#: common/lib/cmds/bpApproveRenewedCSR:118
+#: common/lib/cmds/bpApproveRenewedCSR:126
+#: common/lib/cmds/bpApproveRenewedCSR:132 common/lib/cmds/bpExportPKCS12:47
+#: common/lib/cmds/bpExportPKCS12:82 common/lib/cmds/bpExportPKCS12:103
+#: common/lib/cmds/bpExportPKCS12:112 common/lib/cmds/bpExportPKCS12:118
+#: common/lib/cmds/bpExportPKCS12:124 common/lib/cmds/bpImportProcessData:188
+#: common/lib/cmds/bpExportPIN:62 common/lib/cmds/bpExportPIN:67
+#: common/lib/cmds/bpRecoverKey:43 common/lib/cmds/bpViewUser:43
+#: common/lib/cmds/bpViewUser:254 common/lib/cmds/bpApprovePendingCSR:120
+#: common/lib/cmds/bpApprovePendingCSR:127
+#: common/lib/cmds/bpApprovePendingCSR:132
+#: common/lib/cmds/bpApprovePendingCSR:133
+#: common/lib/cmds/bpImportNewProcess:117
+msgid "/ID"
+msgstr ""
+
+#: common/lib/cmds/bpDeletePIN:34 common/lib/cmds/bpCreateCSR:45
+#: common/lib/cmds/bpCreateCSR:231
+msgid "/acl/newCSR"
+msgstr ""
+
+#: common/lib/cmds/bpDeletePIN:35 common/lib/cmds/bpDeletePIN:38
+#: common/lib/cmds/bpCreateCSR:48 common/lib/cmds/bpCreateCSR:74
+#: common/lib/cmds/bpCreateKey:106 common/lib/cmds/bpCreateKey:116
+#: common/lib/cmds/bpCreatePIN:46 common/lib/cmds/bpCreatePIN:97
+#: common/lib/cmds/bpCreatePIN:135 common/lib/cmds/bpCreatePIN:149
+#: common/lib/cmds/bpBackupKey:91 common/lib/cmds/bpBackupKey:122
+#: common/lib/cmds/bpRecoverCert:42 common/lib/cmds/bpExportPKCS12:48
+#: common/lib/cmds/bpExportPKCS12:74 common/lib/cmds/bpExportPIN:63
+#: common/lib/cmds/bpExportPIN:79 common/lib/cmds/bpExportPIN:86
+#: common/lib/cmds/bpViewUser:181
+msgid "/private/purePIN"
+msgstr ""
+
+#: common/lib/cmds/bpDeletePIN:36 common/lib/cmds/bpCreateCSR:46
+#: common/lib/cmds/bpCreateCSR:88 common/lib/cmds/bpCreatePIN:49
+#: common/lib/cmds/bpCreatePIN:50 common/lib/cmds/bpCreatePIN:128
+#: common/lib/cmds/bpApproveRenewedCSR:165
+#: common/lib/cmds/bpApproveRenewedCSR:173
+#: common/lib/cmds/bpApproveRenewedCSR:180
+#: common/lib/cmds/bpApproveRenewedCSR:181 common/lib/cmds/bpExportPIN:64
+#: common/lib/cmds/bpViewUser:131 common/lib/cmds/bpApprovePendingCSR:164
+#: common/lib/cmds/bpApprovePendingCSR:171
+#: common/lib/cmds/bpApprovePendingCSR:177
+#: common/lib/cmds/bpApprovePendingCSR:178
+msgid "/public/hashedPIN"
+msgstr ""
+
+msgid "<FONT COLOR=#FF0000>"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:18 common/lib/cmds/renewCSR:12
+#: common/lib/cmds/approveCRRnotSigned:15 common/lib/cmds/changeCRR:12
+#: common/lib/cmds/changeCSR:13 common/lib/cmds/addCRR:21
+#: common/lib/cmds/bpApproveRenewedCSR:188 common/lib/cmds/viewCRR:90
+#: common/lib/cmds/viewCSR:112 common/lib/cmds/approveCRR:15
+#: common/lib/cmds/bpApprovePendingCSR:204 common/lib/cmds/confirm_revreq:20
+msgid "-----BEGIN HEADER-----"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:19 common/lib/cmds/renewCSR:13
+#: common/lib/cmds/approveCRRnotSigned:16 common/lib/cmds/changeCRR:13
+#: common/lib/cmds/changeCSR:14 common/lib/cmds/addCRR:22
+#: common/lib/cmds/bpApproveRenewedCSR:189 common/lib/cmds/viewCRR:91
+#: common/lib/cmds/viewCSR:113 common/lib/cmds/approveCRR:16
+#: common/lib/cmds/bpApprovePendingCSR:205 common/lib/cmds/confirm_revreq:21
+msgid "-----END HEADER-----"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:20 common/lib/cmds/addCRR:23
+#: common/lib/cmds/approveCRR:17
+msgid "-----BEGIN PKCS7-----"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:21 common/lib/cmds/addCRR:24
+#: common/lib/cmds/approveCRR:18
+msgid "-----END PKCS7-----"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:24 common/lib/cmds/approveCRRnotSigned:19
+#: common/lib/cmds/addCRR:27 common/lib/cmds/viewCRR:113
+#: common/lib/cmds/viewCSR:136 common/lib/cmds/approveCRR:21
+#: common/lib/cmds/approveCSR:15 common/lib/cmds/approveCSRnotSigned:15
+#: common/lib/cmds/confirm_revreq:204
+msgid "head"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:25 common/lib/cmds/approveCRRnotSigned:20
+#: common/lib/cmds/addCRR:28 common/lib/cmds/verifySignature:21
+#: common/lib/cmds/verifySignature:98 common/lib/cmds/viewCRR:114
+#: common/lib/cmds/viewCSR:137 common/lib/cmds/approveCRR:22
+#: common/lib/cmds/approveCSR:14 common/lib/cmds/approveCSRnotSigned:14
+#: common/lib/cmds/test_cert:18 common/lib/cmds/confirm_revreq:205
+msgid "text"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:26 common/lib/cmds/addCRR:29
+#: common/lib/cmds/verifySignature:20 common/lib/cmds/verifySignature:99
+#: common/lib/cmds/viewCSR:138 common/lib/cmds/approveCRR:23
+#: common/lib/cmds/approveCSR:16 common/lib/cmds/test_cert:19
+#: common/lib/cmds/confirm_revreq:203
+msgid "signature"
+msgstr ""
+
+msgid "\n"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:38 common/lib/cmds/submit_revreq:70
+#: common/lib/cmds/basic_csr:447 common/lib/cmds/basic_csr:462
+#: common/lib/cmds/basic_csr:502 common/lib/cmds/basic_csr:589
+#: common/lib/cmds/renewCSR:88 common/lib/cmds/approveCRRnotSigned:25
+#: common/lib/cmds/approveCRRnotSigned:36 common/lib/cmds/bpCreateCSR:138
+#: common/lib/cmds/bpCreateCSR:186 common/lib/cmds/changeCRR:138
+#: common/lib/cmds/changeCSR:178 common/lib/cmds/bpRevokeCertificate:121
+#: common/lib/cmds/bpRevokeCertificate:204
+#: common/lib/cmds/scepPKIOperation:303 common/lib/cmds/genCAReq:58
+#: common/lib/cmds/addCRR:41 common/lib/cmds/changePasswd:77
+#: common/lib/cmds/genCRL:47 common/lib/cmds/bpApproveRenewedCSR:248
+#: common/lib/cmds/bpIssueCertificate:125 common/lib/cmds/verifySignature:32
+#: common/lib/cmds/approveCRR:35 common/lib/cmds/approveCRR:46
+#: common/lib/cmds/approveCSR:64 common/lib/cmds/genCRLfromFile:157
+#: common/lib/cmds/bpApprovePendingCSR:263
+#: common/lib/cmds/approveCSRnotSigned:58 common/lib/cmds/removeKey:55
+#: common/lib/cmds/pkcs10_req:159 common/lib/cmds/pkcs10_req:243
+#: common/lib/cmds/pkcs10_req:311 common/lib/cmds/confirm_revreq:63
+msgid "SHELL"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:38 common/lib/cmds/submit_revreq:55
+#: common/lib/cmds/submit_revreq:65 common/lib/cmds/submit_revreq:67
+#: common/lib/cmds/setPasswd:64 common/lib/cmds/basic_csr:449
+#: common/lib/cmds/basic_csr:464 common/lib/cmds/basic_csr:553
+#: common/lib/cmds/basic_csr:591 common/lib/cmds/renewCSR:89
+#: common/lib/cmds/approveCRRnotSigned:27
+#: common/lib/cmds/approveCRRnotSigned:38
+#: common/lib/cmds/bpImportUpdateUser:118 common/lib/cmds/editCSR:143
+#: common/lib/cmds/editCSR:181 common/lib/cmds/editCSR:226
+#: common/lib/cmds/editCSR:242 common/lib/cmds/send_cert_key_openssl:24
+#: common/lib/cmds/bpCreateCSR:186 common/lib/cmds/bpCreateCSR:214
+#: common/lib/cmds/bpCreateCSR:217 common/lib/cmds/bpCreateCSR:222
+#: common/lib/cmds/bpCreatePIN:96 common/lib/cmds/bpCreatePIN:110
+#: common/lib/cmds/bpCreatePIN:128 common/lib/cmds/changeCRR:140
+#: common/lib/cmds/changeCSR:179 common/lib/cmds/bpBackupKey:107
+#: common/lib/cmds/bpBackupKey:139 common/lib/cmds/bpBackupKey:153
+#: common/lib/cmds/bpRevokeCertificate:100
+#: common/lib/cmds/bpRevokeCertificate:110
+#: common/lib/cmds/bpRevokeCertificate:183
+#: common/lib/cmds/bpRevokeCertificate:193
+#: common/lib/cmds/send_cert_key_pkcs12:26
+#: common/lib/cmds/send_cert_key_pkcs12:28 common/lib/cmds/scepPKIOperation:48
+#: common/lib/cmds/scepPKIOperation:113 common/lib/cmds/scepPKIOperation:305
+#: common/lib/cmds/bpImportACL:139 common/lib/cmds/bpRecoverCert:90
+#: common/lib/cmds/bpRecoverCert:93 common/lib/cmds/bpRecoverCert:123
+#: common/lib/cmds/addCRR:43 common/lib/cmds/changePasswd:71
+#: common/lib/cmds/changePasswd:79 common/lib/cmds/getcert:85
+#: common/lib/cmds/genCRL:92 common/lib/cmds/genCRL:102
+#: common/lib/cmds/genCRL:112 common/lib/cmds/genCRL:122
+#: common/lib/cmds/signConfig:43 common/lib/cmds/bpApproveRenewedCSR:214
+#: common/lib/cmds/bpApproveRenewedCSR:248
+#: common/lib/cmds/bpApproveRenewedCSR:270
+#: common/lib/cmds/bpIssueCertificate:104
+#: common/lib/cmds/bpIssueCertificate:114 common/lib/cmds/bpExportPKCS12:89
+#: common/lib/cmds/bpExportPKCS12:113 common/lib/cmds/verifySignature:29
+#: common/lib/cmds/verifySignature:30 common/lib/cmds/removeFiles:25
+#: common/lib/cmds/bpImportProcessData:231 common/lib/cmds/approveCRR:37
+#: common/lib/cmds/approveCRR:48 common/lib/cmds/approveCSR:67
+#: common/lib/cmds/bpApprovePendingCSR:230
+#: common/lib/cmds/bpApprovePendingCSR:263
+#: common/lib/cmds/bpApprovePendingCSR:285
+#: common/lib/cmds/approveCSRnotSigned:61 common/lib/cmds/removeKey:57
+#: common/lib/cmds/pkcs10_req:161 common/lib/cmds/pkcs10_req:245
+#: common/lib/cmds/pkcs10_req:285 common/lib/cmds/pkcs10_req:313
+#: common/lib/cmds/confirm_revreq:48 common/lib/cmds/confirm_revreq:58
+#: common/lib/cmds/confirm_revreq:60
+msgid "DATA"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:48 common/lib/cmds/changeCRR:150
+#: common/lib/cmds/addCRR:53
+msgid "db_error"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:55 common/lib/cmds/setPasswd:65
+#: common/lib/cmds/basic_csr:481 common/lib/cmds/basic_csr:554
+#: common/lib/cmds/bpCreateCSR:218 common/lib/cmds/bpCreatePIN:111
+#: common/lib/cmds/bpBackupKey:108 common/lib/cmds/genSKey:36
+#: common/lib/cmds/pkcs10_req:286 common/lib/cmds/confirm_revreq:48
+msgid "ALGORITHM"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:55 common/lib/cmds/setPasswd:65
+#: common/lib/cmds/basic_csr:554 common/lib/cmds/bpCreateCSR:218
+#: common/lib/cmds/bpCreatePIN:111 common/lib/cmds/bpBackupKey:108
+#: common/lib/cmds/pkcs10_req:286 common/lib/cmds/confirm_revreq:48
+msgid "sha1"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:63 common/lib/cmds/send_cert_key:14
+#: common/lib/cmds/bpRevokeCertificate:17
+#: common/lib/cmds/send_cert_key_pkcs12:14 common/lib/cmds/bpRecoverCert:23
+#: common/lib/cmds/bpApproveRenewedCSR:83
+#: common/lib/cmds/bpIssueCertificate:36 common/lib/cmds/genCRLfromFile:17
+#: common/lib/cmds/bpApprovePendingCSR:84 common/lib/cmds/confirm_revreq:56
+msgid "TempDir"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:65 common/lib/cmds/submit_revreq:67
+#: common/lib/cmds/delete_right:33 common/lib/cmds/bpImportUpdateUser:118
+#: common/lib/cmds/bpCreateCSR:213 common/lib/cmds/bpCreateCSR:222
+#: common/lib/cmds/bpCreatePIN:128 common/lib/cmds/bpRevokeCertificate:99
+#: common/lib/cmds/bpRevokeCertificate:109
+#: common/lib/cmds/bpRevokeCertificate:182
+#: common/lib/cmds/bpRevokeCertificate:192
+#: common/lib/cmds/send_cert_key_pkcs12:26 common/lib/cmds/scepPKIOperation:48
+#: common/lib/cmds/scepPKIOperation:113 common/lib/cmds/bpImportACL:139
+#: common/lib/cmds/bpRecoverCert:90 common/lib/cmds/bpDoStep:59
+#: common/lib/cmds/bpDoStep:63 common/lib/cmds/bpDoStep:67
+#: common/lib/cmds/bpDoStep:71 common/lib/cmds/bpDoStep:75
+#: common/lib/cmds/bpDoStep:79 common/lib/cmds/bpDoStep:83
+#: common/lib/cmds/bpDoStep:87 common/lib/cmds/genMenu:28
+#: common/lib/cmds/genMenu:33 common/lib/cmds/genMenu:42
+#: common/lib/cmds/genMenu:46 common/lib/cmds/genMenu:50
+#: common/lib/cmds/genMenu:56 common/lib/cmds/genMenu:127
+#: common/lib/cmds/genMenu:134 common/lib/cmds/genMenu:139
+#: common/lib/cmds/genMenu:148 common/lib/cmds/genMenu:163
+#: common/lib/cmds/genMenu:171 common/lib/cmds/genMenu:175
+#: common/lib/cmds/getcert:85 common/lib/cmds/genCRL:91
+#: common/lib/cmds/genCRL:101 common/lib/cmds/genCRL:111
+#: common/lib/cmds/genCRL:121 common/lib/cmds/bpImportNewUser:33
+#: common/lib/cmds/bpImportNewUser:37 common/lib/cmds/bpApproveRenewedCSR:269
+#: common/lib/cmds/bpIssueCertificate:103
+#: common/lib/cmds/bpIssueCertificate:113 common/lib/cmds/bpExportPKCS12:113
+#: common/lib/cmds/verifySignature:29 common/lib/cmds/verifySignature:30
+#: common/lib/cmds/removeFiles:25 common/lib/cmds/bpImportProcessData:35
+#: common/lib/cmds/bpImportProcessData:39
+#: common/lib/cmds/bpImportProcessData:43
+#: common/lib/cmds/bpImportProcessData:47
+#: common/lib/cmds/bpImportProcessData:51
+#: common/lib/cmds/bpImportProcessData:55
+#: common/lib/cmds/bpImportProcessData:59
+#: common/lib/cmds/bpImportProcessData:63
+#: common/lib/cmds/bpImportProcessData:102
+#: common/lib/cmds/bpImportProcessData:106
+#: common/lib/cmds/bpImportProcessData:230 common/lib/cmds/new_right:40
+#: common/lib/cmds/bpApprovePendingCSR:284
+#: common/lib/cmds/bpImportNewProcess:33 common/lib/cmds/bpImportNewProcess:37
+#: common/lib/cmds/bpImportNewProcess:41 common/lib/cmds/bpImportNewProcess:45
+#: common/lib/cmds/bpListUser:17 common/lib/cmds/confirm_revreq:58
+#: common/lib/cmds/confirm_revreq:60
+msgid "FILENAME"
+msgstr ""
+#: common/lib/cmds/submit_revreq:67 common/lib/cmds/submit_revreq:72#: common/lib/cmds/submit_revreq:71 common/lib/cmds/basic_csr:448
+#: common/lib/cmds/basic_csr:463 common/lib/cmds/basic_csr:503
+#: common/lib/cmds/basic_csr:590 common/lib/cmds/renewCSR:90
+#: common/lib/cmds/approveCRRnotSigned:26
+#: common/lib/cmds/approveCRRnotSigned:37 common/lib/cmds/changeCRR:139
+#: common/lib/cmds/changeCSR:180 common/lib/cmds/bpRevokeCertificate:122
+#: common/lib/cmds/bpRevokeCertificate:205
+#: common/lib/cmds/scepPKIOperation:304 common/lib/cmds/genCAReq:59
+#: common/lib/cmds/addCRR:42 common/lib/cmds/changePasswd:78
+#: common/lib/cmds/bpDoStep:101 common/lib/cmds/genCRL:50
+#: common/lib/cmds/bpIssueCertificate:126 common/lib/cmds/verifySignature:33
+#: common/lib/cmds/bpImportProcessData:77 common/lib/cmds/approveCRR:36
+#: common/lib/cmds/approveCRR:47 common/lib/cmds/approveCSR:65
+#: common/lib/cmds/genCRLfromFile:160 common/lib/cmds/approveCSRnotSigned:59
+#: common/lib/cmds/removeKey:56 common/lib/cmds/pkcs10_req:160
+#: common/lib/cmds/pkcs10_req:244 common/lib/cmds/pkcs10_req:312
+#: common/lib/cmds/confirm_revreq:64
+msgid "GETTEXT"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:73 common/lib/cmds/bpRevokeCertificate:124
+#: common/lib/cmds/bpRevokeCertificate:207
+#: common/lib/cmds/bpIssueCertificate:128 common/lib/cmds/verifySignature:35
+#: common/lib/cmds/confirm_revreq:66
+msgid "DATAFILE"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:74 common/lib/cmds/bpRevokeCertificate:125
+#: common/lib/cmds/bpRevokeCertificate:208
+#: common/lib/cmds/bpIssueCertificate:129 common/lib/cmds/verifySignature:36
+#: common/lib/cmds/confirm_revreq:67
+msgid "CA_DIR"
+msgstr ""#: common/lib/cmds/submit_revreq:93 common/lib/cmds/revoke_req:23
+#: common/lib/cmds/confirm_revreq:86
+msgid "<Input type=\"text\" name=\"serial\" value=\""
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:93 common/lib/cmds/submit_revreq:103
+#: common/lib/cmds/setPasswd:34 common/lib/cmds/listReqs:258
+#: common/lib/cmds/listReqs:349 common/lib/cmds/basic_csr:270
+#: common/lib/cmds/basic_csr:379 common/lib/cmds/show_rights:58
+#: common/lib/cmds/editCRR:18 common/lib/cmds/editCRR:19
+#: common/lib/cmds/bpRevokeCertificate:45 common/lib/cmds/getStaticPage:290
+#: common/lib/cmds/getStaticPage:291 common/lib/cmds/getStaticPage:323
+#: common/lib/cmds/getStaticPage:324 common/lib/cmds/getStaticPage:354
+#: common/lib/cmds/getStaticPage:355 common/lib/cmds/changePasswd:28
+#: common/lib/cmds/add_role:18 common/lib/cmds/raList:15
+#: common/lib/cmds/bpApproveRenewedCSR:44 common/lib/cmds/search_rights:31
+#: common/lib/cmds/search_rights:42 common/lib/cmds/search_rights:43
+#: common/lib/cmds/search_rights:59 common/lib/cmds/writeCertMail:33
+#: common/lib/cmds/writeCertMail:39 common/lib/cmds/writeCertMail:47
+#: common/lib/cmds/viewCRL:74 common/lib/cmds/viewCSR:355
+#: common/lib/cmds/viewCSR:401 common/lib/cmds/revoke_req:23
+#: common/lib/cmds/revoke_req:33 common/lib/cmds/add_script:23
+#: common/lib/cmds/bpViewUser:157 common/lib/cmds/bpApprovePendingCSR:45
+#: common/lib/cmds/removeKey:34 common/lib/cmds/bpListUser:45
+#: common/lib/cmds/bpListUser:53 common/lib/cmds/viewCert:359
+#: common/lib/cmds/viewCert:361 common/lib/cmds/add_right:28
+#: common/lib/cmds/add_right:39 common/lib/cmds/add_right:40
+#: common/lib/cmds/pkcs10_req:23 common/lib/cmds/pkcs10_req:24
+#: common/lib/cmds/pkcs10_req:176 common/lib/cmds/pkcs10_req:177
+#: common/lib/cmds/confirm_revreq:86 common/lib/cmds/confirm_revreq:96
+msgid "\">"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:95 common/lib/cmds/revoke_req:25
+#: common/lib/cmds/confirm_revreq:88
+msgid "<textarea cols=\"35\" rows=\"5\" name=\"reason\" wrap=\"virtual\">"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:95 common/lib/cmds/writeCertMail:43
+#: common/lib/cmds/revoke_req:27 common/lib/cmds/confirm_revreq:88
+msgid "</textarea>"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:98 common/lib/cmds/revoke_req:29
+#: common/lib/cmds/confirm_revreq:91
+msgid "<Input type=\"password\" name=\"crin\">"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:100 common/lib/cmds/revoke_req:31
+#: common/lib/cmds/confirm_revreq:93
+msgid "<Input type=\"password\" name=\"crin2\">"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:102
+msgid "submit_revreq"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:103 common/lib/cmds/changePasswd:28
+#: common/lib/cmds/writeCertMail:46 common/lib/cmds/revoke_req:33
+#: common/lib/cmds/confirm_revreq:96
+msgid "<input type=\"submit\" name=\"Submit\" value=\""
+msgstr ""
+#: common/lib/cmds/submit_revreq:110 common/lib/cmds/show_prepared_right:53
+#: common/lib/cmds/setPasswd:42 common/lib/cmds/basic_csr:276
+#: common/lib/cmds/basic_csr:386 common/lib/cmds/basic_csr:630
+#: common/lib/cmds/getParams:63 common/lib/cmds/editCRR:115
+#: common/lib/cmds/editCSR:453 common/lib/cmds/bpRevokeCertificate:51
+#: common/lib/cmds/getStaticPage:307 common/lib/cmds/getStaticPage:340
+#: common/lib/cmds/getStaticPage:367 common/lib/cmds/genCAReq:78
+#: common/lib/cmds/changePasswd:42 common/lib/cmds/genSKey:60
+#: common/lib/cmds/add_role:24 common/lib/cmds/viewSignature:138
+#: common/lib/cmds/raList:63 common/lib/cmds/bpApproveRenewedCSR:50
+#: common/lib/cmds/search_rights:68 common/lib/cmds/verifySignature:141
+#: common/lib/cmds/writeCertMail:54 common/lib/cmds/viewCRL:86
+#: common/lib/cmds/viewCRR:318 common/lib/cmds/viewCSR:568
+#: common/lib/cmds/add_module:25 common/lib/cmds/revoke_req:38
+#: common/lib/cmds/add_script:60 common/lib/cmds/bpViewUser:260
+#: common/lib/cmds/bpApprovePendingCSR:51 common/lib/cmds/removeKey:42
+#: common/lib/cmds/test_cert:55 common/lib/cmds/viewCert:369
+#: common/lib/cmds/add_right:60 common/lib/cmds/pkcs10_req:142
+#: common/lib/cmds/pkcs10_req:234 common/lib/cmds/pkcs10_req:346
+#: common/lib/cmds/confirm_revreq:103 common/lib/cmds/confirm_revreq:214
+msgid "INFO_LIST"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:118 common/lib/cmds/submit_revreq:125
+#: common/lib/cmds/setPasswd:71 common/lib/cmds/setPasswd:74
+#: common/lib/cmds/listReqs:254 common/lib/cmds/listReqs:319
+#: common/lib/cmds/listReqs:345 common/lib/cmds/basic_csr:600
+#: common/lib/cmds/renewCSR:97 common/lib/cmds/approveCRRnotSigned:52
+#: common/lib/cmds/approveCRRnotSigned:53
+#: common/lib/cmds/approveCRRnotSigned:54
+#: common/lib/cmds/approveCRRnotSigned:55
+#: common/lib/cmds/approveCRRnotSigned:63
+#: common/lib/cmds/approveCRRnotSigned:64 common/lib/cmds/lists:154
+#: common/lib/cmds/editCRR:40 common/lib/cmds/editCRR:72
+#: common/lib/cmds/editCSR:75 common/lib/cmds/bpCreateCSR:199
+#: common/lib/cmds/changeCRR:155 common/lib/cmds/changeCSR:189
+#: common/lib/cmds/bpRevokeCertificate:139
+#: common/lib/cmds/bpRevokeCertificate:150
+#: common/lib/cmds/scepPKIOperation:316 common/lib/cmds/addCRR:58
+#: common/lib/cmds/addCRR:65 common/lib/cmds/changePasswd:87
+#: common/lib/cmds/changePasswd:90 common/lib/cmds/genCRL:82
+#: common/lib/cmds/deleteCRR:30 common/lib/cmds/deleteCRR:51
+#: common/lib/cmds/deleteCSR:25 common/lib/cmds/viewSignature:36
+#: common/lib/cmds/bpApproveRenewedCSR:253
+#: common/lib/cmds/bpIssueCertificate:56 common/lib/cmds/bpIssueCertificate:67
+#: common/lib/cmds/viewCRR:140 common/lib/cmds/viewCRR:159
+#: common/lib/cmds/viewCSR:282 common/lib/cmds/approveCRR:53
+#: common/lib/cmds/approveCRR:67 common/lib/cmds/approveCRR:68
+#: common/lib/cmds/approveCRR:69 common/lib/cmds/approveCRR:70
+#: common/lib/cmds/approveCRR:78 common/lib/cmds/approveCRR:79
+#: common/lib/cmds/approveCSR:72 common/lib/cmds/approveCSR:77
+#: common/lib/cmds/approveCSR:80 common/lib/cmds/bpApprovePendingCSR:268
+#: common/lib/cmds/approveCSRnotSigned:65 common/lib/cmds/deletePasswd:31
+#: common/lib/cmds/deletePasswd:34 common/lib/cmds/removeKey:64
+#: common/lib/cmds/updateSearchAttributes:24 common/lib/cmds/pkcs10_req:320
+msgid "OBJECT"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:118 common/lib/cmds/setPasswd:71
+#: common/lib/cmds/setPasswd:74 common/lib/cmds/listReqs:172
+#: common/lib/cmds/listReqs:182 common/lib/cmds/basic_csr:602
+#: common/lib/cmds/crlList:50 common/lib/cmds/crlList:60
+#: common/lib/cmds/renewCSR:96 common/lib/cmds/approveCRRnotSigned:55
+#: common/lib/cmds/genDB:20 common/lib/cmds/genDB:25 common/lib/cmds/lists:115
+#: common/lib/cmds/lists:125 common/lib/cmds/bpCreateCSR:201
+#: common/lib/cmds/scepPKIOperation:318 common/lib/cmds/addCRR:58
+#: common/lib/cmds/addCRR:65 common/lib/cmds/changePasswd:87
+#: common/lib/cmds/changePasswd:90 common/lib/cmds/genCRL:82
+#: common/lib/cmds/listCerts:51 common/lib/cmds/listCerts:61
+#: common/lib/cmds/viewCSR:393 common/lib/cmds/approveCRR:70
+#: common/lib/cmds/deletePasswd:31 common/lib/cmds/deletePasswd:34
+#: common/lib/cmds/removeKey:64 common/lib/cmds/updateSearchAttributes:24
+#: common/lib/cmds/pkcs10_req:320
+msgid "MODE"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:118 common/lib/cmds/basic_csr:602
+#: common/lib/cmds/renewCSR:96 common/lib/cmds/approveCRRnotSigned:55
+#: common/lib/cmds/bpCreateCSR:201 common/lib/cmds/scepPKIOperation:318
+#: common/lib/cmds/addCRR:58 common/lib/cmds/genCRL:82
+#: common/lib/cmds/approveCRR:70 common/lib/cmds/pkcs10_req:320
+msgid "INSERT"
+msgstr ""
+
+
+#: common/lib/cmds/submit_revreq:125 common/lib/cmds/approveCRRnotSigned:52
+#: common/lib/cmds/approveCRRnotSigned:53
+#: common/lib/cmds/approveCRRnotSigned:54
+#: common/lib/cmds/approveCRRnotSigned:63
+#: common/lib/cmds/approveCRRnotSigned:64 common/lib/cmds/changeCRR:155
+#: common/lib/cmds/changeCSR:190 common/lib/cmds/deleteCRR:30
+#: common/lib/cmds/deleteCRR:50 common/lib/cmds/deleteCSR:25
+#: common/lib/cmds/bpApproveRenewedCSR:254 common/lib/cmds/approveCRR:67
+#: common/lib/cmds/approveCRR:68 common/lib/cmds/approveCRR:69
+#: common/lib/cmds/approveCRR:78 common/lib/cmds/approveCRR:79
+#: common/lib/cmds/approveCSR:80 common/lib/cmds/bpApprovePendingCSR:269
+#: common/lib/cmds/approveCSRnotSigned:65
+msgid "NEWTYPE"
+msgstr ""
+
+#: common/lib/cmds/submit_revreq:126
+msgid ""
+"SECURITY ALERT BY PKI: database failed during an update of the certificate "
+"state for a correct CRR which follows\n"
+msgstr ""#: common/lib/cmds/submit_revreq:135 common/lib/cmds/listReqs:259
+#: common/lib/cmds/listReqs:350 common/lib/cmds/listReqs:369
+#: common/lib/cmds/show_rights:58 common/lib/cmds/approveCRRnotSigned:75
+#: common/lib/cmds/show_modules:25 common/lib/cmds/lists:178
+#: common/lib/cmds/lists:189 common/lib/cmds/getStaticPage:32
+#: common/lib/cmds/getStaticPage:34 common/lib/cmds/getStaticPage:36
+#: common/lib/cmds/getStaticPage:38 common/lib/cmds/getStaticPage:40
+#: common/lib/cmds/getStaticPage:81 common/lib/cmds/getStaticPage:83
+#: common/lib/cmds/getStaticPage:85 common/lib/cmds/getStaticPage:87
+#: common/lib/cmds/getStaticPage:89 common/lib/cmds/getStaticPage:93
+#: common/lib/cmds/getStaticPage:95 common/lib/cmds/getStaticPage:97
+#: common/lib/cmds/getStaticPage:101 common/lib/cmds/getStaticPage:103
+#: common/lib/cmds/getStaticPage:105 common/lib/cmds/getStaticPage:107
+#: common/lib/cmds/getStaticPage:109 common/lib/cmds/getStaticPage:113
+#: common/lib/cmds/getStaticPage:115 common/lib/cmds/getStaticPage:117
+#: common/lib/cmds/getStaticPage:126 common/lib/cmds/getStaticPage:130
+#: common/lib/cmds/getStaticPage:132 common/lib/cmds/getStaticPage:134
+#: common/lib/cmds/getStaticPage:143 common/lib/cmds/getStaticPage:147
+#: common/lib/cmds/getStaticPage:151 common/lib/cmds/getStaticPage:156
+#: common/lib/cmds/getStaticPage:160 common/lib/cmds/getStaticPage:162
+#: common/lib/cmds/getStaticPage:166 common/lib/cmds/getStaticPage:168
+#: common/lib/cmds/getStaticPage:177 common/lib/cmds/getStaticPage:180
+#: common/lib/cmds/getStaticPage:183 common/lib/cmds/getStaticPage:186
+#: common/lib/cmds/getStaticPage:195 common/lib/cmds/getStaticPage:198
+#: common/lib/cmds/getStaticPage:201 common/lib/cmds/getStaticPage:204
+#: common/lib/cmds/getStaticPage:213 common/lib/cmds/getStaticPage:217
+#: common/lib/cmds/getStaticPage:226 common/lib/cmds/getStaticPage:231
+#: common/lib/cmds/getStaticPage:236 common/lib/cmds/getStaticPage:245
+#: common/lib/cmds/getStaticPage:250 common/lib/cmds/getStaticPage:255
+#: common/lib/cmds/getStaticPage:260 common/lib/cmds/getStaticPage:265
+#: common/lib/cmds/getStaticPage:270 common/lib/cmds/addCRR:17
+#: common/lib/cmds/show_roles:28 common/lib/cmds/listCerts:80
+#: common/lib/cmds/viewCRL:75 common/lib/cmds/approveCRR:89
+#: common/lib/cmds/bpViewUser:157 common/lib/cmds/bpListUser:45
+#: common/lib/cmds/bpListUser:53 common/lib/cmds/viewCert:359
+#: common/lib/cmds/viewCert:361 common/lib/cmds/pkcs10_req:330
+msgid "</a>"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_right:25
+msgid "delete_right"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_right:28
+msgid "new_right"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:15 common/lib/cmds/basic_csr:210
+#: common/lib/cmds/basic_csr:214 common/lib/cmds/basic_csr:369
+#: common/lib/cmds/basic_csr:747 common/lib/cmds/basic_csr:749
+#: common/lib/cmds/changePasswd:20 common/lib/cmds/pkcs10_req:102
+#: common/lib/cmds/pkcs10_req:186 common/lib/cmds/pkcs10_req:378
+msgid "passwd2"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:16 common/lib/cmds/changePasswd:21
+msgid "passwd3"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:22
+msgid "setPasswd"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:30 common/lib/cmds/changePasswd:34
+msgid "<input type=password name=\"passwd2\" value=\"\" size=16 minlength=8>"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:32 common/lib/cmds/changePasswd:36
+msgid "<input type=password name=\"passwd3\" value=\"\" size=16 minlength=8>"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:34 common/lib/cmds/editCRR:18
+#: common/lib/cmds/add_role:18 common/lib/cmds/raList:15
+#: common/lib/cmds/search_rights:59 common/lib/cmds/viewCRL:44
+#: common/lib/cmds/viewCRL:49 common/lib/cmds/viewCRR:232
+#: common/lib/cmds/viewCRR:282 common/lib/cmds/viewCSR:441
+#: common/lib/cmds/viewCSR:509 common/lib/cmds/removeKey:34
+#: common/lib/cmds/pkcs10_req:23 common/lib/cmds/pkcs10_req:176
+msgid "<input type=\"submit\" value=\""
+msgstr ""
+
+#: common/lib/cmds/setPasswd:35 common/lib/cmds/removeKey:35
+msgid "<input type=\"submit\" name=\"cancel\" value=\""
+msgstr ""
+
+#: common/lib/cmds/setPasswd:36 common/lib/cmds/removeKey:36
+msgid "\" onClick=\"this.form.cmd.value='viewCSR';\">"
+msgstr ""
+#: common/lib/cmds/setPasswd:48 common/lib/cmds/changePasswd:48#: common/lib/cmds/setPasswd:60 common/lib/cmds/deletePasswd:23
+msgid "PASSWD_"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:66 common/lib/cmds/deletePasswd:26
+msgid "SHA1_PASSWD_"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:71 common/lib/cmds/setPasswd:74
+#: common/lib/cmds/addCRR:65 common/lib/cmds/changePasswd:87
+#: common/lib/cmds/changePasswd:90 common/lib/cmds/deletePasswd:31
+#: common/lib/cmds/deletePasswd:34 common/lib/cmds/removeKey:64
+#: common/lib/cmds/updateSearchAttributes:24
+msgid "UPDATE"
+msgstr ""
+
+#: common/lib/cmds/setPasswd:76 common/lib/cmds/listReqs:211
+#: common/lib/cmds/basic_csr:34 common/lib/cmds/basic_csr:484
+#: common/lib/cmds/editCSR:282 common/lib/cmds/bpCreateCSR:148
+#: common/lib/cmds/bpCreateKey:138 common/lib/cmds/bpCreateKey:141
+#: common/lib/cmds/changePasswd:92 common/lib/cmds/search:95
+#: common/lib/cmds/viewCSR:164 common/lib/cmds/deletePasswd:36
+#: common/lib/cmds/removeKey:66 common/lib/cmds/pkcs10_req:76
+msgid "<br>"
+msgstr ""
+#: common/lib/cmds/warnExpiring:14 common/lib/cmds/bpCreatePIN:98
+#: common/lib/cmds/bpCreatePIN:99 common/lib/cmds/bpBackupKey:155
+#: common/lib/cmds/bpBackupKey:156
+msgid "SERVICE_MAIL_ACCOUNT"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:15
+msgid "WARN_EXPIRING_MSG"
+msgstr ""
+#: common/lib/cmds/warnExpiring:16
+msgid "WARN_EXPIRING_DAYS"
+msgstr ""
+#: common/lib/cmds/warnExpiring:57
+#, perl-format
+msgid "Parsed expire date %d-%d-%d %d:%d<br>\n"
+msgstr ""
+#: common/lib/cmds/warnExpiring:63
+msgid "<font color=#888888>"
+msgstr ""
+#: common/lib/cmds/warnExpiring:66 common/lib/cmds/warnExpiring:72#: common/lib/cmds/warnExpiring:67 common/lib/cmds/warnExpiring:73
+#: common/lib/cmds/warnExpiring:98 common/lib/cmds/warnExpiring:104
+#: common/lib/cmds/lists:200 common/lib/cmds/genCRLfromFile:100
+#: common/lib/cmds/genCRLfromFile:179 common/lib/cmds/stopDaemon:18
+msgid "</font>"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:69 common/lib/cmds/warnExpiring:100
+#: common/lib/cmds/lists:199 common/lib/cmds/genCRLfromFile:97
+#: common/lib/cmds/genCRLfromFile:179 common/lib/cmds/stopDaemon:16
+msgid "<font color=#ff0000>"
+msgstr ""
+#: common/lib/cmds/warnExpiring:77#: common/lib/cmds/warnExpiring:78#: common/lib/cmds/warnExpiring:79#: common/lib/cmds/warnExpiring:80#: common/lib/cmds/warnExpiring:82 common/lib/cmds/sendMail:60
+msgid " <"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:82
+msgid ">"
+msgstr ""
+#: common/lib/cmds/warnExpiring:85 common/lib/cmds/pkcs10_req:31
+msgid "TEXT"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:86
+msgid "Encoding"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:86
+msgid "8bit"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:87
+msgid "Data"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:89
+msgid "content-type.charset"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:89
+msgid "ISO-8859-1"
+msgstr ""
+
+#: common/lib/cmds/warnExpiring:94
+msgid "<font color=#00ff00>"
+msgstr ""
+#: common/lib/cmds/listReqs:11 common/lib/cmds/crlList:19
+#: common/lib/cmds/lists:21 common/lib/cmds/listCerts:18
+#: common/lib/cmds/search:18
+msgid "viewFrom"
+msgstr ""
+
+#: common/lib/cmds/listReqs:127 common/lib/cmds/lists:102
+msgid "maxReturnedItems"
+msgstr ""
+
+#: common/lib/cmds/listReqs:131 common/lib/cmds/listReqs:155
+#: common/lib/cmds/listReqs:163 common/lib/cmds/basic_csr:188
+#: common/lib/cmds/basic_csr:285 common/lib/cmds/basic_csr:346
+#: common/lib/cmds/basic_csr:395 common/lib/cmds/basic_csr:560
+#: common/lib/cmds/bpCreateCSR:177 common/lib/cmds/raList:27
+#: common/lib/cmds/viewCSR:313 common/lib/cmds/pkcs10_req:45
+#: common/lib/cmds/pkcs10_req:182 common/lib/cmds/pkcs10_req:191
+#: common/lib/cmds/pkcs10_req:297
+msgid "ra"
+msgstr ""
+
+#: common/lib/cmds/listReqs:132 common/lib/cmds/listReqs:147
+#: common/lib/cmds/listReqs:164 common/lib/cmds/listReqs:202
+#: common/lib/cmds/basic_csr:26 common/lib/cmds/basic_csr:152
+#: common/lib/cmds/basic_csr:291 common/lib/cmds/basic_csr:337
+#: common/lib/cmds/basic_csr:401 common/lib/cmds/editCSR:272
+#: common/lib/cmds/raList:44 common/lib/cmds/raList:54
+#: common/lib/cmds/viewCSR:155 common/lib/cmds/pkcs10_req:67
+#: common/lib/cmds/pkcs10_req:84 common/lib/cmds/pkcs10_req:184
+#: common/lib/cmds/pkcs10_req:195 common/lib/cmds/pkcs10_req:254
+msgid "loa"
+msgstr ""
+
+#: common/lib/cmds/listReqs:140 common/lib/cmds/listReqs:146
+#: common/lib/cmds/listReqs:154 common/lib/cmds/listReqs:162
+#: common/lib/cmds/crlList:42 common/lib/cmds/lists:108
+#: common/lib/cmds/listCerts:45
+msgid "ITEMS"
+msgstr ""
+
+#: common/lib/cmds/listReqs:140 common/lib/cmds/listReqs:146
+#: common/lib/cmds/listReqs:154 common/lib/cmds/listReqs:162
+#: common/lib/cmds/crlList:42 common/lib/cmds/lists:108
+#: common/lib/cmds/bpCreatePIN:99 common/lib/cmds/bpBackupKey:156
+#: common/lib/cmds/listCerts:45
+msgid "FROM"
+msgstr ""
+
+#: common/lib/cmds/listReqs:147 common/lib/cmds/listReqs:164
+#: common/lib/cmds/editCSR:295 common/lib/cmds/editCSR:393
+#: common/lib/cmds/changeCSR:26 common/lib/cmds/viewCSR:370
+msgid "LOA"
+msgstr ""
+
+#: common/lib/cmds/listReqs:155 common/lib/cmds/listReqs:163
+msgid "RA"
+msgstr ""
+
+#: common/lib/cmds/listReqs:169 common/lib/cmds/listReqs:179
+#: common/lib/cmds/crlList:47 common/lib/cmds/crlList:57
+#: common/lib/cmds/lists:112 common/lib/cmds/lists:122
+#: common/lib/cmds/listCerts:48 common/lib/cmds/listCerts:58
+#: common/lib/cmds/search:105
+msgid "ELEMENTS"
+msgstr ""
+
+#: common/lib/cmds/listReqs:170 common/lib/cmds/listReqs:180
+#: common/lib/cmds/crlList:48 common/lib/cmds/crlList:58
+#: common/lib/cmds/lists:113 common/lib/cmds/lists:123
+#: common/lib/cmds/listCerts:49 common/lib/cmds/listCerts:59
+#: common/lib/cmds/search:105
+msgid "MAXITEMS"
+msgstr ""
+
+#: common/lib/cmds/listReqs:171 common/lib/cmds/listReqs:181
+#: common/lib/cmds/crlList:49 common/lib/cmds/crlList:59
+#: common/lib/cmds/lists:114 common/lib/cmds/lists:124
+#: common/lib/cmds/listCerts:50 common/lib/cmds/listCerts:60
+msgid "FACTOR"
+msgstr ""
+
+#: common/lib/cmds/listReqs:172 common/lib/cmds/listReqs:182
+#: common/lib/cmds/crlList:50 common/lib/cmds/crlList:60
+#: common/lib/cmds/lists:115 common/lib/cmds/lists:125
+#: common/lib/cmds/listCerts:51 common/lib/cmds/listCerts:61
+msgid "EXP"
+msgstr ""
+
+#: common/lib/cmds/listReqs:173 common/lib/cmds/listReqs:183
+#: common/lib/cmds/crlList:51 common/lib/cmds/crlList:61
+#: common/lib/cmds/lists:116 common/lib/cmds/lists:126
+#: common/lib/cmds/listCerts:52 common/lib/cmds/listCerts:62
+msgid "NOW_FIRST"
+msgstr ""
+
+#: common/lib/cmds/listReqs:174 common/lib/cmds/listReqs:184
+#: common/lib/cmds/crlList:52 common/lib/cmds/crlList:62
+#: common/lib/cmds/lists:117 common/lib/cmds/lists:127
+#: common/lib/cmds/listCerts:53 common/lib/cmds/listCerts:63
+msgid "NOW_LAST"
+msgstr ""
+
+#: common/lib/cmds/listReqs:175 common/lib/cmds/listReqs:185
+#: common/lib/cmds/crlList:53 common/lib/cmds/crlList:63
+#: common/lib/cmds/lists:118 common/lib/cmds/lists:128
+#: common/lib/cmds/listCerts:54 common/lib/cmds/listCerts:64
+msgid "FIRST"
+msgstr ""
+
+#: common/lib/cmds/listReqs:176 common/lib/cmds/listReqs:186
+#: common/lib/cmds/crlList:54 common/lib/cmds/crlList:64
+#: common/lib/cmds/lists:119 common/lib/cmds/lists:129
+#: common/lib/cmds/listCerts:55 common/lib/cmds/listCerts:65
+msgid "LAST"
+msgstr ""
+
+#: common/lib/cmds/listReqs:190 common/lib/cmds/basic_csr:17
+#: common/lib/cmds/editCSR:261 common/lib/cmds/changeCSR:21
+#: common/lib/cmds/raList:33 common/lib/cmds/viewCSR:47
+#: common/lib/cmds/pkcs10_req:56
+msgid "USE_LOAS"
+msgstr ""
+
+#: common/lib/cmds/listReqs:195 common/lib/cmds/basic_csr:21
+#: common/lib/cmds/editCSR:266 common/lib/cmds/raList:38
+#: common/lib/cmds/viewCSR:148 common/lib/cmds/pkcs10_req:61
+msgid "LOAConfiguration"
+msgstr ""
+
+#: common/lib/cmds/listReqs:206 common/lib/cmds/basic_csr:30
+#: common/lib/cmds/basic_csr:31 common/lib/cmds/editCSR:276
+#: common/lib/cmds/editCSR:277 common/lib/cmds/raList:46
+#: common/lib/cmds/viewCSR:159 common/lib/cmds/pkcs10_req:72
+msgid "level"
+msgstr ""
+
+#: common/lib/cmds/listReqs:236 common/lib/cmds/listReqs:310
+msgid "---"
+msgstr ""
+
+#: common/lib/cmds/listReqs:239 common/lib/cmds/listReqs:286
+#: common/lib/cmds/listReqs:313 common/lib/cmds/listReqs:373
+#: common/lib/cmds/listReqs:380 common/lib/cmds/lists:218
+#: common/lib/cmds/listCerts:83 common/lib/cmds/listCerts:84
+msgid "<CENTER>---</CENTER>"
+msgstr ""
+
+#: common/lib/cmds/listReqs:242 common/lib/cmds/renewCSR:103
+#: common/lib/cmds/changeCSR:195 common/lib/cmds/search:151
+#: common/lib/cmds/viewCSR:225
+msgid "viewCSR"
+msgstr ""
+#: common/lib/cmds/listReqs:243 common/lib/cmds/lists:215
+msgid "class"
+msgstr ""
+
+#: common/lib/cmds/listReqs:243 common/lib/cmds/lists:215
+msgid "list"
+msgstr ""
+
+#: common/lib/cmds/listReqs:243 common/lib/cmds/lists:215
+#: common/lib/cmds/editCRR:48 common/lib/cmds/editCSR:39
+#: common/lib/cmds/editCSR:68 common/lib/cmds/editCSR:83
+#: common/lib/cmds/viewSignature:45 common/lib/cmds/viewSignature:49
+#: common/lib/cmds/viewSignature:96 common/lib/cmds/viewSignature:105
+#: common/lib/cmds/search:115 common/lib/cmds/search:133
+#: common/lib/cmds/search:159 common/lib/cmds/viewCRR:126
+#: common/lib/cmds/viewCRR:132 common/lib/cmds/viewCRR:148
+#: common/lib/cmds/viewCSR:227 common/lib/cmds/viewCSR:235
+#: common/lib/cmds/viewCSR:275 common/lib/cmds/viewCSR:290
+msgid "href"
+msgstr ""
+
+#: common/lib/cmds/listReqs:243 common/lib/cmds/editCRR:48
+#: common/lib/cmds/editCSR:39 common/lib/cmds/editCSR:68
+#: common/lib/cmds/editCSR:83 common/lib/cmds/viewSignature:45
+#: common/lib/cmds/viewSignature:49 common/lib/cmds/viewSignature:96
+#: common/lib/cmds/viewSignature:105 common/lib/cmds/search:115
+#: common/lib/cmds/search:133 common/lib/cmds/search:159
+#: common/lib/cmds/viewCRR:126 common/lib/cmds/viewCRR:132
+#: common/lib/cmds/viewCRR:148 common/lib/cmds/viewCSR:227
+#: common/lib/cmds/viewCSR:235 common/lib/cmds/viewCSR:275
+#: common/lib/cmds/viewCSR:290
+msgid "?"
+msgstr ""
+#: common/lib/cmds/listReqs:249#: common/lib/cmds/listReqs:255 common/lib/cmds/listReqs:320
+#: common/lib/cmds/listReqs:346 common/lib/cmds/lists:155
+#: common/lib/cmds/editCRR:73 common/lib/cmds/bpRevokeCertificate:150
+#: common/lib/cmds/bpRevokeCertificate:160 common/lib/cmds/viewSignature:52
+#: common/lib/cmds/viewSignature:80 common/lib/cmds/bpIssueCertificate:67
+#: common/lib/cmds/bpIssueCertificate:79 common/lib/cmds/verifySignature:55
+#: common/lib/cmds/verifySignature:76 common/lib/cmds/viewCRR:160
+msgid "SIGNATURE"
+msgstr ""#: common/lib/cmds/listReqs:395 common/lib/cmds/show_rights:75
+#: common/lib/cmds/crlList:92 common/lib/cmds/show_modules:32
+#: common/lib/cmds/lists:228 common/lib/cmds/getStaticPage:397
+#: common/lib/cmds/show_roles:33 common/lib/cmds/serverInfo:35
+#: common/lib/cmds/listCerts:92 common/lib/cmds/search:169
+#: common/lib/cmds/bpListUser:61
+msgid "ITEM_LIST"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:12 common/lib/cmds/basic_csr:648
+#: common/lib/cmds/pkcs10_req:11
+msgid "minpinlength"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:14 common/lib/cmds/basic_csr:264
+#: common/lib/cmds/basic_csr:357 common/lib/cmds/setupInitialCert:17
+msgid "CSR_TYPE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:47 common/lib/cmds/basic_csr:53
+#: common/lib/cmds/basic_csr:54 common/lib/cmds/basic_csr:60
+#: common/lib/cmds/basic_csr:62 common/lib/cmds/basic_csr:65
+#: common/lib/cmds/basic_csr:87 common/lib/cmds/basic_csr:96
+#: common/lib/cmds/basic_csr:100 common/lib/cmds/basic_csr:296
+#: common/lib/cmds/basic_csr:301 common/lib/cmds/basic_csr:311
+#: common/lib/cmds/basic_csr:351 common/lib/cmds/basic_csr:358
+#: common/lib/cmds/basic_csr:411 common/lib/cmds/basic_csr:413
+#: common/lib/cmds/basic_csr:418 common/lib/cmds/basic_csr:431
+#: common/lib/cmds/basic_csr:433 common/lib/cmds/basic_csr:435
+#: common/lib/cmds/basic_csr:455 common/lib/cmds/basic_csr:520
+#: common/lib/cmds/basic_csr:521 common/lib/cmds/basic_csr:524
+#: common/lib/cmds/basic_csr:569 common/lib/cmds/basic_csr:583
+#: common/lib/cmds/basic_csr:676 common/lib/cmds/basic_csr:680
+#: common/lib/cmds/basic_csr:690 common/lib/cmds/basic_csr:698
+#: common/lib/cmds/basic_csr:779 common/lib/cmds/basic_csr:792
+#: common/lib/cmds/basic_csr:794 common/lib/cmds/basic_csr:796
+#: common/lib/cmds/basic_csr:812 common/lib/cmds/basic_csr:814
+#: common/lib/cmds/basic_csr:816 common/lib/cmds/basic_csr:821
+msgid "DN_TYPE_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:47 common/lib/cmds/basic_csr:296
+#: common/lib/cmds/basic_csr:418 common/lib/cmds/basic_csr:676
+#: common/lib/cmds/basic_csr:779 common/lib/cmds/basic_csr:821
+msgid "_ELEMENTS"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:53 common/lib/cmds/basic_csr:54
+#: common/lib/cmds/basic_csr:60 common/lib/cmds/basic_csr:62
+#: common/lib/cmds/basic_csr:65 common/lib/cmds/basic_csr:87
+#: common/lib/cmds/basic_csr:96 common/lib/cmds/basic_csr:100
+#: common/lib/cmds/basic_csr:311 common/lib/cmds/basic_csr:680
+#: common/lib/cmds/basic_csr:690 common/lib/cmds/basic_csr:698
+msgid "_ELEMENT_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:53 common/lib/cmds/basic_csr:54
+msgid "_SELECT"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:56 common/lib/cmds/basic_csr:76
+#: common/lib/cmds/basic_csr:82 common/lib/cmds/basic_csr:91
+#: common/lib/cmds/basic_csr:134 common/lib/cmds/basic_csr:150
+#: common/lib/cmds/basic_csr:186 common/lib/cmds/basic_csr:193
+#: common/lib/cmds/basic_csr:199 common/lib/cmds/basic_csr:208
+#: common/lib/cmds/basic_csr:217 common/lib/cmds/basic_csr:685
+#: common/lib/cmds/basic_csr:693 common/lib/cmds/basic_csr:722
+#: common/lib/cmds/basic_csr:735 common/lib/cmds/editCRR:59
+#: common/lib/cmds/editCSR:134 common/lib/cmds/editCSR:139
+#: common/lib/cmds/editCSR:153 common/lib/cmds/editCSR:159
+#: common/lib/cmds/editCSR:169 common/lib/cmds/editCSR:175
+#: common/lib/cmds/editCSR:215 common/lib/cmds/editCSR:221
+#: common/lib/cmds/editCSR:233 common/lib/cmds/editCSR:238
+#: common/lib/cmds/editCSR:250 common/lib/cmds/editCSR:293
+#: common/lib/cmds/editCSR:355 common/lib/cmds/bpRevokeCertificate:27
+#: common/lib/cmds/bpRevokeCertificate:33 common/lib/cmds/raList:25
+#: common/lib/cmds/raList:52 common/lib/cmds/bpApproveRenewedCSR:24
+#: common/lib/cmds/bpApproveRenewedCSR:32
+#: common/lib/cmds/bpIssueCertificate:181
+#: common/lib/cmds/bpIssueCertificate:187
+#: common/lib/cmds/bpApprovePendingCSR:25
+#: common/lib/cmds/bpApprovePendingCSR:33 common/lib/cmds/pkcs10_req:31
+#: common/lib/cmds/pkcs10_req:43 common/lib/cmds/pkcs10_req:49
+#: common/lib/cmds/pkcs10_req:82 common/lib/cmds/pkcs10_req:92
+#: common/lib/cmds/pkcs10_req:100 common/lib/cmds/pkcs10_req:131
+msgid "regx"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:56 common/lib/cmds/basic_csr:76
+#: common/lib/cmds/editCSR:134 common/lib/cmds/editCSR:153
+#: common/lib/cmds/editCSR:169 common/lib/cmds/editCSR:215
+#: common/lib/cmds/editCSR:233
+msgid "MIXED"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:57 common/lib/cmds/basic_csr:77
+#: common/lib/cmds/basic_csr:83 common/lib/cmds/basic_csr:92
+#: common/lib/cmds/basic_csr:135 common/lib/cmds/basic_csr:151
+#: common/lib/cmds/basic_csr:187 common/lib/cmds/basic_csr:194
+#: common/lib/cmds/basic_csr:200 common/lib/cmds/basic_csr:209
+#: common/lib/cmds/basic_csr:218 common/lib/cmds/basic_csr:686
+#: common/lib/cmds/basic_csr:694 common/lib/cmds/basic_csr:723
+#: common/lib/cmds/basic_csr:736 common/lib/cmds/editCRR:60
+#: common/lib/cmds/editCSR:135 common/lib/cmds/editCSR:140
+#: common/lib/cmds/editCSR:154 common/lib/cmds/editCSR:160
+#: common/lib/cmds/editCSR:170 common/lib/cmds/editCSR:176
+#: common/lib/cmds/editCSR:216 common/lib/cmds/editCSR:222
+#: common/lib/cmds/editCSR:234 common/lib/cmds/editCSR:239
+#: common/lib/cmds/editCSR:251 common/lib/cmds/editCSR:294
+#: common/lib/cmds/editCSR:356 common/lib/cmds/bpRevokeCertificate:28
+#: common/lib/cmds/bpRevokeCertificate:34 common/lib/cmds/raList:26
+#: common/lib/cmds/raList:53 common/lib/cmds/bpApproveRenewedCSR:25
+#: common/lib/cmds/bpApproveRenewedCSR:33
+#: common/lib/cmds/bpIssueCertificate:182
+#: common/lib/cmds/bpIssueCertificate:188
+#: common/lib/cmds/bpApprovePendingCSR:26
+#: common/lib/cmds/bpApprovePendingCSR:34 common/lib/cmds/pkcs10_req:32
+#: common/lib/cmds/pkcs10_req:44 common/lib/cmds/pkcs10_req:50
+#: common/lib/cmds/pkcs10_req:83 common/lib/cmds/pkcs10_req:93
+#: common/lib/cmds/pkcs10_req:101 common/lib/cmds/pkcs10_req:132
+msgid "intype"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:57 common/lib/cmds/basic_csr:77
+#: common/lib/cmds/basic_csr:151 common/lib/cmds/basic_csr:187
+#: common/lib/cmds/basic_csr:194 common/lib/cmds/basic_csr:218
+#: common/lib/cmds/editCSR:135 common/lib/cmds/editCSR:154
+#: common/lib/cmds/editCSR:170 common/lib/cmds/editCSR:216
+#: common/lib/cmds/editCSR:234 common/lib/cmds/editCSR:251
+#: common/lib/cmds/editCSR:294 common/lib/cmds/bpRevokeCertificate:28
+#: common/lib/cmds/bpRevokeCertificate:34 common/lib/cmds/raList:26
+#: common/lib/cmds/raList:53 common/lib/cmds/bpApproveRenewedCSR:33
+#: common/lib/cmds/bpIssueCertificate:182
+#: common/lib/cmds/bpIssueCertificate:188
+#: common/lib/cmds/bpApprovePendingCSR:34 common/lib/cmds/pkcs10_req:44
+#: common/lib/cmds/pkcs10_req:50 common/lib/cmds/pkcs10_req:83
+msgid "popup_menu"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:58 common/lib/cmds/basic_csr:78
+#: common/lib/cmds/basic_csr:85 common/lib/cmds/basic_csr:88
+#: common/lib/cmds/basic_csr:94 common/lib/cmds/basic_csr:97
+#: common/lib/cmds/basic_csr:310 common/lib/cmds/basic_csr:312
+#: common/lib/cmds/basic_csr:422 common/lib/cmds/basic_csr:681
+#: common/lib/cmds/basic_csr:688 common/lib/cmds/basic_csr:696
+#: common/lib/cmds/basic_csr:783 common/lib/cmds/basic_csr:825
+msgid "DN_VALUE_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:59 common/lib/cmds/basic_csr:79
+#: common/lib/cmds/basic_csr:88 common/lib/cmds/basic_csr:97
+#: common/lib/cmds/basic_csr:205 common/lib/cmds/basic_csr:214
+#: common/lib/cmds/editCSR:38 common/lib/cmds/editCSR:66
+#: common/lib/cmds/editCSR:163 common/lib/cmds/editCSR:179
+#: common/lib/cmds/editCSR:225 common/lib/cmds/send_cert_key:30
+#: common/lib/cmds/send_cert_key:34 common/lib/cmds/changeCSR:193
+#: common/lib/cmds/viewSignature:44 common/lib/cmds/viewSignature:48
+#: common/lib/cmds/viewSignature:104 common/lib/cmds/bpApproveRenewedCSR:30
+#: common/lib/cmds/search:22 common/lib/cmds/viewCRR:125
+#: common/lib/cmds/viewCRR:131 common/lib/cmds/viewCSR:234
+#: common/lib/cmds/viewCSR:273 common/lib/cmds/bpApprovePendingCSR:31
+#: common/lib/cmds/setupInitialCert:17 common/lib/cmds/setupInitialCert:19
+#: common/lib/cmds/setupInitialCert:20 common/lib/cmds/setupInitialCert:22
+#: common/lib/cmds/setupInitialCert:23 common/lib/cmds/setupInitialCert:25
+#: common/lib/cmds/setupInitialCert:26 common/lib/cmds/pkcs10_req:166
+msgid "value"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:60 common/lib/cmds/basic_csr:62
+msgid "_XML_FILE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:65
+msgid "_XML_PATH"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:82 common/lib/cmds/basic_csr:685
+#: common/lib/cmds/editCSR:66 common/lib/cmds/viewSignature:48
+#: common/lib/cmds/viewSignature:103 common/lib/cmds/viewCRR:131
+#: common/lib/cmds/viewCSR:273
+msgid "EMAIL"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:83 common/lib/cmds/basic_csr:92
+#: common/lib/cmds/basic_csr:135 common/lib/cmds/basic_csr:686
+#: common/lib/cmds/basic_csr:694 common/lib/cmds/basic_csr:723
+#: common/lib/cmds/editCSR:140 common/lib/cmds/editCSR:160
+#: common/lib/cmds/editCSR:176 common/lib/cmds/editCSR:222
+#: common/lib/cmds/editCSR:239 common/lib/cmds/editCSR:356
+#: common/lib/cmds/bpApproveRenewedCSR:25
+#: common/lib/cmds/bpApprovePendingCSR:26 common/lib/cmds/pkcs10_req:132
+msgid "textfield"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:84 common/lib/cmds/basic_csr:93
+#: common/lib/cmds/basic_csr:136 common/lib/cmds/basic_csr:203
+#: common/lib/cmds/basic_csr:212 common/lib/cmds/basic_csr:687
+#: common/lib/cmds/basic_csr:695 common/lib/cmds/basic_csr:724
+#: common/lib/cmds/basic_csr:739 common/lib/cmds/editCSR:141
+#: common/lib/cmds/editCSR:161 common/lib/cmds/editCSR:177
+#: common/lib/cmds/editCSR:223 common/lib/cmds/editCSR:240
+#: common/lib/cmds/editCSR:357 common/lib/cmds/bpApproveRenewedCSR:26
+#: common/lib/cmds/bpApprovePendingCSR:27 common/lib/cmds/pkcs10_req:34
+#: common/lib/cmds/pkcs10_req:95 common/lib/cmds/pkcs10_req:103
+#: common/lib/cmds/pkcs10_req:133
+msgid "size"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:86 common/lib/cmds/basic_csr:95
+#: common/lib/cmds/basic_csr:138 common/lib/cmds/basic_csr:202
+#: common/lib/cmds/basic_csr:211 common/lib/cmds/basic_csr:689
+#: common/lib/cmds/basic_csr:697 common/lib/cmds/basic_csr:726
+#: common/lib/cmds/basic_csr:738 common/lib/cmds/editCSR:359
+#: common/lib/cmds/bpApproveRenewedCSR:28
+#: common/lib/cmds/bpApprovePendingCSR:29 common/lib/cmds/pkcs10_req:135
+msgid "check"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:86 common/lib/cmds/basic_csr:95
+#: common/lib/cmds/basic_csr:138 common/lib/cmds/basic_csr:211
+#: common/lib/cmds/basic_csr:689 common/lib/cmds/basic_csr:697
+#: common/lib/cmds/basic_csr:726 common/lib/cmds/editCSR:359
+#: common/lib/cmds/bpApproveRenewedCSR:28
+#: common/lib/cmds/bpApprovePendingCSR:29 common/lib/cmds/pkcs10_req:135
+msgid "fill"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:87 common/lib/cmds/basic_csr:96
+#: common/lib/cmds/basic_csr:204 common/lib/cmds/basic_csr:213
+#: common/lib/cmds/basic_csr:690 common/lib/cmds/basic_csr:698
+#: common/lib/cmds/basic_csr:727 common/lib/cmds/basic_csr:740
+#: common/lib/cmds/bpApproveRenewedCSR:29
+#: common/lib/cmds/bpApprovePendingCSR:30 common/lib/cmds/pkcs10_req:96
+#: common/lib/cmds/pkcs10_req:104
+msgid "minlen"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:87 common/lib/cmds/basic_csr:96
+#: common/lib/cmds/basic_csr:690 common/lib/cmds/basic_csr:698
+msgid "_MINIMUM_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:91 common/lib/cmds/basic_csr:126
+#: common/lib/cmds/basic_csr:693 common/lib/cmds/basic_csr:714
+#: common/lib/cmds/editCSR:139 common/lib/cmds/editCSR:159
+#: common/lib/cmds/editCSR:175 common/lib/cmds/editCSR:221
+#: common/lib/cmds/editCSR:238 common/lib/cmds/editCSR:345
+msgid "LATIN1_LETTERS"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:108 common/lib/cmds/basic_csr:315
+#: common/lib/cmds/basic_csr:576 common/lib/cmds/basic_csr:704
+#: common/lib/cmds/editCSR:327 common/lib/cmds/changeCSR:133
+#: common/lib/cmds/viewCSR:408 common/lib/cmds/pkcs10_req:106
+#: common/lib/cmds/pkcs10_req:207 common/lib/cmds/pkcs10_req:292
+msgid "ADDITIONAL_REQUEST_ATTRIBUTES"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:109 common/lib/cmds/basic_csr:705
+#: common/lib/cmds/editCSR:328 common/lib/cmds/pkcs10_req:107
+#: common/lib/cmds/pkcs10_req:208
+msgid "ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:110 common/lib/cmds/basic_csr:316
+#: common/lib/cmds/editCSR:329 common/lib/cmds/viewCSR:409
+#: common/lib/cmds/pkcs10_req:108 common/lib/cmds/pkcs10_req:209
+msgid "ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE"
+msgstr ""
+
+
+#: common/lib/cmds/basic_csr:137 common/lib/cmds/basic_csr:139
+#: common/lib/cmds/basic_csr:327 common/lib/cmds/basic_csr:329
+#: common/lib/cmds/basic_csr:579 common/lib/cmds/basic_csr:725
+#: common/lib/cmds/editCSR:358 common/lib/cmds/editCSR:360
+#: common/lib/cmds/editCSR:424 common/lib/cmds/changeCSR:136
+#: common/lib/cmds/viewCSR:423 common/lib/cmds/pkcs10_req:134
+#: common/lib/cmds/pkcs10_req:225 common/lib/cmds/pkcs10_req:227
+#: common/lib/cmds/pkcs10_req:295
+msgid "ADDITIONAL_ATTRIBUTE_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:139 common/lib/cmds/editCRR:64
+#: common/lib/cmds/editCSR:157 common/lib/cmds/editCSR:173
+#: common/lib/cmds/editCSR:219 common/lib/cmds/editCSR:254
+#: common/lib/cmds/editCSR:297 common/lib/cmds/editCSR:360
+#: common/lib/cmds/bpRevokeCertificate:31
+#: common/lib/cmds/bpRevokeCertificate:37 common/lib/cmds/sendCRINMail:32
+#: common/lib/cmds/bpApproveRenewedCSR:36
+#: common/lib/cmds/bpIssueCertificate:185
+#: common/lib/cmds/bpIssueCertificate:191
+#: common/lib/cmds/bpApprovePendingCSR:37 common/lib/cmds/pkcs10_req:33
+msgid "default"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:150 common/lib/cmds/basic_csr:186
+#: common/lib/cmds/basic_csr:193 common/lib/cmds/bpRevokeCertificate:27
+#: common/lib/cmds/bpRevokeCertificate:33
+#: common/lib/cmds/bpApproveRenewedCSR:24
+#: common/lib/cmds/bpApproveRenewedCSR:32
+#: common/lib/cmds/bpIssueCertificate:181
+#: common/lib/cmds/bpIssueCertificate:187
+#: common/lib/cmds/bpApprovePendingCSR:25
+#: common/lib/cmds/bpApprovePendingCSR:33 common/lib/cmds/pkcs10_req:49
+#: common/lib/cmds/pkcs10_req:82
+msgid "LETTERS"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:153 common/lib/cmds/basic_csr:189
+#: common/lib/cmds/basic_csr:196 common/lib/cmds/basic_csr:220
+#: common/lib/cmds/editCSR:137 common/lib/cmds/editCSR:156
+#: common/lib/cmds/editCSR:172 common/lib/cmds/editCSR:218
+#: common/lib/cmds/editCSR:236 common/lib/cmds/editCSR:253
+#: common/lib/cmds/editCSR:296 common/lib/cmds/bpRevokeCertificate:30
+#: common/lib/cmds/bpRevokeCertificate:36 common/lib/cmds/raList:28
+#: common/lib/cmds/raList:55 common/lib/cmds/bpApproveRenewedCSR:35
+#: common/lib/cmds/bpIssueCertificate:184
+#: common/lib/cmds/bpIssueCertificate:190
+#: common/lib/cmds/bpApprovePendingCSR:36 common/lib/cmds/pkcs10_req:46
+#: common/lib/cmds/pkcs10_req:52 common/lib/cmds/pkcs10_req:85
+msgid "values"
+msgstr ""
+#: common/lib/cmds/basic_csr:163 common/lib/cmds/basic_csr:165
+#: common/lib/cmds/editCSR:309 common/lib/cmds/editCSR:311
+msgid "value=\""
+msgstr ""
+
+#: common/lib/cmds/basic_csr:163 common/lib/cmds/basic_csr:165
+#: common/lib/cmds/editCSR:309 common/lib/cmds/editCSR:311
+msgid "\""
+msgstr ""
+#: common/lib/cmds/basic_csr:167 common/lib/cmds/editCSR:313#: common/lib/cmds/basic_csr:181 common/lib/cmds/raList:19
+#: common/lib/cmds/pkcs10_req:38
+msgid "RegistrationAuthority"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:199 common/lib/cmds/basic_csr:208
+#: common/lib/cmds/basic_csr:735 common/lib/cmds/editCRR:59
+#: common/lib/cmds/editCSR:250 common/lib/cmds/editCSR:293
+#: common/lib/cmds/raList:25 common/lib/cmds/raList:52
+#: common/lib/cmds/pkcs10_req:43 common/lib/cmds/pkcs10_req:92
+#: common/lib/cmds/pkcs10_req:100
+msgid "*"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:200 common/lib/cmds/basic_csr:209
+#: common/lib/cmds/basic_csr:736 common/lib/cmds/pkcs10_req:93
+#: common/lib/cmds/pkcs10_req:101
+msgid "password_field"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:201 common/lib/cmds/basic_csr:205
+#: common/lib/cmds/basic_csr:283 common/lib/cmds/basic_csr:368
+#: common/lib/cmds/basic_csr:405 common/lib/cmds/basic_csr:550
+#: common/lib/cmds/basic_csr:732 common/lib/cmds/basic_csr:737
+#: common/lib/cmds/basic_csr:747 common/lib/cmds/basic_csr:749
+#: common/lib/cmds/changePasswd:19 common/lib/cmds/pkcs10_req:94
+#: common/lib/cmds/pkcs10_req:185 common/lib/cmds/pkcs10_req:186
+#: common/lib/cmds/pkcs10_req:282 common/lib/cmds/pkcs10_req:378
+msgid "passwd1"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:202 common/lib/cmds/basic_csr:738
+msgid "all"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:217
+msgid "NUMERIC"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:221
+msgid "Basic_CSR_Keysizes"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:263 common/lib/cmds/basic_csr:267
+msgid "client-filled-form"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:266 common/lib/cmds/basic_csr:366
+msgid "basic_csr"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:267
+msgid "status"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:301 common/lib/cmds/basic_csr:351
+#: common/lib/cmds/basic_csr:358 common/lib/cmds/basic_csr:413
+#: common/lib/cmds/basic_csr:455 common/lib/cmds/basic_csr:521
+#: common/lib/cmds/basic_csr:524
+msgid "_KEYGEN_MODE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:353
+msgid "<KEYGEN NAME=\"newkey\" CHALLENGE=\"NO_CHALLENGE\">"
+msgstr ""
+
+
+
+#: common/lib/cmds/basic_csr:367
+msgid "client-confirmed-form"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:370 common/lib/cmds/basic_csr:459
+#: common/lib/cmds/pkcs10_req:166 common/lib/cmds/pkcs10_req:181
+#: common/lib/cmds/pkcs10_req:245 common/lib/cmds/pkcs10_req:307
+msgid "request"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:375 common/lib/cmds/basic_csr:378
+#: common/lib/cmds/genCAReq:21 common/lib/cmds/viewCRL:37
+#: common/lib/cmds/viewCert:100
+msgid "dn"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:376
+msgid "<input type=button name=cont value=\""
+msgstr ""
+
+#: common/lib/cmds/basic_csr:376
+msgid "\" OnClick=\"GenReq()\">"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:388
+msgid "IE_REQUEST_CERT"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:410 common/lib/cmds/genSKey:16
+msgid "alg"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:411 common/lib/cmds/basic_csr:520
+#: common/lib/cmds/basic_csr:569 common/lib/cmds/basic_csr:583
+msgid "_BODY"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:427 common/lib/cmds/basic_csr:435
+#: common/lib/cmds/basic_csr:579 common/lib/cmds/changeCSR:151
+#: common/lib/cmds/changeCSR:152 common/lib/cmds/viewCSR:129
+#: common/lib/cmds/pkcs10_req:295
+msgid " = "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:431 common/lib/cmds/basic_csr:792
+#: common/lib/cmds/basic_csr:812
+msgid "_BASE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:433 common/lib/cmds/basic_csr:435
+#: common/lib/cmds/basic_csr:794 common/lib/cmds/basic_csr:796
+#: common/lib/cmds/basic_csr:814 common/lib/cmds/basic_csr:816
+msgid "_BASE_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:441
+msgid "newkey"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:443
+msgid "The keygeneration of the browser failed. SPKAC is empty."
+msgstr ""
+#: common/lib/cmds/basic_csr:450 common/lib/cmds/basic_csr:465
+#: common/lib/cmds/basic_csr:491 common/lib/cmds/basic_csr:601
+#: common/lib/cmds/renewCSR:91 common/lib/cmds/send_cert_key_openssl:26
+#: common/lib/cmds/bpCreateCSR:200 common/lib/cmds/changeCSR:181
+#: common/lib/cmds/bpBackupKey:135 common/lib/cmds/send_cert_key_pkcs12:31
+#: common/lib/cmds/scepPKIOperation:317 common/lib/cmds/bpRecoverCert:96
+#: common/lib/cmds/bpRecoverCert:125 common/lib/cmds/scepGetCACert:37
+#: common/lib/cmds/changePasswd:67 common/lib/cmds/bpApproveRenewedCSR:248
+#: common/lib/cmds/bpExportPKCS12:92 common/lib/cmds/approveCSR:66
+#: common/lib/cmds/bpApprovePendingCSR:263
+#: common/lib/cmds/approveCSRnotSigned:60 common/lib/cmds/pkcs10_req:320
+msgid "INFORM"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:450 common/lib/cmds/basic_csr:661
+#: common/lib/cmds/basic_csr:666 common/lib/cmds/renewCSR:78
+#: common/lib/cmds/changeCSR:164
+msgid "SPKAC"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:451 common/lib/cmds/basic_csr:466
+msgid "Error while creating REQ object."
+msgstr ""
+
+#: common/lib/cmds/basic_csr:452 common/lib/cmds/basic_csr:467
+#: common/lib/cmds/basic_csr:604 common/lib/cmds/editCSR:137
+#: common/lib/cmds/editCSR:156 common/lib/cmds/editCSR:172
+#: common/lib/cmds/editCSR:218 common/lib/cmds/editCSR:236
+#: common/lib/cmds/genCRLfromFile:145 common/lib/cmds/genCRLfromFile:146
+msgid " "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:458
+msgid "-----BEGIN CERTIFICATE REQUEST-----\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:460
+msgid "-----END CERTIFICATE REQUEST-----"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:465 common/lib/cmds/basic_csr:491
+#: common/lib/cmds/basic_csr:507 common/lib/cmds/renewCSR:76
+#: common/lib/cmds/send_cert_key_openssl:27 common/lib/cmds/bpCreateCSR:142
+#: common/lib/cmds/changeCSR:162 common/lib/cmds/bpBackupKey:135
+#: common/lib/cmds/send_cert_key_pkcs12:31
+#: common/lib/cmds/scepPKIOperation:317 common/lib/cmds/bpRecoverCert:96
+#: common/lib/cmds/bpRecoverCert:119 common/lib/cmds/bpRecoverCert:125
+#: common/lib/cmds/scepGetCACert:37 common/lib/cmds/changePasswd:67
+#: common/lib/cmds/getcert:89 common/lib/cmds/bpApproveRenewedCSR:244
+#: common/lib/cmds/bpExportPKCS12:92 common/lib/cmds/approveCSR:17
+#: common/lib/cmds/approveCSR:59 common/lib/cmds/bpApprovePendingCSR:259
+#: common/lib/cmds/approveCSRnotSigned:16
+#: common/lib/cmds/approveCSRnotSigned:53
+msgid "PEM"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:472 common/lib/cmds/scepPKIOperation:31
+#: common/lib/cmds/scepPKIOperation:32 common/lib/cmds/scepPKIOperation:33
+#: common/lib/cmds/scepPKIOperation:34 common/lib/cmds/scepGetCACert:21
+#: common/lib/cmds/getcert:19 common/lib/cmds/verifySignature:18
+msgid "tempdir"
+msgstr ""
+#: common/lib/cmds/basic_csr:479 common/lib/cmds/bpCreateKey:131
+#: common/lib/cmds/genSKey:35
+msgid "BITS"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:482 common/lib/cmds/basic_csr:506
+#: common/lib/cmds/bpCreateCSR:141 common/lib/cmds/bpCreateKey:134
+#: common/lib/cmds/send_cert_key_pkcs12:33 common/lib/cmds/bpRecoverCert:98
+#: common/lib/cmds/signConfig:48 common/lib/cmds/signConfig:77
+#: common/lib/cmds/bpApproveRenewedCSR:218 common/lib/cmds/bpExportPKCS12:94
+#: common/lib/cmds/bpApprovePendingCSR:234
+msgid "PASSWD"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:483
+msgid "Cannot create keypair!"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:492 common/lib/cmds/send_cert_key_openssl:26
+#: common/lib/cmds/bpBackupKey:136 common/lib/cmds/bpRecoverCert:117
+#: common/lib/cmds/changePasswd:68
+msgid "PKCS8"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:493 common/lib/cmds/send_cert_key_openssl:28
+#: common/lib/cmds/bpBackupKey:137 common/lib/cmds/bpRecoverCert:127
+#: common/lib/cmds/changePasswd:69
+msgid "INPASSWD"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:494 common/lib/cmds/send_cert_key_openssl:29
+#: common/lib/cmds/bpBackupKey:138 common/lib/cmds/bpRecoverCert:128
+#: common/lib/cmds/changePasswd:70
+msgid "OUTPASSWD"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:497
+msgid "Cannot convert key to PKCS#8!"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:504 common/lib/cmds/bpCreateCSR:139
+#: common/lib/cmds/send_cert_key_pkcs12:30 common/lib/cmds/bpRecoverCert:95
+#: common/lib/cmds/bpExportPKCS12:91
+msgid "KEYFILE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:505 common/lib/cmds/bpCreateCSR:140
+#: common/lib/cmds/bpCreatePIN:100 common/lib/cmds/bpBackupKey:157
+#: common/lib/cmds/genCAReq:52
+msgid "SUBJECT"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:507 common/lib/cmds/bpCreateCSR:142
+msgid "FORMAT"
+msgstr ""
+
+
+#: common/lib/cmds/basic_csr:519 common/lib/cmds/bpCreateCSR:155
+#: common/lib/cmds/scepPKIOperation:278 common/lib/cmds/pkcs10_req:268
+msgid "-----BEGIN HEADER-----\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:523
+msgid "TYPE = SPKAC\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:525
+msgid "TYPE = IE\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:527 common/lib/cmds/bpCreateCSR:156
+#: common/lib/cmds/scepPKIOperation:279 common/lib/cmds/pkcs10_req:269
+msgid "TYPE = PKCS#10\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:530
+msgid "TYPE = HEADER\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:534 common/lib/cmds/search:24
+#: common/lib/cmds/viewCRL:14 common/lib/cmds/confirm_revreq:16
+msgid "CgiServerType"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:535 common/lib/cmds/basic_csr:547
+#: common/lib/cmds/renewCSR:61 common/lib/cmds/bpCreateCSR:174
+#: common/lib/cmds/bpApproveRenewedCSR:195
+#: common/lib/cmds/bpApprovePendingCSR:211
+msgid "SERIAL = "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:540 common/lib/cmds/basic_csr:546
+#: common/lib/cmds/renewCSR:49 common/lib/cmds/renewCSR:55
+#: common/lib/cmds/bpCreateCSR:160 common/lib/cmds/bpCreateCSR:173
+#: common/lib/cmds/changeCRR:92 common/lib/cmds/changeCRR:100
+#: common/lib/cmds/scepPKIOperation:283 common/lib/cmds/scepPKIOperation:293
+#: common/lib/cmds/pkcs10_req:273 common/lib/cmds/pkcs10_req:279
+#: common/lib/cmds/confirm_revreq:144 common/lib/cmds/confirm_revreq:152
+msgid "ModuleShift"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:542 common/lib/cmds/renewCSR:51
+msgid "Database fails during counting the already existing requests!"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:546 common/lib/cmds/renewCSR:55
+#: common/lib/cmds/bpCreateCSR:173 common/lib/cmds/changeCRR:100
+#: common/lib/cmds/scepPKIOperation:293 common/lib/cmds/pkcs10_req:279
+#: common/lib/cmds/confirm_revreq:152
+msgid "ModuleID"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:549 common/lib/cmds/renewCSR:65
+#: common/lib/cmds/bpCreateCSR:175 common/lib/cmds/scepPKIOperation:295
+#: common/lib/cmds/pkcs10_req:281
+msgid "NOTBEFORE = "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:556
+msgid "OpenSSL fails during the calculation of the hash from the passphrase!"
+msgstr ""
+#: common/lib/cmds/basic_csr:560 common/lib/cmds/bpCreateCSR:177
+#: common/lib/cmds/pkcs10_req:297
+msgid "RA = "
+msgstr ""
+#: common/lib/cmds/basic_csr:566#: common/lib/cmds/basic_csr:570#: common/lib/cmds/basic_csr:571
+msgid "KEY_ALGORITHM = "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:572
+msgid "KEY_BITS = "
+msgstr ""
+
+#: common/lib/cmds/basic_csr:582 common/lib/cmds/bpCreateCSR:181
+#: common/lib/cmds/scepPKIOperation:298 common/lib/cmds/pkcs10_req:303
+msgid "-----END HEADER-----\n"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:592
+msgid "Internal Request Error (__ERRVAL__)"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:603 common/lib/cmds/scepPKIOperation:320
+#: common/lib/cmds/pkcs10_req:321
+msgid "Error while storing REQ in database!"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:608 common/lib/cmds/bpImportUpdateUser:18
+#: common/lib/cmds/exportCAReqCert:49 common/lib/cmds/send_cert_key_pkcs12:36
+#: common/lib/cmds/bpImportACL:18 common/lib/cmds/bpImportNewUser:18
+#: common/lib/cmds/bpExportPKCS12:38 common/lib/cmds/bpImportProcessData:20
+#: common/lib/cmds/bpExportPIN:50 common/lib/cmds/bpImportNewProcess:18
+msgid "DIR"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:608 common/lib/cmds/send_cert_key_pkcs12:36
+msgid "FILTER"
+msgstr ""
+#: common/lib/cmds/basic_csr:611 common/lib/cmds/pkcs10_req:325
+msgid "<input TYPE=\"Button\" Name=\"Print\" Value=\""
+msgstr ""
+
+#: common/lib/cmds/basic_csr:611 common/lib/cmds/pkcs10_req:325
+msgid "Print"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:611 common/lib/cmds/pkcs10_req:325
+msgid "\" onClick=\"window.print();\">"
+msgstr ""
+
+
+#: common/lib/cmds/basic_csr:627 common/lib/cmds/pkcs10_req:343
+msgid "Certificate Request Confirm"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:634
+msgid "ERROR: Status Unkown!"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:652
+msgid "DN_TYPES"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:664
+msgid "IE"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:668
+msgid "BASIC"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:680
+msgid "_REQUIRED"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:744
+msgid "<BR>|OK|[ ()]"
+msgstr ""
+
+
+#: common/lib/cmds/basic_csr:756 common/lib/cmds/genCRLfromFile:39
+#: common/lib/cmds/pkcs10_req:356
+msgid "HTTP_REQUEST_METHOD"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:758 common/lib/cmds/pkcs10_req:358
+msgid "This command can only be used with from which are using POST as METHOD!"
+msgstr ""
+#: common/lib/cmds/basic_csr:788 common/lib/cmds/basic_csr:796
+#: common/lib/cmds/basic_csr:816 common/lib/cmds/basic_csr:830
+#: common/lib/cmds/changeCSR:61 common/lib/cmds/viewCSR:188
+#: common/lib/cmds/viewCSR:195 common/lib/cmds/pkcs10_req:410
+#: common/lib/cmds/pkcs10_req:461
+msgid "="
+msgstr ""
+
+#: common/lib/cmds/basic_csr:788 common/lib/cmds/basic_csr:796
+#: common/lib/cmds/basic_csr:816 common/lib/cmds/basic_csr:830
+#: common/lib/cmds/genCAReq:129 common/lib/cmds/genCAReq:131
+#: common/lib/cmds/genCAReq:133 common/lib/cmds/genCAReq:135
+#: common/lib/cmds/genCAReq:137 common/lib/cmds/viewCSR:188
+#: common/lib/cmds/viewCSR:195 common/lib/cmds/genCRLfromFile:61
+msgid ","
+msgstr ""
+
+#: common/lib/cmds/hsmLogout:11
+msgid "Logout from hardware security module"
+msgstr ""
+
+#: common/lib/cmds/hsmLogout:13
+msgid "The logout command is:"
+msgstr ""
+
+#: common/lib/cmds/hsmLogout:14
+msgid "HSM_LOGOUT_CMD"
+msgstr ""
+
+#: common/lib/cmds/show_rights:21 common/lib/cmds/show_rights:22
+#: common/lib/cmds/show_rights:23 common/lib/cmds/show_rights:24
+msgid ".*"
+msgstr ""#: common/lib/cmds/show_rights:58 common/lib/cmds/show_modules:25
+msgid "DELETE"
+msgstr ""
+
+#: common/lib/cmds/show_rights:61 common/lib/cmds/search_rights:39
+#: common/lib/cmds/add_right:36
+msgid "&lt;new user&gt;"
+msgstr ""
+
+#: common/lib/cmds/show_rights:63 common/lib/cmds/search_rights:40
+#: common/lib/cmds/add_right:37
+msgid "&lt;CA itself or any role&gt;"
+msgstr ""
+
+#: common/lib/cmds/show_rights:74
+msgid "Show Rights"
+msgstr ""
+
+#: common/lib/cmds/delete_right:15 common/lib/cmds/new_right:15
+msgid "access_control/acl/permission"
+msgstr ""
+
+
+#: common/lib/cmds/delete_right:33 common/lib/cmds/new_right:40
+msgid "TWIG"
+msgstr ""
+
+#: common/lib/cmds/delete_right:33 common/lib/cmds/new_right:40
+msgid "access_control/acl_config/list"
+msgstr ""
+
+#: common/lib/cmds/delete_right:35 common/lib/cmds/search_rights:61
+#: common/lib/cmds/new_right:42
+msgid "show_rights"
+msgstr ""
+
+#: common/lib/cmds/updateOCSPindexDB:12
+msgid "Try to update OCSP's OpenSSL's index database"
+msgstr ""
+
+#: common/lib/cmds/updateOCSPindexDB:17
+#: common/lib/cmds/rebuildOpenSSLindexDB:45 common/lib/cmds/serverInfo:15
+msgid "DB"
+msgstr ""
+
+#: common/lib/cmds/updateOCSPindexDB:17
+msgid "OCSPindex"
+msgstr ""
+
+#: common/lib/cmds/updateOCSPindexDB:18
+msgid "Update failed."
+msgstr ""
+
+msgid "</FONT>"
+msgstr ""
+
+#: common/lib/cmds/updateOCSPindexDB:20
+msgid "Update succeeded."
+msgstr ""
+
+#: common/lib/cmds/crlList:20
+msgid "viewTo"
+msgstr ""
+
+#: common/lib/cmds/crlList:21 common/lib/cmds/lists:22
+#: common/lib/cmds/editCRR:62 common/lib/cmds/listCerts:19
+#: common/lib/cmds/search:19
+msgid "rows"
+msgstr ""
+
+#: common/lib/cmds/crlList:25 common/lib/cmds/listCerts:25
+#: common/lib/cmds/search:27
+msgid "MaxReturnedItems"
+msgstr ""
+#: common/lib/cmds/crlList:80
+msgid "</a></CENTER>"
+msgstr ""
+#: common/lib/cmds/renewCSR:35 common/lib/cmds/changeCRR:71
+#: common/lib/cmds/changeCSR:123 common/lib/cmds/confirm_revreq:123
+msgid "SSL_CLIENT_CERT_SERIAL"
+msgstr ""
+
+#: common/lib/cmds/renewCSR:35 common/lib/cmds/changeCRR:71
+#: common/lib/cmds/changeCSR:123 common/lib/cmds/deleteCRR:25
+#: common/lib/cmds/revoke_req:15 common/lib/cmds/confirm_revreq:123
+msgid "SSL_CLIENT_M_SERIAL"
+msgstr ""
+
+#: common/lib/cmds/renewCSR:41 common/lib/cmds/editCRR:42
+#: common/lib/cmds/editCRR:45 common/lib/cmds/editCSR:77
+#: common/lib/cmds/editCSR:80 common/lib/cmds/nodeDownloadCRL:27
+#: common/lib/cmds/nodeDownloadAll:24 common/lib/cmds/nodeDownloadAll:25
+#: common/lib/cmds/nodeDownloadAll:26 common/lib/cmds/changeCRR:85
+#: common/lib/cmds/changeCSR:128 common/lib/cmds/nodeDownloadCert:27
+#: common/lib/cmds/sendCRINMail:14 common/lib/cmds/viewSignature:77
+#: common/lib/cmds/viewSignature:89 common/lib/cmds/verifySignature:73
+#: common/lib/cmds/verifySignature:85 common/lib/cmds/viewCRR:142
+#: common/lib/cmds/viewCRR:145 common/lib/cmds/viewCSR:284
+#: common/lib/cmds/viewCSR:287 common/lib/cmds/genCRLfromFile:113
+#: common/lib/cmds/nodeDownloadConfig:31 common/lib/cmds/confirm_revreq:137
+msgid "0"
+msgstr ""
+#: common/lib/cmds/renewCSR:59#: common/lib/cmds/renewCSR:60#: common/lib/cmds/renewCSR:62 common/lib/cmds/bpApproveRenewedCSR:196
+#: common/lib/cmds/bpApprovePendingCSR:212
+msgid "RENEW = "
+msgstr ""
+#: common/lib/cmds/renewCSR:66#: common/lib/cmds/renewCSR:67#: common/lib/cmds/renewCSR:69#: common/lib/cmds/renewCSR:71#: common/lib/cmds/renewCSR:72#: common/lib/cmds/renewCSR:73 common/lib/cmds/changeCRR:58#: common/lib/cmds/approveCRRnotSigned:47 common/lib/cmds/approveCRR:62
+msgid "SECURITY ALERT BY PKI: database failed during loading the certificate "
+msgstr ""
+#: common/lib/cmds/getParams:15 common/lib/cmds/getParams:45
+#: common/lib/cmds/viewCert:95
+msgid "GET_PARAMS_CMD"
+msgstr ""
+
+#: common/lib/cmds/getParams:19 common/lib/cmds/getParams:44
+msgid "GET_PARAMS_STEP"
+msgstr ""
+
+#: common/lib/cmds/getParams:27
+msgid "getParams"
+msgstr ""
+#: common/lib/cmds/getParams:57 common/lib/cmds/getStaticPage:291
+#: common/lib/cmds/getStaticPage:324 common/lib/cmds/getStaticPage:355
+msgid "<input type=reset value=\""
+msgstr ""
+
+#: common/lib/cmds/getParams:57 common/lib/cmds/editCRR:19
+#: common/lib/cmds/getStaticPage:291 common/lib/cmds/getStaticPage:324
+#: common/lib/cmds/getStaticPage:355 common/lib/cmds/pkcs10_req:24
+#: common/lib/cmds/pkcs10_req:177
+msgid "Reset"
+msgstr ""
+
+#: common/lib/cmds/getParams:60
+msgid "Get Additional Parameters"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:11
+#: common/lib/cmds/show_prepared_module:16 common/lib/cmds/bpRecoverCert:29
+#: common/lib/cmds/genMenu:63 common/lib/cmds/genMenu:140
+#: common/lib/cmds/genMenu:149 common/lib/cmds/genMenu:164
+#: common/lib/cmds/delete_module:17 common/lib/cmds/bpRecoverKey:28
+#: common/lib/cmds/bpViewUser:254 common/lib/cmds/new_module:17
+#: common/lib/cmds/new_module:30
+msgid "id"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:12
+#: common/lib/cmds/show_prepared_module:17 common/lib/cmds/new_module:21
+#: common/lib/cmds/new_module:22 common/lib/cmds/new_module:31
+msgid "description"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:20
+msgid "delete_module"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:21
+msgid "DELETE this Module"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:23
+msgid "new_module"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:24
+msgid "Create this Module"
+msgstr ""
+
+#: common/lib/cmds/show_prepared_module:29
+msgid "The prepared module is __MODULE__ (__DESCRIPTION__)."
+msgstr ""
+#: common/lib/cmds/show_prepared_module:31#: common/lib/cmds/show_modules:17 common/lib/cmds/add_module:16
+msgid "Description"
+msgstr ""
+#: common/lib/cmds/show_modules:25
+msgid "&description="
+msgstr ""
+
+#: common/lib/cmds/show_modules:25
+msgid "&next_cmd=delete\">"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:33
+msgid "BP_File_ImportUpdateUser"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:36 common/lib/cmds/bpImportUpdateUser:90
+#: common/lib/cmds/bpImportACL:36 common/lib/cmds/bpImportACL:90
+#: common/lib/cmds/bpRecoverCert:35 common/lib/cmds/getcert:32
+#: common/lib/cmds/signConfig:25 common/lib/cmds/signConfig:27
+#: common/lib/cmds/signConfig:44 common/lib/cmds/signConfig:72
+#: common/lib/cmds/signConfig:73 common/lib/cmds/bpImportNewUser:42
+#: common/lib/cmds/bpImportNewUser:88 common/lib/cmds/bpApproveRenewedCSR:101
+#: common/lib/cmds/bpExportPKCS12:112 common/lib/cmds/new_role:20
+#: common/lib/cmds/new_role:21 common/lib/cmds/new_role:77
+#: common/lib/cmds/new_role:78 common/lib/cmds/bpImportProcessData:112
+#: common/lib/cmds/bpImportProcessData:181 common/lib/cmds/bpRecoverKey:30
+#: common/lib/cmds/genCRLfromFile:133 common/lib/cmds/genCRLfromFile:138
+#: common/lib/cmds/genCRLfromFile:162 common/lib/cmds/bpViewUser:19
+#: common/lib/cmds/bpViewUser:21 common/lib/cmds/bpApprovePendingCSR:103
+#: common/lib/cmds/bpImportNewProcess:50
+#: common/lib/cmds/bpImportNewProcess:110 common/lib/cmds/bpListUser:22
+#: common/lib/cmds/bpListUser:24 common/lib/cmds/bpListUser:50
+msgid "/"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:38 common/lib/cmds/bpImportACL:38
+#: common/lib/cmds/bpImportNewUser:44 common/lib/cmds/bpImportProcessData:114
+#: common/lib/cmds/bpImportNewProcess:52
+msgid "Cannot open file with data for batch processor!"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:79 common/lib/cmds/bpImportUpdateUser:88
+#: common/lib/cmds/bpImportUpdateUser:102
+#: common/lib/cmds/bpImportUpdateUser:111
+#: common/lib/cmds/bpImportUpdateUser:129 common/lib/cmds/bpImportACL:79
+#: common/lib/cmds/bpImportACL:88 common/lib/cmds/bpImportACL:102
+#: common/lib/cmds/bpImportACL:111 common/lib/cmds/bpImportACL:123
+#: common/lib/cmds/bpImportACL:130 common/lib/cmds/bpImportACL:131
+#: common/lib/cmds/genMenu:78 common/lib/cmds/genMenu:91
+#: common/lib/cmds/add_module:14 common/lib/cmds/bpViewUser:11
+#: common/lib/cmds/bpViewUser:42 common/lib/cmds/bpListUser:11
+#: common/lib/cmds/bpListUser:35 common/lib/cmds/bpListUser:44
+#: common/lib/cmds/bpListUser:45 common/lib/cmds/bpListUser:52
+#: common/lib/cmds/bpListUser:53
+msgid "ID"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:81 common/lib/cmds/bpImportACL:81
+#: common/lib/cmds/bpImportNewUser:79 common/lib/cmds/bpImportProcessData:166
+#: common/lib/cmds/bpImportNewProcess:94
+msgid "Ignoring dataset because there is no ID!"
+msgstr ""
+
+
+
+#: common/lib/cmds/bpImportUpdateUser:118
+#: common/lib/cmds/bpImportProcessData:230
+msgid "/data/"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:121
+#: common/lib/cmds/bpImportProcessData:234
+msgid "Cannot write file __FILE__. Continuing ..."
+msgstr ""
+#: common/lib/cmds/bpImportUpdateUser:128 common/lib/cmds/bpCreatePIN:151
+#: common/lib/cmds/bpRevokeCertificate:232 common/lib/cmds/bpImportACL:160
+#: common/lib/cmds/genCRL:97 common/lib/cmds/genCRL:107
+#: common/lib/cmds/genCRL:117 common/lib/cmds/genCRL:127
+#: common/lib/cmds/bpIssueCertificate:156
+#: common/lib/cmds/bpImportProcessData:241
+msgid "<FONT COLOR=#00FF00>"
+msgstr ""
+
+#: common/lib/cmds/bpImportUpdateUser:129
+msgid "ID __ID__ successfully updated."
+msgstr ""
+
+#: common/lib/cmds/genDB:14
+msgid "DBmodule"
+msgstr ""
+
+#: common/lib/cmds/genDB:17
+msgid "DBI"
+msgstr ""
+
+#: common/lib/cmds/genDB:19
+msgid "NONE"
+msgstr ""
+
+#: common/lib/cmds/genDB:21 common/lib/cmds/genDB:26
+msgid "Error while initializing the database."
+msgstr ""
+
+#: common/lib/cmds/genDB:24
+msgid "FORCE"
+msgstr ""
+
+#: common/lib/cmds/genDB:32
+msgid "Generate CA's Database"
+msgstr ""
+
+#: common/lib/cmds/genDB:33
+msgid "The database was successfully initialized."
+msgstr ""
+
+#: common/lib/cmds/lists:11
+msgid "action"
+msgstr ""
+#: common/lib/cmds/lists:14
+msgid "Command Error (Command Missing)"
+msgstr ""
+
+#: common/lib/cmds/lists:19
+msgid "pki?cmd=viewCert;"
+msgstr ""#: common/lib/cmds/lists:214 common/lib/cmds/sendMail:27
+msgid "subject"
+msgstr ""
+msgid "<FONT COLOR=#ff0000>"
+msgstr ""
+
+#: common/lib/cmds/editCRR:19 common/lib/cmds/pkcs10_req:24
+#: common/lib/cmds/pkcs10_req:177
+msgid "<input type=\"reset\" name=\"reset\" value=\""
+msgstr ""
+
+#: common/lib/cmds/editCRR:39 common/lib/cmds/editCSR:74
+#: common/lib/cmds/viewCRR:139 common/lib/cmds/viewCSR:281
+msgid "viewSignature"
+msgstr ""
+
+#: common/lib/cmds/editCRR:41 common/lib/cmds/editCRR:44
+#: common/lib/cmds/editCSR:76 common/lib/cmds/editCSR:79
+#: common/lib/cmds/viewSignature:56 common/lib/cmds/viewSignature:76
+#: common/lib/cmds/verifySignature:59 common/lib/cmds/verifySignature:72
+#: common/lib/cmds/viewCRR:141 common/lib/cmds/viewCRR:144
+#: common/lib/cmds/viewCSR:283 common/lib/cmds/viewCSR:286
+msgid "src"
+msgstr ""
+
+#: common/lib/cmds/editCRR:41 common/lib/cmds/editCSR:76
+#: common/lib/cmds/viewSignature:76 common/lib/cmds/verifySignature:72
+#: common/lib/cmds/viewCRR:141 common/lib/cmds/viewCSR:283
+msgid "ValidSigImage"
+msgstr ""
+
+#: common/lib/cmds/editCRR:42 common/lib/cmds/editCRR:45
+#: common/lib/cmds/editCSR:77 common/lib/cmds/editCSR:80
+#: common/lib/cmds/viewSignature:77 common/lib/cmds/verifySignature:73
+#: common/lib/cmds/viewCRR:142 common/lib/cmds/viewCRR:145
+#: common/lib/cmds/viewCSR:284 common/lib/cmds/viewCSR:287
+msgid "border"
+msgstr ""
+
+#: common/lib/cmds/editCRR:42 common/lib/cmds/editCRR:45
+#: common/lib/cmds/editCSR:77 common/lib/cmds/editCSR:80
+#: common/lib/cmds/viewSignature:57 common/lib/cmds/viewSignature:77
+#: common/lib/cmds/verifySignature:60 common/lib/cmds/verifySignature:73
+#: common/lib/cmds/viewCRR:142 common/lib/cmds/viewCRR:145
+#: common/lib/cmds/viewCSR:284 common/lib/cmds/viewCSR:287
+msgid "align"
+msgstr ""
+
+#: common/lib/cmds/editCRR:42 common/lib/cmds/editCRR:45
+#: common/lib/cmds/editCSR:77 common/lib/cmds/editCSR:80
+#: common/lib/cmds/viewSignature:57 common/lib/cmds/viewSignature:77
+#: common/lib/cmds/verifySignature:60 common/lib/cmds/verifySignature:73
+#: common/lib/cmds/viewCRR:142 common/lib/cmds/viewCRR:145
+#: common/lib/cmds/viewCSR:284 common/lib/cmds/viewCSR:287
+msgid "MIDDLE"
+msgstr ""
+
+#: common/lib/cmds/editCRR:44 common/lib/cmds/editCSR:79
+#: common/lib/cmds/viewSignature:56 common/lib/cmds/verifySignature:59
+#: common/lib/cmds/viewCRR:144 common/lib/cmds/viewCSR:286
+msgid "SigErrorImage"
+msgstr ""
+
+#: common/lib/cmds/editCRR:51 common/lib/cmds/editCSR:86
+#: common/lib/cmds/viewSignature:87 common/lib/cmds/verifySignature:83
+#: common/lib/cmds/viewCRR:151 common/lib/cmds/viewCSR:293
+msgid "<FONT COLOR=\"RED\">"
+msgstr ""
+
+#: common/lib/cmds/editCRR:51 common/lib/cmds/editCSR:86
+#: common/lib/cmds/viewCRR:151 common/lib/cmds/viewCSR:293
+msgid "Not Signed"
+msgstr ""
+
+#: common/lib/cmds/editCRR:60
+msgid "textarea"
+msgstr ""
+
+#: common/lib/cmds/editCRR:63
+msgid "columns"
+msgstr ""
+
+#: common/lib/cmds/editCRR:77 common/lib/cmds/viewCRR:164
+msgid "Cannot determine certificate from signature (CRR: "
+msgstr ""
+
+#: common/lib/cmds/editCRR:77 common/lib/cmds/editCRR:81
+#: common/lib/cmds/viewCRR:164 common/lib/cmds/viewCRR:168
+msgid ")\n"
+msgstr ""
+
+#: common/lib/cmds/editCRR:81 common/lib/cmds/viewCRR:168
+msgid "Cannot build object from signature (CRR: "
+msgstr ""
+
+#: common/lib/cmds/editCRR:109
+msgid "changeCRR"
+msgstr ""
+
+#: common/lib/cmds/editCRR:110 common/lib/cmds/changeCRR:20
+msgid "crr_serial"
+msgstr ""
+
+#: common/lib/cmds/editCRR:118 common/lib/cmds/editCSR:456
+#: common/lib/cmds/viewSignature:139 common/lib/cmds/viewCRR:321
+#: common/lib/cmds/viewCSR:571 common/lib/cmds/viewCert:373
+msgid "SIGINFO"
+msgstr ""
+
+#: common/lib/cmds/editCSR:37 common/lib/cmds/editCSR:65
+#: common/lib/cmds/getStaticPage:282 common/lib/cmds/getStaticPage:315
+#: common/lib/cmds/getStaticPage:348 common/lib/cmds/viewSignature:43
+#: common/lib/cmds/viewSignature:47 common/lib/cmds/viewSignature:101
+#: common/lib/cmds/search:128 common/lib/cmds/viewCRR:124
+#: common/lib/cmds/viewCRR:130 common/lib/cmds/viewCSR:233
+#: common/lib/cmds/viewCSR:272
+msgid "search"
+msgstr ""
+
+#: common/lib/cmds/editCSR:38 common/lib/cmds/getStaticPage:285
+#: common/lib/cmds/getStaticPage:318 common/lib/cmds/viewSignature:44
+#: common/lib/cmds/viewCRR:125 common/lib/cmds/viewCSR:234
+msgid "CN"
+msgstr ""
+
+#: common/lib/cmds/editCSR:46 common/lib/cmds/viewCSR:246
+msgid "email:"
+msgstr ""
+
+#: common/lib/cmds/editCSR:67 common/lib/cmds/changeCSR:57
+#: common/lib/cmds/changeCSR:85 common/lib/cmds/viewCSR:274
+msgid ", "
+msgstr ""
+
+#: common/lib/cmds/editCSR:120
+msgid "CSR_SUPPORTED_ATTRIBUTES"
+msgstr ""
+
+#: common/lib/cmds/editCSR:121
+msgid "CSR_DEFAULT_ATTRIBUTE_FIELDS"
+msgstr ""
+
+#: common/lib/cmds/editCSR:122
+msgid "CSR_ALLOW_MULTIVALUED_ATTRIBUTES"
+msgstr ""
+#: common/lib/cmds/editCSR:142#: common/lib/cmds/editCSR:151 common/lib/cmds/editCSR:167
+msgid "<b>+</b>"
+msgstr ""
+
+#: common/lib/cmds/editCSR:155 common/lib/cmds/editCSR:171
+msgid "SUBJECT_ATTRIBUTE_"
+msgstr ""
+
+#: common/lib/cmds/editCSR:155 common/lib/cmds/editCSR:162
+#: common/lib/cmds/editCSR:171 common/lib/cmds/editCSR:178
+msgid "_"
+msgstr ""
+
+#: common/lib/cmds/editCSR:162 common/lib/cmds/editCSR:178
+msgid "SUBJECT_VALUE_"
+msgstr ""
+
+#: common/lib/cmds/editCSR:203
+msgid "CSR_SUPPORTED_SUBJECT_ALT_NAMES"
+msgstr ""
+
+#: common/lib/cmds/editCSR:204
+msgid "CSR_DEFAULT_SUBJECT_ALT_NAME_FIELDS"
+msgstr ""
+#: common/lib/cmds/editCSR:224#: common/lib/cmds/editCSR:235#: common/lib/cmds/editCSR:241#: common/lib/cmds/editCSR:252 common/lib/cmds/changeCSR:19
+#: common/lib/cmds/getStaticPage:288 common/lib/cmds/getStaticPage:321
+msgid "ROLE"
+msgstr ""
+#: common/lib/cmds/editCSR:354
+msgid "ROW"
+msgstr ""
+
+#: common/lib/cmds/editCSR:440
+msgid "<input type=\"submit\" name=\"OK\" value=\""
+msgstr ""
+
+#: common/lib/cmds/editCSR:441
+msgid "\" onClick=\"cmd.value='changeCSR'\">"
+msgstr ""
+
+#: common/lib/cmds/editCSR:443
+msgid "<input type=\"submit\" name=\"Cancel\" value=\""
+msgstr ""
+
+#: common/lib/cmds/editCSR:444
+msgid "\" onClick=\"cmd.value='viewCSR'\">"
+msgstr ""
+
+#: common/lib/cmds/editCSR:455 common/lib/cmds/viewCRL:87
+#: common/lib/cmds/viewCRR:319 common/lib/cmds/viewCSR:569
+#: common/lib/cmds/viewCert:370 common/lib/cmds/confirm_revreq:215
+msgid "CMD_LIST"
+msgstr ""
+
+#: common/lib/cmds/issueCertificate:25 common/lib/cmds/genCAReq:72
+#: common/lib/cmds/genSKey:54 common/lib/cmds/viewSignature:132
+#: common/lib/cmds/verifySignature:130 common/lib/cmds/viewCSR:386
+#: common/lib/cmds/bpViewUser:184 common/lib/cmds/pkcs10_req:189
+msgid "<pre>"
+msgstr ""
+
+#: common/lib/cmds/issueCertificate:25 common/lib/cmds/genCAReq:72
+#: common/lib/cmds/genSKey:54 common/lib/cmds/viewSignature:132
+#: common/lib/cmds/verifySignature:130 common/lib/cmds/viewCSR:386
+#: common/lib/cmds/bpViewUser:184 common/lib/cmds/pkcs10_req:189
+msgid "</pre>"
+msgstr ""
+
+#: common/lib/cmds/nodeDownloadCRL:25 common/lib/cmds/nodeDownloadCRL:27
+#: common/lib/cmds/nodeDownloadAll:20 common/lib/cmds/nodeDownloadAll:21
+#: common/lib/cmds/nodeDownloadAll:22 common/lib/cmds/nodeDownloadAll:24
+#: common/lib/cmds/nodeDownloadAll:25 common/lib/cmds/nodeDownloadAll:26
+#: common/lib/cmds/nodeDownloadCert:25 common/lib/cmds/nodeDownloadCert:27
+#: common/lib/cmds/nodeDownloadConfig:29 common/lib/cmds/nodeDownloadConfig:31
+msgid "TMP"
+msgstr ""
+
+#: common/lib/cmds/nodeDownloadCRL:25 common/lib/cmds/nodeDownloadCRL:27
+#: common/lib/cmds/nodeDownloadAll:20 common/lib/cmds/nodeDownloadAll:21
+#: common/lib/cmds/nodeDownloadAll:22 common/lib/cmds/nodeDownloadAll:24
+#: common/lib/cmds/nodeDownloadAll:25 common/lib/cmds/nodeDownloadAll:26
+#: common/lib/cmds/nodeDownloadCert:25 common/lib/cmds/nodeDownloadCert:27
+#: common/lib/cmds/viewCRL:41 common/lib/cmds/viewCert:248
+#: common/lib/cmds/nodeDownloadConfig:29 common/lib/cmds/nodeDownloadConfig:31
+msgid "LDAP"
+msgstr ""
+
+#: common/lib/cmds/nodeDownloadCRL:25 common/lib/cmds/nodeDownloadAll:20
+#: common/lib/cmds/nodeDownloadAll:21 common/lib/cmds/nodeDownloadAll:22
+#: common/lib/cmds/bpRevokeCertificate:126
+#: common/lib/cmds/bpRevokeCertificate:209 common/lib/cmds/nodeDownloadCert:25
+#: common/lib/cmds/genMenu:13 common/lib/cmds/bpIssueCertificate:130
+#: common/lib/cmds/search:130 common/lib/cmds/nodeDownloadConfig:29
+msgid "1"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:12 common/lib/cmds/send_cert_key_openssl:12
+#: common/lib/cmds/send_cert_key_pkcs12:12
+#: common/lib/cmds/send_cert_key_pkcs8:12 common/lib/cmds/viewCert:102
+msgid "PUBLIC"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:17 common/lib/cmds/bpRecoverCert:28
+#: common/lib/cmds/sendcert:16 common/lib/cmds/viewCert:103
+msgid "format"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:18
+msgid "format_send_cert_key"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:27
+msgid "send_cert_key_pkcs12"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:30 common/lib/cmds/send_cert_key:34
+msgid "encoding"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:31
+msgid "send_cert_key_pkcs8"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:35
+msgid "send_cert_key_openssl"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:37
+msgid "Unknown standard __STANDARD__."
+msgstr ""
+#: common/lib/cmds/send_cert_key:49 common/lib/cmds/genCAReq:92
+#: common/lib/cmds/genCAReq:145 common/lib/cmds/bpDoStep:223
+#: common/lib/cmds/sendCRINMail:48 common/lib/cmds/genSKey:73
+#: common/lib/cmds/getcert:129 common/lib/cmds/genCRL:148
+#: common/lib/cmds/bpIssueCertificate:193
+msgid "<table>\n"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:50 common/lib/cmds/genCAReq:146
+msgid "  <tr><td>"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key:50 common/lib/cmds/genCAReq:93
+#: common/lib/cmds/genCAReq:146 common/lib/cmds/bpDoStep:224
+#: common/lib/cmds/sendCRINMail:49 common/lib/cmds/genSKey:74
+#: common/lib/cmds/getcert:130 common/lib/cmds/genCRL:149
+msgid "</td></tr>\n"
+msgstr ""
+
+
+#: common/lib/cmds/send_cert_key:56 common/lib/cmds/genCAReq:122
+#: common/lib/cmds/genCAReq:152 common/lib/cmds/bpDoStep:246
+#: common/lib/cmds/sendCRINMail:57 common/lib/cmds/genSKey:107
+#: common/lib/cmds/getcert:150 common/lib/cmds/genCRL:167
+#: common/lib/cmds/bpIssueCertificate:205
+msgid "</table>\n"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_openssl:32
+#: common/lib/cmds/bpRevokeCertificate:226
+#: common/lib/cmds/bpRevokeCertificate:228 common/lib/cmds/genCAReq:53
+#: common/lib/cmds/bpRecoverCert:131 common/lib/cmds/genSKey:40
+#: common/lib/cmds/deleteCSR:28 common/lib/cmds/bpIssueCertificate:139
+#: common/lib/cmds/bpIssueCertificate:150
+#: common/lib/cmds/bpIssueCertificate:152 common/lib/cmds/new_role:49
+#: common/lib/cmds/writeCertMail:18 common/lib/cmds/viewCSR:218
+#: common/lib/cmds/approveCSR:47 common/lib/cmds/approveCSR:69
+#: common/lib/cmds/approveCSR:82 common/lib/cmds/bpViewUser:141
+#: common/lib/cmds/bpViewUser:155 common/lib/cmds/bpApprovePendingCSR:187
+#: common/lib/cmds/approveCSRnotSigned:41
+msgid "<br>\n"
+msgstr ""
+
+
+#: common/lib/cmds/bpCreateCSR:14 common/lib/cmds/bpCreateKey:14
+#: common/lib/cmds/bpCreatePIN:14 common/lib/cmds/bpBackupKey:15
+#: common/lib/cmds/bpDoStep:20 common/lib/cmds/bpExportPKCS12:16
+#: common/lib/cmds/bpExportPIN:16
+msgid "BP"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:30
+msgid "bpCreateCSR"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:47 common/lib/cmds/bpCreateCSR:110
+#: common/lib/cmds/bpCreateCSR:139 common/lib/cmds/bpCreateKey:46
+#: common/lib/cmds/bpCreateKey:132 common/lib/cmds/bpBackupKey:96
+#: common/lib/cmds/bpExportPKCS12:49 common/lib/cmds/bpExportPKCS12:87
+#: common/lib/cmds/bpViewUser:184
+msgid "/private/privateKey"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:49 common/lib/cmds/bpCreateCSR:99
+#: common/lib/cmds/bpViewUser:64 common/lib/cmds/bpApprovePendingCSR:114
+msgid "/data/ROLE"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:50 common/lib/cmds/bpCreateCSR:121
+#: common/lib/cmds/bpApproveRenewedCSR:137 common/lib/cmds/bpViewUser:58
+#: common/lib/cmds/bpApprovePendingCSR:138
+msgid "/data/DN"
+msgstr ""
+#: common/lib/cmds/bpCreateCSR:73 common/lib/cmds/bpCreateKey:115
+#: common/lib/cmds/bpBackupKey:121 common/lib/cmds/bpRecoverCert:41
+#: common/lib/cmds/bpRecoverCert:75 common/lib/cmds/bpExportPKCS12:73
+#: common/lib/cmds/bpExportPIN:78 common/lib/cmds/bpRecoverKey:36
+msgid "DECRYPT"
+msgstr ""
+#: common/lib/cmds/bpCreateCSR:176
+msgid "PIN = "
+msgstr ""
+#: common/lib/cmds/bpCreateCSR:179
+msgid "SUBJECT = "
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:180
+msgid "SUBJECT_ALT_NAME = "
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:180 common/lib/cmds/bpApproveRenewedCSR:148
+#: common/lib/cmds/bpViewUser:61 common/lib/cmds/bpApprovePendingCSR:148
+msgid "/data/SUBJECT_ALT_NAME"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:213 common/lib/cmds/bpCreateCSR:214
+#: common/lib/cmds/bpApproveRenewedCSR:269
+#: common/lib/cmds/bpApproveRenewedCSR:270 common/lib/cmds/bpExportPKCS12:50
+#: common/lib/cmds/bpExportPKCS12:53 common/lib/cmds/bpViewUser:134
+#: common/lib/cmds/bpApprovePendingCSR:284
+#: common/lib/cmds/bpApprovePendingCSR:285
+msgid "/public/csrList"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:221 common/lib/cmds/bpRecoverCert:63
+msgid "/keybackup/csr_"
+msgstr ""
+
+#: common/lib/cmds/bpCreateCSR:221 common/lib/cmds/bpRecoverCert:63
+msgid ".keydigest"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:30
+msgid "bpCreateKey"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:45 common/lib/cmds/bpCreateKey:148
+msgid "/acl/newKey"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:53 common/lib/cmds/bpCreateKey:54
+msgid "/data/KEY_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:56
+msgid "BP_DEFAULT_KEY_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:68 common/lib/cmds/bpCreateKey:73
+msgid "BP_MINIMUM_KEY_LENGTH"
+msgstr ""
+#: common/lib/cmds/bpCreateKey:73#: common/lib/cmds/bpCreateKey:80 common/lib/cmds/bpCreateKey:81
+msgid "/data/KEY_ALGORITHM"
+msgstr ""
+
+#: common/lib/cmds/bpCreateKey:83
+msgid "BP_DEFAULT_KEY_ALGORITHM"
+msgstr ""
+#: common/lib/cmds/bpCreateKey:133 common/lib/cmds/genSKey:37
+msgid "TYPE"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:30
+msgid "bpCreatePIN"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:45 common/lib/cmds/bpCreatePIN:146
+#: common/lib/cmds/bpCreatePIN:148 common/lib/cmds/bpCreatePIN:156
+msgid "/acl/newPIN"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:57 common/lib/cmds/bpCreatePIN:60
+#: common/lib/cmds/bpCreatePIN:65
+msgid "SECURE_PIN_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:58 common/lib/cmds/bpCreatePIN:61
+#: common/lib/cmds/bpCreatePIN:68 common/lib/cmds/bpCreatePIN:70
+msgid "SECURE_PIN_RANDOM"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:60 common/lib/cmds/bpCreatePIN:65
+msgid "PIN_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:61 common/lib/cmds/bpCreatePIN:70
+msgid "RANDOM_LENGTH"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:81 common/lib/cmds/bpCreatePIN:118
+msgid " ("
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:81
+msgid ")</FONT>"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:92
+msgid "-----BEGIN PIN-----\n"
+msgstr ""
+
+
+#: common/lib/cmds/bpCreatePIN:94 common/lib/cmds/bpBackupKey:151
+msgid "ENCRYPT"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:95
+msgid "SIGN"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:98 common/lib/cmds/bpBackupKey:155
+msgid "TO"
+msgstr ""
+
+#: common/lib/cmds/bpCreatePIN:118
+msgid ").</FONT>"
+msgstr ""
+#: common/lib/cmds/changeCRR:53 common/lib/cmds/changeCRR:104
+#: common/lib/cmds/viewCRR:95 common/lib/cmds/confirm_revreq:156
+msgid "TYPE = CRR\n"
+msgstr ""
+#: common/lib/cmds/changeCRR:55 common/lib/cmds/viewCRR:97
+msgid "SSL_CERT_SERIAL = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:56 common/lib/cmds/viewCRR:98
+msgid "SSL_CERT_DN = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:57 common/lib/cmds/viewCRR:99
+msgid "SSL_CERT_ISSUER = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:60 common/lib/cmds/changeCRR:111
+#: common/lib/cmds/viewCRR:102 common/lib/cmds/confirm_revreq:163
+msgid "SUBMIT_DATE = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:61 common/lib/cmds/viewCRR:104
+msgid "CRIN = "
+msgstr ""
+#: common/lib/cmds/changeCRR:63 common/lib/cmds/changeCRR:114
+#: common/lib/cmds/viewCRR:106 common/lib/cmds/confirm_revreq:169
+msgid "REVOKE_CERTIFICATE_DN = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:64 common/lib/cmds/changeCRR:115
+#: common/lib/cmds/viewCRR:107 common/lib/cmds/confirm_revreq:170
+msgid "REVOKE_CERTIFICATE_NOTBEFORE = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:65 common/lib/cmds/changeCRR:116
+#: common/lib/cmds/viewCRR:108 common/lib/cmds/confirm_revreq:171
+msgid "REVOKE_CERTIFICATE_NOTAFTER = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:66 common/lib/cmds/changeCRR:117
+#: common/lib/cmds/viewCRR:109 common/lib/cmds/confirm_revreq:172
+msgid "REVOKE_CERTIFICATE_SERIAL = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:67 common/lib/cmds/changeCRR:118
+#: common/lib/cmds/viewCRR:110 common/lib/cmds/confirm_revreq:173
+msgid "REVOKE_CERTIFICATE_ISSUER_DN = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:68 common/lib/cmds/changeCRR:119
+#: common/lib/cmds/viewCRR:111 common/lib/cmds/confirm_revreq:174
+msgid "REVOKE_CERTIFICATE_KEY_DIGEST = "
+msgstr ""
+
+#: common/lib/cmds/changeCRR:72 common/lib/cmds/confirm_revreq:124
+msgid "SSL_CLIENT_S_DN"
+msgstr ""
+
+#: common/lib/cmds/changeCRR:73 common/lib/cmds/confirm_revreq:125
+msgid "SSL_CLIENT_I_DN"
+msgstr ""
+#: common/lib/cmds/changeCRR:107 common/lib/cmds/confirm_revreq:159#: common/lib/cmds/changeCRR:108 common/lib/cmds/confirm_revreq:160#: common/lib/cmds/changeCRR:112 common/lib/cmds/confirm_revreq:167#: common/lib/cmds/changeCRR:126
+msgid "Cannot load file __FILE__!"
+msgstr ""
+
+#: common/lib/cmds/changeCRR:161 common/lib/cmds/search:153
+msgid "viewCRR"
+msgstr ""
+
+#: common/lib/cmds/changeCSR:25
+msgid "in the first If block of changeCSR<br>\n"
+msgstr ""
+#: common/lib/cmds/changeCSR:37#: common/lib/cmds/changeCSR:42 common/lib/cmds/changeCSR:52#: common/lib/cmds/changeCSR:45 common/lib/cmds/changeCSR:46#: common/lib/cmds/changeCSR:59
+msgid "+"
+msgstr ""
+#: common/lib/cmds/changeCSR:78 common/lib/cmds/changeCSR:79#: common/lib/cmds/changeCSR:87
+msgid ":"
+msgstr ""
+
+#: common/lib/cmds/changeCSR:99
+msgid "Error: Request __CSR_SERIAL__ not found!"
+msgstr ""
+
+
+#: common/lib/cmds/changeCSR:184
+msgid "Cannot create a new REQ object (__ERRVAL__)"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:24 common/lib/cmds/bpRecoverCert:12
+#: common/lib/cmds/bpDoStep:21 common/lib/cmds/bpRecoverKey:12
+msgid "KEYBACKUP"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:40
+msgid "bpBackupKey"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:56 common/lib/cmds/bpBackupKey:167
+msgid "/acl/backupKey"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:57 common/lib/cmds/bpBackupKey:66
+#: common/lib/cmds/bpViewUser:111 common/lib/cmds/bpViewUser:114
+msgid "BP_KEY_BACKUP_MODE"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:77 common/lib/cmds/bpBackupKey:78
+#: common/lib/cmds/bpViewUser:195 common/lib/cmds/bpViewUser:214
+msgid "/keybackup"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:111 common/lib/cmds/bpRecoverKey:37
+msgid "/keybackup/"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:152
+msgid "ENCRYPT_CERT"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:152
+msgid "KEY_BACKUP_CERTIFICATE"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:157
+msgid "Key backup"
+msgstr ""
+
+#: common/lib/cmds/bpRevokeCertificate:14
+#: common/lib/cmds/bpRevokeCertificate:29
+#: common/lib/cmds/bpApproveRenewedCSR:14
+#: common/lib/cmds/bpApproveRenewedCSR:27
+#: common/lib/cmds/bpIssueCertificate:14
+#: common/lib/cmds/bpIssueCertificate:183
+#: common/lib/cmds/bpApprovePendingCSR:14
+#: common/lib/cmds/bpApprovePendingCSR:28
+msgid "operator"
+msgstr ""
+
+#: common/lib/cmds/bpRevokeCertificate:44
+msgid "bpRevokeCertificate"
+msgstr ""
+
+#: common/lib/cmds/bpRevokeCertificate:45
+#: common/lib/cmds/bpApproveRenewedCSR:44
+#: common/lib/cmds/bpApprovePendingCSR:45
+msgid "<input type=\"Submit\" name=\"Submit\" value=\""
+msgstr ""
+#: common/lib/cmds/bpRevokeCertificate:126
+#: common/lib/cmds/bpRevokeCertificate:209
+#: common/lib/cmds/bpIssueCertificate:130
+msgid "NOCHAIN"
+msgstr ""
+
+msgid "AUTHORITY_CERTIFICATE"
+msgstr ""
+
+msgid "NOPRINT"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:31 common/lib/cmds/getStaticPage:33
+#: common/lib/cmds/getStaticPage:35 common/lib/cmds/getStaticPage:37
+#: common/lib/cmds/getStaticPage:39 common/lib/cmds/getStaticPage:80
+#: common/lib/cmds/getStaticPage:82 common/lib/cmds/getStaticPage:84
+#: common/lib/cmds/getStaticPage:86 common/lib/cmds/getStaticPage:88
+#: common/lib/cmds/getStaticPage:92 common/lib/cmds/getStaticPage:94
+#: common/lib/cmds/getStaticPage:96 common/lib/cmds/getStaticPage:100
+#: common/lib/cmds/getStaticPage:102 common/lib/cmds/getStaticPage:104
+#: common/lib/cmds/getStaticPage:106 common/lib/cmds/getStaticPage:108
+#: common/lib/cmds/getStaticPage:112 common/lib/cmds/getStaticPage:114
+#: common/lib/cmds/getStaticPage:116 common/lib/cmds/getStaticPage:125
+#: common/lib/cmds/getStaticPage:129 common/lib/cmds/getStaticPage:131
+#: common/lib/cmds/getStaticPage:133 common/lib/cmds/getStaticPage:141
+#: common/lib/cmds/getStaticPage:146 common/lib/cmds/getStaticPage:150
+#: common/lib/cmds/getStaticPage:155 common/lib/cmds/getStaticPage:161
+#: common/lib/cmds/getStaticPage:165 common/lib/cmds/getStaticPage:167
+#: common/lib/cmds/getStaticPage:175 common/lib/cmds/getStaticPage:178
+#: common/lib/cmds/getStaticPage:181 common/lib/cmds/getStaticPage:184
+#: common/lib/cmds/getStaticPage:193 common/lib/cmds/getStaticPage:196
+#: common/lib/cmds/getStaticPage:199 common/lib/cmds/getStaticPage:202
+#: common/lib/cmds/getStaticPage:211 common/lib/cmds/getStaticPage:216
+#: common/lib/cmds/getStaticPage:224 common/lib/cmds/getStaticPage:229
+#: common/lib/cmds/getStaticPage:234 common/lib/cmds/getStaticPage:243
+#: common/lib/cmds/getStaticPage:248 common/lib/cmds/getStaticPage:253
+#: common/lib/cmds/getStaticPage:258 common/lib/cmds/getStaticPage:263
+#: common/lib/cmds/getStaticPage:268 common/lib/cmds/viewCSR:399
+#: common/lib/cmds/viewCert:359 common/lib/cmds/viewCert:361
+msgid "<a href=\""
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:31 common/lib/cmds/getStaticPage:33
+#: common/lib/cmds/getStaticPage:35 common/lib/cmds/getStaticPage:37
+#: common/lib/cmds/getStaticPage:39 common/lib/cmds/getStaticPage:80
+#: common/lib/cmds/getStaticPage:82 common/lib/cmds/getStaticPage:84
+#: common/lib/cmds/getStaticPage:86 common/lib/cmds/getStaticPage:88
+#: common/lib/cmds/getStaticPage:92 common/lib/cmds/getStaticPage:94
+#: common/lib/cmds/getStaticPage:96 common/lib/cmds/getStaticPage:100
+#: common/lib/cmds/getStaticPage:102 common/lib/cmds/getStaticPage:104
+#: common/lib/cmds/getStaticPage:106 common/lib/cmds/getStaticPage:108
+#: common/lib/cmds/getStaticPage:112 common/lib/cmds/getStaticPage:114
+#: common/lib/cmds/getStaticPage:116 common/lib/cmds/getStaticPage:125
+#: common/lib/cmds/getStaticPage:129 common/lib/cmds/getStaticPage:131
+#: common/lib/cmds/getStaticPage:133 common/lib/cmds/getStaticPage:141
+#: common/lib/cmds/getStaticPage:146 common/lib/cmds/getStaticPage:150
+#: common/lib/cmds/getStaticPage:155 common/lib/cmds/getStaticPage:161
+#: common/lib/cmds/getStaticPage:165 common/lib/cmds/getStaticPage:167
+#: common/lib/cmds/getStaticPage:175 common/lib/cmds/getStaticPage:178
+#: common/lib/cmds/getStaticPage:181 common/lib/cmds/getStaticPage:184
+#: common/lib/cmds/getStaticPage:193 common/lib/cmds/getStaticPage:196
+#: common/lib/cmds/getStaticPage:199 common/lib/cmds/getStaticPage:202
+#: common/lib/cmds/getStaticPage:211 common/lib/cmds/getStaticPage:216
+#: common/lib/cmds/getStaticPage:224 common/lib/cmds/getStaticPage:229
+#: common/lib/cmds/getStaticPage:234 common/lib/cmds/getStaticPage:243
+#: common/lib/cmds/getStaticPage:248 common/lib/cmds/getStaticPage:253
+#: common/lib/cmds/getStaticPage:258 common/lib/cmds/getStaticPage:263
+#: common/lib/cmds/getStaticPage:268 common/lib/cmds/getStaticPage:380
+#: common/lib/cmds/getStaticPage:381
+msgid "HTTP_CGI_SCRIPT"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:31
+msgid "?cmd=getParams;GET_PARAMS_CMD=bpDoStep\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:33
+msgid "?cmd=bpListUser\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:35
+msgid "?cmd=getParams;GET_PARAMS_CMD=bpImportNewUser\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:37
+msgid "?cmd=getParams;GET_PARAMS_CMD=bpImportNewProcess\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:39
+msgid "?cmd=getParams;GET_PARAMS_CMD=bpImportProcessData\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:80
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeEnrollAll\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:82
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeEnrollCert\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:84
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeEnrollCRL\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:86 common/lib/cmds/getStaticPage:167
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeEnrollConfig\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:88
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeEnrollBP\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:92
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeReceiveAll\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:94
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeReceiveCSR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:96
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeReceiveCRR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:99
+msgid "Download data from a higher level of the hierarchy"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:100
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeDownloadAll\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:102
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeDownloadCert\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:104
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeDownloadCRL\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:106 common/lib/cmds/getStaticPage:216
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeDownloadConfig\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:108
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeDownloadBP\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:112
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeUploadAll\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:114
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeUploadCSR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:116
+msgid "?cmd=getParams;GET_PARAMS_CMD=nodeUploadCRR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:123
+msgid "BACKUP"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:125
+msgid "?cmd=getParams;GET_PARAMS_CMD=exportDB\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:128
+msgid "RECOVERY"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:129 common/lib/cmds/getStaticPage:141
+#: common/lib/cmds/getStaticPage:211
+msgid "?cmd=genDB\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:131
+msgid "?cmd=getParams;GET_PARAMS_CMD=importDB\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:133
+msgid "?cmd=rebuildOpenSSLindexDB\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:146
+msgid "?cmd=getParams;GET_PARAMS_CMD=genSKey\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:150
+msgid "?cmd=getParams;GET_PARAMS_CMD=genCAReq\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:155
+msgid "?cmd=getParams;GET_PARAMS_CMD=genCACert\">"
+msgstr ""
+#: common/lib/cmds/getStaticPage:161
+msgid "?cmd=importCACert\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:165
+msgid "?cmd=rebuildChain\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:175 common/lib/cmds/getStaticPage:193
+msgid "?cmd=setupInitialCert&dest=basic_csr\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:178 common/lib/cmds/getStaticPage:196
+msgid "?cmd=setupInitialCert&dest=editCSR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:181 common/lib/cmds/getStaticPage:199
+msgid "?cmd=setupInitialCert&dest=viewCSR\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:184 common/lib/cmds/getStaticPage:202
+msgid "?cmd=setupInitialCert&dest=viewCert\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:224
+msgid "?cmd=getStaticPage&name=initCA\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:229
+msgid "?cmd=getStaticPage&name=initUser\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:234
+msgid "?cmd=getStaticPage&name=initRA\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:243
+msgid "?cmd=basic_csr\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:248
+msgid "?cmd=basic_csr&CSR_TYPE=basic\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:253
+msgid "?cmd=basic_csr&CSR_TYPE=spkac\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:258
+msgid "?cmd=pkcs10_req\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:263
+msgid "?cmd=basic_csr&CSR_TYPE=ie\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:268
+msgid "?cmd=basic_csr&CSR_TYPE=token\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:284 common/lib/cmds/getStaticPage:317
+#: common/lib/cmds/getStaticPage:350 common/lib/cmds/search:23
+#: common/lib/cmds/search:130
+msgid "pcounter"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:284 common/lib/cmds/getStaticPage:317
+msgid "4"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:285 common/lib/cmds/getStaticPage:318
+#: common/lib/cmds/getStaticPage:351 common/lib/cmds/search:131
+msgid "name_1"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:286 common/lib/cmds/getStaticPage:319
+#: common/lib/cmds/getStaticPage:352
+msgid "name_2"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:286 common/lib/cmds/getStaticPage:319
+msgid "EMAILADDRESS"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:287 common/lib/cmds/getStaticPage:320
+msgid "name_3"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:287 common/lib/cmds/getStaticPage:320
+#: common/lib/cmds/genCAReq:51 common/lib/cmds/viewCSR:394
+#: common/lib/cmds/pkcs10_req:203
+msgid "DN"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:288 common/lib/cmds/getStaticPage:321
+msgid "name_4"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:294 common/lib/cmds/getStaticPage:327
+#: common/lib/cmds/getStaticPage:358
+msgid "<input type=text name=\"value_1\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:296 common/lib/cmds/getStaticPage:329
+#: common/lib/cmds/getStaticPage:360
+msgid "<input type=text name=\"value_2\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:298 common/lib/cmds/getStaticPage:331
+msgid "<input type=text name=\"value_3\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:300 common/lib/cmds/getStaticPage:333
+msgid "<input type=text name=\"value_4\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:349 common/lib/cmds/search:129
+msgid "LOG"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:350
+msgid "2"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:351
+msgid "CLASS"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:352 common/lib/cmds/genMenu:79
+#: common/lib/cmds/genMenu:92
+msgid "LEVEL"
+msgstr ""
+
+
+#: common/lib/cmds/getStaticPage:374
+msgid "HtdocsUrlPrefix"
+msgstr ""
+
+
+
+
+#: common/lib/cmds/exportCAReqCert:21 common/lib/cmds/importCACert:25
+msgid "CACertDir"
+msgstr ""
+#: common/lib/cmds/exportCAReqCert:34
+msgid "careq.pem"
+msgstr ""
+#: common/lib/cmds/exportCAReqCert:40 common/lib/cmds/sendcert:45#: common/lib/cmds/send_cert_key_pkcs12:26#: common/lib/cmds/send_cert_key_pkcs12:32 common/lib/cmds/bpRecoverCert:97
+#: common/lib/cmds/bpExportPKCS12:93
+msgid "PKCS12"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs12:34 common/lib/cmds/bpRecoverCert:99
+#: common/lib/cmds/bpExportPKCS12:95
+msgid "P12PASSWD"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs12:35 common/lib/cmds/bpRecoverCert:100
+#: common/lib/cmds/bpExportPKCS12:96
+msgid "CACERT"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:20 common/lib/cmds/scepGetCACert:18
+msgid "message"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:23
+msgid "scepPath"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:24
+msgid "scepRAPasswd"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:25
+msgid "scepRACert"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:26
+msgid "scepRAKey"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:27 common/lib/cmds/genCRL:18
+#: common/lib/cmds/genCRLfromFile:18
+msgid "CRLDir"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:27
+msgid "/cacrl.pem"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:74 common/lib/cmds/scepPKIOperation:120
+#: common/lib/cmds/scepPKIOperation:165 common/lib/cmds/scepPKIOperation:184
+#: common/lib/cmds/scepPKIOperation:213 common/lib/cmds/scepPKIOperation:248
+#: common/lib/cmds/scepPKIOperation:337 common/lib/cmds/scepPKIOperation:354
+msgid "-|"
+msgstr ""
+#: common/lib/cmds/scepPKIOperation:96 common/lib/cmds/scepPKIOperation:130
+#: common/lib/cmds/scepPKIOperation:272
+msgid "SCEP_TID"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:111 common/lib/cmds/getcert:23
+#: common/lib/cmds/getcert:60 common/lib/cmds/bpExportPKCS12:62
+#: common/lib/cmds/viewCSR:332 common/lib/cmds/bpViewUser:153
+#: common/lib/cmds/bpViewUser:228
+msgid "CSR_SERIAL"
+msgstr ""
+#: common/lib/cmds/scepPKIOperation:134 common/lib/cmds/scepPKIOperation:151
+#: common/lib/cmds/scepPKIOperation:258 common/lib/cmds/scepPKIOperation:288
+#: common/lib/cmds/scepPKIOperation:310 common/lib/cmds/scepPKIOperation:322
+#: common/lib/cmds/scepPKIOperation:353
+msgid "badRequest"
+msgstr ""
+#: common/lib/cmds/scepPKIOperation:184 common/lib/cmds/scepPKIOperation:354#: common/lib/cmds/scepPKIOperation:223 common/lib/cmds/scepPKIOperation:239
+msgid "badMessageCheck"
+msgstr ""
+#: common/lib/cmds/scepPKIOperation:238 common/lib/cmds/scepPKIOperation:257
+#: common/lib/cmds/scepPKIOperation:287 common/lib/cmds/scepPKIOperation:309
+#: common/lib/cmds/scepPKIOperation:321
+msgid ": "
+msgstr ""
+#: common/lib/cmds/scepPKIOperation:296
+msgid "ROLE = VPN Server\n"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:297
+#: common/lib/cmds/bpApproveRenewedCSR:204
+#: common/lib/cmds/bpApprovePendingCSR:220
+msgid "SCEP_TID = "
+msgstr ""
+#: common/lib/cmds/bpImportACL:33
+msgid "BP_File_ImportACL"
+msgstr ""
+
+#: common/lib/cmds/bpImportACL:117 common/lib/cmds/bpImportACL:118
+#: common/lib/cmds/bpViewUser:75
+msgid "/acl"
+msgstr ""
+#: common/lib/cmds/bpImportACL:138 common/lib/cmds/bpImportACL:139
+#: common/lib/cmds/bpImportACL:150 common/lib/cmds/bpImportACL:151
+msgid "/acl/"
+msgstr ""
+#: common/lib/cmds/genCAReq:15
+msgid "email"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:16
+msgid "cn"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:17
+msgid "ou"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:18
+msgid "o"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:19
+msgid "c"
+msgstr ""
+#: common/lib/cmds/genCAReq:51#: common/lib/cmds/genCAReq:51#: common/lib/cmds/genCAReq:51#: common/lib/cmds/genCAReq:51#: common/lib/cmds/genCAReq:52#: common/lib/cmds/genCAReq:63
+msgid "<BR><BR>\n"
+msgstr ""
+#: common/lib/cmds/genCAReq:65#: common/lib/cmds/genCAReq:93 common/lib/cmds/bpDoStep:224
+#: common/lib/cmds/sendCRINMail:49 common/lib/cmds/genSKey:74
+#: common/lib/cmds/getcert:130 common/lib/cmds/genCRL:149
+msgid "  <tr><td colspan=2>"
+msgstr ""
+
+
+
+
+
+
+
+#: common/lib/cmds/genCAReq:129
+msgid "emailAddress="
+msgstr ""
+
+#: common/lib/cmds/genCAReq:129 common/lib/cmds/genCAReq:130
+msgid "subject_emailAddress"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:131
+msgid "CN="
+msgstr ""
+
+#: common/lib/cmds/genCAReq:131 common/lib/cmds/genCAReq:132
+msgid "subject_cn"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:133
+msgid "OU="
+msgstr ""
+
+#: common/lib/cmds/genCAReq:133 common/lib/cmds/genCAReq:134
+msgid "subject_ou"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:135
+msgid "O="
+msgstr ""
+
+#: common/lib/cmds/genCAReq:135 common/lib/cmds/genCAReq:136
+msgid "subject_o"
+msgstr ""
+
+#: common/lib/cmds/genCAReq:137
+msgid "C="
+msgstr ""
+
+#: common/lib/cmds/genCAReq:137 common/lib/cmds/genCAReq:138
+msgid "subject_c"
+msgstr ""
+
+
+
+#: common/lib/cmds/bpRecoverCert:90 common/lib/cmds/bpRecoverCert:102#: common/lib/cmds/bpRecoverCert:103
+msgid "<b><FONT COLOR=#ff0000>"
+msgstr ""
+
+#: common/lib/cmds/bpRecoverCert:107
+msgid "</FONT></b>"
+msgstr ""
+msgid "LDAP_CRL_Issuer"
+msgstr ""#: common/lib/cmds/scepGetCACert:29
+msgid "ScepRACert"
+msgstr ""
+#: common/lib/cmds/scepGetCACert:38 common/lib/cmds/getcert:93
+msgid "CERTSLIST"
+msgstr ""
+
+msgid "new_dn"
+msgstr ""
+#: common/lib/cmds/changePasswd:26
+msgid "changePasswd"
+msgstr ""
+
+#: common/lib/cmds/changePasswd:32
+msgid "<input type=password name=\"passwd1\" value=\"\" size=16 minlength=8>"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:16
+msgid "steps"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:59 common/lib/cmds/bpDoStep:63
+#: common/lib/cmds/bpDoStep:67 common/lib/cmds/bpDoStep:71
+#: common/lib/cmds/bpDoStep:75 common/lib/cmds/bpDoStep:79
+#: common/lib/cmds/bpDoStep:83 common/lib/cmds/bpDoStep:87
+#: common/lib/cmds/bpImportNewUser:33 common/lib/cmds/bpImportNewUser:37
+#: common/lib/cmds/bpImportProcessData:35
+#: common/lib/cmds/bpImportProcessData:39
+#: common/lib/cmds/bpImportProcessData:43
+#: common/lib/cmds/bpImportProcessData:47
+#: common/lib/cmds/bpImportProcessData:51
+#: common/lib/cmds/bpImportProcessData:55
+#: common/lib/cmds/bpImportProcessData:59
+#: common/lib/cmds/bpImportProcessData:63
+#: common/lib/cmds/bpImportProcessData:102
+#: common/lib/cmds/bpImportProcessData:106
+#: common/lib/cmds/bpImportNewProcess:33 common/lib/cmds/bpImportNewProcess:37
+#: common/lib/cmds/bpImportNewProcess:41 common/lib/cmds/bpImportNewProcess:45
+#: common/lib/cmds/bpListUser:17
+msgid "StateMachineConfiguration"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:60 common/lib/cmds/bpDoStep:64
+#: common/lib/cmds/bpDoStep:68 common/lib/cmds/bpDoStep:72
+#: common/lib/cmds/bpDoStep:76 common/lib/cmds/bpDoStep:80
+#: common/lib/cmds/bpDoStep:84 common/lib/cmds/bpDoStep:88
+#: common/lib/cmds/genMenu:29 common/lib/cmds/genMenu:34
+#: common/lib/cmds/genMenu:43 common/lib/cmds/genMenu:47
+#: common/lib/cmds/genMenu:51 common/lib/cmds/genMenu:57
+#: common/lib/cmds/genMenu:74 common/lib/cmds/genMenu:87
+#: common/lib/cmds/genMenu:128 common/lib/cmds/genMenu:135
+#: common/lib/cmds/genMenu:140 common/lib/cmds/genMenu:149
+#: common/lib/cmds/genMenu:164 common/lib/cmds/genMenu:172
+#: common/lib/cmds/genMenu:176 common/lib/cmds/bpImportNewUser:34
+#: common/lib/cmds/bpImportNewUser:38 common/lib/cmds/bpImportProcessData:36
+#: common/lib/cmds/bpImportProcessData:40
+#: common/lib/cmds/bpImportProcessData:44
+#: common/lib/cmds/bpImportProcessData:48
+#: common/lib/cmds/bpImportProcessData:52
+#: common/lib/cmds/bpImportProcessData:56
+#: common/lib/cmds/bpImportProcessData:60
+#: common/lib/cmds/bpImportProcessData:64
+#: common/lib/cmds/bpImportProcessData:103
+#: common/lib/cmds/bpImportProcessData:107
+#: common/lib/cmds/bpImportNewProcess:34 common/lib/cmds/bpImportNewProcess:38
+#: common/lib/cmds/bpImportNewProcess:42 common/lib/cmds/bpImportNewProcess:46
+#: common/lib/cmds/bpListUser:18
+msgid "XPATH"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:60 common/lib/cmds/bpImportProcessData:36
+msgid "statemachine/state_list_file"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:61 common/lib/cmds/bpDoStep:65
+#: common/lib/cmds/bpDoStep:69 common/lib/cmds/bpDoStep:73
+#: common/lib/cmds/bpDoStep:77 common/lib/cmds/bpDoStep:81
+#: common/lib/cmds/bpDoStep:85 common/lib/cmds/bpDoStep:89
+#: common/lib/cmds/genMenu:35 common/lib/cmds/genMenu:44
+#: common/lib/cmds/genMenu:48 common/lib/cmds/genMenu:52
+#: common/lib/cmds/genMenu:58 common/lib/cmds/genMenu:75
+#: common/lib/cmds/genMenu:88 common/lib/cmds/genMenu:129
+#: common/lib/cmds/genMenu:136 common/lib/cmds/genMenu:141
+#: common/lib/cmds/genMenu:150 common/lib/cmds/genMenu:165
+#: common/lib/cmds/genMenu:173 common/lib/cmds/genMenu:177
+#: common/lib/cmds/bpImportNewUser:35 common/lib/cmds/bpImportNewUser:39
+#: common/lib/cmds/bpImportProcessData:37
+#: common/lib/cmds/bpImportProcessData:41
+#: common/lib/cmds/bpImportProcessData:45
+#: common/lib/cmds/bpImportProcessData:49
+#: common/lib/cmds/bpImportProcessData:53
+#: common/lib/cmds/bpImportProcessData:57
+#: common/lib/cmds/bpImportProcessData:61
+#: common/lib/cmds/bpImportProcessData:65
+#: common/lib/cmds/bpImportProcessData:104
+#: common/lib/cmds/bpImportProcessData:108
+#: common/lib/cmds/bpImportNewProcess:35 common/lib/cmds/bpImportNewProcess:39
+#: common/lib/cmds/bpImportNewProcess:43 common/lib/cmds/bpImportNewProcess:47
+#: common/lib/cmds/bpListUser:19
+msgid "COUNTER"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:64 common/lib/cmds/bpImportProcessData:40
+msgid "statemachine/function_list_file"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:68 common/lib/cmds/bpImportProcessData:44
+msgid "statemachine/function_directory"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:72 common/lib/cmds/bpImportProcessData:48
+msgid "statemachine/function_state_file_suffix"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:76 common/lib/cmds/bpImportProcessData:52
+#: common/lib/cmds/bpImportNewProcess:42
+msgid "statemachine/user_list_file"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:80 common/lib/cmds/bpImportNewUser:34
+#: common/lib/cmds/bpImportProcessData:56
+#: common/lib/cmds/bpImportProcessData:103
+#: common/lib/cmds/bpImportNewProcess:34 common/lib/cmds/bpListUser:18
+msgid "statemachine/user_directory"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:84 common/lib/cmds/bpImportProcessData:60
+#: common/lib/cmds/bpImportNewProcess:46
+msgid "statemachine/user_state_file"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:88 common/lib/cmds/bpImportProcessData:64
+msgid "statemachine/subs_directory"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:102 common/lib/cmds/bpImportProcessData:78
+msgid "STATE_LIST_FILE"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:103 common/lib/cmds/bpImportProcessData:79
+msgid "FUNCTION_LIST_FILE"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:104 common/lib/cmds/bpImportProcessData:80
+msgid "FUNCTION_DIRECTORY"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:105 common/lib/cmds/bpImportProcessData:81
+msgid "FUNCTION_STATES_FILE_SUFFIX"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:106 common/lib/cmds/bpImportProcessData:82
+msgid "USER_LIST_FILE"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:107 common/lib/cmds/bpImportProcessData:83
+msgid "USER_DIRECTORY"
+msgstr ""
+
+#: common/lib/cmds/bpDoStep:108 common/lib/cmds/bpImportProcessData:84
+msgid "USER_STATE_FILE_NAME"
+msgstr ""
+
+#: common/lib/cmds/sendCRINMail:16 common/lib/cmds/sendCRINMail:33
+#: common/lib/cmds/confirm_revreq:25
+msgid "crin"
+msgstr ""
+
+
+#: common/lib/cmds/genMenu:12
+msgid "CgiServerName"
+msgstr ""
+
+#: common/lib/cmds/genMenu:13
+msgid "on"
+msgstr ""
+
+#: common/lib/cmds/genMenu:14
+msgid "interface_menus"
+msgstr ""
+#: common/lib/cmds/genMenu:28 common/lib/cmds/genMenu:33
+#: common/lib/cmds/genMenu:42 common/lib/cmds/genMenu:46
+#: common/lib/cmds/genMenu:50 common/lib/cmds/genMenu:56
+#: common/lib/cmds/genMenu:127 common/lib/cmds/genMenu:134
+#: common/lib/cmds/genMenu:139 common/lib/cmds/genMenu:148
+#: common/lib/cmds/genMenu:163 common/lib/cmds/genMenu:171
+#: common/lib/cmds/genMenu:175
+msgid "MenuConfiguration"
+msgstr ""
+#: common/lib/cmds/genMenu:43
+msgid "htdocs_prefix"
+msgstr ""
+
+#: common/lib/cmds/genMenu:47
+msgid "cgi_prefix"
+msgstr ""
+
+#: common/lib/cmds/genMenu:51
+msgid "logo_left"
+msgstr ""
+
+#: common/lib/cmds/genMenu:57
+msgid "logo_right"
+msgstr ""
+
+#: common/lib/cmds/genMenu:61
+msgid "menu"
+msgstr ""
+
+#: common/lib/cmds/genMenu:76 common/lib/cmds/genMenu:89
+msgid "HTDOCS"
+msgstr ""
+
+#: common/lib/cmds/genMenu:77 common/lib/cmds/genMenu:90
+msgid "CGI"
+msgstr ""
+
+#: common/lib/cmds/genMenu:80 common/lib/cmds/genMenu:93
+msgid "ID_PATH"
+msgstr ""
+
+#: common/lib/cmds/genMenu:81 common/lib/cmds/genMenu:128
+#: common/lib/cmds/genMenu:135 common/lib/cmds/genMenu:140
+#: common/lib/cmds/genMenu:149 common/lib/cmds/genMenu:164
+#: common/lib/cmds/genMenu:172 common/lib/cmds/genMenu:176
+msgid "item"
+msgstr ""#: common/lib/cmds/genMenu:144#: common/lib/cmds/genMenu:152
+msgid ";id="
+msgstr ""
+#: common/lib/cmds/genMenu:155 common/lib/cmds/genMenu:191#: common/lib/cmds/genMenu:156
+msgid "tab_on"
+msgstr ""
+
+#: common/lib/cmds/genMenu:158
+msgid "tab_off"
+msgstr ""
+
+#: common/lib/cmds/genMenu:160
+msgid "cmd=genMenu"
+msgstr ""
+
+#: common/lib/cmds/genMenu:161
+msgid "top"
+msgstr ""
+
+#: common/lib/cmds/genMenu:172
+msgid "link"
+msgstr ""
+
+#: common/lib/cmds/genMenu:176
+msgid "target"
+msgstr ""
+#: common/lib/cmds/genMenu:188
+msgid "sub"
+msgstr ""
+
+#: common/lib/cmds/genMenu:192
+msgid "submenu_item_on"
+msgstr ""
+
+#: common/lib/cmds/genMenu:194
+msgid "submenu_item_off"
+msgstr ""
+#: common/lib/cmds/genMenu:205
+msgid "menu_row"
+msgstr ""
+
+#: common/lib/cmds/genMenu:207 common/lib/cmds/genMenu:210
+msgid "submenu_row"
+msgstr ""
+
+#: common/lib/cmds/genMenu:212
+msgid "subsubmenu_row"
+msgstr ""
+#: common/lib/cmds/genSKey:17
+msgid "key_type"
+msgstr ""
+#: common/lib/cmds/genSKey:46
+msgid "&nbsp;"
+msgstr ""
+
+
+
+
+#: common/lib/cmds/getcert:53
+msgid "/.csr"
+msgstr ""
+#: common/lib/cmds/getcert:103
+msgid "<a class=\"normal\" name=\"result\">Installing certificate...</a>"
+msgstr ""
+
+#: common/lib/cmds/getcert:104
+msgid "cert"
+msgstr ""
+
+#: common/lib/cmds/getcert:110
+msgid "IE_ENROLL_CERT"
+msgstr ""
+
+
+
+
+#: common/lib/cmds/genCRL:22 common/lib/cmds/genCRLfromFile:23
+msgid "UNIQUE_DN"
+msgstr ""
+
+#: common/lib/cmds/genCRL:40 common/lib/cmds/genCRLfromFile:43
+msgid "exts"
+msgstr ""
+
+#: common/lib/cmds/genCRL:49 common/lib/cmds/genCRLfromFile:159
+msgid "EXTS"
+msgstr ""
+
+#: common/lib/cmds/genCRL:51 common/lib/cmds/genCRLfromFile:161
+msgid "NOUNIQUEDN"
+msgstr ""
+
+
+#: common/lib/cmds/deleteCRR:35 common/lib/cmds/deleteCRR:38
+#: common/lib/cmds/deleteCRR:42
+msgid "REVOKE_CERTIFICATE_SERIAL"
+msgstr ""
+
+#: common/lib/cmds/revokeCertificate:18
+msgid "143"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:12
+msgid "PREFERENCES_LANGUAGE"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:12 common/lib/cmds/setLanguage:19
+msgid "lang"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:13 common/lib/cmds/setLanguage:15
+msgid "charset"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:15 common/lib/cmds/setLanguage:17
+#: common/lib/cmds/setLanguage:20
+msgid "PREFERENCES_CHARSET"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:17
+msgid "iso-8859-1"
+msgstr ""
+
+#: common/lib/cmds/setLanguage:21
+msgid "genMenu"
+msgstr ""
+
+msgid "basedn"
+msgstr ""
+
+msgid "CertDir"
+msgstr ""msgid "[ "
+msgstr ""
+
+msgid " ]"
+msgstr ""
+
+
+#: common/lib/cmds/add_role:14
+msgid "<input type=\"text\" value=\"\" name=\"role\">"
+msgstr ""
+
+#: common/lib/cmds/add_role:16
+msgid "show_prepared_role"
+msgstr ""
+
+#: common/lib/cmds/signConfig:16
+msgid "<p>"
+msgstr ""
+
+#: common/lib/cmds/signConfig:16
+msgid "</p>\n"
+msgstr ""
+#: common/lib/cmds/signConfig:18
+msgid "<input type=hidden name=cmd value=\"signConfig\">\n"
+msgstr ""
+
+#: common/lib/cmds/signConfig:19
+msgid "<input type=password name=passwd value=\"\">\n"
+msgstr ""
+
+#: common/lib/cmds/signConfig:20
+msgid "<input type=submit value=\"ok\">\n"
+msgstr ""
+
+#: common/lib/cmds/signConfig:21
+msgid "</form>\n"
+msgstr ""
+
+#: common/lib/cmds/signConfig:25 common/lib/cmds/signConfig:27
+#: common/lib/cmds/add_script:16
+msgid "RBAC_DIR"
+msgstr ""
+
+#: common/lib/cmds/signConfig:26
+msgid "RIGHTS_DIR"
+msgstr ""
+
+#: common/lib/cmds/signConfig:28
+msgid "SCRIPT_CONFIG_DIR"
+msgstr ""
+
+#: common/lib/cmds/signConfig:44 common/lib/cmds/signConfig:73
+#: common/lib/cmds/bpApproveRenewedCSR:217
+#: common/lib/cmds/bpApprovePendingCSR:233
+msgid "OUT_FILE"
+msgstr ""
+
+#: common/lib/cmds/signConfig:45 common/lib/cmds/signConfig:74
+msgid "KEY_FILE"
+msgstr ""
+
+#: common/lib/cmds/signConfig:46 common/lib/cmds/signConfig:75
+msgid "USE_ENGINE"
+msgstr ""
+
+#: common/lib/cmds/signConfig:47 common/lib/cmds/signConfig:76
+msgid "CERT_FILE"
+msgstr ""
+
+#: common/lib/cmds/signConfig:72
+msgid "DATA_FILE"
+msgstr ""
+
+#: common/lib/cmds/rebuildOpenSSLindexDB:19
+#: common/lib/cmds/rebuildOpenSSLindexDB:20
+#: common/lib/cmds/rebuildOpenSSLindexDB:21
+#: common/lib/cmds/rebuildOpenSSLindexDB:24
+#: common/lib/cmds/rebuildOpenSSLindexDB:45 common/lib/cmds/genCRLfromFile:19
+msgid "sslindex"
+msgstr ""
+
+#: common/lib/cmds/rebuildOpenSSLindexDB:20
+#: common/lib/cmds/rebuildOpenSSLindexDB:32
+msgid "."
+msgstr ""
+
+#: common/lib/cmds/rebuildOpenSSLindexDB:20
+#: common/lib/cmds/rebuildOpenSSLindexDB:32
+msgid "before_recovery"
+msgstr ""
+
+#: common/lib/cmds/rebuildOpenSSLindexDB:24
+msgid "FAILED TO COPY __SSLINDEX__"
+msgstr ""
+#: common/lib/cmds/rebuildOpenSSLindexDB:31
+#: common/lib/cmds/rebuildOpenSSLindexDB:32
+#: common/lib/cmds/rebuildOpenSSLindexDB:33
+#: common/lib/cmds/rebuildOpenSSLindexDB:36
+#: common/lib/cmds/rebuildOpenSSLindexDB:46
+msgid "sslserial"
+msgstr ""
+#: common/lib/cmds/rebuildOpenSSLindexDB:46
+msgid "SERIAL"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:15
+msgid "OpenSSL"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:15
+msgid "Tools"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:15
+msgid "TRIStateCGI"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:16
+msgid "REQ"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:16
+msgid "X509"
+msgstr ""
+
+#: common/lib/cmds/serverInfo:16
+msgid "PKCS7"
+msgstr ""
+#: common/lib/cmds/serverInfo:20#: common/lib/cmds/viewSignature:18 common/lib/cmds/approveCSR:20
+#: common/lib/cmds/approveCSRnotSigned:19
+msgid "tempDir"
+msgstr ""
+
+#: common/lib/cmds/viewSignature:53 common/lib/cmds/viewSignature:61
+#: common/lib/cmds/verifySignature:56 common/lib/cmds/verifySignature:64
+msgid "<FONT COLOR=\"Red\">"
+msgstr ""
+
+#: common/lib/cmds/viewSignature:92 common/lib/cmds/search:149
+msgid "viewCert"
+msgstr ""
+
+#: common/lib/cmds/viewSignature:99
+msgid "( "
+msgstr ""
+
+#: common/lib/cmds/viewSignature:99
+msgid " )"
+msgstr ""
+
+#: common/lib/cmds/viewSignature:130
+msgid "("
+msgstr ""
+
+#: common/lib/cmds/viewSignature:130
+msgid ")"
+msgstr ""
+
+msgid "LDAP_CA_DN"
+msgstr ""
+#: common/lib/cmds/listCerts:32 common/lib/cmds/viewCert:366#: common/lib/cmds/listCerts:85 common/lib/cmds/search:144
+#: common/lib/cmds/search:145 common/lib/cmds/search:146
+msgid "<CENTER>"
+msgstr ""
+
+#: common/lib/cmds/listCerts:85 common/lib/cmds/search:144
+#: common/lib/cmds/search:145 common/lib/cmds/search:146
+msgid "</CENTER>"
+msgstr ""
+
+#: common/lib/cmds/bpImportNewUser:38
+msgid "statemachine/import_new_user_file"
+msgstr ""
+#: common/lib/cmds/raList:14
+msgid "listReqs"
+msgstr ""
+
+#: common/lib/cmds/raList:56
+msgid "labels"
+msgstr ""
+
+#: common/lib/cmds/bpApproveRenewedCSR:43
+msgid "bpApproveRenewedCSR"
+msgstr ""
+
+#: common/lib/cmds/bpApproveRenewedCSR:112
+msgid "/ROLE"
+msgstr ""
+#: common/lib/cmds/bpApproveRenewedCSR:159
+msgid "/acl/approveRenewedCSR"
+msgstr ""
+#: common/lib/cmds/bpApproveRenewedCSR:180#: common/lib/cmds/bpApproveRenewedCSR:194#: common/lib/cmds/bpApproveRenewedCSR:197
+#: common/lib/cmds/bpApprovePendingCSR:213
+msgid "OPERATOR = "
+msgstr ""
+#: common/lib/cmds/bpApproveRenewedCSR:200
+#: common/lib/cmds/bpApprovePendingCSR:216
+msgid "APPROVED = "
+msgstr ""
+#: common/lib/cmds/bpApproveRenewedCSR:202#: common/lib/cmds/bpApproveRenewedCSR:205#: common/lib/cmds/bpApproveRenewedCSR:216
+#: common/lib/cmds/bpApprovePendingCSR:232
+msgid "CERT"
+msgstr ""
+#: common/lib/cmds/bpApproveRenewedCSR:266
+msgid "/acl/renewedCSR"
+msgstr ""
+
+
+
+#: common/lib/cmds/bpExportPKCS12:32
+msgid "bpExportPKCS12"
+msgstr ""
+
+#: common/lib/cmds/bpExportPKCS12:38 common/lib/cmds/bpExportPKCS12:111
+msgid "BP_EXPORT_PKCS12_DIR"
+msgstr ""
+
+#: common/lib/cmds/bpExportPKCS12:112
+msgid ".p12"
+msgstr ""
+
+#: common/lib/cmds/search:29
+msgid " - "
+msgstr ""
+
+#: common/lib/cmds/search:71 common/lib/cmds/search:74
+msgid "parName"
+msgstr ""
+#: common/lib/cmds/search:85#: common/lib/cmds/search:114
+msgid "viewLog"
+msgstr ""
+#: common/lib/cmds/search:131
+msgid "SESSION_ID"
+msgstr ""
+
+#: common/lib/cmds/search:132
+msgid "value_1"
+msgstr ""
+#: common/lib/cmds/search:159#: common/lib/cmds/search_rights:19 common/lib/cmds/add_right:16
+msgid "<select name=module>\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:20 common/lib/cmds/search_rights:29
+#: common/lib/cmds/add_right:17 common/lib/cmds/add_right:26
+msgid "<option value=\"\">\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:22 common/lib/cmds/search_rights:31
+#: common/lib/cmds/search_rights:42 common/lib/cmds/search_rights:43
+#: common/lib/cmds/add_script:23 common/lib/cmds/add_right:19
+#: common/lib/cmds/add_right:28 common/lib/cmds/add_right:39
+#: common/lib/cmds/add_right:40
+msgid "<option value=\""
+msgstr ""
+#: common/lib/cmds/search_rights:24 common/lib/cmds/search_rights:33
+#: common/lib/cmds/search_rights:45 common/lib/cmds/search_rights:46
+#: common/lib/cmds/add_script:25 common/lib/cmds/add_right:21
+#: common/lib/cmds/add_right:30 common/lib/cmds/add_right:42
+#: common/lib/cmds/add_right:43
+msgid "</select>\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:28 common/lib/cmds/add_script:21
+#: common/lib/cmds/add_right:25
+msgid "<select name=operation>\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:37 common/lib/cmds/add_right:34
+msgid "<select name=role>\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:38 common/lib/cmds/add_right:35
+msgid "<select name=owner>\n"
+msgstr ""
+
+#: common/lib/cmds/search_rights:39 common/lib/cmds/search_rights:40
+#: common/lib/cmds/add_right:36 common/lib/cmds/add_right:37
+msgid "<option value=\"\">"
+msgstr ""
+
+#: common/lib/cmds/verifySignature:26 common/lib/cmds/approveCSR:28
+msgid "-----BEGIN PKCS7-----\n"
+msgstr ""
+
+
+#: common/lib/cmds/verifySignature:30 common/lib/cmds/verifySignature:34#: common/lib/cmds/verifySignature:36#: common/lib/cmds/verifySignature:100 common/lib/cmds/test_cert:20
+msgid "verifySignature"
+msgstr ""
+
+#: common/lib/cmds/verifySignature:102 common/lib/cmds/test_cert:22
+msgid "<input type=button name=\"sign\" value=\""
+msgstr ""
+
+#: common/lib/cmds/verifySignature:104 common/lib/cmds/test_cert:24
+msgid "\" onClick=\"signForm( this.form, window)\" >"
+msgstr ""
+
+#: common/lib/cmds/verifySignature:143 common/lib/cmds/viewCRR:322
+#: common/lib/cmds/viewCSR:572 common/lib/cmds/test_cert:57
+#: common/lib/cmds/confirm_revreq:216
+msgid "SIGN_FORM"
+msgstr ""
+
+#: common/lib/cmds/sendMail:14
+msgid "emailaddress"
+msgstr ""
+
+#: common/lib/cmds/sendMail:40
+msgid "body"
+msgstr ""
+
+#: common/lib/cmds/sendMail:55
+msgid "mailcommand"
+msgstr ""
+
+#: common/lib/cmds/sendMail:60
+msgid ">\n"
+msgstr ""
+#: common/lib/cmds/sendcert:17
+msgid "format_sendcert"
+msgstr ""
+
+#: common/lib/cmds/sendcert:19
+msgid "_CERTIFICATE"
+msgstr ""
+
+
+
+#: common/lib/cmds/new_role:15 common/lib/cmds/new_role:72
+msgid "EXT_DIR"
+msgstr ""
+
+#: common/lib/cmds/new_role:16 common/lib/cmds/new_role:73
+msgid "OpenSSL_DIR"
+msgstr ""
+
+#: common/lib/cmds/new_role:20 common/lib/cmds/new_role:77
+msgid ".ext"
+msgstr ""
+
+#: common/lib/cmds/new_role:21 common/lib/cmds/new_role:78
+msgid ".conf"
+msgstr ""
+
+#: common/lib/cmds/new_role:26
+msgid "OPENSSL_SAMPLE_EXT"
+msgstr ""
+
+#: common/lib/cmds/new_role:27
+msgid "OPENSSL_SAMPLE_CONF"
+msgstr ""#: common/lib/cmds/new_role:55 common/lib/cmds/new_role:60
+#: common/lib/cmds/new_role:97
+msgid "RoleConfiguration"
+msgstr ""
+
+#: common/lib/cmds/new_role:57
+msgid "access_control/roles"
+msgstr ""
+
+#: common/lib/cmds/new_role:62
+msgid "show_roles"
+msgstr ""
+
+#: common/lib/cmds/new_role:98
+msgid "access_control/roles/role"
+msgstr ""
+
+#: common/lib/cmds/writeCertMail:22
+msgid "basemailfile"
+msgstr ""
+#: common/lib/cmds/writeCertMail:28#: common/lib/cmds/writeCertMail:32
+msgid "<input type=\"text\" name=\"emailaddress\" value=\""
+msgstr ""
+
+#: common/lib/cmds/writeCertMail:35
+msgid "<input type=\"text\" name=\"subject\" value=\""
+msgstr ""
+
+#: common/lib/cmds/writeCertMail:41
+msgid "<textarea cols=\"80\" rows=\"20\" name=\"body\">"
+msgstr ""
+
+#: common/lib/cmds/writeCertMail:50
+msgid "sendMail"
+msgstr ""#: common/lib/cmds/viewCRR:103 common/lib/cmds/confirm_revreq:165
+msgid "APPROVED_DATE = "
+msgstr ""
+
+#: common/lib/cmds/viewCRR:224
+msgid "CmdRefs_viewCRR"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:234
+msgid "\" onClick=\"cmd.value=''editCRR';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:243 common/lib/cmds/viewCRR:255
+#: common/lib/cmds/viewCRR:306 common/lib/cmds/viewCSR:453
+#: common/lib/cmds/viewCSR:467 common/lib/cmds/viewCSR:480
+#: common/lib/cmds/viewCSR:536 common/lib/cmds/viewCSR:556
+msgid "<input type=\"button\" value=\""
+msgstr ""
+
+#: common/lib/cmds/viewCRR:245
+msgid "\" onClick=\"cmd.value='approveCRR';signForm( this.form, window )\">"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:257
+msgid "\" onClick=\"cmd.value='approveCRRnotSigned';if (confirm ('"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:260 common/lib/cmds/viewCRR:310
+#: common/lib/cmds/viewCSR:457 common/lib/cmds/viewCSR:484
+#: common/lib/cmds/viewCSR:540 common/lib/cmds/viewCSR:560
+msgid "')) {this.form.submit();}\">"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:284
+msgid "\" onClick=\"cmd.value='revokeCertificate';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCRR:308
+msgid "\" onClick=\"cmd.value='deleteCRR';if (confirm ('"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:49
+msgid "AUTOMATIC_SUBJECT_ALT_NAME"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:50
+msgid "DEFAULT_SUBJECT_ALT_NAME"
+msgstr ""
+#: common/lib/cmds/viewCSR:185
+msgid "SET_REQUEST_SERIAL_IN_DN"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:188
+msgid "REQUEST_SERIAL_NAME"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:192
+msgid "SET_CERTIFICATE_SERIAL_IN_DN"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:195
+msgid "CERTIFICATE_SERIAL_NAME"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:205
+msgid "DN_WITHOUT_EMAIL"
+msgstr ""
+#: common/lib/cmds/viewCSR:306
+msgid "first_name"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:310
+msgid "last_name"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:317
+msgid ".ou"
+msgstr ""
+#: common/lib/cmds/viewCSR:355
+msgid "</a>&nbsp;"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:393
+msgid "RAW"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:402
+msgid "</a> "
+msgstr ""
+
+#: common/lib/cmds/viewCSR:435
+msgid "CmdRefs_viewCSR"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:443
+msgid "\" onClick=\"cmd.value='editCSR';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:455
+msgid "\" onClick=\"cmd.value='basic_csr';if (confirm ('"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:469
+msgid "\" onClick=\"cmd.value='approveCSR';signForm( this.form, window )\">"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:482
+msgid "\" onClick=\"cmd.value='approveCSRnotSigned';if (confirm ('"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:511
+msgid "\" onClick=\"cmd.value='issueCertificate';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:538
+msgid "\" onClick=\"cmd.value='deleteCSR';if (confirm ('"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:558
+msgid "\" onClick=\"cmd.value='renewCSR';if (confirm ('"
+msgstr ""
+#: common/lib/cmds/bpImportProcessData:107
+msgid "statemachine/import_process_data_file"
+msgstr ""
+
+#: common/lib/cmds/bpImportProcessData:164
+#: common/lib/cmds/bpImportProcessData:179
+#: common/lib/cmds/bpImportProcessData:193
+#: common/lib/cmds/bpImportProcessData:202
+#: common/lib/cmds/bpImportProcessData:213
+#: common/lib/cmds/bpImportProcessData:221
+#: common/lib/cmds/bpImportProcessData:244
+msgid "USER"
+msgstr ""
+
+#: common/lib/cmds/bpImportProcessData:170
+#: common/lib/cmds/bpImportProcessData:192
+#: common/lib/cmds/bpImportProcessData:201
+#: common/lib/cmds/bpImportProcessData:214
+#: common/lib/cmds/bpImportProcessData:222
+#: common/lib/cmds/bpImportProcessData:230
+#: common/lib/cmds/bpImportProcessData:235
+#: common/lib/cmds/bpImportProcessData:243
+msgid "PROCESS"
+msgstr ""
+#: common/lib/cmds/bpImportProcessData:192
+#: common/lib/cmds/bpImportProcessData:201
+#: common/lib/cmds/bpImportProcessData:230
+#: common/lib/cmds/bpImportProcessData:235
+msgid "/workflows/"
+msgstr ""
+
+#: common/lib/cmds/bpImportProcessData:215
+msgid "SET"
+msgstr ""
+
+#: common/lib/cmds/bpImportProcessData:223
+msgid "UNSET"
+msgstr ""
+#: common/lib/cmds/new_right:35
+msgid "permission"
+msgstr ""
+
+#: common/lib/cmds/new_right:36
+msgid "access_control/acl"
+msgstr ""
+#: common/lib/cmds/approveCSR:29#: common/lib/cmds/approveCSR:30
+msgid "-----END PKCS7-----\n"
+msgstr ""
+
+#: common/lib/cmds/approveCSR:45 common/lib/cmds/bpApprovePendingCSR:185
+#: common/lib/cmds/approveCSRnotSigned:39
+msgid "PUBKEY"
+msgstr ""
+
+
+#: common/lib/cmds/approveCSR:51 common/lib/cmds/bpApprovePendingCSR:191
+#: common/lib/cmds/approveCSRnotSigned:45
+msgid "<li>"
+msgstr ""
+
+#: common/lib/cmds/approveCSR:51 common/lib/cmds/bpApprovePendingCSR:191
+#: common/lib/cmds/approveCSRnotSigned:45
+msgid "</li>\n"
+msgstr ""
+#: common/lib/cmds/delete_module:11 common/lib/cmds/delete_module:30
+#: common/lib/cmds/new_module:11 common/lib/cmds/new_module:37
+msgid "ModuleConfiguration"
+msgstr ""
+
+#: common/lib/cmds/delete_module:15 common/lib/cmds/new_module:15
+msgid "access_control/modules/module"
+msgstr ""
+
+#: common/lib/cmds/delete_module:32 common/lib/cmds/new_module:39
+msgid "show_modules"
+msgstr ""
+
+#: common/lib/cmds/add_module:13
+msgid "show_prepared_module"
+msgstr ""
+
+#: common/lib/cmds/add_module:15
+msgid "<input type=\"text\" value=\"\" name=\"id\">"
+msgstr ""
+
+#: common/lib/cmds/add_module:17
+msgid "<input type=\"text\" value=\"\" name=\"description\">"
+msgstr ""
+
+#: common/lib/cmds/add_module:18 common/lib/cmds/add_script:53
+#: common/lib/cmds/add_right:53
+msgid "<input type=\"submit\" value=\"OK\">"
+msgstr ""
+
+#: common/lib/cmds/bpExportPIN:29
+msgid "BP_File_ExportPIN"
+msgstr ""
+#: common/lib/cmds/bpExportPIN:42
+msgid "bpExportPIN"
+msgstr ""
+
+#: common/lib/cmds/bpExportPIN:100
+msgid "ID "
+msgstr ""
+
+#: common/lib/cmds/bpExportPIN:101
+msgid "PIN "
+msgstr ""
+
+
+#: common/lib/cmds/revoke_req:20 common/lib/cmds/confirm_revreq:95
+msgid "confirm_revreq"
+msgstr ""
+
+#: common/lib/cmds/bpRecoverKey:37
+msgid "key_digest"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:117
+#, perl-format
+msgid "%lX"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:120
+msgid "REVOKE_CERTIFICATE_DN"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:121
+msgid "991231235959Z"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:133 common/lib/cmds/genCRLfromFile:162
+msgid ".index.txt"
+msgstr ""
+#: common/lib/cmds/genCRLfromFile:139
+msgid "R\t"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:140 common/lib/cmds/genCRLfromFile:141
+msgid "\t"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:142
+msgid "\tunknown\t"
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:144
+msgid "R "
+msgstr ""
+
+#: common/lib/cmds/genCRLfromFile:147
+msgid " unknown "
+msgstr ""
+
+#: common/lib/cmds/add_script:17
+msgid "OPERATIONS_DIR"
+msgstr ""#: common/lib/cmds/add_script:35
+msgid "show_prepared_script"
+msgstr ""
+
+#: common/lib/cmds/add_script:37
+msgid "<input type=text name=script value=\"\">"
+msgstr ""
+
+
+
+
+
+
+
+
+#: common/lib/cmds/add_script:52
+msgid "<input type=text name=owner_argument value=\"\">"
+msgstr ""
+
+#: common/lib/cmds/bpViewUser:47
+msgid "/data"
+msgstr ""
+
+#: common/lib/cmds/bpViewUser:121
+msgid "/public"
+msgstr ""
+#: common/lib/cmds/bpViewUser:171
+msgid "/private"
+msgstr ""
+#: common/lib/cmds/bpViewUser:208
+msgid ";cmd=getParams;GET_PARAMS_CMD=bpRecoverKey\">Key</a>"
+msgstr ""#: common/lib/cmds/bpViewUser:237#: common/lib/cmds/bpViewUser:241
+msgid ";format=openssl;cmd=getParams;GET_PARAMS_CMD=bpRecoverCert\">SSLeay</a>"
+msgstr ""
+
+#: common/lib/cmds/bpApprovePendingCSR:44
+msgid "bpApprovePendingCSR"
+msgstr ""
+
+#: common/lib/cmds/bpApprovePendingCSR:158
+#: common/lib/cmds/bpApprovePendingCSR:281
+msgid "/acl/approvePendingCSR"
+msgstr ""
+
+#: common/lib/cmds/importCACert:15
+msgid "EXPORT_IMPORT_LOCAL_IMPORT"
+msgstr ""
+
+#: common/lib/cmds/importCACert:16
+msgid "EXPORT_IMPORT_LOCAL_DEVICE"
+msgstr ""
+#: common/lib/cmds/importCACert:29#: common/lib/cmds/importCACert:42#: common/lib/cmds/removeKey:26 common/lib/cmds/removeKey:28
+msgid "removeKey"
+msgstr ""
+#: common/lib/cmds/bpImportNewProcess:38
+msgid "statemachine/import_new_process_file"
+msgstr ""#: common/lib/cmds/bpListUser:52#: common/lib/cmds/bpListUser:60
+msgid "User: __USER__"
+msgstr ""
+
+#: common/lib/cmds/viewCert:98
+msgid "HIDDEN_key"
+msgstr ""
+
+#: common/lib/cmds/viewCert:127
+msgid "download.cer?cmd=send_email_cert;type=email;key="
+msgstr ""
+
+#: common/lib/cmds/viewCert:174
+msgid "CmdRefs_viewCert"
+msgstr ""
+
+#: common/lib/cmds/viewCert:199 common/lib/cmds/viewCert:218
+#: common/lib/cmds/viewCert:227 common/lib/cmds/viewCert:236
+#: common/lib/cmds/viewCert:251 common/lib/cmds/viewCert:260
+#: common/lib/cmds/viewCert:269 common/lib/cmds/viewCert:278
+#: common/lib/cmds/viewCert:293 common/lib/cmds/viewCert:303
+#: common/lib/cmds/viewCert:318 common/lib/cmds/viewCert:331
+#: common/lib/cmds/viewCert:346
+msgid "<input TYPE=\"Submit\" Name=\"Submit\" Value=\""
+msgstr ""
+
+#: common/lib/cmds/viewCert:202
+msgid "\" onClick=\"cmd.value='sendcert';\">"
+msgstr ""
+
+
+
+#: common/lib/cmds/viewCert:230
+msgid "\" onClick=\"cmd.value='changePasswd'\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:239
+msgid "\" onClick=\"cmd.value='removeKey'\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:296
+msgid "\" onClick=\"cmd.value='getcert'\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:306
+msgid "\" onClick=\"cmd.value='writeCertMail'\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:321
+msgid "\" onClick=\"cmd.value='setPasswd';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:334
+msgid "\" onClick=\"cmd.value='deletePasswd';\">"
+msgstr ""
+
+#: common/lib/cmds/viewCert:349
+msgid "\" onClick=\"cmd.value='revoke_req'\">"
+msgstr ""
+
+#: common/lib/cmds/setupInitialCert:13 common/lib/cmds/setupInitialCert:15
+#: common/lib/cmds/setupInitialCert:18 common/lib/cmds/setupInitialCert:21
+#: common/lib/cmds/setupInitialCert:28
+msgid "dest"
+msgstr ""
+
+#: common/lib/cmds/setupInitialCert:17
+msgid "basic"
+msgstr ""
+
+#: common/lib/cmds/add_right:47
+msgid "show_prepared_right"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:26 common/lib/cmds/pkcs10_req:179
+msgid "pkcs10_req"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:27 common/lib/cmds/pkcs10_req:145
+msgid "server-filled-form"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:32
+msgid "filefield"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:33
+msgid "req.pem"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:180 common/lib/cmds/pkcs10_req:237
+msgid "server-confirmed-form"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:199
+msgid "PUBKEY_ALGORITHM"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:201
+msgid "KEYSIZE"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:205
+msgid "HEADER"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:205
+msgid "NOTBEFORE"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:298
+msgid "ROLE = "
+msgstr ""#: common/lib/cmds/pkcs10_req:391
+msgid "DN_TYPE_PKCS10_REQUIRED_ELEMENTS"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:392
+msgid "DN_TYPE_PKCS10_BASE"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:393
+msgid "DN_TYPE_PKCS10_ENFORCE_BASE"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:399
+msgid "DN_TYPE_PKCS10_BASE_"
+msgstr ""#: common/lib/cmds/pkcs10_req:444 common/lib/cmds/pkcs10_req:447#: common/lib/cmds/pkcs10_req:473#: common/lib/cmds/confirm_revreq:26
+msgid "crin2"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:31
+msgid "<input TYPE=\"Button\" Name=\"Sign2\" Value=\""
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:33
+msgid "\" onClick=\"signForm (this.form, window )\">"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:110
+msgid "<input TYPE=\"Button\" Name=\"continue\" Value=\""
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:112
+msgid "\" onClick=\"this.form.submit()\">"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:184
+msgid "COLS"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:184
+msgid "WIDTH"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:184
+msgid "100%"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:185
+msgid "BGCOLOR"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:185
+msgid "#EEEEF1"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:186
+msgid "TITLE_BGCOLOR"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:186
+msgid "#DDCCFF"
+msgstr ""
+
+#: common/lib/cmds/confirm_revreq:208
+msgid "approveCRR"
+msgstr ""
+
+#: common/lib/cmds/new_module:33
+msgid "access_control/modules"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:374
+msgid "/cacert/cacert.crt\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:379
+msgid "/cacert/cacert.pem\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:384
+msgid "/cacert/cacert.der\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:389
+msgid "/cacert/cacert.cer\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:394
+msgid "/cacert/cacert.txt\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:402
+msgid "/crl/cacrl.crl\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:407
+msgid "/crl/cacrl.pem\">"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:412
+msgid "/crl/cacrl.txt\">"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1548
+msgid "SUBJECT_ALT_NAME"
+msgstr ""
+
+#: common/lib/cmds/bpListProcess:25
+msgid "/workflows"
+msgstr ""
+#: common/lib/cmds/bpListProcess:44
+msgid "&PROCESS="
+msgstr ""
+
+#: common/lib/cmds/bpViewProcess:75
+msgid "/data/LOA_MODE"
+msgstr ""
+#: common/lib/cmds/bpViewProcess:64
+msgid "/data/SUBJECT"
+msgstr ""
+
+#: common/lib/cmds/bpRecoverKey:35
+msgid ".enc_key"
+msgstr ""
+
+#: common/lib/cmds/bpViewProcess:261
+msgid "\" onClick=\"cmd.value='bpUnsetState';\">"
+msgstr ""
+#: common/lib/cmds/bpViewProcess:270
+msgid "FUNCTION"
+msgstr ""
+
+#: common/lib/cmds/bpViewProcess:275
+msgid "\" onClick=\"cmd.value='bpDoFunction';\">"
+msgstr ""
+
+#: common/lib/cmds/bpViewProcess:280
+msgid "bpViewProcess"
+msgstr ""
+
+#: common/lib/cmds/bpBackupKey:111
+msgid ".msg"
+msgstr ""
+#: common/lib/cmds/bpExportPIN:112
+msgid "statemachine/functions/enrollment/pin/list"
+msgstr ""
+
+#: common/lib/cmds/bpExportPIN:126
+msgid "%Y-%m-%d-%H-%M-%S"
+msgstr ""
+
+#: common/lib/cmds/getStaticPage:45
+msgid "?cmd=getParams;GET_PARAMS_CMD=bpExportPIN\">"
+msgstr ""
+
+#: common/lib/cmds/bpExportPIN:35
+msgid "statemachine/functions/enrollment/pin/waiting"
+msgstr ""
+#: common/lib/cmds/bpViewProcess:208#: common/lib/cmds/bpViewProcess:215#: common/lib/cmds/bpViewProcess:222#: common/lib/cmds/getStaticPage:49
+msgid "statemachine/functions/enrollment/pkcs12/dir"
+msgstr ""
+
+#: common/lib/cmds/revoke_req:20
+msgid "CmdRefs_revoke_req"
+msgstr ""
+
+#: common/lib/cmds/revoke_req:23
+msgid "addCRR"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:477
+msgid "\" onClick=\"window.open('"
+msgstr ""
+
+#: common/lib/cmds/viewCSR:479
+msgid "','PIN Verification','width=640,height=480,top=100,left=100');\">"
+msgstr ""
+
+#: common/lib/cmds/verifyPIN:56 common/lib/cmds/verifyPIN:73
+msgid "pin"
+msgstr ""
+
+#: common/lib/cmds/verifyPIN:57
+msgid "verifyPIN"
+msgstr ""
+
+#: common/lib/cmds/verifyPIN:58
+msgid "check_it"
+msgstr ""
+
+#: common/lib/cmds/verifyPIN:106
+msgid "<input type=button value=\""
+msgstr ""
+
+#: common/lib/cmds/verifyPIN:106
+msgid "\" onclick=\"window.close()\">"
+msgstr ""
+
+#: common/lib/cmds/sendcert:33
+msgid "Content-Disposition: attachment; filename=\""
+msgstr ""
+
+
+#: common/lib/cmds/viewCert:254
+msgid "\" onClick=\"cmd.value='ldapAddCert'\">"
+msgstr ""
+
+
+#: common/lib/cmds/viewCert:272
+msgid "\" onClick=\"cmd.value='ldapDeleteCert'\">"
+msgstr ""
+
+
+#: common/lib/cmds/basic_csr:107 common/lib/cmds/basic_csr:356
+#: common/lib/cmds/basic_csr:645 common/lib/cmds/basic_csr:789
+msgid "_SUBJECTALTNAMES"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:112 common/lib/cmds/basic_csr:113
+#: common/lib/cmds/basic_csr:119 common/lib/cmds/basic_csr:121
+#: common/lib/cmds/basic_csr:124 common/lib/cmds/basic_csr:146
+#: common/lib/cmds/basic_csr:155 common/lib/cmds/basic_csr:159
+#: common/lib/cmds/basic_csr:377 common/lib/cmds/basic_csr:793
+#: common/lib/cmds/basic_csr:803 common/lib/cmds/basic_csr:811
+msgid "_SUBJECTALTNAME_"
+msgstr ""
+
+#: common/lib/cmds/basic_csr:117 common/lib/cmds/basic_csr:137
+#: common/lib/cmds/basic_csr:144 common/lib/cmds/basic_csr:147
+#: common/lib/cmds/basic_csr:153 common/lib/cmds/basic_csr:156
+#: common/lib/cmds/basic_csr:376 common/lib/cmds/basic_csr:378
+#: common/lib/cmds/basic_csr:648 common/lib/cmds/basic_csr:649
+#: common/lib/cmds/basic_csr:794 common/lib/cmds/basic_csr:801
+#: common/lib/cmds/basic_csr:809
+msgid "SUBJECTALTNAME_VALUE_"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:192
+msgid "<br/><br/><pre>"
+msgstr ""
+
+#: common/lib/cmds/pkcs10_req:227
+msgid "**********"
+msgstr ""
+
+#: common/lib/cmds/revoke_req:48
+msgid "<textarea cols=\"35\" rows=\"5\" name=\"description\" wrap=\"virtual\">"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:753
+msgid "LOA = 10\n"
+msgstr ""
+
+#: common/lib/cmds/scepPKIOperation:765
+msgid "ARRAY"
+msgstr ""
+
+#: common/lib/cmds/sendcert:38
+msgid "Content-type: text/plain\n"
+msgstr ""
+
+#: common/lib/cmds/sendcert:39
+msgid "Content-Description: User Certificate\n"
+msgstr ""
+
+#: common/lib/cmds/sendcert:81 common/lib/cmds/sendcert:87
+msgid "Content-Type: text/html\n"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs12:50
+msgid "_certificate.p12"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs12:53
+msgid "Content-type: application/x-pkcs12\n"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs8:31
+msgid "_certificate"
+msgstr ""
+
+#: common/lib/cmds/send_cert_key_pkcs8:32
+msgid ".p8"
+msgstr ""
+
+#: common/lib/cmds/stopAutoEmail:18
+msgid "var_prefix"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:26 common/lib/cmds/startAutoCA:358
+#: common/lib/cmds/statusAutoCA:24 common/lib/cmds/stopAutoCA:17
+msgid "/tmp/openca_autoca.pid"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:308
+msgid "CA_TOKEN"
+msgstr ""
+
+msgid "scrolling_list"
+msgstr ""
+
+msgid "true"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:380
+msgid "ttributes"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:384 common/lib/cmds/startAutoCA:387
+#: common/lib/cmds/startAutoEmail:265 common/lib/cmds/startAutoEmail:268
+msgid "checkbox"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:385 common/lib/cmds/startAutoCA:389
+#: common/lib/cmds/startAutoCA:619 common/lib/cmds/statusAutoCA:100
+msgid "reqsig"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:388 common/lib/cmds/startAutoEmail:269
+msgid "abel"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:447 common/lib/cmds/startAutoCRL:414
+#: common/lib/cmds/startAutoEmail:334 common/lib/cmds/viewLoas:37
+msgid "<table class=\"getParams\">\n"
+msgstr ""
+
+#: common/lib/cmds/viewLoas:38
+msgid "<tr><td colspan=\"2\">\n"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:449 common/lib/cmds/startAutoCRL:416
+#: common/lib/cmds/startAutoEmail:336 common/lib/cmds/viewLoas:39
+msgid "<center><div style='font-size: 120%;'><h3>"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:417 common/lib/cmds/viewLoas:40
+msgid "</h3></div></center>"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:420
+msgid "<div class=\"description\" style='margin: 10px;'>"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:356
+msgid "<center><h3>"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:543
+msgid "<tr><td colspan=\"2\">"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:552
+msgid "</div><br />"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:504 common/lib/cmds/startAutoCA:539
+msgid "<br /><center><h3>"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:505 common/lib/cmds/startAutoCA:540
+msgid "</h3></div></center></td></tr>"
+msgstr ""
+
+msgid "</td></tr>"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:490
+msgid "HUP"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:578 common/lib/cmds/statusAutoCA:159
+msgid "/tmp/openca_autoca_status.txt"
+msgstr ""
+
+#: common/lib/cmds/startAutoCA:592 common/lib/cmds/startAutoCRL:487#:
+#: common/lib/cmds/startAutoCA:604 common/lib/cmds/startAutoCA:627
+msgid "/db/openca_autoca.cnf"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:26 common/lib/cmds/startAutoCRL:348
+#: common/lib/cmds/statusAutoCRL:26 common/lib/cmds/stopAutoCRL:18
+msgid "/tmp/openca_autocrl.pid"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:56 common/lib/cmds/stopAutoCRL:39
+msgid "statusAutoCRL"
+msgstr ""
+
+#: common/lib/cmds/statusAutoCRL:83 common/lib/cmds/statusAutoEmail:86
+msgid "period_type"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:73 common/lib/cmds/startAutoEmail:78
+msgid "SLEEP"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:244 common/lib/cmds/startAutoEmail:523
+#: common/lib/cmds/statusAutoCRL:82 common/lib/cmds/statusAutoEmail:85
+msgid "period"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:174 common/lib/functions/misc-utils.lib:673
+#: modules/openca-dbi/DBI.pm:2119 modules/openca-dbi/DBI.pm:2451
+msgid "KEYLIST"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:191 common/lib/cmds/startAutoCRL:193
+#: common/lib/cmds/startAutoCRL:195 common/lib/cmds/startAutoCRL:248
+#: common/lib/cmds/startAutoCRL:252 common/lib/cmds/startAutoCRL:259
+msgid "sec_period"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:202 common/lib/cmds/startAutoCRL:205
+#: common/lib/cmds/startAutoCRL:207 common/lib/cmds/startAutoCRL:287
+msgid "hours_validity"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:204 common/lib/cmds/startAutoCRL:206
+#: common/lib/cmds/startAutoCRL:390 common/lib/cmds/startAutoCRL:392
+#: common/lib/cmds/startAutoCRL:515 common/lib/cmds/statusAutoCRL:95
+msgid "validity_type"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:205 common/lib/cmds/startAutoCRL:207
+#: common/lib/cmds/startAutoCRL:410 common/lib/cmds/startAutoCRL:412
+#: common/lib/cmds/startAutoCRL:514 common/lib/cmds/statusAutoCRL:94
+msgid "validity"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:251
+msgid " > "
+msgstr ""
+
+
+#: common/lib/cmds/startAutoCRL:274#: common/lib/cmds/startAutoCRL:279#:
+#: common/lib/cmds/startAutoCRL:287 modules/openca-crl/CRL.pm:171
+msgid "HOURS"
+msgstr ""
+#: common/lib/cmds/startAutoEmail:295 common/lib/cmds/startAutoEmail:331
+msgid "numeric"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:330
+msgid "small"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:305
+msgid "min-width: 13em; width: 13em;"
+msgstr ""
+
+
+#: common/lib/cmds/startAutoCRL:434
+msgid "</h3></center>"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:473 common/lib/cmds/statusAutoCRL:127
+msgid "/tmp/openca_autocrl_status.txt"
+msgstr ""
+
+#: common/lib/cmds/startAutoCRL:499 common/lib/cmds/startAutoCRL:520
+msgid "/db/openca_autocrl.cnf"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:28 common/lib/cmds/startAutoEmail:223
+#: common/lib/cmds/statusAutoEmail:26 common/lib/cmds/stopAutoEmail:18
+msgid "/tmp/openca_autoemail.pid"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:525 common/lib/cmds/statusAutoEmail:94
+msgid "warn_expiring"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:630 common/lib/cmds/statusAutoEmail:109
+msgid "expire_1"
+msgstr ""
+#: common/lib/cmds/startAutoEmail:629
+msgid "expire_1_type"
+msgstr ""
+#: common/lib/cmds/startAutoEmail:640 common/lib/cmds/statusAutoEmail:120
+msgid "expire_2"
+msgstr ""
+
+#: common/lib/cmds/statusAutoEmail:121
+msgid "expire_2_type"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:337 common/lib/cmds/startAutoEmail:357
+msgid "</h3></div></center></td></tr>\n"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:341
+msgid "<tr><td colspan='2'><div class=\"description\" style='margin: 10px;'>"
+msgstr ""
+
+
+#: common/lib/cmds/startAutoEmail:510 common/lib/cmds/startAutoEmail:537
+msgid "/db/openca_autoemail.cnf"
+msgstr ""
+
+#: common/lib/cmds/startAutoEmail:552
+msgid "/db/openca_autoemail_status.db"
+msgstr ""
+
+#: common/lib/cmds/statusAutoEmail:180 common/lib/cmds/statusAutoEmail:187
+msgid "<div class='desclabel'>"
+msgstr ""
+
+#: common/lib/cmds/statusAutoEmail:183 common/lib/cmds/statusAutoEmail:190
+msgid "<div class='descvalue'>"
+msgstr ""
+
+#: common/lib/cmds/viewCertFull:247
+msgid "<input TYPE=\"Submit\" Value=\""
+msgstr ""
+
+
+#: common/lib/cmds/viewCRL:52
+msgid "\" onClick=\"cmd.value='ldapAddCRL'\">"
+msgstr ""
+
+

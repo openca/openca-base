@@ -1,0 +1,36 @@
+## OpenCA - Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: HSMlogin
+##       Brief: create a session on the hardware security module
+## Description: login the hard ware security module
+##  Parameters: 
+
+use strict;
+
+sub cmdHsmLogin {
+
+
+
+	print startLogPage (gettext("Login to hardware security module"));
+
+    	print addLogSection (gettext("The login command is:"));
+
+	my $ca_token;
+    	#$crypto_layer->startDaemon();
+	$ca_token = $crypto_layer->getToken ('CA');
+
+    	if ( not $ca_token ) {
+        	 configError( i18nGettext ("Cannot initialize Crypto token!").
+                      $OpenCA::Crypto::errval, $OpenCA::Crypto::errno );
+    	}
+
+    	print closeLogSection ();
+
+    	print closeLogPage ();
+
+    	return 1;
+}
+
+1;

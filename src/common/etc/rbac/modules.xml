@@ -1,0 +1,26 @@
+<openca>
+    <access_control>
+       <modules>
+            <module>
+               <id>0</id>
+               <description>Certification Authority</description>
+            </module>
+            <module>
+               <id>1</id>
+               <description>Registration Authority</description>
+            </module>
+            <module>
+               <id>2</id>
+               <description>LDAP Administration</description>
+            </module>
+            <module>
+               <id>3</id>
+               <description>Server Management (node)</description>
+            </module>
+            <module>
+               <id>32</id>
+               <description>Public Interface</description>
+            </module>
+       </modules>
+    </access_control>
+</openca>

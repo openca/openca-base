@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openca base="/pki/ca">
+  <menu name="PKI Init &amp; Config" img="images/info-key.png">
+    <item name="Home" img="" lnk="?cmd=getStaticPage;name=homePage" />
+    <item />
+    <submenu name="Initialization" img="" lnk="?cmd=getStaticPage;name=init">
+      <item name="DB, Key and Cert Init" img="" lnk="?cmd=getStaticPage;name=initCA" />
+      <item name="CA Administrator" img="" lnk="?cmd=getStaticPage;name=initUser" />
+      <item name="RA Certificate" img="" lnk="?cmd=getStaticPage;name=initRA" />
+    </submenu>
+    <submenu name="Configuration" img="">
+      <item name="View Roles" img="" lnk="?cmd=show_roles" />
+      <item name="View Rights" img="" lnk="?cmd=show_rights" />
+      <item name="View Modules" img="" lnk="?cmd=show_modules" />
+      <item />
+      <item name="Sign Config" img="" lnk="?cmd=signConfig" />
+    </submenu>
+    <item />
+    <submenu name="HSM Management" img="">
+      <item name="HSM Login" img="" lnk="?cmd=hsmLogin" />
+      <item name="HSM Logout" img="" lnk="?cmd=hsmLogout" />
+    </submenu>
+    <item />
+    <submenu name="Go To..." img="">
+      <item name="RA Interface" img="" lnk="/pki/ra?" />
+      <item name="Batch Interface" img="" lnk="/pki/batch?" />
+      <item name="Public Interface" img="" lnk="/pki/pub?" />
+      <item />
+      <item name="Node Management" img="" lnk="/pki/node?" />
+      <item name="LDAP Management" img="" lnk="/pki/ldap?" />
+    </submenu>
+    <item />
+    <item name="Logout" img="" lnk="?cmd=logout" />
+  </menu>
+  <menu name="CA Operations" img="">
+    <submenu name="Certification Requests" img="">
+      <item name="New" img="" lnk="?cmd=listCSR;dataType=NEW_REQUEST" />
+      <item name="Pending" img="" lnk="?cmd=listCSR;dataType=PENDING_REQUEST" />
+      <item />
+      <item name="Signing Required" img="" lnk="?cmd=listCSR;dataType=SIGNED_REQUEST"/>
+      <item />
+      <item name="Approved" img="" lnk="?cmd=listCSR;dataType=APPROVED_REQUEST"/>
+    </submenu>
+    <submenu name="Revocation Requests" img="">
+      <item name="New" img="" lnk="?cmd=listCRR;dataType=NEW_CRR" />
+      <item name="Pending" img="" lnk="?cmd=listCRR;dataType=PENDING_CRR" />
+      <item />
+      <item name="Signing Required" img="" lnk="?cmd=listCRR;dataType=SIGNED_CRR" />
+      <item />
+      <item name="Approved" img="" lnk="?cmd=listCRR;dataType=APPROVED_CRR" />
+    </submenu>
+    <submenu name="Renewal Requests" img="">
+      <item name="New" img="" lnk="?cmd=listCSR;dataType=RENEW_REQUEST" />
+    </submenu>
+    <item />
+    <item name="Issue New CRLs" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=genCRL" />
+    <item />
+    <submenu name="Auto Certificate Issuing" img="">
+        <item name="Activate" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=startAutoCA" />
+        <item name="Deactivate" img="" lnk="?cmd=stopAutoCA" />
+        <item />
+        <item name="Status" img="" lnk="?cmd=statusAutoCA" />
+    </submenu>
+    <submenu name="Auto Certificate Revocation" img="">
+        <item name="Activate" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=startAutoRevoke" />
+        <item name="Deactivate" img="" lnk="?cmd=stopAutoRevoke" />
+        <item />
+        <item name="Status" img="" lnk="?cmd=statusAutoRevoke" />
+    </submenu>
+    <submenu name="Auto CRL Issuing" img="" >
+        <item name="Activate" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=startAutoCRL" />
+        <item name="Deactivate" img="" lnk="?cmd=stopAutoCRL" />
+        <item />
+        <item name="Status" img="" lnk="?cmd=statusAutoCRL" />
+    </submenu>
+    <item name="Auto Certificate Renewal" img="" lnk="" />
+    <item />
+    <submenu name="Batch Processing" >
+      <item name="Issue Certificates" img="" 
+               lnk="?cmd=getParams;GET_PARAMS_CMD=bpIssueCertificate" />
+      <item name="Revoke Certificates" img="" 
+               lnk="?cmd=getParams;GET_PARAMS_CMD=bpRevokeCertificate" />
+    </submenu>
+  </menu>
+  <menu name="Information" img="">
+    <submenu name="CA Certificates" img="">
+      <item name="Valid" img="" lnk="?cmd=listCerts;dataType=VALID_CA_CERTIFICATE" />
+      <item name="Expired" img="" lnk="?cmd=listCerts;dataType=EXPIRED_CA_CERTIFICATE" />
+      <item />
+      <item name="Deleted" img="" lnk="?cmd=listCerts;dataType=DELETED_CA_CERTIFICATE" />
+    </submenu>
+    <submenu name="Issued Certificates" img="">
+      <item name="Valid" img="" lnk="?cmd=listCerts;dataType=VALID_CERTIFICATE" />
+      <item name="Expired" img="" lnk="?cmd=listCerts;dataType=EXPIRED_CERTIFICATE" />
+      <item />
+      <item name="Suspended" img="" lnk="?cmd=listCerts;dataType=SUSPENDED_CERTIFICATE"/>
+      <item name="Revoked" img="" lnk="?cmd=listCerts;dataType=REVOKED_CERTIFICATE" />
+      <item />
+      <item name="Deleted" img="" lnk="?cmd=listCerts;dataType=DELETED_CERTIFICATE" />
+    </submenu>
+    <item />
+    <submenu name="Certificate Requests" img="">
+      <item name="Archived" img="" lnk="?cmd=listCSR;dataType=ARCHIVED_REQUEST" />
+      <item name="Deleted" img="" lnk="?cmd=listCSR;dataType=DELETED_REQUEST" />
+    </submenu>
+    <submenu name="Revocation Requests" img="">
+      <item name="Archived" img="" lnk="?cmd=listCRR;dataType=ARCHIVED_CRR" />
+      <item name="Deleted" img="" lnk="?cmd=listCRR;dataType=DELETED_CRR" />
+    </submenu>
+    <item />
+    <submenu name="CRLs" img="">
+      <item name="Valid" img="" lnk="?cmd=crlList;dataType=VALID_CRL" />
+      <item name="Expired" img="" lnk="?cmd=crlList;dataType=EXPIRED_CRL" />
+    </submenu>
+    <item />
+    <submenu name="Search" img="">
+      <item name="Certificates" img="" lnk="?cmd=getStaticPage;name=search_cert" />
+      <item name="Requests" img="" lnk="?cmd=getStaticPage;name=search_csr" />
+    </submenu>
+    <item />
+    <item name="Statistics" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=stats" />
+  </menu>
+  <menu name="Help" img="">
+    <item name="OpenCA PKI Guide" img="" lnk="http://www.openca.org/projects/openca/docs.shtml?" />
+    <item name="OpenCA PKI Home" img="" lnk="http://www.openca.org/projects/openca?" />
+    <item />
+    <item name="About OpenCA..." img="" lnk="?cmd=serverInfo" />
+  </menu>
+  <menu name="Languages" img="" >
+    <item name="English" img=""
+		lnk="?cmd=setLanguage;lang=en_GB;charset=UTF-8" />
+    <item name="Spanish" img=""
+		lnk="?cmd=setLanguage;lang=es_ES;charset=UTF-8" />
+    <item name="Italian" img=""
+		lnk="?cmd=setLanguage;lang=it_IT;charset=UTF-8" />
+    <item name="French" img=""
+		lnk="?cmd=setLanguage;lang=fr_FR;charset=UTF-8" />
+    <item name="Japanese" img=""
+		lnk="?cmd=setLanguage;lang=ja_JP;charset=UTF-8" />
+    <item name="Greek" img=""
+		lnk="?cmd=setLanguage;lang=el_GR;charset=UTF-8" />
+    <item name="Polish" img=""
+		lnk="?cmd=setLanguage;lang=pl_PL;charset=UTF-8" />
+    <item name="Slovene" img=""
+		lnk="?cmd=setLanguage;lang=sl_SI;charset=UTF-8" />
+    <item name="Russian" img=""
+		lnk="?cmd=setLanguage;lang=ru_RU;charset=UTF-8" />
+    <item name="German" img=""
+		lnk="?cmd=setLanguage;lang=de_DE;charset=UTF-8" />
+  </menu>
+  <item name="Home" img="images/home.png"
+  		lnk="?cmd=getStaticPage;name=homePage" />
+</openca>

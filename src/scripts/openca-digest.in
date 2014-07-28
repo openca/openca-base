@@ -1,0 +1,71 @@
+#! @PERL@
+
+@perl_use_lib@
+
+($VERSION = '$Revision: 1.1.1.1 $' )=~ s/(?:^.*: (\d+))|(?:\s+\$$)/defined $1?"0\.9":""/eg;
+
+## create digest for passwd
+my $type = "sha1";
+my $text = "";
+my $verbose = 0;
+
+while( $#ARGV > -1 ) {
+        if ( $ARGV[0] =~ /-dgst/ ) {
+                $type = $ARGV[1];
+		if( $type eq "" ) {
+			print "ERROR::Needed type of digest!\n\n";
+			die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+				"text-to-digest\n\n";
+		}
+		shift( @ARGV );
+		shift( @ARGV );
+		next;
+	}
+        if ( $ARGV[0] =~ /-v/ ) {
+                $verbose = 1;
+		shift( @ARGV );
+		next;
+	}
+
+	if ( $#ARGV == 0 ) {
+		$text = $ARGV[0];
+		shift( @ARGV );
+		next;
+	} else {
+		print "ERROR::Option '".$ARGV[0]."' not understood!\n\n";
+		die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+			"text-to-digest\n\n";
+	}
+};
+
+if ( $type !~ /^(sha1|md5|crypt)$/i ) {
+	print "ERROR::Digest '$type' is not supported!\n\n";
+	die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+		"text-to-digest\n\n";
+}
+
+if ($type =~ /sha1/i) {
+    use Digest::SHA1;
+    my $digest = Digest::SHA1->new;
+    $digest->add ($text);
+    $result = $digest->b64digest;
+} elsif ($type =~ /md5/i) {
+    use Digest::MD5;
+    my $digest = Digest::MD5->new;
+    $digest->add ($text);
+    $result = $digest->b64digest;
+} elsif ($type =~ /crypt/i) {
+    my $salt = join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
+    $result = crypt ($text, $salt);
+}
+
+if ( $verbose > 0 ) {
+    print "Digest: $type\n";
+    print "String: ".$text."\n";
+    print "$type: ".$result."\n";
+} else {
+	print "$result";
+}
+
+exit 0;
+

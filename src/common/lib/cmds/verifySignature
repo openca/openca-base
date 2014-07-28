@@ -1,0 +1,184 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: verifySignature
+##       Brief: Verifies a signature
+## Description: verify a passed signature
+##  Parameters: text, signature
+
+use strict;
+
+sub cmdVerifySignature {
+
+    our ($tools, $query, $errno, $errval, $cryptoShell);
+
+    ## Get Required Parameters from Configuration
+    my $chaindir = getRequired ('ChainDir');
+    my $tmpDir   = getRequired ('tempdir');
+
+    my $signature 	= $query->param('signature' );
+    my $text     	= $query->param('text');
+
+    my @cols = ( gettext("Variable"), gettext("Value") );
+
+    chomp( $signature );
+    if ($signature !~ /-----BEGIN PKCS7-----/)
+    {
+        $signature = "-----BEGIN PKCS7-----\n" .
+                     $signature .
+                     "\n-----END PKCS7-----\n";
+    }
+
+    ## Get Signature
+
+    $tools->saveFile( FILENAME=>"$tmpDir/$$.txt", DATA=>$text );
+    $tools->saveFile( FILENAME=>"$tmpDir/$$.sig", DATA=>$signature );
+
+    my $sign = new OpenCA::PKCS7( SHELL    => $cryptoShell,
+                                  GETTEXT  => \&i18nGettext,
+                                  INFILE   => "$tmpDir/$$.sig",
+                                  DATAFILE => "$tmpDir/$$.txt",
+                                  CA_DIR   => "$chaindir" );
+    $errno  = $OpenCA::PKCS7::errno;
+    $errval = $OpenCA::PKCS7::errval;
+
+    if (not $sign)
+    {
+        ## try to compensate browser bugs
+        ## CRLF --> LF
+        $text =~ s/\r\n/\n/g;
+        $tools->saveFile( FILENAME=>"$tmpDir/$$.txt", DATA=>$text );
+        $sign = new OpenCA::PKCS7( SHELL    => $cryptoShell,
+                                   GETTEXT  => \&i18nGettext,
+                                   INFILE   => "$tmpDir/$$.sig",
+                                   DATAFILE => "$tmpDir/$$.txt",
+                                   CA_DIR   => "$chaindir" );
+        $errval .= "\n".$OpenCA::PKCS7::errval;
+    }
+
+    unlink( "$tmpDir/$$.sig" );
+    unlink( "$tmpDir/$$.txt" );
+
+    if( not $sign ) {
+        generalError( $errval, $errno );
+    }
+
+    ## Get Signer
+
+    my ($signer, $myDN, $issuerDN);
+
+    $signer = $sign->getSigner();
+
+    $myDN = $signer->{DN};
+    $myDN =~ s/^\///; $myDN =~ s/[\/,] *(?=[A-Za-z0-9\-]+=)/<BR>/g;
+
+    $issuerDN = $sign->getParsed()->{CHAIN}->{1}->{DN};
+    $issuerDN =~ s/^\///; $issuerDN =~ s/[\/,] *(?=[A-Za-z0-9\-]+=)/<BR>/g;
+
+    ## Check Signature Status
+    my ($sigStatus, $sigMessage, $sigInfo, $sigCertStatus);
+    my ($dbMessage, $dbStatus, $serLink);
+    if( not libCheckSignature( SIGNATURE=>$sign ) ) {
+	$sigStatus = "<FONT COLOR=\"Red\">".gettext("Error")."</FONT>";
+	$sigMessage = $errval;
+
+	$sigInfo = $query->img({-src=>getRequired ('SigErrorImage'),
+				-align=>"MIDDLE"});
+    } else {
+	$sigStatus = gettext("Valid");
+	$sigInfo = $query->img({src=>getRequired ('ValidSigImage'),
+			border=>"0", align=>"MIDDLE"});
+    }
+
+    my $tmpCert = libGetSignerCertificateDB( SIGNATURE=>$sign );
+    if( not $tmpCert ) {
+        generalError ($errval, $errno);
+    }
+
+    ##
+    ## set sigCertStatus and add extra info to sigStatus
+    ## FIXME: sigCertStatus isn't used - remove code?
+    if( $tmpCert->getStatus() =~ /VALID/ ) {
+        $sigCertStatus = gettext("Valid");
+        $sigStatus .= gettext(" / Certificate Valid");
+    } elsif ( $tmpCert->getStatus() =~ /EXPIRED/ ) {
+        $sigCertStatus = gettext("Expired");
+        $sigStatus .= "<FONT COLOR=\"RED\">".gettext(" / Certficate Expired")."</FONT>";
+    } elsif ( $tmpCert->getStatus() =~ /SUSPENDED/ ) {
+        $sigCertStatus = "<FONT COLOR=\"RED\">".gettext("Revoked")."</FONT>";
+        $sigStatus .= "<FONT COLOR=\"RED\">".gettext(" / Certficate Suspended")."</FONT>";
+    } elsif ( $tmpCert->getStatus() =~ /REVOKED/ ) {
+        $sigCertStatus = "<FONT COLOR=\"RED\">".gettext("Revoked")."</FONT>";
+        $sigStatus .= "<FONT COLOR=\"RED\">".gettext(" / Certficate Revoked")."</FONT>";
+    }
+												
+    $dbStatus   = "0";
+    $dbMessage  = gettext("Certificate present in dB");
+
+    $serLink    = $tmpCert->getSerial();
+
+    my $pCert = $tmpCert->getParsed();
+
+    ## FIXME: old can be removed after release of 0.9.2
+    ## # Text to sign
+    ## my $text = gettext ("You are going to sign this simple text. Be sure\n Javascript is enabled and your certificate gets\n correctly verified in your browser.\n");
+
+    ## FIXME: old can be removed after release of 0.9.2
+    ## my ($cmd_panel, $hidden_list, $info_list) = (undef, undef, undef);
+    my ($info_list) = (undef, undef, undef);
+
+    ## FIXME: old can be removed after release of 0.9.2
+    ## $hidden_list->{"text"}      = $text;
+    ## $hidden_list->{"signature"} = "";
+    ## $hidden_list->{"cmd"}       = "verifySignature";
+
+    ## FIXME: old can be removed after release of 0.9.2
+    ## $cmd_panel->[0] = '<input type=button name="sign" value="'.
+    ##               gettext ("Sign").
+    ##              '" onClick="signForm( this.form, window)" >';
+
+    $info_list->{HEAD}->[0] = gettext("Variable");
+    $info_list->{HEAD}->[1] = gettext("Value");
+
+    ## View the Operator Used Certificate Data
+    $info_list->{BODY}->[0]->[0] = gettext("Subject of the used certificate");
+    $info_list->{BODY}->[0]->[1] = ($myDN or gettext("n/a"));
+    $info_list->{BODY}->[1]->[0] = gettext("Issuer of the used certificate");
+    $info_list->{BODY}->[1]->[1] = ($issuerDN or gettext("n/a"));
+    $info_list->{BODY}->[2]->[0] = gettext("Serial of the used certificate");
+    $info_list->{BODY}->[2]->[1] = $serLink;
+
+    $info_list->{BODY}->[3]->[0] = gettext("Start of the validity period");
+    $info_list->{BODY}->[3]->[1] = ($pCert->{NOTBEFORE} or gettext("n/a"));
+    $info_list->{BODY}->[4]->[0] = gettext("End of the validity period");
+    $info_list->{BODY}->[4]->[1] = ($pCert->{NOTAFTER} or gettext("n/a"));
+
+    $info_list->{BODY}->[5]->[0] = gettext("Status of the signature");
+    $info_list->{BODY}->[5]->[1] = $sigStatus;
+    $info_list->{BODY}->[6]->[0] = gettext("Validation Message");
+    $info_list->{BODY}->[6]->[1] = $sigMessage;
+    $info_list->{BODY}->[7]->[0] = gettext("Signature Information");
+    $info_list->{BODY}->[7]->[1] = $sigInfo;
+
+    $info_list->{BODY}->[8]->[0] = gettext("Signature");
+    $info_list->{BODY}->[8]->[1] = "<pre>".$signature."</pre>";
+
+    $info_list->{BODY}->[9]->[0] = gettext("Statuscode from the database");
+    $info_list->{BODY}->[9]->[1] = $dbStatus;
+    $info_list->{BODY}->[10]->[0] = gettext("Status message from the database");
+    $info_list->{BODY}->[10]->[1] = $dbMessage;
+
+    ## FIXME: old can be removed after release of 0.9.2
+    ##                  "HIDDEN_LIST" => $hidden_list,
+    ##                  "CMD_PANEL"   => $cmd_panel,
+    ##                  "SIGN_FORM"   => 1
+    return libSendReply (
+                     "NAME"        => gettext ("Signature Validation"),
+                     "EXPLANATION" => gettext ("These are the informations which can be extracted from the validated signature."),
+                     "INFO_LIST"   => $info_list,
+                        );
+
+}
+
+1;

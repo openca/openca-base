@@ -1,0 +1,44 @@
+# These extensions are added when 'ca' signs a request.
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+
+basicConstraints=CA:FALSE
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+
+# For an object signing certificate this would be used.
+#nsCertType = objsign
+
+# For normal client use this is typical
+nsCertType = client, email
+
+# This is typical also
+
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+nsComment		= "User Certificate of @ca_organization@"
+
+# PKIX recommendations
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer:always
+
+# Import the email address.
+
+subjectAltName=@subject_alt_name
+
+# Copy subject details
+
+issuerAltName=issuer:copy
+
+nsCaRevocationUrl	= @NS_CRLDistributionPoint@
+nsRevocationUrl		= @NS_CRLDistributionPoint@
+crlDistributionPoints   = @cdp_section
+
+[ subject_alt_name ]
+
+__SUBJECT_ALT_NAME__
+
+[ cdp_section ]
+
+@CRLDistributionPoints@

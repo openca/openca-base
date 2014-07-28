@@ -1,0 +1,235 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: stats
+##       Brief: Certificate Statistics
+##     Version: $Revision: 1.1 $
+## Description: Provides stats about the issued certificates and
+#               received requests
+##  Parameters: 
+
+use strict;
+
+sub cmdStats {
+
+	my $pid = undef;
+	my $status = undef;
+	my $pidfile = undef;
+	my $params = undef;
+
+	my $from = $query->param('from');
+	my $to   = $query->param('to');
+
+	my $graphType = $query->param('graph_type');
+	my $dataType  = $query->param('data_type');
+
+	my ( $info_list, $certs, $crl, $crr, $req );
+
+	## Parameters used by the issuing certificate process
+
+        our ($db, $query, $errno, $errval, $cryptoShell, $ca_token, $DEBUG);
+        our (%AUTOCONF);
+
+	my $today = gmtime;
+	my $now = $cryptoShell->getNumericDate ( "$today" );
+
+	$certs->{VALID} = $db->rows ( DATATYPE=>"VALID_CERTIFICATE" );
+	$certs->{EXPIRED} = $db->rows ( DATATYPE => "EXPIRED_CERTIFICATE");
+	$certs->{REVOKED} = $db->rows ( DATATYPE => "REVOKED_CERTIFICATE");
+	$certs->{SUSPENDED} = $db->rows ( DATATYPE => "SUSPENDED_CERTIFICATE");
+
+	$crl->{VALID} = $db->rows ( DATATYPE => "VALID_CRL",
+				EXPIRES_AFTER => $now );
+	$crl->{EXPIRED} = $db->rows ( DATATYPE => "EXPIRED_CRL",
+				EXPIRES_BEFORE => $now );
+
+	$crr->{NEW} = $db->rows ( DATATYPE => "NEW_CRR");
+	$crr->{PENDING} = $db->rows ( DATATYPE => "PENDING_CRR");
+	$crr->{SIGNED} = $db->rows ( DATATYPE => "SIGNED_CRR");
+	$crr->{APPROVED} = $db->rows ( DATATYPE => "APPROVED_CRR");
+	$crr->{ARCHIVED} = $db->rows ( DATATYPE => "ARCHIVED_CRR");
+	$crr->{DELETED} = $db->rows ( DATATYPE => "DELETED_CRR");
+
+	$req->{NEW} = $db->rows ( DATATYPE => "NEW_REQUEST");
+	$req->{PENDING} = $db->rows ( DATATYPE => "PENDING_REQUEST");
+	$req->{SIGNED} = $db->rows ( DATATYPE => "SIGNED_REQUEST");
+	$req->{APPROVED} = $db->rows ( DATATYPE => "APPROVED_REQUEST");
+	$req->{ARCHIVED} = $db->rows ( DATATYPE => "ARCHIVED_REQUEST");
+	$req->{DELETED} = $db->rows ( DATATYPE => "DELETED_REQUEST");
+
+	$info_list->{CLASS} = "signView";
+
+	my $idx = 0;
+	$info_list->{BODY}->[$idx++]->[0] = "Certificates";
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+
+	$info_list->{BODY}->[$idx]->[0] = "Valid Certificates";
+	$info_list->{BODY}->[$idx++]->[1] = $certs->{VALID};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Expired Certificates";
+	$info_list->{BODY}->[$idx++]->[1] = $certs->{EXPIRED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Revoked Certificates";
+	$info_list->{BODY}->[$idx++]->[1] = $certs->{REVOKED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Suspended Certificates";
+	$info_list->{BODY}->[$idx++]->[1] = $certs->{SUSPENDED};
+	
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+	$info_list->{BODY}->[$idx++]->[0] = "Certificate Revocation Lists";
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+
+	$info_list->{BODY}->[$idx]->[0] = "Vaild CRL(s)";
+	$info_list->{BODY}->[$idx++]->[1] = $crl->{VALID};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Expired CRL(s)";
+	$info_list->{BODY}->[$idx++]->[1] = $crl->{EXPIRED};
+	
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+	$info_list->{BODY}->[$idx++]->[0] = "Certificate Requests";
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+
+	$info_list->{BODY}->[$idx]->[0] = "New";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{NEW};
+
+	$info_list->{BODY}->[$idx]->[0] = "Pending";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{PENDING};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Signed";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{SIGNED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Approved";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{APPROVED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Archivied (Processed)";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{ARCHIVED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Deleted (Not Processed)";
+	$info_list->{BODY}->[$idx++]->[1] = $req->{DELETED};
+	
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+	$info_list->{BODY}->[$idx++]->[0] = "Revocation Requests";
+	$info_list->{BODY}->[$idx++]->[0] = "<br/>";
+
+	$info_list->{BODY}->[$idx]->[0] = "New";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{NEW};
+
+	$info_list->{BODY}->[$idx]->[0] = "Pending";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{PENDING};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Signed";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{SIGNED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Approved";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{APPROVED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Archivied (Processed)";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{ARCHIVED};
+	
+	$info_list->{BODY}->[$idx]->[0] = "Deleted (Not Processed)";
+	$info_list->{BODY}->[$idx++]->[1] = $crr->{DELETED};
+	
+    	return libSendReply (
+        	"NAME"        => gettext ("Statistics"),
+                "EXPLANATION" => undef,
+                "TIMESTAMP"   => 1,
+                "INFO_LIST"   => $info_list,
+                );
+}
+
+sub getParamsStats {
+
+    our ($query, $DEBUG, $self);
+
+    my $result = "";
+
+    ## The params are needed for the next version of the stats...
+    ## For now, we simply provide STUPID stats.. Just a start....
+
+    return undef;
+
+    if (not $_[0]) {
+
+	my %labels = undef;
+
+	my $html_from = $query->newInput (
+		-intype => 'textfield',
+		-regx => 'DATE',
+		-default => '01/01/2010',
+		-class => "small",
+		-name => 'from' );
+
+	my $html_to = $query->newInput (
+		-intype => 'textfield',
+		-regx => 'DATE',
+		-name => 'to',
+		-default => '01/01/2010',
+		-class => "small" );
+
+	my %labels = { "GENERAL" => gettext ("General"),
+			"DAY" => gettext ("Hourly Stats") };
+	my @values = ( "GENERAL", "DAY" );
+
+	my $html_graph_type = $query->newInput (
+		-name => "graph_type",
+		-intype => 'radio_group',
+		-labels => { "GENERAL" => gettext("General"), 
+				"DAY" => gettext("Hourly Stats") },
+		-cols=>1,
+		-values => \@values,
+	);
+
+	%labels = { gettext("Certificates") => "CERTIFICATE",
+		    gettext ("Requests") => "REQUEST" };
+	@values = ( "CERTIFICATE", "REQUEST" );
+
+	my $html_data_type = $query->newInput (
+		-name => 'data_type',
+		-intype => 'radio_group',
+		-regx => '*',
+		-labels => { "CERTIFICATE" => gettext ( "Certificates"),
+			     "REQUEST" => gettext ("Requests") },
+		-cols=>1,
+		-values => \@values,
+	);
+
+        # $result .= "<tr><td colspan=\"2\">\n";
+	$result = "<center><div style='font-size: 120%;'><h3>" . 
+		       gettext("Simple Statistics System")."</h3>" .
+		   "</div></center>";
+
+	$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+		    "Bla Bla Bla..."
+		    ) .
+		    "</div>";
+        # $result .= "</td></tr>\n";
+
+        $result .= "<table class=\"getParams\">\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Period")."</td>\n".
+                   "    <td>From ".$html_from." to " .
+		   "          " . $html_to . "</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Data Type(s)").
+		   "</td>\n<td style='width: 70%''>".$html_data_type."</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".
+			gettext ("Graph Type")."</td>\n".
+                   "    <td style='width: 70%;'>" . $html_graph_type . "</td>\n".
+                   "  </tr>\n";
+
+	$result .= " <tr><td></td><td style='min-width: 400px;'></td></tr>";
+        $result .= "</table>\n";
+    }
+
+    return $result;
+
+};
+
+1;

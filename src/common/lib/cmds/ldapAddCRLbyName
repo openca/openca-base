@@ -1,0 +1,68 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapAddCRLbyName
+##       Brief: Add a CRL to LDAP server with changed issuer
+## Description: Add a CRL to LDAP server with changed issuer
+##  Parameters:
+
+use strict;
+
+sub cmdLdapAddCRLbyName {
+
+print startLogPage ( gettext ("Updating the CRL on the LDAP ..."));
+
+my $key = $query->param ('key');
+if (not $key and ($key != 0)) {
+        print addPreLogLine ("<FONT COLOR=#ff0000>".
+                        gettext ("No CRL was specified! FAILED").
+                        "</FONT>");
+        closeLogSection ();
+        closePage ();
+        return undef;
+}
+
+my $dn = $query->param ('new_dn');
+if (not $dn) {
+        print addPreLogLine ("<FONT COLOR=#ff0000>".
+                        gettext ("No special issuer was specified! FAILED").
+                        "</FONT>");
+        closeLogSection ();
+        closePage ();
+        return undef;
+}
+
+my $crl = $db->getItem ( DATATYPE => "CRL", KEY => $key );
+print addLogSection (i18nGettext ("CRL __CRL_SERIAL__ ...", "__CRL_SERIAL__", $crl->getSerial()));
+
+$crl->{parsedItem}->{ISSUER} = $dn;
+my $result = eximObjectToLDAP ( CRL => $crl );
+
+if ($result and $result->{STATUS}) {
+        print addPreLogLine (
+              gettext ("Added CRL to LDAP")."\n\t".
+              i18nGettext ("Last Update: __CRL_LAST_UPDATE__", "__CRL_LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE})."\n\t".
+              i18nGettext ("Next Update: __CRL_NEXT_UPDATE__", "__CRL_NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE})."\n"
+              );
+} else {
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".
+              gettext ("Cannot write CRL to LDAP")."\n\t".
+              i18nGettext ("Last Update: __CRL_LAST_UPDATE__", "__CRL_LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE})."\n\t".
+              i18nGettext ("Next Update: __CRL_NEXT_UPDATE__", "__CRL_NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE})."\n".
+                              "</FONT>");
+}
+
+
+print closeLogSection ();
+
+closePage ();
+
+}
+
+sub getParamsLdapAddCRLbyName
+{
+    return LDAP_getParamsDN (@_);
+}
+
+1;

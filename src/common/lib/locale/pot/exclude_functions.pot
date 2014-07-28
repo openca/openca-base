@@ -1,0 +1,2161 @@
+
+#: common/lib/functions/rbac-utils.lib:8
+msgid "RoleConfiguration"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:12
+msgid "access_control/roles/role"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:25
+msgid "ModuleConfiguration"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:29
+msgid "access_control/modules/module"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:34
+msgid "id"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:34
+msgid "description"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:47
+msgid "access_control/acl/permission"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:69
+#: common/lib/functions/rbac-utils.lib:70
+msgid "access_control/acl_config/command_dir"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:80
+#: common/lib/functions/rbac-utils.lib:141
+#: common/lib/functions/crypto-utils.lib:230
+#: common/lib/functions/crypto-utils.lib:239
+#: common/lib/functions/crypto-utils.lib:1276
+#: common/lib/functions/crypto-utils.lib:1361
+#: common/lib/functions/crypto-utils.lib:1671
+#: common/lib/functions/export-import.lib:600
+#: common/lib/functions/export-import.lib:1201
+#: common/lib/functions/export-import.lib:1287
+#: common/lib/functions/export-import.lib:1300
+#: common/lib/functions/export-import.lib:1313
+#: common/lib/functions/export-import.lib:2070 common/lib/functions/initDBI:8
+#: common/lib/functions/initDBI:23 common/lib/functions/initDBI:33
+#: common/lib/functions/initDBI:39 common/lib/functions/initDBI:45
+#: common/lib/functions/initDBI:55 common/lib/functions/initDBI:59
+#: common/lib/functions/initDBI:70 common/lib/functions/initDBI:74
+#: common/lib/functions/initDBI:78 common/lib/functions/initDBI:82
+#: common/lib/functions/initDBI:86
+msgid "FILENAME"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:80
+#: common/lib/functions/rbac-utils.lib:84
+#: common/lib/functions/crypto-utils.lib:442
+#: common/lib/functions/crypto-utils.lib:1276
+#: common/lib/functions/crypto-utils.lib:1288
+#: common/lib/functions/crypto-utils.lib:1312
+#: common/lib/functions/crypto-utils.lib:1321
+#: common/lib/functions/crypto-utils.lib:1361
+#: common/lib/functions/crypto-utils.lib:1367
+#: common/lib/functions/misc-utils.lib:206
+#: common/lib/functions/misc-utils.lib:208
+#: common/lib/functions/export-import.lib:136
+#: common/lib/functions/export-import.lib:139
+#: common/lib/functions/export-import.lib:599
+#: common/lib/functions/export-import.lib:649
+#: common/lib/functions/export-import.lib:661
+#: common/lib/functions/export-import.lib:881
+#: common/lib/functions/export-import.lib:1033
+#: common/lib/functions/export-import.lib:1756
+#: common/lib/functions/export-import.lib:1807
+#: common/lib/functions/export-import.lib:1811
+#: common/lib/functions/export-import.lib:1817
+#: common/lib/functions/export-import.lib:1824
+#: common/lib/functions/export-import.lib:1827
+#: common/lib/functions/export-import.lib:2126
+#: common/lib/functions/export-import.lib:2127
+#: common/lib/functions/export-import.lib:2128
+#: common/lib/functions/mail-utils.lib:280
+#: common/lib/functions/mail-utils.lib:286
+msgid "/"
+msgstr ""
+#: common/lib/functions/rbac-utils.lib:85
+#: common/lib/functions/rbac-utils.lib:88
+msgid "command_config/command/operation"
+msgstr ""
+#: common/lib/functions/rbac-utils.lib:139
+msgid "record"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:141
+#: common/lib/functions/crypto-utils.lib:174
+#: common/lib/functions/crypto-utils.lib:231
+#: common/lib/functions/crypto-utils.lib:240
+#: common/lib/functions/crypto-utils.lib:1215
+#: common/lib/functions/crypto-utils.lib:1277
+#: common/lib/functions/crypto-utils.lib:1287
+#: common/lib/functions/crypto-utils.lib:1362
+#: common/lib/functions/crypto-utils.lib:1671
+#: common/lib/functions/ldap-utils.lib:94
+#: common/lib/functions/ldap-utils.lib:125
+#: common/lib/functions/misc-utils.lib:297
+#: common/lib/functions/export-import.lib:601
+#: common/lib/functions/export-import.lib:1202
+#: common/lib/functions/export-import.lib:1287
+#: common/lib/functions/export-import.lib:1300
+#: common/lib/functions/export-import.lib:1313
+#: common/lib/functions/export-import.lib:2071
+msgid "DATA"
+msgstr ""
+
+#: common/lib/functions/initServer:42
+msgid "modules loaded"
+msgstr ""
+#: common/lib/functions/initServer:57
+msgid "misc-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:59
+msgid "log-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:61
+msgid "crypto-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:63
+msgid "rbac-utils loaded"
+msgstr ""
+
+#: common/lib/functions/initServer:66 common/lib/functions/initServer:314
+msgid "HTDOCS_URL_PREFIX"
+msgstr ""
+
+#: common/lib/functions/initServer:66 common/lib/functions/initServer:314
+msgid "HtdocsUrlPrefix"
+msgstr ""
+
+#: common/lib/functions/initServer:67 common/lib/functions/initServer:315
+msgid "LANGUAGE"
+msgstr ""
+
+#: common/lib/functions/initServer:67 common/lib/functions/initServer:122
+msgid "DEFAULT_LANGUAGE"
+msgstr ""
+
+#: common/lib/functions/initServer:68 common/lib/functions/initServer:316
+msgid "CHARSET"
+msgstr ""
+
+#: common/lib/functions/initServer:68 common/lib/functions/initServer:122
+msgid "DEFAULT_CHARSET"
+msgstr ""
+
+#: common/lib/functions/initServer:72
+msgid "VERSION"
+msgstr ""
+
+#: common/lib/functions/initServer:73
+msgid "PROGRAM"
+msgstr ""
+
+#: common/lib/functions/initServer:77
+msgid "SOCKETFILE"
+msgstr ""
+
+#: common/lib/functions/initServer:77
+#: common/lib/functions/crypto-utils.lib:201
+msgid "tempDir"
+msgstr ""
+
+#: common/lib/functions/initServer:77
+msgid "/openca_xml_cache"
+msgstr ""
+
+#: common/lib/functions/initServer:78
+msgid "IPC_USER"
+msgstr ""
+
+
+#: common/lib/functions/initServer:79
+msgid "IPC_GROUP"
+msgstr ""
+
+
+#: common/lib/functions/initServer:82
+msgid "Cannot initialize XML cache!"
+msgstr ""
+
+#: common/lib/functions/initServer:82
+#: common/lib/functions/crypto-utils.lib:448
+#: common/lib/functions/crypto-utils.lib:449
+#: common/lib/functions/crypto-utils.lib:450
+#: common/lib/functions/crypto-utils.lib:515
+#: common/lib/functions/misc-utils.lib:153
+#: common/lib/functions/misc-utils.lib:182
+msgid " "
+msgstr ""
+
+#: common/lib/functions/initServer:86
+msgid "LOGFILE"
+msgstr ""
+
+#: common/lib/functions/initServer:86 common/lib/functions/initServer:87
+#: common/lib/functions/initServer:135
+#: common/lib/functions/crypto-utils.lib:507
+#: common/lib/functions/crypto-utils.lib:515
+#: common/lib/functions/crypto-utils.lib:1380
+#: common/lib/functions/crypto-utils.lib:1581
+#: common/lib/functions/export-import.lib:86
+msgid "TempDir"
+msgstr ""
+
+#: common/lib/functions/initServer:86
+msgid "/xml_cache.log"
+msgstr ""
+
+#: common/lib/functions/initServer:87
+msgid "PIDFILE"
+msgstr ""
+
+#: common/lib/functions/initServer:87
+msgid "/xml_cache.pid"
+msgstr ""
+
+#: common/lib/functions/initServer:90
+msgid "xml cache activated"
+msgstr ""
+
+#: common/lib/functions/initServer:92
+msgid "xml cache is now available"
+msgstr ""
+
+#: common/lib/functions/initServer:103 common/lib/functions/initServer:104
+#: common/lib/functions/initServer:284
+msgid "etc_prefix"
+msgstr ""
+
+#: common/lib/functions/initServer:103
+msgid "/database/DB.conf"
+msgstr ""
+
+#: common/lib/functions/initServer:104
+msgid "/database/DBI.conf"
+msgstr ""
+
+#: common/lib/functions/initServer:107
+msgid "SCRIPT_FILENAME"
+msgstr ""
+
+#: common/lib/functions/initServer:113
+msgid "database config ready"
+msgstr ""
+
+#: common/lib/functions/initServer:120
+msgid ":locale_h"
+msgstr ""
+
+#: common/lib/functions/initServer:121
+msgid ":libintl_h"
+msgstr ""
+
+#: common/lib/functions/initServer:125
+msgid "opensslEngine"
+msgstr ""
+
+#: common/lib/functions/initServer:127
+msgid "opensslEngineArg"
+msgstr ""
+
+#: common/lib/functions/initServer:128 common/lib/functions/initServer:130
+msgid "engine"
+msgstr ""
+#: common/lib/functions/initServer:133
+msgid "TokenConfiguration"
+msgstr ""
+
+#: common/lib/functions/initServer:134
+msgid "openssl"
+msgstr ""
+
+#: common/lib/functions/initServer:136
+msgid "sslconfig"
+msgstr ""
+
+#: common/lib/functions/initServer:142 common/lib/functions/initServer:166
+#: common/lib/functions/initServer:364
+#: common/lib/functions/crypto-utils.lib:1492
+msgid "CONFIG"
+msgstr ""
+
+#: common/lib/functions/initServer:143 common/lib/functions/initServer:167
+#: common/lib/functions/initServer:184 common/lib/functions/initServer:198
+#: common/lib/functions/initServer:303 common/lib/functions/initServer:370
+#: common/lib/functions/initDB:11 common/lib/functions/crypto-utils.lib:173
+#: common/lib/functions/crypto-utils.lib:251
+#: common/lib/functions/export-import.lib:667
+#: common/lib/functions/export-import.lib:672
+#: common/lib/functions/export-import.lib:676 common/lib/functions/initLDAP:14
+#: common/lib/functions/initDBI:93
+msgid "GETTEXT"
+msgstr ""
+
+#: common/lib/functions/initServer:144 common/lib/functions/initServer:168
+#: common/lib/functions/initServer:372
+msgid "CACHE"
+msgstr ""
+#: common/lib/functions/initServer:162
+msgid "cryptoshell ready"
+msgstr ""
+
+#: common/lib/functions/initServer:164 common/lib/functions/initServer:181
+#: common/lib/functions/initServer:300 common/lib/functions/initServer:368
+#: common/lib/functions/export-import.lib:130
+msgid "LOG"
+msgstr ""
+
+#: common/lib/functions/initServer:166 common/lib/functions/initServer:172
+msgid "LogConfiguration"
+msgstr ""
+
+#: common/lib/functions/initServer:169 common/lib/functions/initServer:365
+msgid "CRYPTO"
+msgstr ""
+#: common/lib/functions/initServer:177
+msgid "logging ready"
+msgstr ""
+
+#: common/lib/functions/initServer:180 common/lib/functions/initServer:299
+#: common/lib/functions/initServer:317 common/lib/functions/initServer:367
+#: common/lib/functions/initLDAP:15
+msgid "CGI"
+msgstr ""
+
+#: common/lib/functions/initServer:182 common/lib/functions/initServer:301
+#: common/lib/functions/crypto-utils.lib:1395
+#: common/lib/functions/export-import.lib:458
+#: common/lib/functions/export-import.lib:465
+#: common/lib/functions/export-import.lib:482
+#: common/lib/functions/export-import.lib:501
+#: common/lib/functions/export-import.lib:1081
+#: common/lib/functions/export-import.lib:1094
+#: common/lib/functions/export-import.lib:1107
+#: common/lib/functions/export-import.lib:1121
+#: common/lib/functions/export-import.lib:1140
+#: common/lib/functions/export-import.lib:1160
+#: common/lib/functions/export-import.lib:1224
+#: common/lib/functions/export-import.lib:1242
+#: common/lib/functions/export-import.lib:1973
+#: common/lib/functions/export-import.lib:1980
+#: common/lib/functions/export-import.lib:2005
+#: common/lib/functions/export-import.lib:2013
+msgid "DIR"
+msgstr ""
+
+#: common/lib/functions/initServer:182 common/lib/functions/initServer:301
+msgid "SessionDir"
+msgstr ""
+
+#: common/lib/functions/initServer:183 common/lib/functions/initServer:302
+msgid "LIFETIME"
+msgstr ""
+
+#: common/lib/functions/initServer:183 common/lib/functions/initServer:302
+msgid "SessionLifetime"
+msgstr ""
+
+#: common/lib/functions/initServer:190
+msgid "session ready"
+msgstr ""
+
+#: common/lib/functions/initServer:192 common/lib/functions/initServer:194
+#: common/lib/functions/initServer:309 common/lib/functions/initServer:311
+msgid "PREFERENCES_LANGUAGE"
+msgstr ""
+
+#: common/lib/functions/initServer:193 common/lib/functions/initServer:310
+msgid "PREFERENCES_CHARSET"
+msgstr ""
+
+#: common/lib/functions/initServer:196
+msgid "session loaded and language ready"
+msgstr ""
+
+#: common/lib/functions/initServer:203
+msgid "tools ready"
+msgstr ""
+
+#: common/lib/functions/initServer:205 common/lib/functions/initServer:293
+#: common/lib/functions/misc-utils.lib:164
+#: common/lib/functions/misc-utils.lib:230
+#: common/lib/functions/misc-utils.lib:239
+msgid "DBmodule"
+msgstr ""
+#: common/lib/functions/initServer:208#: common/lib/functions/initServer:211
+msgid "database ready"
+msgstr ""
+
+#: common/lib/functions/initServer:214
+#: common/lib/functions/export-import.lib:2152
+msgid "LDAP"
+msgstr ""
+#: common/lib/functions/initServer:216#: common/lib/functions/initServer:219
+msgid "ldap ready"
+msgstr ""
+
+#: common/lib/functions/initServer:236
+msgid "variables initialized"
+msgstr ""
+
+#: common/lib/functions/initServer:238 common/lib/functions/initServer:243
+#: common/lib/functions/initServer:245 common/lib/functions/initCGI:65
+msgid "var_prefix"
+msgstr ""
+
+#: common/lib/functions/initServer:238 common/lib/functions/initCGI:65
+msgid "/tmp/openca_socket"
+msgstr ""
+
+#: common/lib/functions/initServer:240
+msgid "user"
+msgstr ""
+
+#: common/lib/functions/initServer:241
+msgid "group"
+msgstr ""
+
+#: common/lib/functions/initServer:242
+msgid "proto"
+msgstr ""
+
+#: common/lib/functions/initServer:242
+msgid "unix"
+msgstr ""
+
+#: common/lib/functions/initServer:243
+msgid "port"
+msgstr ""
+
+#: common/lib/functions/initServer:243
+msgid "/tmp/openca_socket|unix"
+msgstr ""
+
+#: common/lib/functions/initServer:244
+msgid "background"
+msgstr ""
+
+#: common/lib/functions/initServer:245
+msgid "pid_file"
+msgstr ""
+
+#: common/lib/functions/initServer:245
+msgid "/tmp/openca_socket.pid"
+msgstr ""
+
+#: common/lib/functions/initServer:272 common/lib/functions/initServer:273
+#: common/lib/functions/initServer:284 common/lib/functions/initCGI:58
+msgid "config_prefix"
+msgstr ""
+
+#: common/lib/functions/initServer:278
+msgid "<"
+msgstr ""
+
+#: common/lib/functions/initServer:284
+msgid "/servers/"
+msgstr ""
+
+#: common/lib/functions/initServer:284
+#: common/lib/functions/crypto-utils.lib:1546
+msgid ".conf"
+msgstr ""
+
+#: common/lib/functions/initServer:319
+msgid "reinitialization complete"
+msgstr ""
+
+#: common/lib/functions/initServer:336 common/lib/functions/initServer:347
+#: common/lib/functions/initServer:350 common/lib/functions/initServer:360
+#: common/lib/functions/initServer:377 common/lib/functions/misc-utils.lib:137
+#: common/lib/functions/misc-utils.lib:312
+msgid "cmd"
+msgstr ""
+
+#: common/lib/functions/initServer:338
+msgid "CgiServerType"
+msgstr ""
+
+#: common/lib/functions/initServer:341 common/lib/functions/initServer:360
+msgid "serverInfo"
+msgstr ""
+
+#: common/lib/functions/initServer:347
+msgid "scepGetCACert"
+msgstr ""
+
+#: common/lib/functions/initServer:350
+msgid "scepPKIOperation"
+msgstr ""
+
+#: common/lib/functions/initServer:355
+msgid "This interface is only for SCEP."
+msgstr ""
+
+#: common/lib/functions/initServer:364
+msgid "AccessControlConfiguration"
+msgstr ""
+
+#: common/lib/functions/initServer:366
+#: common/lib/functions/crypto-utils.lib:507
+msgid "DB"
+msgstr ""
+
+#: common/lib/functions/initServer:369 common/lib/functions/initLDAP:13
+msgid "GUI"
+msgstr ""
+
+#: common/lib/functions/initServer:371
+msgid "SESSION"
+msgstr ""
+
+#: common/lib/functions/initServer:373 common/lib/functions/initDBI:94
+msgid "DEBUG"
+msgstr ""
+
+#: common/lib/functions/initServer:375
+msgid "access control executed"
+msgstr ""
+
+#: common/lib/functions/initServer:387
+msgid "command executed"
+msgstr ""
+
+#: common/lib/functions/initServer:398 common/lib/functions/initServer:399
+#: common/lib/functions/initServer:400
+msgid "openca"
+msgstr ""
+
+#: common/lib/functions/initServer:398
+msgid "lib_prefix"
+msgstr ""
+
+#: common/lib/functions/initServer:398
+msgid "/locale"
+msgstr ""
+
+#: common/lib/functions/initServer:419
+msgid "start time"
+msgstr ""
+
+#: common/lib/functions/initServer:431
+msgid " in "
+msgstr ""
+
+#: common/lib/functions/initServer:431 common/lib/functions/initServer:434
+#: common/lib/functions/initDB:15 common/lib/functions/initDB:16
+#: common/lib/functions/ldap-utils.lib:159
+#: common/lib/functions/ldap-utils.lib:193
+#: common/lib/functions/misc-utils.lib:12
+#: common/lib/functions/export-import.lib:733
+#: common/lib/functions/export-import.lib:734
+#: common/lib/functions/export-import.lib:735
+#: common/lib/functions/export-import.lib:804
+#: common/lib/functions/export-import.lib:805
+#: common/lib/functions/export-import.lib:806
+msgid "<br>\n"
+msgstr ""
+
+#: common/lib/functions/initServer:434
+msgid "total time "
+msgstr ""
+#: common/lib/functions/initDB:8
+msgid "dbDir"
+msgstr ""
+
+#: common/lib/functions/initDB:10 common/lib/functions/crypto-utils.lib:172
+#: common/lib/functions/crypto-utils.lib:250
+#: common/lib/functions/export-import.lib:666
+#: common/lib/functions/export-import.lib:671
+#: common/lib/functions/export-import.lib:677 common/lib/functions/initDBI:92
+msgid "SHELL"
+msgstr ""
+
+#: common/lib/functions/initDB:12
+msgid "DB_DIR"
+msgstr ""#: common/lib/functions/initDB:16 common/lib/functions/crypto-utils.lib:141#: common/lib/functions/initDB:17 common/lib/functions/crypto-utils.lib:142#: common/lib/functions/crypto-utils.lib:131
+#: common/lib/functions/crypto-utils.lib:1383
+#: common/lib/functions/crypto-utils.lib:1401
+#: common/lib/functions/crypto-utils.lib:1404
+#: common/lib/functions/crypto-utils.lib:1407
+#: common/lib/functions/crypto-utils.lib:1410
+#: common/lib/functions/crypto-utils.lib:1413
+#: common/lib/functions/crypto-utils.lib:1685
+#: common/lib/functions/crypto-utils.lib:1696
+#: common/lib/functions/crypto-utils.lib:1699
+#: common/lib/functions/crypto-utils.lib:1702
+#: common/lib/functions/crypto-utils.lib:1705
+#: common/lib/functions/export-import.lib:816
+#: common/lib/functions/export-import.lib:828
+#: common/lib/functions/export-import.lib:834
+#: common/lib/functions/export-import.lib:840
+#: common/lib/functions/export-import.lib:852
+#: common/lib/functions/export-import.lib:861
+#: common/lib/functions/export-import.lib:928
+#: common/lib/functions/export-import.lib:932
+#: common/lib/functions/export-import.lib:951
+#: common/lib/functions/export-import.lib:995
+#: common/lib/functions/export-import.lib:1000
+#: common/lib/functions/export-import.lib:1005
+msgid "OBJECT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:150
+msgid "SIGNATURE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:166
+msgid "-----END CERTIFICATE-----"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:202
+#: common/lib/functions/export-import.lib:1344
+msgid "ChainDir"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:227
+#: common/lib/functions/crypto-utils.lib:447
+#: common/lib/functions/crypto-utils.lib:1287
+#: common/lib/functions/ldap-utils.lib:69
+#: common/lib/functions/export-import.lib:883
+#: common/lib/functions/export-import.lib:1035
+#: common/lib/functions/export-import.lib:1185
+#: common/lib/functions/export-import.lib:1198
+#: common/lib/functions/export-import.lib:1819 common/lib/functions/initCGI:57
+#: common/lib/functions/initCGI:58 common/lib/functions/initCGI:59
+#: common/lib/functions/initCGI:84 common/lib/functions/mail-utils.lib:65
+#: common/lib/functions/mail-utils.lib:155
+#: common/lib/functions/mail-utils.lib:157
+msgid "\n"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:239#: common/lib/functions/crypto-utils.lib:252
+#: common/lib/functions/crypto-utils.lib:1675
+#: common/lib/functions/export-import.lib:668
+#: common/lib/functions/export-import.lib:673
+#: common/lib/functions/export-import.lib:675
+msgid "INFILE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:253
+msgid "DATAFILE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:254
+msgid "CA_DIR"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:282
+#: common/lib/functions/crypto-utils.lib:321
+#: common/lib/functions/crypto-utils.lib:336
+#: common/lib/functions/crypto-utils.lib:351
+#: common/lib/functions/crypto-utils.lib:366
+#: common/lib/functions/crypto-utils.lib:381
+#: common/lib/functions/crypto-utils.lib:400
+#: common/lib/functions/crypto-utils.lib:408
+#: common/lib/functions/crypto-utils.lib:1382
+#: common/lib/functions/crypto-utils.lib:1402
+#: common/lib/functions/crypto-utils.lib:1405
+#: common/lib/functions/crypto-utils.lib:1408
+#: common/lib/functions/crypto-utils.lib:1411
+#: common/lib/functions/crypto-utils.lib:1414
+#: common/lib/functions/crypto-utils.lib:1463
+#: common/lib/functions/crypto-utils.lib:1606
+#: common/lib/functions/crypto-utils.lib:1620
+#: common/lib/functions/crypto-utils.lib:1621
+#: common/lib/functions/crypto-utils.lib:1622
+#: common/lib/functions/crypto-utils.lib:1623
+#: common/lib/functions/crypto-utils.lib:1647
+#: common/lib/functions/crypto-utils.lib:1686
+#: common/lib/functions/crypto-utils.lib:1697
+#: common/lib/functions/crypto-utils.lib:1700
+#: common/lib/functions/crypto-utils.lib:1703
+#: common/lib/functions/crypto-utils.lib:1706
+#: common/lib/functions/ldap-utils.lib:90
+#: common/lib/functions/ldap-utils.lib:148
+#: common/lib/functions/ldap-utils.lib:182
+#: common/lib/functions/misc-utils.lib:148
+#: common/lib/functions/misc-utils.lib:170
+#: common/lib/functions/misc-utils.lib:176
+#: common/lib/functions/misc-utils.lib:183
+#: common/lib/functions/misc-utils.lib:184
+#: common/lib/functions/misc-utils.lib:281
+#: common/lib/functions/misc-utils.lib:285
+#: common/lib/functions/export-import.lib:458
+#: common/lib/functions/export-import.lib:501
+#: common/lib/functions/export-import.lib:558
+#: common/lib/functions/export-import.lib:580
+#: common/lib/functions/export-import.lib:584
+#: common/lib/functions/export-import.lib:612
+#: common/lib/functions/export-import.lib:722
+#: common/lib/functions/export-import.lib:725
+#: common/lib/functions/export-import.lib:754
+#: common/lib/functions/export-import.lib:755
+#: common/lib/functions/export-import.lib:756
+#: common/lib/functions/export-import.lib:757
+#: common/lib/functions/export-import.lib:758
+#: common/lib/functions/export-import.lib:815
+#: common/lib/functions/export-import.lib:826
+#: common/lib/functions/export-import.lib:833
+#: common/lib/functions/export-import.lib:839
+#: common/lib/functions/export-import.lib:851
+#: common/lib/functions/export-import.lib:860
+#: common/lib/functions/export-import.lib:867
+#: common/lib/functions/export-import.lib:904
+#: common/lib/functions/export-import.lib:906
+#: common/lib/functions/export-import.lib:908
+#: common/lib/functions/export-import.lib:926
+#: common/lib/functions/export-import.lib:930
+#: common/lib/functions/export-import.lib:946
+#: common/lib/functions/export-import.lib:949
+#: common/lib/functions/export-import.lib:967
+#: common/lib/functions/export-import.lib:980
+#: common/lib/functions/export-import.lib:983
+#: common/lib/functions/export-import.lib:993
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/export-import.lib:1003
+#: common/lib/functions/export-import.lib:1028
+#: common/lib/functions/export-import.lib:1078
+#: common/lib/functions/export-import.lib:1081
+#: common/lib/functions/export-import.lib:1091
+#: common/lib/functions/export-import.lib:1094
+#: common/lib/functions/export-import.lib:1104
+#: common/lib/functions/export-import.lib:1107
+#: common/lib/functions/export-import.lib:1117
+#: common/lib/functions/export-import.lib:1120
+#: common/lib/functions/export-import.lib:1137
+#: common/lib/functions/export-import.lib:1140
+#: common/lib/functions/export-import.lib:1157
+#: common/lib/functions/export-import.lib:1160
+#: common/lib/functions/export-import.lib:1221
+#: common/lib/functions/export-import.lib:1224
+#: common/lib/functions/export-import.lib:1239
+#: common/lib/functions/export-import.lib:1242
+#: common/lib/functions/export-import.lib:1272
+#: common/lib/functions/export-import.lib:1749
+#: common/lib/functions/export-import.lib:1752
+#: common/lib/functions/export-import.lib:1774
+#: common/lib/functions/export-import.lib:1790
+#: common/lib/functions/mail-utils.lib:80
+msgid "DATATYPE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:283
+#: common/lib/functions/crypto-utils.lib:1462
+#: common/lib/functions/crypto-utils.lib:1607
+#: common/lib/functions/crypto-utils.lib:1620
+#: common/lib/functions/crypto-utils.lib:1621
+#: common/lib/functions/crypto-utils.lib:1622
+#: common/lib/functions/crypto-utils.lib:1623
+#: common/lib/functions/crypto-utils.lib:1647
+#: common/lib/functions/ldap-utils.lib:91
+#: common/lib/functions/misc-utils.lib:283
+#: common/lib/functions/misc-utils.lib:285
+#: common/lib/functions/export-import.lib:582
+#: common/lib/functions/export-import.lib:585
+#: common/lib/functions/export-import.lib:613
+#: common/lib/functions/export-import.lib:723
+#: common/lib/functions/export-import.lib:725
+#: common/lib/functions/export-import.lib:868
+#: common/lib/functions/export-import.lib:905
+#: common/lib/functions/export-import.lib:907
+#: common/lib/functions/export-import.lib:909
+#: common/lib/functions/export-import.lib:981
+#: common/lib/functions/export-import.lib:983
+#: common/lib/functions/export-import.lib:1028
+#: common/lib/functions/export-import.lib:1754
+#: common/lib/functions/export-import.lib:1774
+#: common/lib/functions/mail-utils.lib:81
+msgid "KEY"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:324
+#: common/lib/functions/crypto-utils.lib:354
+#: common/lib/functions/crypto-utils.lib:387
+msgid "V"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:327
+#: common/lib/functions/crypto-utils.lib:342
+#: common/lib/functions/crypto-utils.lib:357
+#: common/lib/functions/crypto-utils.lib:372
+#: common/lib/functions/crypto-utils.lib:391
+#: common/lib/functions/crypto-utils.lib:405
+#: common/lib/functions/crypto-utils.lib:468
+#, perl-format
+msgid "%lX"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:328
+#: common/lib/functions/crypto-utils.lib:343
+#: common/lib/functions/crypto-utils.lib:358
+#: common/lib/functions/crypto-utils.lib:373
+#: common/lib/functions/crypto-utils.lib:392
+#: common/lib/functions/crypto-utils.lib:406
+#: common/lib/functions/crypto-utils.lib:467
+#: common/lib/functions/crypto-utils.lib:469
+msgid "0"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:339
+#: common/lib/functions/crypto-utils.lib:369
+msgid "E"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:385
+#: common/lib/functions/crypto-utils.lib:403
+msgid "R"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:409
+msgid "REVOKE_CERTIFICATE_DN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:410
+msgid "991231235959Z"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:443
+#: common/lib/functions/crypto-utils.lib:444
+#: common/lib/functions/crypto-utils.lib:445
+msgid "\t"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:446
+msgid "\tunknown\t"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:451
+msgid " unknown "
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:459
+msgid "Writing serial __CERT_SERIAL__ ..."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:507
+#: common/lib/functions/crypto-utils.lib:515
+msgid "/ocsp_"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:508
+msgid "OCSP"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:508
+msgid "YES"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:514
+msgid "rm "
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:515
+msgid ";ln "
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:908
+msgid ") or die  "
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1178
+msgid "REQUEST_PIN_MAIL"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1187
+#: common/lib/functions/crypto-utils.lib:1191
+msgid "PIN_LENGTH"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1188
+#: common/lib/functions/crypto-utils.lib:1194
+msgid "RANDOM_LENGTH"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1210
+msgid "SECURE_PIN_MAIL"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1216
+#: common/lib/functions/misc-utils.lib:298
+msgid "ALGORITHM"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1216
+#: common/lib/functions/misc-utils.lib:298
+msgid "sha1"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1244
+#: common/lib/functions/crypto-utils.lib:1254
+msgid "ENCRYPT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1245
+#: common/lib/functions/crypto-utils.lib:1255
+msgid "SIGN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1246
+msgid "ENCRYPT_CERT"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1246
+msgid ".pem"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1247
+#: common/lib/functions/crypto-utils.lib:1256
+msgid "MESSAGE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1248
+#: common/lib/functions/crypto-utils.lib:1257
+msgid "TO"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1249
+#: common/lib/functions/crypto-utils.lib:1258
+msgid "FROM"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1250
+#: common/lib/functions/crypto-utils.lib:1259
+#: common/lib/functions/crypto-utils.lib:1495
+msgid "SUBJECT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1276
+#: common/lib/functions/crypto-utils.lib:1361
+#: common/lib/functions/crypto-utils.lib:1367
+#: common/lib/functions/export-import.lib:1756
+#: common/lib/functions/export-import.lib:1824
+#: common/lib/functions/export-import.lib:1827
+#: common/lib/functions/mail-utils.lib:280
+#: common/lib/functions/mail-utils.lib:286
+msgid ".msg"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1288
+msgid "OUT_FILE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1288
+#: common/lib/functions/crypto-utils.lib:1312
+#: common/lib/functions/crypto-utils.lib:1321
+msgid ".sig"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1304
+msgid "PIN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1330
+#: common/lib/functions/mail-utils.lib:264
+msgid "DEFAULT_MAIL_DIR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1333
+#: common/lib/functions/crypto-utils.lib:1338
+msgid "CONFIRM_CERT_SIGN"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1343#: common/lib/functions/crypto-utils.lib:1350#: common/lib/functions/crypto-utils.lib:1355
+msgid "To: "
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1384
+#: common/lib/functions/export-import.lib:581
+#: common/lib/functions/export-import.lib:817
+#: common/lib/functions/export-import.lib:835
+#: common/lib/functions/export-import.lib:841
+#: common/lib/functions/export-import.lib:853
+#: common/lib/functions/export-import.lib:862
+#: common/lib/functions/export-import.lib:1078
+#: common/lib/functions/export-import.lib:1081
+#: common/lib/functions/export-import.lib:1091
+#: common/lib/functions/export-import.lib:1094
+#: common/lib/functions/export-import.lib:1104
+#: common/lib/functions/export-import.lib:1107
+#: common/lib/functions/export-import.lib:1117
+#: common/lib/functions/export-import.lib:1122
+#: common/lib/functions/export-import.lib:1137
+#: common/lib/functions/export-import.lib:1140
+#: common/lib/functions/export-import.lib:1157
+#: common/lib/functions/export-import.lib:1160
+#: common/lib/functions/export-import.lib:1221
+#: common/lib/functions/export-import.lib:1224
+#: common/lib/functions/export-import.lib:1239
+#: common/lib/functions/export-import.lib:1242
+#: common/lib/functions/export-import.lib:1749
+#: common/lib/functions/export-import.lib:1753
+#: common/lib/functions/export-import.lib:1790
+#: common/lib/functions/export-import.lib:1974
+#: common/lib/functions/export-import.lib:1981
+#: common/lib/functions/export-import.lib:2006
+#: common/lib/functions/export-import.lib:2014
+msgid "MODE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1384
+#: common/lib/functions/export-import.lib:687
+#: common/lib/functions/export-import.lib:832
+#: common/lib/functions/export-import.lib:848
+msgid "INSERT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1395
+msgid "FILTER"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1395
+msgid "openssl_backup_"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1395
+msgid "_*"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1403
+#: common/lib/functions/crypto-utils.lib:1406
+#: common/lib/functions/crypto-utils.lib:1409
+#: common/lib/functions/crypto-utils.lib:1412
+#: common/lib/functions/crypto-utils.lib:1415
+#: common/lib/functions/crypto-utils.lib:1687
+#: common/lib/functions/crypto-utils.lib:1698
+#: common/lib/functions/crypto-utils.lib:1701
+#: common/lib/functions/crypto-utils.lib:1704
+#: common/lib/functions/crypto-utils.lib:1707
+#: common/lib/functions/export-import.lib:827
+#: common/lib/functions/export-import.lib:927
+#: common/lib/functions/export-import.lib:931
+#: common/lib/functions/export-import.lib:950
+#: common/lib/functions/export-import.lib:994
+#: common/lib/functions/export-import.lib:999
+#: common/lib/functions/export-import.lib:1004
+msgid "NEWTYPE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1480
+msgid "LOA_OID"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1481
+msgid "LOA_POLICY"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1496
+#: common/lib/functions/export-import.lib:669
+msgid "FORMAT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1497
+msgid "EXTFILE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1498
+#: common/lib/functions/crypto-utils.lib:1508
+#: common/lib/functions/crypto-utils.lib:1512
+msgid "TOKEN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1505
+#: common/lib/functions/crypto-utils.lib:1509
+#: common/lib/functions/crypto-utils.lib:1513
+#: common/lib/functions/crypto-utils.lib:1520
+msgid "CERT"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1529
+#: common/lib/functions/crypto-utils.lib:1531
+#: common/lib/functions/export-import.lib:1290
+#: common/lib/functions/export-import.lib:1303
+#: common/lib/functions/export-import.lib:1316
+#: common/lib/functions/export-import.lib:1332
+#: common/lib/functions/export-import.lib:1758
+#: common/lib/functions/export-import.lib:1807
+#: common/lib/functions/export-import.lib:1998
+#: common/lib/functions/export-import.lib:2059
+msgid "DEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1529
+msgid "sslindex"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1530
+#: common/lib/functions/crypto-utils.lib:1532
+#: common/lib/functions/export-import.lib:1289
+#: common/lib/functions/export-import.lib:1302
+#: common/lib/functions/export-import.lib:1315
+#: common/lib/functions/export-import.lib:1331
+#: common/lib/functions/export-import.lib:1758
+#: common/lib/functions/export-import.lib:1807
+#: common/lib/functions/export-import.lib:1998
+#: common/lib/functions/export-import.lib:2059
+msgid "SRC"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1530
+#: common/lib/functions/crypto-utils.lib:1532
+msgid "/openssl_backup_"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1530
+msgid "_index.txt"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1531
+msgid "sslserial"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1532
+msgid "_serial"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1548
+msgid "OpenSSL_DIR"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1552
+msgid "\\n"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1585
+msgid "UNIQUE_DN"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1636
+#: common/lib/functions/crypto-utils.lib:1645
+msgid "PKI: detected an inconsistency in the certificate-database!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1637
+msgid "PKI: didn't fix the inconsistency (not necessary)."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1648
+msgid "PKI: fixed inconsistency."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1650
+msgid "PKI: failed to fix the inconsistency."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1675#: common/lib/functions/crypto-utils.lib:1676
+msgid "NOUNIQUEDN"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:47
+#: common/lib/functions/export-import.lib:1154
+msgid "CertDir"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:59#: common/lib/functions/ldap-utils.lib:71
+msgid "ELEMENTS"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:71
+msgid "MAXITEMS"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:72
+msgid "COLS"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:76
+msgid "WIDTH"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:76
+msgid "100%"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:77
+msgid "TITLE_BGCOLOR"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:77
+msgid "#DDCCFF"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:95
+#: common/lib/functions/ldap-utils.lib:108
+#: common/lib/functions/mail-utils.lib:83
+#: common/lib/functions/mail-utils.lib:98
+#: common/lib/functions/mail-utils.lib:107
+msgid "<FONT COLOR=\"Red\">"
+msgstr ""
+
+
+#: common/lib/functions/ldap-utils.lib:110
+#: common/lib/functions/export-import.lib:409
+#: common/lib/functions/export-import.lib:607
+#: common/lib/functions/export-import.lib:608
+#: common/lib/functions/export-import.lib:680
+#: common/lib/functions/export-import.lib:681
+#: common/lib/functions/export-import.lib:1045
+#: common/lib/functions/export-import.lib:1046
+#: common/lib/functions/export-import.lib:1048
+#: common/lib/functions/export-import.lib:1049
+#: common/lib/functions/export-import.lib:1052
+#: common/lib/functions/export-import.lib:1053
+#: common/lib/functions/export-import.lib:1055
+#: common/lib/functions/export-import.lib:1056
+#: common/lib/functions/export-import.lib:1183
+#: common/lib/functions/export-import.lib:1206
+#: common/lib/functions/export-import.lib:1252
+#: common/lib/functions/export-import.lib:1262
+#: common/lib/functions/export-import.lib:1296
+#: common/lib/functions/export-import.lib:1309
+#: common/lib/functions/export-import.lib:1322
+#: common/lib/functions/export-import.lib:1337
+#: common/lib/functions/export-import.lib:1763
+#: common/lib/functions/export-import.lib:1766
+#: common/lib/functions/export-import.lib:1813
+#: common/lib/functions/mail-utils.lib:86
+#: common/lib/functions/mail-utils.lib:236
+msgid "</FONT>"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:114
+#: common/lib/functions/export-import.lib:1926
+#: common/lib/functions/export-import.lib:1935
+#: common/lib/functions/export-import.lib:1940
+#: common/lib/functions/export-import.lib:1945
+msgid "NOPRINT"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:114
+msgid "true"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:157
+msgid "ldap-utils.lib: LDAP_get_crl: newer crl found<br>\n"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:159
+msgid "ldap-utils.lib: LDAP_get_crl: crl:<br>\n"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:165
+msgid "ldap-utils.lib: LDAP_get_crl: return newest crl<br>\n"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:179
+msgid "ldap-utils.lib: LDAP_get_ca: try to determine the newest CA-cert<br>\n"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:191
+msgid "ldap-utils.lib: LDAP_get_ca: newer ca-cert found<br>\n"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:193
+msgid "ldap-utils.lib: LDAP_get_ca: ca:<br>\n"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:199
+msgid "ldap-utils.lib: LDAP_get_ca: return newest ca<br>\n"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:216
+msgid "<table>\n"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:217
+msgid "  <tr><td colspan=2>"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:217
+msgid "</td></tr>\n"
+msgstr ""
+
+
+
+#: common/lib/functions/ldap-utils.lib:223
+msgid "dn"
+msgstr ""
+
+
+#: common/lib/functions/ldap-utils.lib:226
+msgid "</table>\n"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:53
+#: common/lib/functions/misc-utils.lib:326
+msgid "NAME"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:54
+#: common/lib/functions/misc-utils.lib:327
+msgid "EXPLANATION"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:55
+#: common/lib/functions/misc-utils.lib:330
+msgid "INFO_LIST"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:107#: common/lib/functions/misc-utils.lib:120
+msgid "CgiCmdsPath"
+msgstr ""#: common/lib/functions/misc-utils.lib:138
+msgid "()"
+msgstr ""#: common/lib/functions/misc-utils.lib:204
+#: common/lib/functions/export-import.lib:599
+#: common/lib/functions/export-import.lib:602
+msgid "."
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:205
+msgid ".."
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:261
+msgid "REQUIRE_PASSWD_"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:268
+#: common/lib/functions/misc-utils.lib:297
+msgid "PASSWD_"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:277 common/lib/functions/initDBI:56
+msgid "name"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:277 common/lib/functions/initDBI:60
+msgid "value"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:282
+msgid "dataType"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:284
+#: common/lib/functions/misc-utils.lib:313
+msgid "key"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:301
+msgid "SHA1_PASSWD_"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:313
+msgid "serial"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:319
+msgid "<input type=submit value=\""
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:319
+#: common/lib/functions/misc-utils.lib:320
+msgid "\">"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:320
+msgid "<input type=reset value=\""
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:324
+msgid "<input type=password name=\"PASSWD_"
+msgstr ""
+
+
+#: common/lib/functions/misc-utils.lib:323
+msgid "\" value=\"\" size=16 minlength=8>"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:328
+msgid "HIDDEN_LIST"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:329
+msgid "CMD_PANEL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:86
+msgid "/tmp_"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:130
+msgid "ALL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:1117
+#: common/lib/functions/export-import.lib:1122
+#: common/lib/functions/export-import.lib:1157
+#: common/lib/functions/export-import.lib:1160
+#: common/lib/functions/export-import.lib:1239
+#: common/lib/functions/export-import.lib:1242
+#: common/lib/functions/export-import.lib:1790
+#: common/lib/functions/export-import.lib:1974
+#: common/lib/functions/export-import.lib:2026
+msgid "DOWNLOAD"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:1078
+#: common/lib/functions/export-import.lib:1081
+#: common/lib/functions/export-import.lib:1137
+#: common/lib/functions/export-import.lib:1140
+#: common/lib/functions/export-import.lib:1221
+#: common/lib/functions/export-import.lib:1224
+#: common/lib/functions/export-import.lib:1749
+#: common/lib/functions/export-import.lib:1753
+#: common/lib/functions/export-import.lib:2014
+msgid "ENROLL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:1104
+#: common/lib/functions/export-import.lib:1107
+#: common/lib/functions/export-import.lib:1981
+#: common/lib/functions/export-import.lib:2027
+msgid "RECEIVE"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:1091
+#: common/lib/functions/export-import.lib:1094
+#: common/lib/functions/export-import.lib:2006
+msgid "UPLOAD"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:131
+#: common/lib/functions/export-import.lib:1749
+#: common/lib/functions/export-import.lib:1790
+#: common/lib/functions/export-import.lib:2038
+msgid "MAIL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:131
+msgid "CRINS"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:131
+msgid "DEFAULT"
+msgstr ""
+#: common/lib/functions/export-import.lib:232
+#: common/lib/functions/export-import.lib:264
+#: common/lib/functions/export-import.lib:605
+#: common/lib/functions/export-import.lib:608
+#: common/lib/functions/export-import.lib:680
+#: common/lib/functions/export-import.lib:681
+#: common/lib/functions/export-import.lib:1045
+#: common/lib/functions/export-import.lib:1046
+#: common/lib/functions/export-import.lib:1048
+#: common/lib/functions/export-import.lib:1049
+#: common/lib/functions/export-import.lib:1052
+#: common/lib/functions/export-import.lib:1053
+#: common/lib/functions/export-import.lib:1055
+#: common/lib/functions/export-import.lib:1056
+#: common/lib/functions/export-import.lib:1203
+#: common/lib/functions/export-import.lib:1252
+#: common/lib/functions/export-import.lib:1292
+#: common/lib/functions/export-import.lib:1305
+#: common/lib/functions/export-import.lib:1318
+#: common/lib/functions/export-import.lib:1333
+#: common/lib/functions/export-import.lib:1760
+#: common/lib/functions/export-import.lib:1764
+#: common/lib/functions/export-import.lib:1809
+#: common/lib/functions/mail-utils.lib:234
+msgid "<FONT COLOR=#FF0000>"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:318
+#: common/lib/functions/export-import.lib:326
+#: common/lib/functions/export-import.lib:330
+#: common/lib/functions/export-import.lib:332
+#: common/lib/functions/export-import.lib:347
+#: common/lib/functions/export-import.lib:349
+#: common/lib/functions/export-import.lib:351
+#: common/lib/functions/export-import.lib:368
+msgid "LEVEL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:344
+msgid "LOCAL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:361
+#: common/lib/functions/export-import.lib:362
+msgid "EXPORT_IMPORT_"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:361
+msgid "_IMPORT"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:362
+msgid "_DEVICE"
+msgstr ""
+#: common/lib/functions/export-import.lib:377#: common/lib/functions/export-import.lib:409
+#: common/lib/functions/export-import.lib:1257
+msgid "<FONT COLOR=#ff0000>"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:458
+#: common/lib/functions/export-import.lib:501
+#: common/lib/functions/export-import.lib:1947
+msgid "STATUS"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:458
+msgid "BACKUP"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:501
+#: common/lib/functions/export-import.lib:1123
+msgid "ALLOW_STATE_INJECTION"
+msgstr ""
+#: common/lib/functions/export-import.lib:549#: common/lib/functions/export-import.lib:554
+#: common/lib/functions/export-import.lib:722
+#: common/lib/functions/export-import.lib:725
+#: common/lib/functions/export-import.lib:815
+#: common/lib/functions/export-import.lib:826
+#: common/lib/functions/export-import.lib:827
+#: common/lib/functions/export-import.lib:833
+#: common/lib/functions/export-import.lib:839
+#: common/lib/functions/export-import.lib:851
+#: common/lib/functions/export-import.lib:860
+#: common/lib/functions/export-import.lib:867
+#: common/lib/functions/export-import.lib:881
+#: common/lib/functions/export-import.lib:1033
+#: common/lib/functions/export-import.lib:1817
+#: common/lib/functions/export-import.lib:2046
+#: common/lib/functions/export-import.lib:2047
+#: common/lib/functions/export-import.lib:2089
+#: common/lib/functions/export-import.lib:2101
+msgid "_"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:571
+#: common/lib/functions/export-import.lib:656
+#: common/lib/functions/export-import.lib:1172
+#: common/lib/functions/export-import.lib:1743
+#: common/lib/functions/export-import.lib:1803
+msgid "<i>"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:571
+#: common/lib/functions/export-import.lib:656
+#: common/lib/functions/export-import.lib:1172
+#: common/lib/functions/export-import.lib:1743
+#: common/lib/functions/export-import.lib:1803
+msgid "</i>"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:594
+#: common/lib/functions/export-import.lib:669
+msgid "PEM"
+msgstr ""
+#: common/lib/functions/export-import.lib:607#: common/lib/functions/export-import.lib:732
+msgid "export-import.lib: importObjects: Phase 1<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:733
+#: common/lib/functions/export-import.lib:804
+msgid "export-import.lib: importObjects: old_status = "
+msgstr ""
+
+#: common/lib/functions/export-import.lib:734
+#: common/lib/functions/export-import.lib:805
+msgid "export-import.lib: importObjects: new_status = "
+msgstr ""
+
+#: common/lib/functions/export-import.lib:735
+#: common/lib/functions/export-import.lib:806
+msgid "export-import.lib: importObjects: next_status = "
+msgstr ""
+
+#: common/lib/functions/export-import.lib:754
+#: common/lib/functions/export-import.lib:755
+#: common/lib/functions/export-import.lib:756
+#: common/lib/functions/export-import.lib:757
+#: common/lib/functions/export-import.lib:758
+#: common/lib/functions/export-import.lib:947
+#: common/lib/functions/export-import.lib:968
+msgid "REVOKE_CERTIFICATE_SERIAL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:803
+msgid "export-import.lib: importObjects: Phase 2<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:812
+#: common/lib/functions/export-import.lib:823
+#: common/lib/functions/export-import.lib:838
+#: common/lib/functions/export-import.lib:858
+msgid "UPDATE"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:849
+msgid "export-import.lib: try to insert object<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:854
+msgid "export-import.lib: insert object failed<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:859
+msgid "export-import.lib: try to update object<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:871
+msgid "export-import.lib: object present in database<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:873
+msgid "export-import.lib: object is not present in database<br>\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:880
+#: common/lib/functions/export-import.lib:1032
+#: common/lib/functions/export-import.lib:1991
+#: common/lib/functions/export-import.lib:2058
+#: common/lib/functions/export-import.lib:2117
+msgid "LOG_"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:880
+#: common/lib/functions/export-import.lib:1032
+#: common/lib/functions/export-import.lib:1991
+#: common/lib/functions/export-import.lib:2058
+#: common/lib/functions/export-import.lib:2117
+msgid "_DIR"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:881
+#: common/lib/functions/export-import.lib:1033
+msgid ".log"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:882
+#: common/lib/functions/export-import.lib:1034
+#: common/lib/functions/export-import.lib:1818
+msgid ">>"
+msgstr ""
+#: common/lib/functions/export-import.lib:889#: common/lib/functions/export-import.lib:926
+#: common/lib/functions/export-import.lib:930
+#: common/lib/functions/export-import.lib:980
+#: common/lib/functions/export-import.lib:993
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/export-import.lib:1003
+msgid "_CERTIFICATE"
+msgstr ""
+#: common/lib/functions/export-import.lib:983
+msgid "_CRR"
+msgstr ""
+#: common/lib/functions/export-import.lib:1140#: common/lib/functions/export-import.lib:1164
+msgid "/CERTIFICATE/VALID/"
+msgstr ""
+
+
+#: common/lib/functions/export-import.lib:1242
+msgid "ENFORCE"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1255
+#: common/lib/functions/export-import.lib:1934
+msgid "AUTHORITY_CERTIFICATE"
+msgstr ""
+#: common/lib/functions/export-import.lib:1288
+msgid "CACertificate"
+msgstr ""
+#: common/lib/functions/export-import.lib:1301
+msgid "CACertificateDER"
+msgstr ""
+#: common/lib/functions/export-import.lib:1314
+msgid "CACertificateTXT"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1330
+msgid "CACertificateCRT"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1347
+msgid "MakePath"
+msgstr ""
+#: common/lib/functions/export-import.lib:1603#: common/lib/functions/export-import.lib:1647
+msgid "/Configuration"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1650
+msgid "RBAC_DIR"
+msgstr ""
+#: common/lib/functions/export-import.lib:1752
+msgid "_MAIL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1756
+#: common/lib/functions/export-import.lib:1807
+#: common/lib/functions/export-import.lib:1812
+msgid "_MAIL_DIR"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1758
+#: common/lib/functions/export-import.lib:1797
+msgid "/MAIL/"
+msgstr ""
+#: common/lib/functions/export-import.lib:1816
+msgid "LOG_DOWNLOAD_DIR"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1817
+msgid "_MAIL.log"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1836
+#: common/lib/functions/export-import.lib:1837
+msgid "SEND_MAIL_DURING_IMPORT"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1838
+msgid "default"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1839
+msgid "crin"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1852
+msgid "/batch"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1858
+msgid "BP_DIR"
+msgstr ""#: common/lib/functions/export-import.lib:1896#: common/lib/functions/export-import.lib:1944
+msgid "AUTHORITY_CRL"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1947
+msgid "CODE"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1947
+msgid "DESC"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1996
+msgid "/*.log"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1998
+msgid "/LOG/"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2030
+#: common/lib/functions/export-import.lib:2093
+msgid "EXPORT_IMPORT_MODULES"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2046
+#: common/lib/functions/export-import.lib:2089
+msgid "_STATES"
+msgstr ""
+#: common/lib/functions/export-import.lib:2057
+#: common/lib/functions/export-import.lib:2071
+msgid "ModuleID"
+msgstr ""
+#: common/lib/functions/export-import.lib:2058#: common/lib/functions/export-import.lib:2070
+#: common/lib/functions/export-import.lib:2077
+msgid "/module.id"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2168
+msgid "updateLDAPautomatic"
+msgstr ""
+
+#: common/lib/functions/initLDAP:9
+msgid "PERL-LDAP"
+msgstr ""
+
+#: common/lib/functions/initLDAP:11
+msgid "XML_CACHE"
+msgstr ""
+
+#: common/lib/functions/initLDAP:12
+msgid "LDAP_CONFIG"
+msgstr ""
+
+#: common/lib/functions/initLDAP:12
+msgid "LDAPConfiguration"
+msgstr ""
+
+#: common/lib/functions/initRBAC:4
+msgid "rbac-utils.lib"
+msgstr ""
+
+#: common/lib/functions/initCGI:16 common/lib/functions/initCGI:45
+msgid "HTTP_REQUEST_METHOD"
+msgstr ""
+
+#: common/lib/functions/initCGI:17 common/lib/functions/initCGI:47
+msgid "HTTP_USER_AGENT"
+msgstr ""
+
+#: common/lib/functions/initCGI:18 common/lib/functions/initCGI:49
+msgid "HTTP_CGI_SCRIPT"
+msgstr ""
+
+#: common/lib/functions/initCGI:19 common/lib/functions/initCGI:57
+msgid "CGISESSID"
+msgstr ""
+
+#: common/lib/functions/initCGI:39 common/lib/functions/initCGI:45
+#: common/lib/functions/initCGI:47 common/lib/functions/initCGI:49
+msgid "-name"
+msgstr ""
+
+#: common/lib/functions/initCGI:39 common/lib/functions/initCGI:46
+#: common/lib/functions/initCGI:48 common/lib/functions/initCGI:50
+msgid "-value"
+msgstr ""
+
+#: common/lib/functions/initCGI:50
+msgid "-relative"
+msgstr ""
+
+#: common/lib/functions/initCGI:54 common/lib/functions/mail-utils.lib:249
+msgid ">"
+msgstr ""
+
+#: common/lib/functions/initCGI:57
+msgid "CGISESSID="
+msgstr ""
+
+#: common/lib/functions/initCGI:83
+msgid "</h1></body></html>\n"
+msgstr ""
+
+#: common/lib/functions/initDBI:1
+msgid "loaded initDBI"
+msgstr ""
+
+#: common/lib/functions/initDBI:5
+msgid "use OpenCA::DBI"
+msgstr ""
+
+#: common/lib/functions/initDBI:9 common/lib/functions/initDBI:24
+#: common/lib/functions/initDBI:34 common/lib/functions/initDBI:40
+#: common/lib/functions/initDBI:46 common/lib/functions/initDBI:56
+#: common/lib/functions/initDBI:60 common/lib/functions/initDBI:71
+#: common/lib/functions/initDBI:75 common/lib/functions/initDBI:79
+#: common/lib/functions/initDBI:83 common/lib/functions/initDBI:87
+msgid "XPATH"
+msgstr ""
+
+#: common/lib/functions/initDBI:9
+msgid "database_config/debug"
+msgstr ""
+
+#: common/lib/functions/initDBI:10 common/lib/functions/initDBI:25
+#: common/lib/functions/initDBI:35 common/lib/functions/initDBI:41
+#: common/lib/functions/initDBI:47 common/lib/functions/initDBI:57
+#: common/lib/functions/initDBI:61 common/lib/functions/initDBI:72
+#: common/lib/functions/initDBI:76 common/lib/functions/initDBI:80
+#: common/lib/functions/initDBI:84 common/lib/functions/initDBI:88
+msgid "COUNTER"
+msgstr ""
+
+#: common/lib/functions/initDBI:24
+msgid "database_config/type"
+msgstr ""
+
+#: common/lib/functions/initDBI:27
+msgid "database vendor detected"
+msgstr ""
+
+#: common/lib/functions/initDBI:34 common/lib/functions/initDBI:40
+#: common/lib/functions/initDBI:46 common/lib/functions/initDBI:56
+#: common/lib/functions/initDBI:60
+msgid "database_config/environment/vendor"
+msgstr ""
+
+#: common/lib/functions/initDBI:40
+msgid "type"
+msgstr ""
+
+#: common/lib/functions/initDBI:46
+msgid "number"
+msgstr ""
+
+#: common/lib/functions/initDBI:49
+msgid "database environment found"
+msgstr ""
+
+#: common/lib/functions/initDBI:56 common/lib/functions/initDBI:60
+msgid "option"
+msgstr ""
+#: common/lib/functions/initDBI:67
+msgid "database environment loaded"
+msgstr ""
+
+#: common/lib/functions/initDBI:71
+msgid "database_config/name"
+msgstr ""
+
+#: common/lib/functions/initDBI:75
+msgid "database_config/host"
+msgstr ""
+
+#: common/lib/functions/initDBI:79
+msgid "database_config/port"
+msgstr ""
+
+#: common/lib/functions/initDBI:83
+msgid "database_config/user"
+msgstr ""
+
+#: common/lib/functions/initDBI:87
+msgid "database_config/passwd"
+msgstr ""
+
+#: common/lib/functions/initDBI:89
+msgid "database configuration options loaded"
+msgstr ""
+
+#: common/lib/functions/initDBI:95
+msgid "DB_Type"
+msgstr ""
+
+#: common/lib/functions/initDBI:96
+msgid "DB_Name"
+msgstr ""
+
+#: common/lib/functions/initDBI:97
+msgid "DB_Host"
+msgstr ""
+
+#: common/lib/functions/initDBI:98
+msgid "DB_Port"
+msgstr ""
+
+#: common/lib/functions/initDBI:99
+msgid "DB_User"
+msgstr ""
+
+#: common/lib/functions/initDBI:100
+msgid "DB_Passwd"
+msgstr ""
+
+#: common/lib/functions/initDBI:102
+msgid "database object instantiated"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:78
+msgid "</B><BR>"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:85
+msgid "<BR><BR>\n"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:92
+msgid " ["
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:92
+msgid "] : "
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:95
+msgid " ( "
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:95
+msgid " )<BR>\n"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:101
+#: common/lib/functions/mail-utils.lib:111
+msgid "</FONT><BR><BR>\n"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:115
+msgid "["
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:115
+msgid "] : <B>"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:116
+msgid "</B>.<BR><BR>\n"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:131#: common/lib/functions/mail-utils.lib:131#: common/lib/functions/mail-utils.lib:135
+#: common/lib/functions/mail-utils.lib:266
+msgid "mailcommand"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:140
+msgid "basemailfile"
+msgstr ""#: common/lib/functions/mail-utils.lib:147#: common/lib/functions/mail-utils.lib:148#: common/lib/functions/mail-utils.lib:153#: common/lib/functions/mail-utils.lib:154
+msgid "Subject: "
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:246
+msgid "Mailcounter after sending mails is __COUNTER__."
+msgstr ""
+#: common/lib/functions/mail-utils.lib:265
+msgid "CRIN_MAIL_DIR"
+msgstr ""
+#: common/lib/functions/initCGI:66#: common/lib/functions/initCGI:67#: common/lib/functions/initCGI:83
+msgid "<html><body><h1>OpenCA Error: "
+msgstr ""
+
+#: common/lib/functions/initCGI:84
+msgid "OpenCA: "
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1548
+msgid "SUBJECT_ALT_NAME"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:132
+msgid "SERVICE_MAIL_ACCOUNT"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:362
+#: common/lib/functions/misc-utils.lib:366
+#: common/lib/functions/misc-utils.lib:370
+#: common/lib/functions/misc-utils.lib:374
+#: common/lib/functions/misc-utils.lib:378
+#: common/lib/functions/misc-utils.lib:382
+#: common/lib/functions/misc-utils.lib:386
+#, fuzzy
+msgid "StateMachineConfiguration"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:363
+msgid "statemachine/state_list_file"
+msgstr "Die Workflowengine hat versagt."
+
+#: common/lib/functions/misc-utils.lib:367
+msgid "statemachine/function_list_file"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:371
+msgid "statemachine/function_directory"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:375
+msgid "statemachine/function_state_file_suffix"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:379
+msgid "statemachine/user_list_file"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:383
+msgid "statemachine/user_directory"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:387
+msgid "statemachine/user_state_file"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:392
+msgid "STATE_LIST_FILE"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:393
+msgid "FUNCTION_LIST_FILE"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:394
+msgid "FUNCTION_DIRECTORY"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:395
+msgid "FUNCTION_STATES_FILE_SUFFIX"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:396
+msgid "USER_LIST_FILE"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:397
+msgid "USER_DIRECTORY"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:398
+msgid "USER_STATE_FILE_NAME"
+msgstr ""
+
+#: common/lib/functions/initCGI:20 common/lib/functions/initCGI:56
+msgid "OPENCA_AC_CHANNEL_SERVER_SOFTWARE"
+msgstr ""
+
+#: common/lib/functions/initCGI:21 common/lib/functions/initCGI:58
+msgid "OPENCA_AC_CHANNEL_HTTPS_MODE"
+msgstr ""
+
+#: common/lib/functions/initCGI:22 common/lib/functions/initCGI:60
+msgid "OPENCA_AC_CHANNEL_SSL_CIPHER"
+msgstr ""
+
+#: common/lib/functions/initCGI:23 common/lib/functions/initCGI:62
+msgid "OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE"
+msgstr ""
+
+#: common/lib/functions/initCGI:24 common/lib/functions/initCGI:64
+msgid "OPENCA_AC_CHANNEL_REMOTE_ADDRESS"
+msgstr ""
+
+#: common/lib/functions/initServer:346
+msgid "token_config/default_token"
+msgstr ""
+
+#: common/lib/functions/initServer:352
+msgid ">> "
+msgstr ""
+
+#: common/lib/functions/initServer:353
+msgid "redirected stderr to file"
+msgstr ""
+
+#: common/lib/functions/initServer:356
+msgid "debug"
+msgstr ""
+
+#: common/lib/functions/initServer:358
+msgid "debugging is configured"
+msgstr ""
+#: common/lib/functions/initServer:345
+#, fuzzy
+msgid "stderr"
+msgstr "Nutzer"
+
+#: common/lib/functions/initServer:351
+#, fuzzy
+msgid "xml cache is now testeda"
+msgstr "Der XML-Cache ist erfolgreich getestet worden."
+
+#: common/lib/functions/initServer:460
+msgid "html ready"
+msgstr "HTML steht nun zur Verfügung."
+
+#: common/lib/functions/misc-utils.lib:11
+#: common/lib/functions/misc-utils.lib:32
+#: common/lib/functions/misc-utils.lib:177
+msgid "HASHREF"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:155
+#: common/lib/functions/export-import.lib:828
+#: common/lib/functions/export-import.lib:865
+msgid "CLASS"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:156
+msgid "info"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:157
+#, fuzzy
+msgid "session_id"
+msgstr "Sitzung"
+
+#: common/lib/functions/misc-utils.lib:159
+#, fuzzy
+msgid "message"
+msgstr "Meldung"
+
+#: common/lib/functions/misc-utils.lib:460
+msgid "cmds->"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:829
+#: common/lib/functions/export-import.lib:866
+msgid "STATE"
+msgstr ""
+

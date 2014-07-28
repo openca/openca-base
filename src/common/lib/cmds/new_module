@@ -1,0 +1,46 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: new_module
+##       Brief: new_module
+## Description: create a new module
+##  Parameters: -
+
+use strict;
+
+sub cmdNew_module {
+
+    my $twig = loadConfigXML ('ModuleConfiguration');
+    my $update = 0;
+
+    ## search for a module with a matching id
+    foreach my $module (($twig->get_xpath ('access_control/modules/module')))
+    {
+        if (($module->first_child ('id'))->field == $query->param ('id'))
+        {
+            ## update module
+            $update = 1;
+            (XML::Twig::Elt->new( 'description', $query->param ('description')))->replace
+                ($module->first_child ('description'));
+            last;
+        }
+    }
+
+    ## add module
+    if (not $update)
+    {
+        my $id   = XML::Twig::Elt->new( 'id', $query->param ('id'));
+        my $desc = XML::Twig::Elt->new( 'description', $query->param ('description'));
+        my $module = XML::Twig::Elt->new( 'module', $id, $desc);
+        $module->paste (($twig->get_xpath ('access_control/modules'))[0]);
+    }
+
+    ## write the configuration
+    writeConfigXML ($twig, 'ModuleConfiguration');
+
+    libExecuteCommand ("show_modules");
+
+}
+
+1;

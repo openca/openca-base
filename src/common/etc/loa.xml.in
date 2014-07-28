@@ -1,0 +1,467 @@
+<openca>
+  <loa>
+    <level>1</level>
+    <name>Low</name>
+    <description>
+    This Level of Assurance is intended to be used for short-lived
+    certificates that are used to access non-critical resources
+    </description>
+    <!-- Requirements section for this level of Assurance -->
+    <!-- Supported Checks:
+         =================
+
+         * strenght - list of accepted algorithms for this request
+         * keygen - key generation mode (e.g., server or browser)
+    -->
+    <requires>
+      <!-- Required Strength Levels:
+
+           * name - name of the strenght level (eg., Weak, Base, etc.. )
+
+           * allowed - allowed algorithm name with the keysize (only one
+	     keysize is allowed per algorithm.
+
+           If an algorithm is not present in the list of accepted
+           algorithms, then the request is rejected.
+       -->
+	<strength>
+	  <name>Weak</name>
+	  <allowed>RSA+512</allowed>
+	  <allowed>DSA+512</allowed>
+	  <allowed>ECDSA+160</allowed>
+        </strength>
+	<strength>
+	  <name>Base</name>
+	  <allowed>RSA+1024</allowed>
+	  <allowed>DSA+1024</allowed>
+	  <allowed>ECDSA+224</allowed>
+        </strength>
+	<strength>
+	  <name>Strong</name>
+	  <allowed>RSA+2048</allowed>
+	  <allowed>DSA+2048</allowed>
+	  <allowed>ECDSA+256</allowed>
+        </strength>
+	<strength>
+	  <name>Advanced</name>
+	  <allowed>RSA+4096</allowed>
+	  <allowed>ECDSA+384</allowed>
+        </strength>
+	<strength>
+	  <name>Strongest</name>
+	  <allowed>RSA+8192</allowed>
+	  <allowed>ECDSA+521</allowed>
+        </strength>
+      <!-- Keygen:
+           * mode - generation mode (eg., Browser or Server). If none is
+                    specified, then both server and browser key generation
+                    is allowed
+      -->
+      <keygen>
+        <mode>Server (Our Systems)</mode>
+      </keygen>
+    </requires>
+    <!-- This is the agreement that is displayed to the user when
+         they request the certificate based on the LOA they choosed
+         from the request form. It uses URI to load the content of
+         the user agreement into the agreement-frame. The file should
+         be xhtml formatted -->
+    <agreement>@etc_prefix@/agreements/low.html</agreement>
+    <cert>
+      <ext>
+         <name>certificatePolicies</name>
+         <!-- list all the policy OIDs here that are below
+              and equevilant to this level of assurance for example
+              loa basic has policy oid 1.2.3.4 , and basic is
+              higher than test and rudimentary and basic, so the
+              line would look like this
+               <CP>
+                 <value>1.2.3.1</value>
+                 <value>1.2.3.3.5</value>
+                 <value>@psec</value>
+              <CP>
+              ..... where
+              1.2.3.1 is the oid for test loa and 1.2.3.2 is for
+              Rudimantary. you get the picture NOTE they must be
+              COMMA separated
+         -->
+         <CP>
+            <value>1.2.3.3.4</value>
+            <value>1.2.3.3.5</value>
+         </CP>
+         <section>
+            <name>psec</name>
+            <policy_ID_tag> policyIdentifier</policy_ID_tag>
+            <!-- you can have multiple CPS URIs exmple
+                 <CPS>
+                   <URI>CPS.1="http:// url1"</URI>
+                   <URI>CPS.2="http://url2"</URI>
+                 <CPS>
+            -->
+            <CPS>
+               <URI>CPS.1 ="https://@web_host@@htdocs_url_prefix@/pub/cps/rudimentary"</URI>
+            </CPS>
+         </section>
+       </ext>
+    </cert>
+  </loa>
+  <loa>
+    <level>2</level>
+    <name>Medium</name>
+    <description>
+    This Level of Assurance is intended to be used for users and servers.
+    </description>
+    <agreement>@etc_prefix@/agreements/general.html</agreement>
+    <!-- Requirements section for this level of Assurance -->
+    <!-- Supported Checks:
+         =================
+
+         * algorithm - list of accepted algorithms for this request
+         * keygen - key generation mode (e.g., server or browser)
+    -->
+    <requires>
+      <!-- Algorithm:
+           * name - name of the algorithm (eg., rsa, dsa, ecdsa, .. )
+           * keysize - minimum number of bits for the algorithm
+       -->
+     <strength>
+       <name>Base</name>
+       <allowed>RSA+1024</allowed>
+       <allowed>DSA+1024</allowed>
+       <allowed>ECDSA+224</allowed>
+      </strength>
+      <strength>
+        <name>Strong</name>
+        <allowed>RSA+2048</allowed>
+        <allowed>DSA+2048</allowed>
+        <allowed>ECDSA+256</allowed>
+      </strength>
+      <strength>
+        <name>Advanced</name>
+        <allowed>RSA+4096</allowed>
+        <allowed>ECDSA+384</allowed>
+      </strength>
+      <strength>
+	<name>Strongest</name>
+	<allowed>RSA+8192</allowed>
+	<allowed>ECDSA+521</allowed>
+      </strength>
+      <!-- Keygen:
+           * mode - generation mode (eg., Browser or Server)
+           If omitted, any key generation mode (Browser or Server)
+           is accepted.
+      -->
+      <keygen>
+        <mode>Browser (Your Computer)</mode>
+        <mode>Server (Our Systems)</mode>
+      </keygen>
+    </requires>
+    <cert>
+      <ext>
+        <name>certificatePolicies</name>
+          <!-- list all the policy OIDs here that are below
+               and equevilant to this level of assurance for example
+               loa basic has policy oid 1.2.3.4 , and basic is
+               higher than test and rudimentary and basic, so the
+               line would look like this
+                 <CP>
+                   <value>1.2.3.1</value>
+                   <value>1.2.3.3.5</value>
+                   <value>@psec</value>
+                 <CP>
+               ..... where
+               1.2.3.1 is the oid for test loa and 1.2.3.2 is for
+               Rudimantary. you get the picture NOTE they must be
+               COMMA separated
+          -->
+          <CP>
+             <value>1.2.3.3.4</value>
+             <value>1.2.3.3.5</value>
+             <value>1.2.3.3.6</value>
+	  </CP>
+          <section>
+            <name>psec</name>
+            <policy_ID_tag> policyIdentifier</policy_ID_tag>
+            <!-- you can have multiple CPS URIs exmple
+                 <CPS>
+                   <URI>CPS.1="http:// url1"</URI>
+                   <URI>CPS.2="http://url2"</URI>
+                 <CPS>
+             -->
+            <CPS>
+              <URI>CPS.1 ="https://@web_host@@htdocs_url_prefix@/pub/cps/basic"</URI>
+            </CPS>
+          </section>
+        </ext>
+      </cert>
+    </loa>
+
+  <loa>
+    <level>3</level>
+    <name>High</name>
+    <description>
+    This Level of Assurance is meant for high security certificates.
+    </description>
+    <agreement>@etc_prefix@/agreements/general.html</agreement>
+    <!-- Requirements section for this level of Assurance -->
+    <!-- Supported Checks:
+         =================
+
+         * algorithm - list of accepted algorithms for this request
+         * keygen - key generation mode (e.g., server or browser)
+    -->
+    <requires>
+      <!-- Algorithm:
+           * name - name of the algorithm (eg., rsa, dsa, ecdsa, .. )
+           * keysize - minimum number of bits for the algorithm
+       -->
+      <strength>
+        <name>Base</name>
+        <allowed>RSA+2048</allowed>
+        <allowed>DSA+2048</allowed>
+        <allowed>ECDSA+256</allowed>
+      </strength>
+      <strength>
+        <name>Strong</name>
+        <allowed>RSA+4096</allowed>
+        <allowed>ECDSA+384</allowed>
+      </strength>
+      <strength>
+	<name>Strongest</name>
+	<allowed>RSA+8192</allowed>
+	<allowed>ECDSA+521</allowed>
+      </strength>
+      <!-- Keygen:
+           * mode - generation mode (eg., Browser or Server)
+      -->
+      <keygen>
+        <mode>Browser (Your Computer)</mode>
+      </keygen>
+    </requires>
+      <cert>
+        <ext>
+          <name>certificatePolicies</name>
+          <!-- list all the policy OIDs here that are below
+               and equevilant to this level of assurance for example
+               loa basic has policy oid 1.2.3.4 , and basic is
+               higher than test and rudimentary and basic, so the
+               line would look like this
+                 <CP>
+                   <value>1.2.3.1</value>
+                   <value>1.2.3.3.5</value>
+                   <value>@psec</value>
+                 <CP>
+               ..... where
+               1.2.3.1 is the oid for test loa and 1.2.3.2 is for
+               Rudimantary. you get the picture NOTE they must be
+               COMMA separated
+            -->
+          <CP>
+            <value>1.2.3.3.4</value>
+            <value>1.2.3.3.5</value>
+            <value>1.2.3.3.6</value>
+            <value>1.2.3.3.7</value>
+          </CP>
+          <section>
+            <name>psec</name>
+            <policy_ID_tag> policyIdentifier</policy_ID_tag>
+	    <!-- you can have multiple CPS URIs exmple
+                 <CPS>
+                   <URI>CPS.1="http:// url1"</URI>
+                   <URI>CPS.2="http://url2"</URI>
+                 <CPS>
+              -->
+            <CPS>
+              <URI>CPS.1 ="https://@web_host@@htdocs_url_prefix@/pub/cps/medium"</URI>
+            </CPS>
+          </section>
+        </ext>
+      </cert>
+  </loa>
+  <loa>
+    <level>4</level>
+    <name>Very High</name>
+    <description>
+    This Level of Assurance is meant for extremely high security certificates.
+    For example it might be required, for a subCA or for PKI administratives
+    Roles (e.g., CA or RA Operator, etc.. ).
+    </description>
+    <agreement>@etc_prefix@/agreements/general.html</agreement>
+    <!-- Requirements section for this level of Assurance -->
+    <!-- Supported Checks:
+         =================
+
+         * algorithm - list of accepted algorithms for this request
+         * keygen - key generation mode (e.g., server or browser)
+    -->
+    <requires>
+      <!-- Algorithm:
+           * name - name of the algorithm (eg., rsa, dsa, ecdsa, .. )
+           * keysize - minimum number of bits for the algorithm
+       -->
+      <strength>
+        <name>Base</name>
+        <allowed>RSA+2048</allowed>
+        <allowed>ECDSA+256</allowed>
+      </strength>
+      <strength>
+        <name>Strong</name>
+        <allowed>RSA+4096</allowed>
+        <allowed>ECDSA+384</allowed>
+      </strength>
+      <strength>
+	<name>Strongest</name>
+	<allowed>RSA+8192</allowed>
+	<allowed>ECDSA+521</allowed>
+      </strength>
+      <!-- Keygen:
+           * mode - generation mode (eg., Browser or Server)
+      -->
+      <keygen>
+        <mode>Browser (Your Computer)</mode>
+        <mode>Server (Our Systems)</mode>
+      </keygen>
+    </requires>
+      <cert>
+        <ext>
+	<name>certificatePolicies</name>
+	<!-- list all the policy OIDs here that are below
+             and equevilant to this level of assurance for example
+             loa basic has policy oid 1.2.3.4 , and basic is
+             higher than test and rudimentary and basic, so the
+             line would look like this
+             <CP>
+               <value>1.2.3.1</value>
+               <value>1.2.3.3.5</value>
+             <CP>
+             ..... where
+             1.2.3.1 is the oid for test loa and 1.2.3.2 is for
+             Rudimantary. you get the picture NOTE they must be
+             COMMA separated
+         -->
+        <CP>
+          <value>1.2.3.3.9994</value>
+          <value>1.2.3.3.5</value>
+          <value>1.2.3.3.6</value>
+          <value>1.2.3.3.7</value>
+          <value>1.2.3.3.8</value>
+	</CP>
+        <section>
+          <name>psec</name>
+          <policy_ID_tag> policyIdentifier</policy_ID_tag>
+          <!-- you can have multiple CPS URIs exmple
+               <CPS>
+                 <URI>CPS.1="http:// url1"</URI>
+                 <URI>CPS.2="http://url2"</URI>
+               <CPS>
+          -->
+          <CPS>
+            <URI>CPS.1 ="https://@web_host@@htdocs_url_prefix@/pub/cps/high"</URI>
+          </CPS>
+
+        </section>
+      </ext>
+    </cert>
+  </loa>
+  <loa>
+    <level>0</level>
+    <name>Test</name>
+    <description>
+    This Level of Assurance is meant for Test or Development purposes
+    only.
+    </description>
+    <agreement>@etc_prefix@/agreements/test.html</agreement>
+    <!-- Requirements section for this level of Assurance -->
+    <!-- Supported Checks:
+         =================
+
+         * algorithm - list of accepted algorithms for this request
+         * keygen - key generation mode (e.g., server or browser)
+    -->
+    <requires>
+      <!-- Algorithm:
+           * name - name of the algorithm (eg., rsa, dsa, ecdsa, .. )
+           * keysize - minimum number of bits for the algorithm
+       -->
+	<strength>
+	  <name>Weak</name>
+	  <allowed>RSA+512</allowed>
+	  <allowed>DSA+512</allowed>
+	  <allowed>ECDSA+160</allowed>
+        </strength>
+	<strength>
+	  <name>Weak</name>
+	  <allowed>RSA+768</allowed>
+	  <allowed>DSA+768</allowed>
+	  <allowed>ECDSA+160</allowed>
+        </strength>
+	<strength>
+	  <name>Base</name>
+	  <allowed>RSA+1024</allowed>
+	  <allowed>DSA+1024</allowed>
+	  <allowed>ECDSA+224</allowed>
+        </strength>
+	<strength>
+	  <name>Strong</name>
+	  <allowed>RSA+1024</allowed>
+	  <allowed>DSA+2048</allowed>
+	  <allowed>ECDSA+224</allowed>
+        </strength>
+	<strength>
+	  <name>Advanced</name>
+	  <allowed>RSA+2048</allowed>
+	  <allowed>DSA+2048</allowed>
+	  <allowed>ECDSA+384</allowed>
+        </strength>
+	<strength>
+	  <name>Strongest</name>
+	  <allowed>RSA+4096</allowed>
+	  <allowed>DSA+4096</allowed>
+	  <allowed>ECDSA+521</allowed>
+        </strength>
+      <!-- Keygen:
+           * mode - generation mode (eg., Browser or Server)
+      -->
+      <keygen>
+        <mode>Browser (Your Computer)</mode>
+        <mode>Server (Our Systems)</mode>
+      </keygen>
+    </requires>
+    <cert>
+      <ext>
+        <name>certificatePolicies</name>
+        <!-- list all the policy OIDs here that are below
+             and equevilant to this level of assurance for example
+             loa basic has policy oid 1.2.3.4 , and basic is
+             higher than test and rudimentary and basic, so the
+             line would look like this
+             <CP>
+               <value>1.2.3.1</value>
+               <value>1.2.3.3.5</value>
+               <value>@psec</value>
+             <CP>
+             ..... where
+             1.2.3.1 is the oid for test loa and 1.2.3.2 is for
+             Rudimantary. you get the picture NOTE they must be
+             COMMA separated
+         -->
+	<CP>
+          <value>1.2.3.3.4</value>
+	</CP>
+        <section>
+          <name>psec</name>
+	  <policy_ID_tag> policyIdentifier</policy_ID_tag>
+	  <!-- you can have multiple CPS URIs exmple
+               <CPS>
+                 <URI>CPS.1="http:// url1"</URI>
+                 <URI>CPS.2="http://url2"</URI>
+               <CPS>
+          -->
+          <CPS>
+            <URI>CPS.1 ="https://@web_host@@htdocs_url_prefix@/pub/cps/test"</URI>
+          </CPS>
+        </section>
+      </ext>
+    </cert>
+  </loa>
+</openca>

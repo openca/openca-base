@@ -1,0 +1,33 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeUploadAll
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: Exports All
+## Description: Exports on a removable media all
+
+use strict;
+
+sub cmdNodeUploadAll {
+
+    print startLogPage (gettext ("Exporting all available items to a higher level of the hierarchy ..."));
+
+    my $tmp = createStructure ();
+    eximUploadCSRs   ( $tmp );
+    eximUploadCRRs   ( $tmp );
+    eximUploadCommit ( $tmp );
+    eximIOUpload     ( $tmp );
+    removeDirectory  ( $tmp );
+
+    closePage ();
+
+}
+
+sub getParamsNodeUploadAll
+{
+    return eximMediaConfirm (@_);
+}
+
+1;
+

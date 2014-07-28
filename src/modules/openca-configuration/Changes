@@ -1,0 +1,11 @@
+Revision history for Perl extension OpenCA::Configuration.
+
+1.5.3 Tue Apr 09 18:05:22 2002
+      Added possibility of having parameters on more lines ending with
+      the '\' character.
+
+1.2  Thu Apr 22 01:13:18 1999
+     Added Support for standard Makefiles. Corrected some major bug in config
+     files parsing.
+
+     Added Licence Notice.

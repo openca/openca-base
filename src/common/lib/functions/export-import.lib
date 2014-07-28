@@ -1,0 +1,2474 @@
+## export/import library of OpenCA Group
+##
+## (c) 1998-2004 by OpenCA Group
+## the license is the general project license
+## (see http://www.openca.org)
+
+use strict;
+use DB_File;
+
+##
+## Usage:
+##
+## Export
+## ------
+## $tmp = createStructure ();
+## exportXYZ ($tmp);
+## exportABC ($tmp);
+## eximIOExport ( DIR => $tmp, LEVEL => "(UP|DOWN|LOCAL)" );
+## removeDirectory ( $tmp );
+##
+## Import
+## ------
+## $tmp = createStructure ();
+## eximIOImport ( DIR => $tmp, LEVEL => "(UP|DOWN|LOCAL)" );
+## importXYZ ($tmp);
+## importABC ($tmp);
+## removeDirectory ( $tmp );
+##
+## export/import functions:
+##   * CSRs
+##   * Certs
+##   * CRRs
+##   * CRLs
+##   * CAs
+##   * Configuration 
+##      * directory (RBAC, OpenSSL, extfiles)
+##      * file (openssl.cnf)
+##   * Mails
+##   * BP
+##   * ImportFromCA/ExportToCA
+##   * ImportFromRAServer/ExportToRAServer
+##   * DB
+##   * uploadCommit
+##   * enrollCommit
+##   * receiveCommit
+##   * downloadCommit
+##  
+## other functions:
+##   * createDirectory
+##   * createStructure
+##   * removeDirectory
+##   * eximIOStart
+##   * eximIOStop
+##   * eximIOImport
+##   * eximIOExport
+##   * eximIOTest
+##
+## directories for the different objects:
+##   * CA_CERTIFICATE
+##   * REQUEST
+##   * CERTIFICATE
+##   * CRR
+##   * CRL
+##   * Configuration
+##      * RBAC
+##      * OpenSSL
+##      * extfiles
+##      * others (for the rest)
+##   * Mail
+
+## the variables which start with $exim_ are reserved for this library
+
+####################################
+## general function for archiving ##
+####################################
+
+## 
+## createDirectory
+##
+## this function prepare a temporary directory for the files
+## which should be exported
+##
+sub createDirectory {
+
+  my $exim_tmp_dir;
+  if ( not $_[0] ) {
+    $exim_tmp_dir = getRequired ('TempDir')."/tmp_".$$;
+  } else {
+    $exim_tmp_dir = $_[0];
+  }
+
+  if (not mkdir ( $exim_tmp_dir, 0700 )) {
+    ## output is only necessary if something going wrong
+    print addLogSection (i18nGettext ("Creating Temporary Directory __DIR__ ...", "__DIR__", $exim_tmp_dir));
+    print addErrorLog (i18nGettext ("Cannot create temporary directory __DIR__!", "__DIR__", $exim_tmp_dir));
+    print closeLogSection();
+    return "";
+  }
+
+  return $exim_tmp_dir;
+}
+
+##
+## createStructure
+##
+## this function prepare a temporary directory for the files
+## which should be exported
+##
+sub createStructure {
+
+  ## get the base directory
+  my $dir;
+  if ( not $_[0]) {
+    $dir = createDirectory ();
+  } else {
+    $dir = $_[0];
+  }
+  if (not defined $dir or not $dir) {
+    return undef;
+  }
+
+  ## create the subdirectories
+
+  ## create structure
+  my $list	= {
+    CERTIFICATE    => [ "VALID", "EXPIRED", "REVOKED", "SUSPENDED" ],
+    REQUEST        => [ "NEW", "RENEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+    CA_CERTIFICATE => [ "VALID", "EXPIRED" ],
+    CRL            => [ "VALID" ],
+    CRR            => [ "NEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+    LOG            => [ "ALL", "DOWNLOAD", "ENROLL", "RECEIVE", "UPLOAD" ],
+    MAIL           => [ "CRINS", "DEFAULT" ],
+		   };
+
+  my $object;
+  foreach $object (keys %{$list}) {
+    return undef if (not createDirectory ( $dir."/".$object ));
+    my $status;
+    foreach $status (@{$list->{$object}}) {
+      return undef if (not createDirectory ( $dir."/".$object."/".$status ));
+    }
+  }
+    
+  return $dir;
+
+}
+
+## 
+## removeArchive
+##
+## this function remove a temporary directory
+##
+sub removeDirectory {
+
+  my $exim_tmp_dir = $_[0];
+  my $ret;
+
+  print addLogSection (gettext ("Clean up ..."));
+
+  if ( length ( $exim_tmp_dir ) < 10 ) {
+    print addErrorLog (i18nGettext ("Stop removing temporary directory __DIR__ because the length of it is smaller than 10!",
+                                    "__DIR__", $exim_tmp_dir));
+    print closeLogSection();
+    return 0;
+  }
+
+  $ret = `cd $exim_tmp_dir/..; rm -rf $exim_tmp_dir`;
+  if( $? != 0 ) {
+    print addErrorLog(i18nGettext("Cannot remove temporary directory __DIR__", "__DIR__", $exim_tmp_dir));
+    print addLogLine( "rm -rf $exim_tmp_dir" );
+    print closeLogSection();
+    return 0;
+  }
+  print addLogLine( gettext ("Ok.") );
+  print closeLogSection();
+
+  return 1;
+}
+
+###############################
+## functions for IO-handling ##
+###############################
+
+## all functions use the device and needs the direction
+##   * eximIOStart
+##   * eximIOStop
+##   * eximIOImport
+##   * eximIOExport
+##   * eximIOTest
+
+## idea by Bahaaldin Al-amood <balamood@vt.edu>
+
+## interface
+
+sub eximIOEnroll {
+    return eximIOExport (DIR => $_[0], LEVEL => "DOWN");
+}
+
+sub eximIODownload {
+    return eximIOImport (DIR => $_[0], LEVEL => "UP");
+}
+
+sub eximIOReceive {
+    return eximIOImport (DIR => $_[0], LEVEL => "DOWN");
+}
+
+sub eximIOUpload {
+    return eximIOExport (DIR => $_[0], LEVEL => "UP");
+}
+
+## implementation
+
+sub eximIOStart
+{
+    our $query;
+
+    my $keys   = { @_ };
+    my @starts = getRequiredList ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_START');
+    return 1 if (not @starts or not $starts[0]);
+
+    ## preparing IO-operation
+    print addPreLogLine (gettext ("Preparing the IO-operations ...."));
+
+    my $device = getRequired ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_DEVICE');
+
+    foreach my $start (@starts)
+    {
+        $start = $query->subVar($start, '@__DEVICE__@', $device);
+
+        print addPreLogLine ($start);
+        `$start 2>&1`;
+        if( $? != 0 ) {
+            print addPreLogSection ("<FONT COLOR=#FF0000>".
+                                    i18nGettext ("The operation failed with errorcode __ERRNO__.",
+                                                 "__ERRNO__", $?).
+                                    "</FONT>");
+            print closeLogSection ();
+            return undef;
+        }
+    }
+    print closeLogSection ();
+    return 1;
+}
+
+sub eximIOStop
+{
+    our $query;
+
+    my $keys  = { @_ };
+    my @stops = getRequiredList ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_STOP');
+    return 1 if (not @stops or not $stops[0]);
+
+    ## preparing IO-operation
+    print addPreLogLine (gettext ("Cleanup the IO-operations ...."));
+
+    my $device = getRequired ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_DEVICE');
+
+    foreach my $stop (@stops)
+    {
+        $stop      = $query->subVar($stop, '@__DEVICE__@', $device);
+
+        print addPreLogLine ($stop);
+        `$stop 2>&1`;
+        if( $? != 0 ) {
+            print addPreLogSection ("<FONT COLOR=#FF0000>".
+                                    i18nGettext ("The operation failed with errorcode __ERRNO__.",
+                                                 "__ERRNO__", $?).
+                                    "</FONT>");
+            print closeLogSection ();
+            return undef;
+        }
+    }
+    print closeLogSection ();
+    return 1;
+}
+
+sub eximIOExport {
+
+    our $query;
+
+    my $keys = { @_ };
+    my $exim_tmp_dir = $keys->{DIR};
+    my $direction    = $keys->{LEVEL};
+    $direction       = "LOCAL" if (not $direction);
+    my $ret;
+
+    return undef if (not eximIOStart (LEVEL => $direction));
+
+    print addLogSection (gettext ("Exporting archive ..."));
+    print addLogLine    ( "" );
+
+    print addPreLogLine (gettext ("Load required variables ..."));
+
+    ## Get required parameters from the configuration file
+    my @arcs   = getRequiredList( 'EXPORT_IMPORT_'.$direction.'_EXPORT' );
+    my $device = getRequired( 'EXPORT_IMPORT_'.$direction.'_DEVICE' );
+
+    print addPreLogLine (i18nGettext ("Changing to directory __DIR__ ...", "__DIR__", $exim_tmp_dir));
+    if (not chdir $exim_tmp_dir) {
+        print addErrorLog (gettext ("failed"));
+        print closeLogSection();
+        eximIOStop (LEVEL => $direction);
+        return undef;
+    }
+
+    print addPreLogLine (gettext ("Running the export command(s) ..."));
+    foreach my $arc (@arcs)
+    {
+        ## building the command
+        $arc = $query->subVar( $arc, '@__DEVICE__@', $device );
+        $arc = $query->subVar( $arc, '@__SRC__@',    $exim_tmp_dir );
+
+        print addPreLogLine ($arc);
+        $ret = `$arc 2>&1`;
+        if( $? != 0 ) {
+            print addErrorLog(gettext ("Export failed!"));
+            print addPreLogLine($ret);
+            print closeLogSection();
+            eximIOStop (LEVEL => $direction);
+            return undef;
+        }
+    }
+
+    print addPreLogLine (gettext ("Archive created successfully."));
+    print closeLogSection();
+
+    my $return =  eximIOTest (LEVEL => $direction);
+
+    if ($return)
+    {
+        return eximIOStop (LEVEL => $direction);
+    } else {
+        eximIOStop (LEVEL => $direction);
+        return undef;
+    }
+}
+
+sub eximIOImport {
+
+    our $query;
+
+    my $keys = { @_ };
+    my $exim_tmp_dir = $keys->{DIR};
+    my $direction    = $keys->{LEVEL};
+    $direction       = "LOCAL" if (not $direction);
+    my $ret;
+
+    return undef if (not eximIOStart (LEVEL => $direction));
+
+    if (not eximIOTest (LEVEL => $direction))
+    {
+        eximIOStop (LEVEL => $direction);
+        return undef;
+    }
+
+    print addLogSection (gettext ("Importing archive ..."));
+    print addLogLine    ( "" );
+
+    print addPreLogLine (gettext ("Load required variables ..."));
+
+    ## Get required parameters from the configuration file
+    my @arcs   = getRequiredList( 'EXPORT_IMPORT_'.$direction.'_IMPORT' );
+    my $device = getRequired( 'EXPORT_IMPORT_'.$direction.'_DEVICE' );
+
+    print addPreLogLine (i18nGettext ("Changing to directory __DIR__ ...", "__DIR__", $exim_tmp_dir));
+    if (not chdir $exim_tmp_dir) {
+        print addErrorLog (gettext ("failed"));
+        print closeLogSection ();
+        eximIOStop (LEVEL => $direction);
+        return undef;
+    }
+
+    print addPreLogLine(gettext ("Running the import command(s) ..."));
+    foreach my $arc (@arcs)
+    {
+        ## Build the right $cmd with substitution of the $dest
+        $arc = $query->subVar( $arc, '@__DEVICE__@', $device );
+        $arc = $query->subVar( $arc, '@__DEST__@',   $exim_tmp_dir );
+
+        print addPreLogLine($arc);
+        $ret = `$arc 2>&1`;
+        if( $? != 0 ) {
+            print addErrorLog(gettext ("Import failed!"));
+            print closeLogSection ();
+            eximIOStop (LEVEL => $direction);
+            return undef;
+       }
+    }
+    print closeLogSection ();
+
+    return eximIOStop (LEVEL => $direction);
+}
+
+sub eximIOTest {
+    our $query;
+
+    my $keys  = { @_ };
+    my $test  = getRequired ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_TEST');
+    return 1 if (not $test);
+
+    ## preparing IO-operation
+    print addLogSection (gettext ("Test the archive ..."));
+
+    my $device = getRequired ('EXPORT_IMPORT_'.$keys->{LEVEL}.'_DEVICE');
+    $test      = $query->subVar($test, '@__DEVICE__@', $device);
+
+    print addPreLogLine ($test);
+    `$test 2>&1`;
+    if( $? != 0 ) {
+        print addLogLine ("<FONT COLOR=#ff0000>".gettext ("FAILED")."</FONT>");
+        print addErrorLog(i18nGettext ("Testing archive failed!"));
+        print closeLogSection();
+        return undef;
+    }
+    addLogLine (gettext ("OK"));
+    print closeLogSection ();
+    return 1;
+}
+
+######################################
+## functions for DB-backup/recovery ##
+######################################
+
+#####################################################
+##                general warning                  ##
+#####################################################
+## * all actions are handled by this function      ##
+##   (except of html-header and -footer)           ##
+## * use importDB only on an empty DB              ##
+## * if importDB detects an already existing       ##
+##   object it only signal this event and continue ##
+## * every import of an object is documented in    ##
+##   the logs if you use OpenCA::DB and importDB   ##
+#####################################################
+
+sub exportDB {
+
+  ## create initial structure
+  my $dir = createStructure ($_[0]);
+  if (not defined $dir or not $dir) {
+    return undef;
+  }
+
+  ## structure
+  my $list	= {
+    CERTIFICATE    => [ "VALID", "EXPIRED", "REVOKED", "SUSPENDED" ],
+    REQUEST        => [ "NEW", "RENEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+    CA_CERTIFICATE => [ "VALID", "EXPIRED" ],
+    CRL            => [ "VALID" ],
+    CRR            => [ "NEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+		   };
+
+  ## iterate over all types of object
+  foreach my $object (keys %{$list}) {
+
+    ## iterate over all states
+    foreach my $status (@{$list->{$object}}) {
+
+      exportObjects ( DATATYPE => $object, STATUS => $status, DIR => $dir, BACKUP => 1 );
+
+    }
+
+  }
+
+  ## create the archive
+  return undef if ((not $_[1] or $_[1] !~ /BACKUP/i) and not eximIOExport ( DIR => $dir ));
+
+  ## remove the hole structure
+  return undef if (not $_[0] and not removeDirectory ( $dir ));
+
+  return 1;
+}
+
+sub importDB {
+
+  ## create initial structure
+  my $dir = createDirectory ();
+  if (not defined $dir or not $dir) {
+    return undef;
+  }
+
+  ## extract archive
+  if (not eximIOImport ( DIR => $dir )) {
+    return undef;
+  }
+
+  ## structure
+  my $list	= {
+    CERTIFICATE    => [ "VALID", "EXPIRED", "REVOKED", "SUSPENDED" ],
+    REQUEST        => [ "NEW", "RENEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+    CA_CERTIFICATE => [ "VALID", "EXPIRED" ],
+    CRL            => [ "VALID" ],
+    CRR            => [ "NEW", "PENDING", "SIGNED", "APPROVED", "ARCHIVED", "DELETED" ],
+		   };
+
+  ## iterate over all types of object
+  foreach my $object (keys %{$list}) {
+
+    ## iterate over all states
+    foreach my $status (@{$list->{$object}}) {
+
+      importObjects ( DATATYPE => $object, STATUS => $status, DIR => $dir, ALLOW_STATE_INJECTION => 1 );
+
+    }
+
+  }
+
+  ## remove the hole structure
+  return undef if (not removeDirectory ( $dir ));
+
+  return 1;
+}
+
+###########################
+## functions for objects ##
+###########################
+
+# Input: DATATYPE and/or STATUS
+# Output: array with the ex-/imported Objects
+
+# determine status and datatype
+sub eximObjectsGetDatatype {
+  my $keys = { @_ };
+  my @result = ();
+
+  # determine status
+  if ($keys->{STATUS}) {
+    $result [1] = $keys->{STATUS};
+  } else {
+    $result [1] = $keys->{DATATYPE};
+    $result [1] =~ s/_.*$//;
+    $result [1] = "" if ($result [1] =~ /^(CA|CERTIFICATE|REQUEST|CRR|CRL|LOG)$/);
+  }
+  
+  # determine datatype
+  $result [0] = $keys->{DATATYPE};
+  $result [0] =~ s/^$result[1]_// if ($result [1]);
+
+  return @result;
+}
+
+sub exportObjects {
+    our ($tools, $db);
+
+    my $keys = { @_ };
+    my @datatype = eximObjectsGetDatatype ( @_ );
+
+    print addLogSection ( i18nGettext ("Exporting __STATUS__ __OBJECT__ ...",
+                                       "__STATUS__", lc gettext($datatype [1]),
+                                       "__OBJECT__", gettext($datatype [0])) );
+
+    ## load first object
+    my $export_datatype;
+    if ($datatype [1]) {
+        $export_datatype = $datatype [1]."_".$datatype [0];
+    } else {
+        $export_datatype = $datatype [0];
+    }
+    my $object = $db->getNextItem (DATATYPE => $export_datatype);
+
+    ## exported objects serials
+    my @result = ();
+
+    if (not defined $object and $db->errno()) {
+        ## error detected
+        print addErrorLog (i18nGettext ("Database failed with errorcode __ERRNO__.",
+                                        "__ERRNO__", $db->errno()));
+        print addErrorLog ($db->errval());
+        return undef;
+    }
+    if (not $object) {
+        print addPreLogLine (gettext ("No objects are present."));
+    } else {
+        print addPreLogLine (gettext ("Exporting all necessary objects."));
+    }
+    while ($object) {
+
+        my $txtItem;
+        my $serial  = $object->getSerial ($datatype [0]);
+        my $format;
+
+        if (not $keys->{BACKUP} and
+            not eximMustBeExported (DATATYPE => $export_datatype,
+                                    MODE     => $keys->{MODE},
+                                    KEY      => $serial))
+        {
+             $object = $db->getNextItem (DATATYPE => $export_datatype,
+                                         KEY      => $serial);
+             next;
+        }
+
+        ## get content, serial and format for file
+        $txtItem = $object->getItem ();
+
+        if( $datatype [0] =~ /(REQUEST|CRR)/i ) {
+          $format = $object->getParsed()->{TYPE};
+        } else {
+          $format = "PEM";
+        }
+        $format =~ s/\s/_/g;
+
+        ## write file
+        my $filename = $keys->{DIR}."/".$datatype [0]."/".$datatype [1]."/".$serial.".".(lc $format);
+        if ($tools->saveFile (FILENAME => $filename,
+                              DATA     => $txtItem)) {
+          print addPreLogLine ($serial.".".(lc $format));
+          push (@result, $serial);
+        } else {
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FAILURE: __SERIAL__ (__FORMAT__).",
+                                                                    "__SERIAL__", $serial,
+                                                                    "__FORMAT__", lc $format)."</FONT>");
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+        }
+
+        ## load next object
+        $object = $db->getNextItem (DATATYPE => $export_datatype,
+                                    KEY      => $serial);
+
+    }
+
+    print closeLogSection ();
+
+    return @result;
+}
+
+## parameters are:
+##     STATUS                - state of object
+##     DATATYPE              - datatype of object perhaps with state as prefix
+##     DIR                   - temporary directory of import
+##     ALLOW_STATE_INJECTION - true or false
+##     ENFORCE               - true or false (deprecated)
+##     MODE                  - upload, download, receive, enroll
+
+sub importObjects {
+  our ($db, $cryptoShell);
+
+  my $keys = { @_ };
+  my @datatype = eximObjectsGetDatatype ( @_ );
+  my $DEBUG = 0;
+
+  print addLogSection (i18nGettext ("Importing __STATUS__ __OBJECT__ ...",
+                                    "__STATUS__", lc gettext($datatype [1]),
+                                    "__OBJECT__", gettext($datatype [0])) );
+
+  if ($datatype [0] =~ /LOG/) {
+    print addPreLogLine (gettext ("Logs were only available on SQL-Databases!"));
+    print closeLogSection ();
+    return ();
+  }
+
+  my $dir = $keys->{DIR};
+
+  ## remove commit logs of this module
+  ## this is part of the incremental dataexchange which
+  ## includes the commits too
+  print addPreLogLine (gettext ("Cleaning up the collected import logs ..."));
+  eximRemoveCommit (MODE     => $keys->{MODE},
+                    DIR      => $keys->{DIR},
+                    DATATYPE => $keys->{DATATYPE})
+    if ($keys->{MODE});
+
+  my $directory = $dir."/".$datatype [0]."/".$datatype [1];
+  opendir( DIR, $directory );
+  my @dirList = grep (/^[^\.]/, readdir( DIR ));
+  closedir( DIR );
+
+  my @result = ();
+  if (not scalar @dirList) {
+    print addPreLogLine ("<i>".gettext ("No objects are present.")."</i>");
+  }
+  foreach my $value (@dirList) {
+
+    ## setup filename
+    my $filename = $directory."/".$value;
+
+    ## create object
+    my $db_object;
+    if ($datatype [0] =~ /CERTIFICATE/) {
+      $db_object = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                      GETTEXT => \&i18nGettext,
+                                      INFILE  => $filename,
+                                      FORMAT  => "PEM" );
+    } elsif ($datatype [0] =~ /^(REQUEST|CRR)$/) {
+      $db_object = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                                     GETTEXT => \&i18nGettext,
+                                     INFILE  => $filename);
+    } else {
+      $db_object = new OpenCA::CRL ( INFILE  => $filename,
+                                     GETTEXT => \&i18nGettext,
+                                     SHELL   => $cryptoShell );
+    }
+    if (not defined $db_object or not $db_object) {
+      print addPreLogLine ( "<FONT COLOR=#FF0000>".gettext ("FAILURE: Cannot create object from file")."</FONT>");
+      print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+      next;
+    }
+
+    ## insert object
+    my $h;
+    my $db_mode = "INSERT";
+
+    ## 1a. determine the old state of the object
+    ## 1b. fix states if there are more than one state (DBM files)
+    ## 2. compare with the new state and defines a new state
+    ## 3. set new state and data if necessary via updateStatus, update or insert
+    ## 4. update related objects
+
+    my $old_status = "";
+    my $new_status = $datatype [1];
+    my $next_status;
+
+    ############### 1. ################
+
+    my (@list, $object_type);
+    if ($datatype [0] =~ /CA_CERTIFICATE/i) {
+      @list = ( 'VALID', 'EXPIRED' );
+      $object_type = 'CA_CERTIFICATE';
+    } elsif ($datatype [0] =~ /CRL/i) {
+      @list = ( 'VALID' );
+      $object_type = 'CRL';
+    } elsif ($datatype [0] =~ /CERTIFICATE/i) {
+      @list = ( 'VALID', 'EXPIRED', 'SUSPENDED', 'REVOKED' );
+      $object_type = 'CERTIFICATE';
+    } elsif ($datatype [0] =~ /CRR/i) {
+      @list = ( 'NEW', 'PENDING', 'SIGNED', 'APPROVED', 'DELETED', 'ARCHIVED' );
+      $object_type = 'CRR';
+    } else { ## REQUEST
+      @list = ( 'NEW', 'RENEW', 'PENDING', 'SIGNED', 'APPROVED', 'DELETED', 'ARCHIVED' );
+      $object_type = 'REQUEST';
+    }
+
+    $old_status = undef;
+    my $old_object = undef;
+    foreach my $status (@list)
+    {
+      my $item = $db->getItem ( DATATYPE => $status.'_'.$object_type,
+                                KEY      => $db_object->getSerial($object_type) );
+      if ($item) {
+          $db->deleteItem ( DATATYPE =>$old_status."_".$object_type, KEY => $db_object->getSerial() )
+            if ($old_status);
+          $old_status = $status;
+          $old_object = $item;
+      }
+    }
+
+    if ($DEBUG) {
+      print "export-import.lib: importObjects: Phase 1<br>\n";
+      print "export-import.lib: importObjects: old_status = ".$old_status."<br>\n";
+      print "export-import.lib: importObjects: new_status = ".$new_status."<br>\n";
+      print "export-import.lib: importObjects: next_status = ".$next_status."<br>\n";
+    }
+
+    ################### 2. #############################
+
+    if ($datatype [0] =~ /CA_CERTIFICATE/i) {
+      if ( ($old_status =~ /EXPIRED/i) or ($new_status =~ /EXPIRED/i) ) {
+        $next_status = "EXPIRED";
+      } else {
+        $next_status = "VALID";
+      }
+    } elsif ($datatype [0] =~ /CRL/i) {
+      $next_status = "VALID";
+    } elsif ($datatype [0] =~ /CERTIFICATE/i) {
+      if ( ($old_status =~ /REVOKED/i) or ($new_status =~ /REVOKED/i) ) {
+        $next_status = "REVOKED";
+      } elsif ( ($old_status =~ /SUSPENDED/i) or ($new_status =~ /SUSPENDED/i) ) {
+        if ( ($old_status =~ /SUSPENDED/i) and ($new_status =~ /SUSPENDED/i) ) {
+          $next_status = "SUSPENDED";
+        } elsif ($db->searchItems ( DATATYPE => "ARCHIVED_CRR", REVOKE_CERTIFICATE_SERIAL => $db_object->getSerial() ) or
+            $db->searchItems ( DATATYPE => "APPROVED_CRR", REVOKE_CERTIFICATE_SERIAL => $db_object->getSerial() ) or
+            $db->searchItems ( DATATYPE => "SIGNED_CRR", REVOKE_CERTIFICATE_SERIAL => $db_object->getSerial() ) or
+            $db->searchItems ( DATATYPE => "PENDING_CRR", REVOKE_CERTIFICATE_SERIAL => $db_object->getSerial() ) or
+            $db->searchItems ( DATATYPE => "NEW_CRR", REVOKE_CERTIFICATE_SERIAL => $db_object->getSerial() ) ) {
+          $next_status = "SUSPENDED";
+        } elsif ( ($old_status =~ /EXPIRED/i) or ($new_status =~ /EXPIRED/i) ) {
+          $next_status = "EXPIRED";
+        } else {
+          $next_status = "VALID";
+        }
+      } elsif ( ($old_status =~ /EXPIRED/i) or ($new_status =~ /EXPIRED/i) ) {
+        $next_status = "EXPIRED";
+      } else {
+        $next_status = "VALID";
+      }
+    } elsif ($datatype [0] =~ /CRR/i) {
+      if ( ($old_status =~ /ARCHIVED/i) or ($new_status =~ /ARCHIVED/i) ) {
+        $next_status = "ARCHIVED";
+      } elsif ( ($old_status =~ /DELETED/i) or ($new_status =~ /DELETED/i) ) {
+        $next_status = "DELETED";
+      } elsif ( ($old_status =~ /APPROVED/i) or ($new_status =~ /APPROVED/i) ) {
+        $next_status = "APPROVED";
+      } elsif ( ($old_status =~ /SIGNED/i) or ($new_status =~ /SIGNED/i) ) {
+        $next_status = "SIGNED";
+      } elsif ( ($old_status =~ /PENDING/i) or ($new_status =~ /PENDING/i) ) {
+        $next_status = "PENDING";
+      } else {
+        $next_status = "NEW";
+      }
+    } else { ## REQUEST
+      if ( ($old_status =~ /ARCHIVED/i) or ($new_status =~ /ARCHIVED/i) ) {
+        $next_status = "ARCHIVED";
+      } elsif ( ($old_status =~ /DELETED/i) or ($new_status =~ /DELETED/i) ) {
+        $next_status = "DELETED";
+      } elsif ( ($old_status =~ /APPROVED/i) or ($new_status =~ /APPROVED/i) ) {
+        $next_status = "APPROVED";
+      } elsif ( ($old_status =~ /SIGNED/i) or ($new_status =~ /SIGNED/i) ) {
+        $next_status = "SIGNED";
+      } elsif ( ($old_status =~ /PENDING/i) or ($new_status =~ /PENDING/i) ) {
+        $next_status = "PENDING";
+      } elsif ( ($old_status =~ /RENEW/i) or ($new_status =~ /RENEW/i) ) {
+        $next_status = "RENEW";
+      } else {
+        $next_status = "NEW";
+      }
+    }
+
+    if ($DEBUG) {
+      print "export-import.lib: importObjects: Phase 2<br>\n";
+      print "export-import.lib: importObjects: old_status = ".$old_status."<br>\n";
+      print "export-import.lib: importObjects: new_status = ".$new_status."<br>\n";
+      print "export-import.lib: importObjects: next_status = ".$next_status."<br>\n";
+    }
+
+    ########################## 3. ###########################
+
+    if ($old_status and ($old_status eq $next_status)) {
+      $db_mode = "UPDATE";
+      if ($keys->{ALLOW_STATE_INJECTION})
+      {
+          ## state injection means data injection too
+          $h = $db->storeItem ( DATATYPE => $next_status."_".$datatype [0],
+                                OBJECT   => $db_object,
+                                MODE     => $db_mode );
+      } else {
+          # if ($datatype [0] eq "CERTIFICATE" and
+         #      not $db_object->getKey() and 
+	# 		$old_object and $old_object->getKey() )
+          # {
+              # print addPreLogLine ("Only removing private key from certificate object ...");
+              # $h = eximRemovePrivateKey (CLASS  => $datatype [0],
+              #                            STATE  => $old_status,
+              #                            OBJECT => $old_object);
+          # } else {
+          #     $h = undef;
+          # }
+      }
+      ## cannot enforce !
+    } elsif ($old_status) {
+      $db_mode = "UPDATE";
+      if ($keys->{ALLOW_STATE_INJECTION}) {
+          $h = $db->updateItem ( DATATYPE => $next_status."_".$datatype [0],
+                                   OBJECT   => $db_object );
+
+          # $h = $db->updateStatus ( DATATYPE => $old_status."_".$datatype [0],
+          #                          NEWTYPE  => $next_status."_".$datatype [0],
+          #                          OBJECT   => $db_object );
+          ## try to enforce
+          if ( not defined $h and $keys->{ENFORCE} ) {
+              $db_mode = "INSERT";
+              $h = $db->storeItem ( DATATYPE => $next_status."_".$datatype [0],
+                                    OBJECT   => $db_object,
+                                    MODE     => $db_mode );
+              if ( not defined $h ) {
+                  $db_mode = "UPDATE";
+                  $h = $db->storeItem ( DATATYPE => $next_status."_".$datatype [0],
+                                        OBJECT   => $db_object,
+                                        MODE     => $db_mode );
+              }
+          }
+      } else {
+          # if ($datatype [0] eq "CERTIFICATE" and
+          #     not $db_object->getKey() and
+          #     		$old_object and $old_object->getKey()) {
+              # print addPreLogLine ("Only removing private key from certificate object ...");
+              # $h = eximRemovePrivateKey (CLASS  => $datatype [0],
+              #                            STATE  => $old_status,
+              #                            OBJECT => $old_object);
+          # } else {
+           #    $h = undef;
+          # }
+      }
+    } else {
+      $db_mode = "INSERT";
+      print "export-import.lib: try to insert object<br>\n"
+         if ($DEBUG);;
+      $h = $db->storeItem ( DATATYPE => $next_status."_".$datatype [0],
+                            OBJECT   => $db_object,
+                            MODE     => $db_mode );
+      print "export-import.lib: insert object failed<br>\n"
+          if (not $h and $DEBUG);
+      ## try to enforce
+      if ( not defined $h and $keys->{ENFORCE} and $keys->{ALLOW_STATE_INJECTION}) {
+        $db_mode = "UPDATE";
+        print "export-import.lib: try to update object<br>\n";
+        $h = $db->storeItem ( DATATYPE => $next_status."_".$datatype [0],
+                              OBJECT   => $db_object,
+                              MODE     => $db_mode );
+      }
+
+      if ($DEBUG)
+      {
+          my $temp_obj = $db->getItem (DATATYPE => $next_status."_".$datatype [0],
+                                       KEY      => $db_object->getSerial ($datatype [0]));
+          if ($temp_obj)
+          {
+              print "export-import.lib: object present in database<br>\n";
+          } else {
+              print "export-import.lib: object is not present in database<br>\n";
+          }
+      }
+    }
+
+    if (defined $h and $keys->{MODE})
+    {
+        if (not eximSetImported (KEY => $db_object->getSerial($datatype[0]),
+                                 DATATYPE => $datatype [1]."_".$datatype[0],
+                                 DIR => $dir,
+                                 MODE => $keys->{MODE}))
+        {
+            our $errval;
+            print addPreLogLine ($errval);
+        }
+    }
+
+    ######################### 4. #############################
+
+    if (defined $h) {
+
+        ##// check for correct certificate's state if CRR is on the 
+        ##// way or successful
+
+        if ( ($datatype [0] =~ /CRR/i) and ($next_status !~ /DELETED/i) ) {
+
+          my $cert_serial = 
+                $db_object->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+
+          my $item = undef;
+          my $old_cert_status = "";
+
+          $item = $db->getItem ( DATATYPE => "CERTIFICATE",
+                                 KEY      => $cert_serial );
+
+          # my $item_2 = $db->getItem ( DATATYPE => "EXPIRED_CERTIFICATE",
+          #                             KEY      => $cert_serial );
+          # my $item_3 = $db->getItem ( DATATYPE => "SUSPENDED_CERTIFICATE",
+          #                             KEY      => $cert_serial );
+
+          if( $item ) {
+                $old_cert_status = $item->getStatus();
+          }
+
+          # my $item = undef;
+          # my $old_cert_status = "";
+          # if ($item_1) {
+          #   $item = $item_1;
+          #   $old_cert_status = "VALID";
+          # } elsif ($item_2) {
+          #   $item = $item_2;
+          #   $old_cert_status = "EXPIRED";
+          # } elsif ($item_3) {
+          #   $item = $item_3;
+          #   $old_cert_status = "SUSPENDED";
+          # }
+
+          if ($item) {
+            if ($next_status =~ /ARCHIVED/i) {
+              $db->updateItem ( OBJECT => $item,
+                                DATATYPE => "REVOKED_CERTIFICATE" );
+
+              # $db->updateStatus (DATATYPE => $old_cert_status."_CERTIFICATE",
+              #                    NEWTYPE  => "REVOKED_CERTIFICATE",
+              #                    OBJECT   => $item);
+            } elsif ($old_cert_status !~ /SUSPENDED/i) {
+              $db->updateItem ( OBJECT => $item,
+                                DATATYPE => "SUSPENDED_CERTIFICATE" );
+
+              # $db->updateStatus (DATATYPE => $old_cert_status."_CERTIFICATE",
+              #                    NEWTYPE  => "SUSPENDED_CERTIFICATE",
+              #                    OBJECT   => $item);
+            }
+          }
+        }
+
+        ## delete all CRRs which are on the way if one CRR is archived 
+        ## (successful)
+
+        if ( ($datatype [0] =~ /CRR/i) and ($next_status =~ /ARCHIVED/i) ) {
+
+          my $cert_serial = $db_object->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+
+          my @status_list = ( 'NEW', 'PENDING', 'SIGNED', 'APPROVED' );
+          foreach my $status (@status_list) {
+            my @list = $db->searchItems ( DATATYPE => "${status}_CRR",
+                            REVOKE_CERTIFICATE_SERIAL => $cert_serial );
+            foreach my $item (@list) {
+                $db->updateItem ( OBJECT => $item, DATATYPE => "${status}_CRR");
+              # $db->updateStatus ( DATATYPE => "${status}_CRR",
+              #                    NEWTYPE  => "DELETED_CRR",
+              #                    OBJECT   => $item);
+            }
+          }
+        }
+
+        ##// check correct certificate's state if CRR is deleted
+
+        if ( ($datatype [0] =~ /CRR/i) and ($next_status =~ /DELETED/i) ) {
+
+          my $cert_serial = 
+                        $db_object->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+          my %crr_list;
+          my @all_crr_list = ();
+          my @list = ( 'NEW', 'PENDING', 'SIGNED', 'APPROVED', 'ARCHIVED' );
+          foreach my $status (@list) {
+            @{$crr_list{$status}} = $db->searchItems ( 
+                                 DATATYPE => "${status}_CRR",
+                                 REVOKE_CERTIFICATE_SERIAL => $cert_serial );
+            push @all_crr_list, @{$crr_list{$status}};
+          }
+
+          @list = ( 'VALID', 'EXPIRED', 'SUSPENDED', 'REVOKED' );
+          my $old_status = undef;
+          my $item = undef;
+          if (@all_crr_list and scalar @all_crr_list) {
+            foreach my $status (@list) {
+              $item = $db->getItem ( DATATYPE => $status.'_CERTIFICATE',
+                                     KEY      => $db_object->getSerial() );
+              if ($item) {
+                $db->deleteItem ( DATATYPE =>$old_status."_CRR", 
+                          KEY => $db_object->getSerial() ) if ($old_status);
+                $old_status = $status;
+              }
+            }
+          }
+
+          if ($old_status !~ /REVOKED/i) {
+            if (scalar @{$crr_list{'ARCHIVED'}}) {
+              ##// certificate's state is revoked
+                $db->updateItem ( OBJECT => $item,
+                                  DATATYPE => "REVOKED_CERTIFICATE" );
+              # $db->updateStatus ( DATATYPE => $old_status."_CERTIFICATE",
+              #                    NEWTYPE  => "REVOKED_CERTIFICATE",
+              #                    OBJECT   => $item);
+            } elsif (@all_crr_list and scalar @all_crr_list) {
+              ##// certificate's state is suspended
+                $db->updateItem ( OBJECT => $item,
+                                  DATATYPE => "SUSPENDED_CERTIFICATE" );
+              # $db->updateStatus ( DATATYPE => $old_status."_CERTIFICATE",
+              #                     NEWTYPE  => "SUSPENDED_CERTIFICATE",
+              #                     OBJECT   => $item);
+            } else {
+                $db->updateItem ( OBJECT => $item,
+                                  DATATYPE => "VALID_CERTIFICATE" );
+              ##// certificate's state is valid (or expired) again
+              ## $db->updateStatus ( DATATYPE => $old_status."_CERTIFICATE",
+              ##                     NEWTYPE  => "VALID_CERTIFICATE",
+              ##                     OBJECT   => $item);
+            }
+          }
+
+        }
+
+    } ## end of if loop (defined $h)
+
+    ############################### finished import of object ###########################
+
+    ## errordetection
+    if (defined $h) {
+      push (@result, $db_object);
+
+      if ($db_mode =~ /UPDATE/) {
+        print addPreLogLine (i18nGettext ("__IMPORTFILE__ updated", "__IMPORTFILE__", $value));
+      } else {
+        print addPreLogLine (i18nGettext ("__IMPORTFILE__ inserted", "__IMPORTFILE__", $value));
+      }
+    } else {
+      # serial
+      my $serial = $db_object->getSerial ($datatype [0]);
+      ## advanced information
+      if ($db->searchItems ( DATATYPE => $datatype [0], KEY => $serial ))
+      {
+        if ($keys->{MODE} and not $keys->{ALLOW_STATE_INJECTION})
+        {
+            if (not eximSetImported (KEY => $db_object->getSerial($datatype[0]),
+                                     DATATYPE => $datatype [1]."_".$datatype[0],
+                                     DIR => $dir,
+                                     MODE => $keys->{MODE}))
+            {
+                our $errval;
+                print addPreLogLine ($errval);
+            }
+        }
+        if ($db_mode !~ /UPDATE/) {
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".gettext ("WARNING: Cannot insert object but object is present in database")."</FONT>");
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+        } else {
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".gettext ("WARNING: Cannot update object but object is present in database")."</FONT>");
+          print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+        }
+      } elsif ($db_mode !~ /UPDATE/) {
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".gettext ("FAILURE: Cannot insert object and object is not present in database")."</FONT>");
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+      } else {
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".gettext ("FAILURE: Cannot insert and/or update object and object is not present in database")."</FONT>");
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".i18nGettext ("FILE: __FILE__", "__FILE__", $filename)."</FONT>");
+      }
+    }
+  }
+
+  print closeLogSection ();
+
+  return @result;
+
+}
+
+sub eximRemovePrivateKey
+{
+    our ($db, $errno, $errval, $cryptoShell);
+
+    my $keys = { @_ };
+    return undef if (not $keys->{CLASS});
+    return undef if (not $keys->{STATE});
+    return undef if (not $keys->{OBJECT});
+
+    ## actually we support this operation only for certificates
+    return undef if ($keys->{CLASS} ne "CERTIFICATE");
+
+    ## notice for use during importObjects:
+    ##
+    ## somebody decided to remove the private key of the user
+    ## if it is an attack then it is not dangerous because
+    ## we have only to create a new key and a new cert but
+    ## an only partly removed private key is a dangerous think
+    ## therefore we remove it here
+
+    ## we don't need it any longer so we should not print it
+    ## my $key_data = $keys->{OBJECT}->getParsed()->{KEY};
+
+    ## use the old object to avoid data injection
+    my $new_cert = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                      GETTEXT => \&i18nGettext,
+                                      DATA    => $keys->{OBJECT}->getPEMHeader ().
+                                                 $keys->{OBJECT}->getPEM () );
+    $errno  = $OpenCA::X509::errno;
+    $errval = $OpenCA::X509::errval;
+    return undef if (not $new_cert);
+    my $res = $db->storeItem ( DATATYPE => $keys->{STATE}."_".$keys->{CLASS},
+                               OBJECT   => $new_cert,
+                               MODE     => "UPDATE" );
+    if (not defined $res)
+    {
+        $errno  = $db->errno;
+        $errval = $db->errval;
+    }
+    return $res;
+}
+############################
+## functions for Requests ##
+############################
+
+## the requests are only archived during the import of the certificates
+## to handle crashed disks etc.
+
+sub eximEnrollCSRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CSR", MODE => "ENROLL"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_REQUEST", DIR => $exim_tmp_dir, MODE => "ENROLL" );
+    }
+
+    return 1;
+}
+
+sub eximUploadCSRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CSR", MODE => "UPLOAD"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_REQUEST", DIR => $exim_tmp_dir, MODE => "UPLOAD" );
+    }
+
+    return 1;
+}
+
+sub eximReceiveCSRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CSR", MODE => "RECEIVE"))
+    {
+        next if (not $state);
+        importObjects ( DATATYPE => "${state}_REQUEST", DIR => $exim_tmp_dir, MODE => "RECEIVE" );
+    }
+
+    return 1;
+}
+
+sub eximDownloadCSRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CSR", MODE => "DOWNLOAD"))
+    {
+        next if (not $state);
+        importObjects ( DATATYPE              => "${state}_REQUEST",
+                        DIR                   => $exim_tmp_dir,
+                        MODE                  => "DOWNLOAD",
+                        ALLOW_STATE_INJECTION => 1);
+    }
+
+    return 1;
+}
+
+################################
+## functions for Certificates ##
+################################
+
+sub eximEnrollCerts {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CERTIFICATE", MODE => "ENROLL"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_CERTIFICATE", DIR => $exim_tmp_dir, MODE => "ENROLL" );
+    }
+    eximEnrollCSRs ($exim_tmp_dir);
+
+    return 1;
+}
+
+sub eximDownloadCerts {
+
+  our $tools;
+ 
+  my $keys = { @_ };
+
+  my $exim_tmp_dir = $keys->{TMP};
+  my $certDir = getRequired ( 'CertDir' );
+
+  my  @list;
+  foreach my $state (eximGetStates (DATATYPE => "CERTIFICATE", MODE => "DOWNLOAD"))
+  {
+      next if (not $state);
+      @list = importObjects ( DATATYPE => "${state}_CERTIFICATE", DIR => $exim_tmp_dir, MODE => "DOWNLOAD" );
+  }
+  eximDownloadCSRs ($exim_tmp_dir);
+
+  my $dir = $exim_tmp_dir."/CERTIFICATE/VALID/";
+
+  return 1 if (not $keys->{LDAP}); 
+
+  if ( $keys->{LDAP} ) {
+    print addLogSection( gettext ("Importing Certificates into ldap ... "));
+
+    if ( not scalar @list) {
+      print addPreLogLine ("<i>".gettext ("No certificates present.")."</i>");
+    }
+    foreach my $data (@list) {
+      my $result = eximObjectToLDAP ( CERTIFICATE => $data );
+      my $ret;
+      if ( not $result or not $result->{STATUS} ) {
+        $ret = "\n<FONT COLOR=#FF0000>".
+               i18nGettext ("Cannot write Certificate __CERT_SERIAL__ to LDAP. (error __ERRNO__: __ERRVAL__)",
+                            "__CERT_SERIAL__", $data->getSerial(),
+                            "__ERRNO__", $result->{CODE},
+                            "__ERRVAL__", $result->{DESC}).
+               "</FONT>";
+      } else {
+        $ret = "\n".i18nGettext ("CERTIFICATE __CERT_SERIAL__ is available via LDAP",
+                                 "__CERT_SERIAL__", $data->getSerial ());
+      }
+      print addPreLogLine ($ret);
+    }
+  }
+
+  ##// what I'm doing here???
+  ## perhaps this code is outdated
+  ## upating lastImport
+  my $txt = "";
+  my $line;
+  foreach $line  (@list) {
+    $txt .= $line->getSerial ()."\n";
+  };
+  unlink( "$certDir/lastImport.txt" );
+  if (not $tools->saveFile (FILENAME => "$certDir/lastImport.txt",
+                            DATA     => $txt ) ) {
+    print addPreLogLine ("<FONT COLOR=#FF0000>".
+                         i18nGettext ("Cannot update file __FILE__ with certificates of last import",
+                                      "__FILE__", "$certDir/lastImport.txt").
+                         "</FONT>");
+  }
+  print closeLogSection();
+
+  return 1;
+}
+
+##################################
+## functions for CA-Certifcates ##
+##################################
+
+sub eximEnrollCAs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CA_CERTIFICATE", MODE => "ENROLL"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_CA_CERTIFICATE", DIR => $exim_tmp_dir, MODE => "ENROLL" );
+    }
+
+    return 1;
+}
+
+sub eximDownloadCAs {
+
+  our ($tools, $db);
+ 
+  my $keys = { @_ };
+
+  my $exim_tmp_dir = $keys->{TMP};
+
+  my @list;
+  foreach my $state (eximGetStates (DATATYPE => "CA_CERTIFICATE", MODE => "DOWNLOAD"))
+  {
+      next if (not $state);
+      @list = importObjects ( DATATYPE => "${state}_CA_CERTIFICATE", DIR => $exim_tmp_dir, MODE => "DOWNLOAD", ENFORCE => 1 );
+  }
+  if ($keys->{LDAP}) {
+
+    print addLogSection( gettext ("Importing CA-Certificates into ldap ... "));
+
+    ## get newest ca-cert
+    my $cacert = LDAP_get_ca ();
+
+    if (not $cacert) {
+      print addPreLogLine ("<FONT COLOR=#FF0000>".gettext ("Cannot load CA-certificate")."</FONT>");
+    } else {
+      ## update LDAP
+      my $result = eximObjectToLDAP ( AUTHORITY_CERTIFICATE => $cacert );
+      if ( not $result or not $result->{STATUS} ) {
+        print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Cannot write CA-Certificate __CERT_SERIAL__ to LDAP. (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $cacert->getSerial("CA_CERTIFICATE"),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                         "</FONT>");
+      } else {
+        print addPreLogLine (i18nGettext ("CA-Certificate __CERT_SERIAL__ is available via LDAP",
+                                          "__CERT_SERIAL__", $cacert->getSerial("CA_CERTIFICATE")));
+      }
+    }
+    print closeLogSection();
+  }
+
+  print addLogSection (gettext("Make CA-Certificate available on the server ..."));
+  my @cacerts = $db->searchItems ( DATATYPE => "VALID_CA_CERTIFICATE" );
+  my $key;
+  my $serial = -1;
+  my $cert_data = "";
+  my $cert_der  = "";
+  my $cert_txt  = "";
+  foreach my $cert (@cacerts) {
+    if ( $cert->getSerial () > $serial ) {
+      $serial    = $cert->getSerial ();
+      $key       = $cert->getSerial ("CA_CERTIFICATE");
+      $cert_data = $cert->getPEM ();
+      $cert_der  = $cert->getDER ();
+      $cert_txt  = $cert->getTXT ();
+    }
+  }
+  $tools->saveFile ( FILENAME => "${exim_tmp_dir}/${key}.pem", DATA => $cert_data);
+  my $CACert = getRequired ( 'CACertificate');
+  if( not $tools->copyFiles ( SRC  => "${exim_tmp_dir}/${key}.pem",
+                                 DEST => $CACert ) ) {
+    print addLogLine ( gettext ("FAILED.") );
+    print addPreLogLine( "<FONT COLOR=#FF0000>".
+                         i18nGettext ("Copying latest ca-certificate into the RAServer failed (from __FILE__ to __TARGET__).",
+                                      "__FILE__", "${exim_tmp_dir}/${key}.pem",
+                                      "__TARGET__", $CACert).
+                         "</FONT>");
+    print closeLogSection ();
+    return 0;
+  }
+  $tools->saveFile ( FILENAME => "${exim_tmp_dir}/${key}.der", DATA => $cert_der);
+  my $CACertDER = getRequired ( 'CACertificateDER');
+  if( not $tools->copyFiles ( SRC  => "${exim_tmp_dir}/${key}.der",
+                                 DEST => $CACertDER ) ) {
+    print addLogLine ( gettext("FAILED.") );
+    print addPreLogLine( "<FONT COLOR=#FF0000>".
+                         i18nGettext ("Copying latest ca-certificate into the RAServer failed (from __FILE__ to __TARGET__).",
+                                      "__FILE__", "${exim_tmp_dir}/${key}.der",
+                                      "__TARGET__", $CACertDER).
+                         "</FONT>");
+    print closeLogSection ();
+    return 0;
+  }
+  $tools->saveFile ( FILENAME => "${exim_tmp_dir}/${key}.txt", DATA => $cert_txt);
+  my $CACertTXT = getRequired ( 'CACertificateTXT');
+  if( not $tools->copyFiles ( SRC  => "${exim_tmp_dir}/${key}.txt",
+                                 DEST => $CACertTXT ) ) {
+    print addLogLine ( gettext("FAILED.") );
+    print addPreLogLine( "<FONT COLOR=#FF0000>".
+                         i18nGettext ("Copying latest ca-certificate into the RAServer failed (from __FILE__ to __TARGET__).",
+                                      "__FILE__", "${exim_tmp_dir}/${key}.txt",
+                                      "__TARGET__", $CACertTXT).
+                         "</FONT>");
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine (gettext("OK."));
+  print closeLogSection (); 
+
+  #// Now we copy the CA's certificate to the chain dir
+  my $cacertCRT = getRequired ('CACertificateCRT');
+  if (not $tools->copyFiles( SRC => $CACert,
+                     DEST => $cacertCRT )) {
+    print addLogSection( "<FONT COLOR=#FF0000>".
+                         i18nGettext ("Copying latest ca-certificate into the RAServer failed (from __FILE__ to __TARGET__).",
+                                      "__FILE__", "${exim_tmp_dir}/${key}.pem",
+                                      "__TARGET__", $cacertCRT).
+                         "</FONT>");
+    print closeLogSection ();
+    return 0;
+  }
+
+  ##// Let's make Chain verification
+  print addLogSection(gettext ("Re-Building CA Chain ... "));
+  my $chainDir = getRequired ( 'ChainDir' );
+  chdir( "${chainDir}" );
+  ## what for command?
+  my $makeCmd = getRequired ('MakePath');
+  my $ret = `$makeCmd clean ; $makeCmd 2>&1`;
+  if ( $? ) {
+    print addLogLine ("<FONT COLOR=#FF0000>".gettext ("FAILED")."</FONT>");
+    print closeLogSection();
+    return 0;
+  } else {
+    print addLogLine(gettext ("Ok."));
+  }
+  print closeLogSection();
+
+  return 1;
+}
+
+
+########################
+## functions for CRRs ##
+########################
+
+sub eximEnrollCRRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CRR", MODE => "ENROLL"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_CRR", DIR => $exim_tmp_dir, MODE => "ENROLL" );
+    }
+
+    return 1;
+}
+
+sub eximUploadCRRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CRR", MODE => "UPLOAD"))
+    {
+        next if (not $state);
+        exportObjects ( DATATYPE => "${state}_CRR", DIR => $exim_tmp_dir, MODE => "UPLOAD" );
+    }
+
+    return 1;
+}
+
+sub eximReceiveCRRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CRR", MODE => "RECEIVE"))
+    {
+        next if (not $state);
+        importObjects ( DATATYPE => "${state}_CRR", DIR => $exim_tmp_dir, MODE => "RECEIVE" );
+    }
+
+    return 1;
+}
+
+sub eximDownloadCRRs {
+
+    my $exim_tmp_dir = $_[0];
+
+    foreach my $state (eximGetStates (DATATYPE => "CRR", MODE => "DOWNLOAD"))
+    {
+        next if (not $state);
+        importObjects ( DATATYPE => "${state}_CRR",
+                        DIR => $exim_tmp_dir,
+                        MODE => "DOWNLOAD",
+                        ALLOW_STATE_INJECTION => 1 );
+    }
+
+    return 1;
+}
+
+########################
+## functions for CRLs ##
+########################
+
+sub eximEnrollCRLs {
+
+  my $exim_tmp_dir = $_[0];
+
+  foreach my $state (eximGetStates (DATATYPE => "CRL", MODE => "ENROLL"))
+  {
+      next if (not $state);
+      exportObjects ( DATATYPE => "${state}_CRL", DIR => $exim_tmp_dir, MODE => "ENROLL" );
+  }
+  eximEnrollCRRs ($exim_tmp_dir);
+
+  return 1;
+}
+
+sub eximDownloadCRLs {
+
+  our ($tools, $cryptoShell);
+
+  my $keys = { @_ };
+
+  my $exim_tmp_dir = $keys->{TMP};
+
+  my @list;
+  foreach my $state (eximGetStates (DATATYPE => "CRL", MODE => "DOWNLOAD"))
+  {
+      next if (not $state);
+      @list = importObjects ( DATATYPE => "${state}_CRL", DIR => $exim_tmp_dir, MODE => "DOWNLOAD", ENFORCE => 1 );
+  }
+  eximDownloadCRRs ($exim_tmp_dir);
+
+  return 1 if (not @list or not scalar @list);
+
+  if ( $keys->{LDAP} ) {
+    print addLogSection(gettext ("Importing CRL into LDAP ... "));
+
+    ## get newest CRL
+    my $crl = LDAP_get_crl ();
+
+    if (not $crl) {
+      print addPreLogLine ("<FONT COLOR=#FF0000>".gettext("Cannot load CRL")."</FONT>");
+    } else {
+      my $result = eximObjectToLDAP ( CRL => $crl );
+      if ( not $result or not $result->{STATUS} ) {
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                              i18nGettext ("Cannot write CRL __CRL_SERIAL__ to LDAP. (error __ERRNO__: __ERRVAL__)",
+                                      "__CRL_SERIAL__", $crl->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                              "\n\t".
+                              i18nGettext ("Last Update: __LAST_UPDATE__",
+                                           "__LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE}).
+                              "\n\t".
+                              i18nGettext ("Next Update: __NEXT_UPDATE__",
+                                           "__NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE}).
+                              "\n".
+                              "</FONT>");
+      } else {
+        print addPreLogLine (
+                              gettext ("Added CRL to LDAP").
+                              "\n\t".
+                              i18nGettext ("Last Update: __LAST_UPDATE__",
+                                           "__LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE}).
+                              "\n\t".
+                              i18nGettext ("Next Update: __NEXT_UPDATE__",
+                                           "__NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE}).
+                              "\n");
+      }
+    }
+    print closeLogSection ();
+  }
+
+  my $crlDir = getRequired ( 'CRLDir');
+
+  print addLogSection(gettext ("Importing CRL into servers ... "));
+
+  my $serial = 0;
+  my $data;
+  foreach my $tmpCRL (@list) {
+
+    if ($cryptoShell->getNumericDate ($tmpCRL->getParsed()->{LAST_UPDATE}) > $serial) {
+      $serial = $cryptoShell->getNumericDate ($tmpCRL->getParsed()->{LAST_UPDATE});
+      $data = $tmpCRL;
+    }
+  }
+
+  ## RAServer
+  if (not $tools->saveFile ( FILENAME=>"$crlDir/cacrl.pem",
+                             DATA=>$data->getPEM())) {
+    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                          i18nGettext ("Cannot update CRL on RAServer. FILE: __FILE__",
+                                       "__FILE__", "$crlDir/cacrl.pem").
+                          "</FONT>");
+  }
+  if (not $tools->saveFile ( FILENAME=>"$crlDir/cacrl.der",
+                             DATA=>$data->getDER())) {
+    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                          i18nGettext ("Cannot update CRL on RAServer. FILE: __FILE__",
+                                       "__FILE__", "$crlDir/cacrl.der").
+                          "</FONT>");
+  }
+  if (not $tools->saveFile ( FILENAME=>"$crlDir/cacrl.crl",
+                             DATA=>$data->getDER())) {
+    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                          i18nGettext ("Cannot update CRL on RAServer. FILE: __FILE__",
+                                       "__FILE__", "$crlDir/cacrl.crl").
+                          "</FONT>");
+  }
+  if (not $tools->saveFile ( FILENAME=>"$crlDir/cacrl.txt",
+                             DATA=>$data->getTXT())) {
+    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                          i18nGettext ("Cannot update CRL on RAServer. FILE: __FILE__",
+                                       "__FILE__", "$crlDir/cacrl.txt").
+                          "</FONT>");
+  }
+
+  print addPreLogLine (
+              gettext ("Added CRL to servers").
+              "\n\t".
+              i18nGettext ("Last Update: __LAST_UPDATE__",
+                           "__LAST_UPDATE__", $data->getParsed()->{LAST_UPDATE}).
+              "\n\t".
+              i18nGettext ("Next Update: __NEXT_UPDATE__",
+                           "__NEXT_UPDATE__", $data->getParsed()->{NEXT_UPDATE}).
+              "\n");
+
+  print closeLogSection();
+
+  return 1;
+}
+
+#################################
+## functions for Configuration ##
+#################################
+
+sub eximEnrollConfiguration {
+
+  my $exim_tmp_dir = $_[0];
+  my $dir = $exim_tmp_dir."/Configuration";
+
+  if ( not createDirectory ($dir) ) {
+    return 0;
+  }
+
+#  my $openssl     = getRequired ( 'sslconfig'   );
+  my $rbac_dir    = getRequired ( 'RBAC_DIR'    );
+  my $openssl_dir = getRequired ( 'OPENSSL_DIR' );
+  my $ext_dir     = getRequired ( 'EXT_DIR'     );
+  my $config_dir  = $rbac_dir;
+
+  $config_dir  =~ s/\/[^\/]*$//;
+  $rbac_dir    =~ s/^.*\///g;
+
+  my $tmpdir = $dir;
+  if( not chdir( "$tmpdir" )) {
+    print addErrorLog( i18nGettext ("Failed changing dir to __DIR__!", "__DIR__", $tmpdir) );
+    print closeLogSection ();
+    return 0;
+  }
+
+#  ## bring openssl.cnf to tmp-dir
+#
+#  print addLogSection(gettext("Exporting the OpenSSL-configurationfile of the CA ..."));
+#  $ret = `cp $openssl . 2>&1`;
+#  if( $? != 0 ) {
+#    print addErrorLog(gettext("Cannot copy $openssl to $tmpdir!"));
+#    print addLogLine( "cp $openssl ." );
+#    print closeLogSection ();
+#    return 0;
+#  }
+#  print addLogLine( gettext("Ok.") );
+#  print closeLogSection ();
+
+  ## bring RBAC/ to tmp-dir
+
+  print addLogSection(gettext("Exporting the RBAC-configuration ... "));
+  mkdir $tmpdir if (not -d $tmpdir);
+  my $ret = `cd $config_dir; tar -cf - $rbac_dir | tar -xf - -C $tmpdir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(i18nGettext ("Cannot copy __SRC_DIR__ to __DEST_DIR__!",
+                                   "__SRC_DIR__", $rbac_dir,
+                                   "__DEST_DIR__", $tmpdir));
+    print addLogLine( "cd $config_dir; tar -cf - $rbac_dir | tar -xf - -C $tmpdir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine( gettext ("Ok.") );
+  print closeLogSection ();
+
+  ## bring OpenSSL/ to tmp-dir
+
+  my $h_openssl_dir = $openssl_dir;
+  $h_openssl_dir =~ s/\/[^\/]*(|\/)*$//;
+  $openssl_dir   =~ s/^.*\/([^\/]+)(|\/)*$/$1/g;
+  print addLogSection(gettext("Exporting the OpenSSL-configuration of the roles ..."));
+  $ret = `cd $h_openssl_dir; tar -cf - $openssl_dir | tar -xf - -C $tmpdir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(gettext("Cannot copy $openssl_dir to $tmpdir!"));
+    print addLogLine( "cd $h_openssl_dir; tar -cf - $openssl_dir | tar -xf - -C $tmpdir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine( gettext("Ok.") );
+  print closeLogSection ();
+
+  ## bring extfiles/ to tmp-dir
+
+  my $h_ext_dir = $ext_dir;
+  $h_ext_dir =~ s/\/[^\/]*(|\/)*$//;
+  $ext_dir   =~ s/^.*\/([^\/]+)(|\/)*$/$1/g;
+  print addLogSection(gettext("Exporting the configuration of the extensions of the roles ... "));
+  $ret = `cd $h_ext_dir; tar -cf - $ext_dir | tar -xf - -C $tmpdir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(gettext("Cannot copy $ext_dir to $tmpdir!"));
+    print addLogLine( "cd $h_ext_dir; tar -cf - $ext_dir | tar -xf - -C $tmpdir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine(gettext("Ok."));
+  print closeLogSection ();
+
+  return 1;
+}
+
+sub eximDownloadConfiguration {
+
+  my $exim_tmp_dir = $_[0];
+  my $dir = $exim_tmp_dir."/Configuration";
+
+#  my $openssl     = getRequired ( 'sslconfig'   );
+  my $rbac_dir    = getRequired ( 'RBAC_DIR'    );
+  my $openssl_dir = getRequired ( 'OPENSSL_DIR' );
+  my $ext_dir     = getRequired ( 'EXT_DIR'     );
+  my $config_dir  = $rbac_dir;
+ 
+  $config_dir  =~ s/\/[^\/]*$//;
+  $rbac_dir    =~ s/^.*\///g;
+
+  my ( @lastExport );
+
+  my $tmpdir = $dir;
+  if (not chdir ( $tmpdir ) ) {
+    print addErrorLog( i18nGettext ("Cannot change directory to __DIR__!", "__DIR__", $tmpdir));
+    print closeLogSection ();
+    return 0;
+  }
+
+#  ## importing openssl.cnf
+#
+#  my $sslconfig = $openssl;
+#  $sslconfig =~ s/.*\///g;
+#  print addLogSection(gettext("Importing the OpenSSL-configurationfile of the CA ... "));
+#  $ret = `cp $sslconfig $openssl 2>&1`;
+#  if( $? != 0 ) {
+#    print addErrorLog(gettext("Cannot copy $sslconfig to $openssl!"));
+#    print addLogLine( "cp $sslconfig $openssl" );
+#    print closeLogSection ();
+#    return 0;
+#  }
+#  print addLogLine(gettext("Ok."));
+#  print closeLogSection ();
+
+  ## importing RBAC/
+
+  print addLogSection(gettext("Importing the RBAC-configuration ... "));
+  my $ret = `cd $tmpdir; tar -cf - $rbac_dir | tar -xf - -C $config_dir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(i18nGettext ("Cannot copy __SRC_DIR__ to __DEST_DIR__!",
+                                   "__SRC_DIR__", $rbac_dir,
+                                   "__DEST_DIR__", $config_dir));
+    print addLogLine( "tar -cf - $rbac_dir | tar -xf - -C $config_dir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine( gettext("Ok.") );
+  print closeLogSection ();
+
+  ## importing OpenSSL/
+
+  my $h_openssl_dir = $openssl_dir;
+  $h_openssl_dir =~ s/\/[^\/]*(|\/)*$//;
+  $openssl_dir   =~ s/^.*\/([^\/]+)(|\/)*$/$1/g;
+  print addLogSection(gettext("Importing the OpenSSL-configuration of the roles  ... "));
+  $ret = `cd $tmpdir; tar -cf - $openssl_dir | tar -xf - -C $h_openssl_dir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(gettext("Cannot copy $openssl_dir to $h_openssl_dir!"));
+    print addLogLine( "tar -cf - $openssl_dir | tar -xf - -C $h_openssl_dir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine(gettext("Ok."));
+  print closeLogSection ();
+
+  ## importing extfiles/
+
+  my $h_ext_dir = $ext_dir;
+  $h_ext_dir =~ s/\/[^\/]*(|\/)*$//;
+  $ext_dir   =~ s/^.*\/([^\/]+)(|\/)*$/$1/g;
+  print addLogSection(gettext("Importing the configuration of the extensions of the roles ... "));
+  $ret = `cd $tmpdir; tar -cf - $ext_dir | tar -xf - -C $h_ext_dir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(gettext("Cannot copy $ext_dir to $h_ext_dir!"));
+    print addLogLine( "tar -cf - $ext_dir | tar -xf - -C $h_ext_dir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine(gettext("Ok."));
+  print closeLogSection ();
+
+  return 1;
+}
+
+#########################
+## functions for Mails ##
+#########################
+
+sub eximEnrollMails {
+
+    our ($tools, $db);
+
+    my $exim_tmp_dir = $_[0];
+
+    print addLogSection(gettext("Exporting the Mails ... "));
+
+    my $cert = libDBGetFirstItem ("VALID_CERTIFICATE");
+    if (not $cert)
+    {
+        print addPreLogLine ("<i>".gettext ("No certificates are present.")."</i>");
+        print closeLogSection ();
+        return 1;
+    }
+    do
+    {
+        foreach my $type (eximGetStates (DATATYPE => "MAIL", MODE => "ENROLL"))
+        {
+            next if (not $type);
+            if (eximMustBeExported (DATATYPE => uc($type)."_MAIL",
+                                    MODE     => "ENROLL",
+                                    KEY      => $cert->getSerial()))
+            {
+                my $msg = getRequired (uc($type)."_MAIL_DIR")."/".$cert->getSerial().".msg";
+                next if (not -f $msg);
+                if (not $tools->copyFiles (SRC => $msg, DEST => $exim_tmp_dir."/MAIL/".uc($type)))
+                {
+                    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                                          i18nGettext ("FAILURE: __SERIAL__",
+                                                       "__SERIAL__", $cert->getSerial()).
+                                          "</FONT>");
+                    print addPreLogLine ( "<FONT COLOR=#FF0000>".
+                                          i18nGettext ("FILE: __FILE__", "__FILE__", $msg).
+                                          "</FONT>");
+                } else {
+                    print addPreLogLine ($msg);
+		}
+            }
+        }
+
+	my $old_serial = $cert->getSerial ();
+        $cert = $db->getNextItem (DATATYPE => "VALID_CERTIFICATE", KEY => $cert->getSerial());
+        ## work around for incorrect getNextItem from OpenCA::DB
+        $cert = undef if ($cert and $cert->getSerial() == $old_serial);
+    } while ($cert);
+
+    print closeLogSection ();
+
+    return 1;
+}
+
+sub eximDownloadMails {
+
+    our $tools;
+
+    my $exim_tmp_dir = $_[0];
+ 
+    foreach my $type (eximGetStates (DATATYPE => "MAIL", MODE => "DOWNLOAD"))
+    {
+        next if (not $type);
+
+        print addLogSection(i18nGettext ("Importing the Mails (__TYPE__) ... ",
+                                         "__TYPE__", uc(gettext($type))));
+
+        my $directory = $exim_tmp_dir."/MAIL/".uc($type);
+        opendir( DIR, $directory );
+        my @dirList = grep (/^[^\.]/, readdir( DIR ));
+        closedir( DIR );
+
+        if (not scalar @dirList) {
+            print addPreLogLine ("<i>".gettext ("No mails are present.")."</i>");
+        }
+	
+	my $found = 0;
+ 	foreach my $value (@dirList) {
+	    
+	    $value =~ s/.msg//;
+	    if (not eximCheckObject (KEY	=> $value,
+	    			     DATATYPE	=> uc($type)."_MAIL",
+				     DIR	=> $exim_tmp_dir,
+				     MODE	=> "DOWNLOAD"))
+	    {
+	    	$found = 1;
+            	if (not $tools->copyFiles (SRC  => $directory."/".$value.".msg",
+                                           DEST => getRequired (uc($type)."_MAIL_DIR")))
+            	{
+                	print addPreLogLine ("<FONT COLOR=#FF0000>".
+                        	             i18nGettext ("__MSG__ cannot be copied to __DIR__!",
+                                	                  "__MSG__", $directory."/".$value.".msg",
+                                        	          "__DIR__", getRequired (uc($type)."_MAIL_DIR")).
+                                     			  "</FONT>");
+            	} else {
+                	if (not eximSetImported (KEY      => $value,
+                        	                 DATATYPE => uc($type)."_MAIL",
+                                	         DIR      => $exim_tmp_dir,
+                                        	 MODE     => "DOWNLOAD"))
+                	{
+                    		our $errval;
+                    		print addPreLogLine ($errval);
+                	} else {
+                    		print addPreLogLine ($directory."/".$value.".msg");
+                	}
+            	} ## end of copyfiles
+            } ## end of object-check
+	} ## end of foreach
+	print addPreLogLine (gettext("No new mails found. No mails imported!")) if (not $found);
+        print closeLogSection ();
+    }
+
+    ## perhaps I have to send the mails ?
+    ## coded in mail-utils.lib
+    if (getRequired ('SEND_MAIL_DURING_IMPORT') and
+        (getRequired ('SEND_MAIL_DURING_IMPORT') !~ /^NO$/i)) {
+        sendPreparedMails ("default");
+        sendPreparedMails ("crin");
+    }
+
+    return 1;
+}
+
+###################################
+## functions for batchprocessors ##
+###################################
+
+sub eximEnrollBP {
+
+  my $exim_tmp_dir = $_[0];
+  my $dir = $exim_tmp_dir."/batch";
+
+  if ( not createDirectory ($dir) ) {
+    return 0;
+  }
+
+  my $bp_dir    = getRequired ( 'BP_EXPORT_PKCS12_DIR' );
+
+  print addLogSection(gettext ("Exporting the data from the batchprocessors ... "));
+  mkdir $dir if (not -d $dir);
+  my $ret = `cd $bp_dir; tar -cf - * | tar -xf - -C $dir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(i18nGettext ("Cannot copy __SRC_DIR__ to __DEST_DIR__!",
+                                   "__SRC_DIR__", $bp_dir,
+                                   "__DEST_DIR__", $dir));
+    print addLogLine( "cd $bp_dir; tar -cf - * | tar -xf - -C $dir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine( gettext ("Ok.") );
+  print closeLogSection ();
+
+  return 1;
+}
+
+sub eximDownloadBP {
+
+  my $exim_tmp_dir = $_[0];
+  my $dir = $exim_tmp_dir."/batch";
+
+  my $bp_dir    = getRequired ( 'TempDir' );
+ 
+  print addLogSection(gettext ("Importing the data from the batchprocessors ... "));
+
+  if (not -e $bp_dir) {
+      print addErrorLog( i18nGettext ("Cannot change directory to __DIR__!", "__DIR__", $bp_dir));
+      print closeLogSection ();
+      return 0;
+  }
+
+  if (not -e $dir) {
+      print addLogLine (gettext("no data present"));
+      print closeLogSection ();
+      return 1;
+  }
+
+  my $ret = `cd $dir; tar -cf - * | tar -xf - -C $bp_dir 2>&1`;
+  if( $? != 0 ) {
+    print addErrorLog(i18nGettext ("Cannot copy __SRC_DIR__ to __DEST_DIR__!",
+                                   "__SRC_DIR__", $dir,
+                                   "__DEST_DIR__", $bp_dir));
+    print addLogLine( "cd $dir; tar -cf - * | tar -xf - -C $bp_dir" );
+    print closeLogSection ();
+    return 0;
+  }
+  print addLogLine( gettext ("Ok.") );
+  print closeLogSection ();
+
+  return 1;
+}
+
+##########################################
+## ldap import and export functionality ##
+##########################################
+
+sub eximObjectToLDAP {
+
+  our $ldap;
+
+  my $keys = { @_ };
+ 
+  ## determine type of object
+  if ( $keys->{CERTIFICATE} ) {
+    ## create object in LDAP
+    my $result = $ldap->add_object ( CERTIFICATE => $keys->{CERTIFICATE} );
+    if ( not $result or not $result->{STATUS} ) {
+      return $result;
+    }
+    ## add attribute
+    return $ldap->add_attribute ( CERTIFICATE => $keys->{CERTIFICATE},
+                              NOPRINT     => 1 );
+  } elsif ( $keys->{AUTHORITY_CERTIFICATE} ) {
+    ## create object in LDAP
+    my $result = $ldap->add_object ( CERTIFICATE => $keys->{AUTHORITY_CERTIFICATE} );
+    if ( not $result or not $result->{STATUS} ) {
+      return $result;
+    }
+    ## add attribute
+    return $ldap->add_attribute ( AUTHORITY_CERTIFICATE => $keys->{AUTHORITY_CERTIFICATE},
+                              NOPRINT               => 1 );
+  } elsif ( $keys->{CRL} ) {
+    ## create object in LDAP is not necessary because it is the CA
+    ## add attribute
+    return $ldap->add_attribute ( CRL     => $keys->{CRL},
+                              NOPRINT => 1 );
+  } elsif ( $keys->{AUTHORITY_CRL} ) {
+    ## create object in LDAP is not necessary because it is the CA
+    ## add attribute
+    return $ldap->add_attribute ( AUTHORITY_CRL => $keys->{AUTHORITY_CRL},
+                              NOPRINT       => 1 );
+  } else {
+    return { STATUS => 0, CODE => -999, DESC => gettext ("No appropriate object specified.")};
+  }
+}
+
+###########################
+## export/import commits ##
+###########################
+
+## the higher level is at every time correct
+## therefore we report all imported
+
+## * there is only one certificate state which we must pass through
+##   the hierarchy - valid
+## * all other certificate states can be determined from requests
+##   and timestamps
+## * CRLs can only be valid
+## * CA-certificates can only be valid and expired
+
+## DIR - temporary directory
+## ID  - ModuleID of other level
+
+sub eximUploadCommit {
+
+    my $keys = { @_ };
+
+    return eximExportCommit (
+               DIR => $_[0],
+               MODE => "DOWNLOAD"
+                            );
+}
+
+sub eximEnrollCommit {
+    return eximExportCommit (
+               DIR => $_[0],
+               MODE => "RECEIVE"
+                            );
+}
+
+sub eximExportCommit {
+    our ($tools, $errno, $errval);
+
+    my $keys = { @_ };
+    my $tmpdir = $keys->{DIR};
+    my $filter = uc($keys->{MODE});
+    my $logdir  = getRequired ('LOG_'.$filter.'_DIR');
+    my $logfiles;
+
+    debug ("export-import.lib: eximExportCommit");
+    debug ("export-import.lib:     MODE: $keys->{MODE}");
+    debug ("export-import.lib:     DIR: $keys->{DIR}");
+
+    $tmpdir = $_[0] if (not $tmpdir);
+
+    ## load filenames
+
+    if (not opendir DIR, $logdir)
+    {
+        debug ("export-import.lib:     there is trouble with the directory $logdir");
+        ## FIXME: we need an errorcode management for dataexchaneg stuff
+        ## FIXME: perhaps we should create a new module
+        ## FIXME: this stuff is definitely to large for lib
+        $errval = i18nGettext ("Cannot open directory __DIR__ to export the logs frm the imported objects.",
+                              "__DIR__", $logdir);
+        $errno  = 123456;
+        return undef;
+    }
+    my @list = grep /.dbm$/, readdir DIR;
+    closedir DIR;
+
+    ## dump files
+
+    foreach my $filename (@list)
+    {
+        my $full_filename = $logdir."/".$filename;
+        my $content = "";
+
+        ## read file
+
+        my $x = eximOpenDatabase ($full_filename);
+        my ($key, $value) = (0, 0);
+        for (my $status = $x->seq($key, $value, R_FIRST) ;
+                $status == 0 ;
+                $status = $x->seq($key, $value, R_NEXT) )
+        {
+            $content .= "$key\n";
+        }
+
+        ## write file
+        $tools->saveFile (FILENAME => "$tmpdir/LOG/$filter/$filename.dump",
+                          DATA     => $content);
+        debug ("export-import.lib:     dumpfile $tmpdir/LOG/$filter/$filename.dump written");
+    }
+
+    eximSetModuleID ($tmpdir);
+}
+
+sub eximDownloadCommit {
+
+    return eximImportCommit (
+               DIR => $_[0],
+               MODE => "UPLOAD"
+                            );
+}
+
+sub eximReceiveCommit {
+
+    return eximImportCommit (
+               DIR => $_[0],
+               MODE => "ENROLL"
+                            );
+}
+
+sub eximImportCommit {
+    our ($tools, $errno, $errval);
+
+    my $keys = { @_ };
+    my $tmpdir = $keys->{DIR};
+
+    my $filter = eximGetModuleID ($tmpdir);
+
+    my $mode = "DOWNLOAD";
+    $mode = "RECEIVE" if ($keys->{MODE} !~ /ENROLL/);
+
+    ## check for special rules in the configuration
+    my @list = getRequiredList ('EXPORT_IMPORT_MODULES');
+    my $special = 0;
+    foreach my $item (@list)
+    {
+        $special = 1 if ($item == $filter);
+    }
+
+    ## check CRRs and CSRs
+    foreach my $object ("CRR", "CSR", "CA_CERTIFICATE", "CERTIFICATE", "CRL", "MAIL")
+    {
+        next if ($object =~ /CA_CERTIFICATE/ and $keys->{MODE} =~ /UPLOAD/);
+        next if ($object =~ /CERTIFICATE/    and $keys->{MODE} =~ /UPLOAD/);
+        next if ($object =~ /CRL/            and $keys->{MODE} =~ /UPLOAD/);
+        next if ($object =~ /MAIL/           and $keys->{MODE} =~ /UPLOAD/);
+
+        ## check state
+        my $config = $keys->{MODE}.'_'.$object.'_STATES';
+        $config = $filter."_".$config if ($special);
+
+        my @stateList = getRequiredList ($config);
+
+        my $datatype = $object;
+        $datatype = "REQUEST" if ($object =~ /CSR/);
+
+        foreach my $state (@stateList)
+        {
+            ## load filename
+            my $filename_org    = "$tmpdir/LOG/$mode/".getRequired('ModuleID')."_${state}_${datatype}.dbm.dump";
+            my $filename_target = getRequired ('LOG_'.$keys->{MODE}.'_DIR')."/${filter}_${state}_${datatype}.dbm";
+
+            ## read content
+            my $content = $tools->getFile ($filename_org);         
+
+            ## extract serials
+            my @list = split /\n/, $content;
+
+            ## write serials
+            my $handle = eximOpenDatabase ($filename_target);
+            foreach my $item (@list)
+            {
+                $item =~ s/\n//sg;
+                next if ($item =~ /^$/);
+                my $value = 0;
+                if ($handle->get ($item, $value) != 0)
+                {
+                    if ($handle->put ($item, "1") != 0)
+                    {
+                        $errval = i18nGettext ("Cannot import log for exports into file __FILENAME__.",
+                                               "__FILENAME__", $filename_target);
+                        $errno  = 1234567;
+                        return undef;
+                    };
+                    debug ("export-import.lib:     $state $datatype $item commited");
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+sub eximSetModuleID {
+    our $tools;
+    my $tmpdir = $_[0];
+    $tools->saveFile (FILENAME => $tmpdir."/module.id",
+                      DATA     => getRequired ('ModuleID'));
+}
+
+sub eximGetModuleID {
+    our $tools;
+    my $tmpdir = $_[0];
+    my $export_module = $tools->getFile ($tmpdir."/module.id");
+    return $export_module;
+}
+
+sub eximGetStates {
+
+    our $tmpdir;
+
+    my $keys = { @_ };
+    my @status;
+    my $filter = "";
+
+    $filter .= $keys->{MODE}."_".$keys->{DATATYPE}."_STATES";
+    my $moduleID = eximGetModuleID ($tmpdir);
+
+    ## check for special rules in the configuration
+    my @list = getRequiredList ('EXPORT_IMPORT_MODULES');
+    my $special = 0;
+    foreach my $item (@list)
+    {
+        $special = 1 if ($item == $moduleID);
+    }
+    ## FIXME: what should $config do here ???
+    ## FIXME: potential security problem ???
+    $filter = $moduleID."_".$filter if ($special);
+
+    return getRequiredList ($filter);
+}
+
+sub eximMustBeExported {
+    our $tools;
+
+    my $keys = { @_ };
+    my $datatype = $keys->{DATATYPE};
+    my $mode     = uc($keys->{MODE});
+    my $key      = $keys->{KEY};
+
+    my $logdir = getRequired ('LOG_'.$mode.'_DIR');
+    opendir DIR, $logdir;
+    my @logfiles = grep /[0-9]*_$datatype\.dbm/, readdir DIR;
+    closedir DIR;
+
+    return 1 if (not scalar @logfiles);
+
+    foreach my $file (@logfiles)
+    {
+        my $handle = eximOpenDatabase ($logdir."/".$file);
+        return undef if (not $handle);
+        my $item;
+        ## get returns 1 if the key does not exist
+        return 1 if ($handle->get ($key, $item) == 1);
+    }
+    debug ("export-import.lib: $key of $datatype has not to be exported");
+
+    return 0;
+}
+
+sub eximSetImported
+{
+    our ($errno, $errval);
+    my $keys = { @_ };
+
+    my $logdir  = getRequired ('LOG_'.uc($keys->{MODE}).'_DIR');
+    my $logfile = $logdir."/".eximGetModuleID($keys->{DIR})."_".$keys->{DATATYPE}.".dbm";
+
+    ## open database
+    my $handle = eximOpenDatabase ($logfile);
+    return undef if (not $handle);
+
+    ## set export mark if not present
+    my $item;
+    ## get returns 1 if the key does not exist
+    if ($handle->get ($keys->{KEY}, $item) == 1)
+    {
+        ## database uses usually 0 to signal success
+        if ($handle->put (sprintf ("%s", $keys->{KEY}), "1"))
+        {
+            $errval = i18nGettext ("Cannot log item __KEY__ in database __FILE__.",
+                                   "__KEY__", $keys->{KEY},
+                                   "__FILE__", $logfile);
+            ## FIXME: what is the real errorcode here?
+            $errno  = 100;
+            return undef;
+        }
+        debug ("export-import.lib: logged ".sprintf ("%s", $keys->{KEY})." to $logfile");
+    }
+
+    ## automatic close on program exit
+    debug ("export-import.lib: $keys->{KEY} of $keys->{DATATYPE} is imported");
+
+    return 1;
+}
+
+sub eximCheckObject
+{
+    my $keys = { @_ };
+
+    my $logdir  = getRequired ('LOG_'.uc($keys->{MODE}).'_DIR');
+    my $logfile = $logdir."/".eximGetModuleID($keys->{DIR})."_".$keys->{DATATYPE}.".dbm";
+
+    ## open database
+    my $handle = eximOpenDatabase ($logfile);
+    return undef if (not $handle);
+
+    ## check if object is available at database
+    my $item;
+    if ($handle->get ($keys->{KEY}, $item) == 1){
+    	## object does not exist
+    	return 0;
+    } else {
+    	## object exists
+    	return 1;
+    }
+}
+    
+sub eximRemoveCommit
+{
+    my $keys = { @_ };
+
+    ## DIR      => tmp directory of the import
+    ## MODE     => actual mode during dataexchange (download|receive)
+    ## DATATYPE => actually handled datatype
+
+    ## build filename
+    my $logdir  = getRequired ('LOG_'.uc($keys->{MODE}).'_DIR');
+    my $logfile = $logdir."/".eximGetModuleID($keys->{DIR})."_".$keys->{DATATYPE}.".dbm";
+
+    ## remove file
+    eximCloseDatabase ($logfile);
+    unlink $logfile;
+
+    return 1;
+}
+
+## global filecache to improve export performance
+our %exim_file_cache = ();
+
+sub eximOpenDatabase
+{
+    our ($errno, $errval);
+    my $file = shift;
+
+    if (not exists $exim_file_cache{$file})
+    {
+        my %h;
+        $exim_file_cache{$file} = tie %h, "DB_File",
+                                             $file,
+                                             O_CREAT|O_RDWR,
+                                             0644, $DB_BTREE ;
+        if (not $exim_file_cache{$file})
+        {
+            $errval = i18nGettext ("Cannot open database __FILE__.",
+                                   "__FILE__", $file);
+            ## FIXME: what is the real errorcode here?
+            $errno  = 100;
+            return undef;
+        }
+        debug ("export-import.lib: opened database file $file\n");
+    }
+    return $exim_file_cache{$file};
+}
+
+sub eximCloseDatabase
+{
+    my $file = shift;
+
+    if (exists $exim_file_cache{$file})
+    {
+        undef $exim_file_cache{$file};
+    }
+    return 1;
+}
+
+#####################################################
+## support for HTML-messages instead of javascript ##
+#####################################################
+
+sub eximMediaConfirm
+{
+    if (not $_[0]) ## 0 or empty
+    {
+        return gettext ("You need to provide a support to proceed (depends on configuration). Are you sure you want to continue?");
+    }
+    return "";
+}
+
+######################################
+## full export/import functionality ##
+######################################
+
+sub withLDAPsupport {
+  my $ldap = getRequired ('LDAP');
+
+  if ( $ldap =~ /^(off|no)$/i ) {
+    print addLogSection (gettext ("LDAP-support is deactivated"));
+    print addLogLine ("");
+    print closeLogSection ();
+    return 0;
+  } else {
+    print addLogSection (gettext ("LDAP-support is activated"));
+    print addLogLine ("");
+    print closeLogSection ();
+    return 1;
+  }
+}
+    
+sub withLDAPautomatic {
+  my $ldap = getRequired ('updateLDAPautomatic');
+
+  if ( $ldap =~ /^(off|no)$/i ) {
+    print addLogSection (gettext("Automatic LDAP-update is deactivated"));
+    print addLogLine ("");
+    print closeLogSection ();
+    return 0;
+  } else {
+    print addLogSection (gettext("Automatic LDAP-update is activated"));
+    print addLogLine ("");
+    print closeLogSection ();
+    return 1;
+  }
+}
+    
+1;

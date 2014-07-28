@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>genDB</name>
+            <operation>initialization of database</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

@@ -1,0 +1,46 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+## All Rights Reserved
+##
+##   File Name: stopAutoEmail
+##       Brief: stop Auto (On-Line) Email Daemon
+##     Version: $Revision: 1.3 $
+## Description: this script stops the On-Line Email Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStopAutoEmail {
+
+	my $pidfile = undef;
+	my $pid = undef;
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoemail.pid";
+
+	if( -f "$pidfile" ) {
+		my $result = undef;
+		my $FD = undef;
+
+		if( not open ( FD, "<$pidfile" )) {
+			generalError("Can not open $pidfile!");
+		} else {
+			$pid = <FD>;
+			close( FD );
+		}
+
+		$result = POSIX::kill( $pid, 0);
+		if( $result gt 0 ) {
+			## The process is active!
+			$result = POSIX::kill( $pid, 1);
+		}
+
+		$query->param ('cmd', 'statusAutoEmail' );
+        	libExecuteCommand ();
+
+	} else {
+		cmdStatusAutoEmail();
+	}
+
+}
+
+1;

@@ -1,0 +1,8 @@
+Revision history for Perl extension OpenCA::PKCS#7
+
+0.1.24 Added chain correct verification;
+       Added a test program in the test directory (pkcs7_test.pl)
+
+0.1.0  Thu Feb 10 12:23:40 2000
+	- original version; created by h2xs 1.19
+

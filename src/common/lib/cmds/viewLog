@@ -1,0 +1,31 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: viewLog
+##       Brief: View Log
+## Description: Display given Logging Message
+##  Parameters: key
+
+use strict;
+
+sub cmdViewLog {
+
+    my $key     = $query->param('key');
+
+    my $msg = $log->getMessage ($key);
+
+    configError ( i18nGettext ("Log message __KEY__ not present in DB or the position of the message was changed!",
+                               "__KEY__", $key) ) if ( not $msg );
+
+    my $xml = $msg->getXML;
+    $xml =~ s/</&lt;/g;
+    $xml =~ s/>/&gt;/g;
+    my $logDesc = "<pre>\n$xml</pre>";
+    return libSendReply (
+                         "NAME"       => gettext ("View Log Message"),
+                         "EXPLANATION" => $logDesc
+                        );
+}
+
+1;

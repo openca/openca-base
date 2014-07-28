@@ -1,0 +1,306 @@
+
+OpenCA 1.5.0 Release Notes
+==========================
+
+This file documents major changes between releases, including new or
+modified features and configuration file changes. Only major modifications 
+are listed, primarily those that can affect existing installations.
+
+Before upgrading from a previous release please consider all changes, in 
+particular configuration file modifications, carefully.
+
+For more details please refer to the CHANGES file.
+
+---------------------------------------------------------------------------
+Aug 08 2013 - OpenCA 1.5.0 (SpecialK)
+Lots of Bug fixing
+---------------------------------------------------------------------------
+-Fixed memory leaks in OpenSSL module
+-Fixed autoCRL daemon period (hours)
+-Removed debugging messages from memory in DBI module
+-Fixed displaying SubjectAltNames in CSRs
+-Fixed recognizing DECIMAL values in DBI module
+-Added support for "NEW CERTIFICATE REQUEST" armors in req_pkcs10 command
+-Added a fork when daemons are called to add a safe container (gets rid of memory leaks inside daemons)
+-Fixed a missing "!" in the startup script (<PREFIX>/etc/init/openca)
+-Fixed a variable reference in AC.pm (self vs $self)
+-Fixed name of the variable "LogConfigurationStartup" vs "LogConfiguration" in initLogStartup()
+-Fixed the use of close when BATCH is used for the interface
+-Fixed an error in startAutoCRL and startAutoRevoke that prevented the openca service to start
+-Added the Auto Revocation Daemon to the list of started daemons in initServer
+
+---------------------------------------------------------------------------
+Feb 08 2012 - OpenCA 1.3.0 (Cuban)
+Bug fixing, added Auto Revocation Daemon
+---------------------------------------------------------------------------
+
+-Fixed CRL daemon when Days was used as Period type
+-Fixed error in DBI module that caused automatic rollbacks messages
+-New Daemon utils for centralized management of spawned processes
+-Fixed initialization issues in initServer
+-Added initial support for auto-starting daemons (not fully implemented yet)
+-Updated default configuration file for CA interface (missing verifyEmailAddress keyword)
+-Fixed an error for LOA when its value is 0 (test loa)
+-Fixed LOA processing in Auto CA Daemon
+-Fixed Signed CRS processing in Auto CA Daemon
+-Added first version of Auto Revocation Daemon
+-Updated Spanish translation
+
+---------------------------------------------------------------------------
+Feb 13 2011 - OpenCA 1.2.0 (Valentine)
+Bug fixing, added Email Verification for Requests
+---------------------------------------------------------------------------
+
+-Added Email verification system for browser request(s)
+-Fixed error in HTML output
+-Simplified JS installation (by grouping util scripts in C/ lang only)
+-Added verifyEmail command
+-Added select/deselect all in listCSR command
+-Added tools.js script
+-Fixed missing initialization of curr_user in initServer
+-Fixed syntax error in initServer (line 757)
+-Fixed error in ieVistaCSR.js script (keyUsage, keyProtection, and webObj.CreateObject call)
+-Fixed bare word usage in User.pm module
+-Fixed error in User.pm module (ERR_USER_UNKNOWN)
+-Fixed parsing error in OpenSSL.pm module
+-Fixed error when enabling EMAIL in Subject of certificates
+-Applied patch to get around a cast problem in MySQL
+-Fixed getNextItem and getPrevItem functions in DBI.pm
+-Updated libGetLastItem and libGetFirstItem in misc-utils
+-Fixed issues with UTF-8 managing
+-Modified rpm building target to generate source packages
+-Added new openca-user module for user management
+-Added new openca-useradmin script
+-Fixed missing link in UI for Node Init (Upgrade DB)
+-Fixed required config keywords in server's config for cert requests when NO
+ or EXIST is used for DN_TYPE_REQUIRED
+-Fixed Email link in UI (fixed HTML.pm and initServer files)
+-Fixed missing setHeaderAttributes() in CRL.pm
+-Fixed utf8 display in DBI.pm
+-Fixed default language support in web interfaces
+-Fixed error in HTML.pm that prevented hidden tags to be closed (IE detected
+ it and would not post XSRF tokens correctly)
+-Cleaned up DB module (not used anymore - only DBI)
+-Fixed Installation bug for .bin files (missing etc/includes directory)
+
+---------------------------------------------------------------------------
+Feb 23 2010 - OpenCA 1.1.0 (samba)
+Bug fixing, Improved RPM support, Support for OpenSSL 1.0+
+---------------------------------------------------------------------------
+
+Main changes from previous version:
+-Fixed startAutoCA, startAutoCRL, and startAutoEmail (lost db handler)
+-Fixed fingerprint matching in CA_CERTIFICATE table
+-Added updateKey in DBI (used in upgradeDB)
+-Fixed problem with export/import certificates w/ private keys
+-Fixed an error in DB storage of CA_CERTIFICATE
+-Fixed an error in DB storage of Server-Side generated requests w/ keys
+-Added getRandomBytes to OpenSSL.pm to support random serial number generation
+on old OpenSSL versions (not supporting `openssl rand -hex ... '
+-Fixed incompatibility with old CGI module (incorrect type for Javascript)
+-Added rowid columns to each table
+-Fixed "Extra References" building routines
+-Fixed problem when retrieving newly issued CA certs from the DB
+-Added Self Signed CA profile
+-Added the possibility to select profile when self-signing CA certificate
+-Added the possibility to use subjectAltNames in self-signed CA
+-Added configuration options to manage the homepage aspect (TITLE, BODY,
+NOTICES PANEL, EASY PANEL)
+-Added new ETC_PREFIX/includes/ directory for static HTML includes
+-Added example home_body.inc include file
+-Installation feature: old config files are now renamed with .old extension
+-Fixed new menus for IE
+-Cleaned up HTML module's code
+-Fixed an HTML bug when sending static page (libSendStatic)
+-Fixed dynamic menu generation bugs
+-Added Fade in/Fade out effects to menues
+-Added Footer Links/Menu
+-Added UI initial support for USERS (*feature not working yet*)
+-Added initial stats page (*to be expanded*)
+-Fixed CRL links (installation bug)
+-Fixed missing expired certs support in 'lists' command
+-Added multi-CSR delete on RA/CA interfaces
+-Fixed LOA and PolicyID bug (thanks to Ralf Hornik)
+-Fixed visualization of CRLs
+-Fixed error in retrieving EXPIRED_CRL objects
+-Updated PERL modules
+-Fixed OpenCA-OpenSSL module to work with OpenSSL 1.0.0
+-Fixed Net-SSLeay module to work with OpenSSL 1.0.0
+-Fixed module installation dir bug (when using --with-build-dir=..)
+-Fixed RPM building script
+-Dropped distribution of OpenSSL together with the bin packages
+-Fixed missing links in installation of ra/ca interfaces
+-Added SCEP capability to understand 'Level of Assurance' or 'loa' (1.3.6.1.4.1.18227.50.1) extension from PKCS#10 request.
+-Fixed parsing of Browser's Request allowing concatenation of variables in the value (eg. $ADDIIONAL_...EMAIL$ADDITIONA_.. without spaces between variables' names)
+-Fixed scepPKIOperation: added check for openca-scep command
+-Added support for "Certificate Template" attribute support in requests
+-Switched to ChangeLog file from CHANGES file
+-Small Bug fix in DBI module
+-Fixed DBI problem
+-Fixed Email English language
+-Fixed an error in signed CRR building
+-Added subjectAltName specific input types for pkcs10 request (server) form
+-Fixed viewCert and send_email_cert commands to correctly send CA certificates
+-Fixed a bug that prevented the signed approval of CRS on RA
+-Fixed the 'make clean' command
+-Fixed the non-root build (defaulting to the user's user/group)
+-Fixed an installation error when using the --with-$iface-prefix
+
+---------------------------------------------------------------------------
+2008-Oct-10 - OpenCA 1.0.1 (Ten Ten)
+Support for new browsers and OSes, DSA/ECDSA algors, new graphic Installer.
+---------------------------------------------------------------------------
+
+Main changes from previous version:
+
+* Added Minimum Certificate Validity Period for Expiring email sending
+  (automatically)
+* Added extensive information in the Auto(*) daemon activation
+  pages - to explain the available configuration options.
+* Finished AutoEmail daemon for automatic E-Mail sending (both
+  for newly issued certificates and for expiring certificate
+  warnings)
+* Added the possibility for searching for attributes with multiple
+  values (eg., multiple roles or LOA for certs)
+* Finished AutoCRL daemon for issuing CRL automatically
+* Added autoEmail daemon (automatic E-Mail sending)
+* Fixed loading/saving of parameters for Auto(*) daemons
+* Extended report on the status for Auto(*) daemons
+* Fixed CRL and Certificates auto status update (valid/expired)
+* Added AutoCRL daemon (needs additional work)
+* Added new functions to misc-utils.lib for managing process status
+  verification and parameter configuration save/restore.
+* Fixed search of objects and extra-refs for lists
+* Fixed DSA and ECDSA e-mail problems (no encryption is supported)
+* Fixed retrieval of requested certificates when the key
+  is generated on the server (eg., a .p12 is returned now)
+* Fixed lists (REQ, CERTS, etc... ) display (more readable)
+* Added Level of Assurance Checking (Key Algorithm, Key Generation Mode
+  and Key Size)
+* Added support for requestStatus to request configuration for automatically
+  approved requests (values can be one of NEW, PENDING, or APPROVED)
+* Added support for ldaps and starttls for ldap authenticated browser
+  requests (etc/datasources.xml)
+* Added authenticated (via ldap) browser request form (etc/auth_browser_req.xml)
+* Added a defaul logo page (instead of software version one)
+* Added support for the new certificate request form for CA initialization
+* Fixed a space-tolerance in RDNs
+* Simplified the Certificate Request Page
+* Added more configurable and simplified certificate request form
+  (etc/browser_req.xml)
+* Updated script code (no more VB - only javascript)
+* Added Vista Support (IE7) for certificate request
+* Added DC fields in CA Certificate Request
+* Added possibility to specify the subjectAltName via the CA
+  interface when self-signing the CA certificate
+* Fixed Browser and OS recognition in initCGI
+* Fixed DN parsing in OpenSSL.pm and REQ.pm to allow bogus DNs
+  from Windows 2003 server (problem reported by Dmitrij Mironov)
+* Added LDAP protocol version selection in config.xml (default 3)
+* Added possibility to generate DSA keys, reqs, and certs via
+  the web interface (eg., for RA/CA operators)
+* Added CRL Revocation Code in CRRs
+* Fixed several errors in the default RBAC definitions (ACL)
+* Fixed name extension when sending .p12 files to the user
+* Applied patch from Alexander Klink (cross-site scripting security fix)
+* Fixed generation of index.txt file (thanks to Diego de Felice)
+* Fixed --with-service-email-account (thanks to Robert Nelson)
+* Eliminated debugging info when web-signing (thx to Robert Nelson)
+* Added ca_organization, ca_locality, ca_state and ca_country in 
+  etc/config.xml using configure
+* Fixed cleanup of directories and ext-modules dependecies
+* Fixed menu generation issue that would prevent Safari from
+  correctly navigating the menu
+
+
+---------------------------------------------------------------------------
+2005-Oct-09 - OpenCA 0.9.3-rc1
+Installation and packaging fixing release
+---------------------------------------------------------------------------
+
+2006-Oct-09: OpenCA 0.9.3-rc1
+	* stripped openca-sv and openca-scep from base package
+	  (no more C-related modules inside the base package)
+	* stripped ocspd from openca base package
+	* binary pacakge building fixed (rpms)
+	* package installation fixed
+
+
+2005-12-22 - OpenCA 0.9.2.5
+- Improved UTF-8 Support
+- LDAP Authentication
+- SCEP improvements (Certificate template request support, authenticated
+    requests)
+
+Configuration file changes:
+etc/servers/scep.conf.template
+  modified: ScepAllowEnrollment (new possible value 'VALIDSIGNATURE', 
+                                 backward compatible)
+
+etc/access_control/*.xml
+  modified: added 'ldap' database to passwd authentication method
+  
+---------------------------------------------------------------------------
+
+
+2005-08-12 - OpenCA 0.9.2.4
+This is a maintenance release and mainly identical to 0.9.2.3.
+---------------------------------------------------------------------------
+
+2005-08-05 - OpenCA 0.9.2.3
+*** IMPORTANT: This release contains an error in the database layer. ***
+DO NOT USE THIS RELEASE!
+
+- Dynamic engine support (required for OpenSSL 0.9.8)
+- Russian translation
+- UTF-8 support
+- Improved SCEP interface (read documentation!)
+
+Configuration file changes:
+etc/config.xml
+  new: cert_chars
+etc/menu.xml.template
+  new: HSM Management
+  new: Russian
+etc/rbac/acl.xml
+  modified: permission/module
+etc/servers/ca.conf.template
+  new: lockFile
+  modified: DN_*_CHARACTERSET
+etc/servers/pub.conf.template
+  modified: DN_*_CHARACTERSET
+etc/servers/ra.conf.template
+  modified: DN_*_CHARACTERSET
+etc/servers/scep.conf.template
+  new: ScepAllowEnrollment
+  new: ScepAllowRenewal
+  new: ScepKeepSubjectAltName
+  new: ScepRenewalRDNMatch
+  new: ScepDefaultRole
+  new: ScepDefaultRA
+  new: ScepAutoApprove
+---------------------------------------------------------------------------
+
+2005-03-07 - OpenCA 0.9.2.2
+- LunaCA3 support
+
+Configuration file changes:
+etc/servers/ldap.conf.template
+  new: ModuleID
+  new: ModuleShift
+etc/servers/node.conf.template
+  modified: SEND_MAIL_DURING_IMPORT
+---------------------------------------------------------------------------
+
+2004-08-28 - OpenCA 0.9.2.1
+- Greek translation
+
+Configuration file changes:
+etc/menu.xml.template
+  new: Greek
+---------------------------------------------------------------------------
+
+2004-10-11 - OpenCA 0.9.2.0
+Major differences to the 0.9.1 version. It is recommended to perform
+a fresh install and migrate configuration manually if upgrading
+from 0.9.1.

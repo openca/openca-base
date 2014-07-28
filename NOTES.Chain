@@ -1,0 +1,18 @@
+Notes about Hierarchies:
+=======================
+
+If your CA is not the ROOT CA of the hierarchy you have, when verifying
+signatures, to use chain verification. To do so, simply put all the CAs'
+certificates ( your too ) into the $ca/chain directory.
+
+Certificates MUST end with the .crt extension, you can use the web
+'CA Initialization' facility to create needed links, or you can do
+is by simply do the following:
+
+	$ cd $ca/chain
+	$ make
+
+Please note that certificates MUST be PEM formatted and named *.crt, i.e.
+'cacert.crt' or 'snake-oil.crt'.
+
+

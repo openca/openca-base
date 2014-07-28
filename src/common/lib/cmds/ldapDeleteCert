@@ -1,0 +1,54 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapDeleteCert
+##       Brief: Add certificate to LDAP server
+## Description: Add a single certificate to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapDeleteCert {
+
+our ($query, $db, $ldap);
+
+## certificates
+print startLogPage (gettext ("Removing certificate from LDAP ..."));
+
+my $key = $query->param ('key');
+if (not $key and ($key != 0)) {
+	print addPreLogLine ("<FONT COLOR=#ff0000>".
+			gettext ("No certificate was specified! FAILED").
+            "</FONT>");
+	closeLogSection ();
+	closePage ();
+	return undef;
+}
+
+my $dataType = $query->param ('dataType');
+$dataType = "CERTIFICATE" if (not $dataType);
+
+my $item = $db->getItem ( DATATYPE => $dataType, KEY => $key );
+
+my $result;
+if ($dataType =~ /CA_CERTIFICATE/i) {
+        $result = $ldap->delete_attribute ( AUTHORITY_CERTIFICATE => $item, NOPRINT => 1 );
+} else {
+        $result = $ldap->delete_attribute ( CERTIFICATE => $item, NOPRINT => 1 );
+}
+
+if ($result and $result->{STATUS}) {
+	print addLogSection (i18nGettext ("Certificate __CERT_SERIAL__ OK", "__CERT_SERIAL__", $item->getSerial()));
+} else {
+	print addLogSection ("<FONT COLOR=#ff0000>".
+	        i18nGettext ("Certificate __CERT_SERIAL__ FAILED", "__CERT_SERIAL__", $item->getSerial()).
+	        "</FONT>");
+}
+closeLogSection ();
+
+closePage ();
+
+}
+
+1;

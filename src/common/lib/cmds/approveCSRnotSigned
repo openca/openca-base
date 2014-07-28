@@ -1,0 +1,127 @@
+## OpenCA - RA Server Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: approveCSRnotSigned
+##       Brief: approve Request
+##     Version: $Revision: 1.6 $
+## Description: Adds a confirmed request into the APPROVED_REQUEST dB
+##  Parameters: key, dataType, text, signature
+
+use strict;
+
+sub cmdApproveCSRnotSigned {
+
+our ($db, $query, $cryptoShell, $errval);
+
+## Get the parameters
+my $key 	= $query->param( 'key' );
+my $dataType 	= $query->param( 'dataType' );
+my $text 	= $query->param( 'text' );
+my $head 	= $query->param( 'head' );
+my $inform	= "PEM";
+
+## Get Conf Parameters
+my $tempDir	= getRequired('tempDir');
+
+my ( $req, $item, $sig, $sigStatus, $signer );
+
+# $signature =~ s/\n*$//;
+
+$text  = "$head" . "$text\n";
+
+if( not $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key) ) {
+	generalError( i18nGettext ("Cannot find __DATATYPE__ REQ in DB!", 
+				"__DATATYPE__", $dataType));
+}
+
+$text .= $req->getKey();
+
+## FIXME: should we check the subject here if it is not dynamic via serials?
+
+if ($dataType !~ /RENEW/i and not $req->getParsed()->{HEADER}->{RENEW}) {
+	# check the public key
+	## Check if there are certificates with the same keys
+	
+	my $sameUser = 1;
+	my @otherCertsList = ();
+
+	my @certList = $db->searchItems( DATATYPE => "CERTIFICATE",
+					 PUBKEY   => $req->getParsed()->{PUBKEY});
+ 
+	foreach my $x ( @certList ) {
+		if ( $x->getParsed->{DN} ne $req->getParsed()->{DN} ) {
+			push ( @otherCertsList, $x );
+		}
+	}
+
+	if ( scalar (@otherCertsList) >= 1 ) {
+
+	   my $errorString = 
+		gettext ("A Certificate with the same public key exists!").
+			"<br>\n". gettext ("This is a keycompromise of the " .
+			"certificates with the serial:") ."\n".
+			"<ul>\n";
+
+		foreach my $h (@otherCertsList) {
+			$errorString .= "<li>".$h->getSerial()."</li>\n";
+		}
+
+		$errorString .= gettext ("Please revoke the certificates and " .
+				 "delete the request.")."\n";
+ 
+		generalError( $errorString ) if($#certList > -1);
+	}
+}
+
+# check the type of request
+if( $req->getParsed()->{HEADER}->{TYPE} =~ /(PKCS#10|IE)/i ) {
+	$inform = "PEM";
+} else {
+	$inform = $req->getParsed()->{HEADER}->{TYPE};
+}
+
+if( not $item = new OpenCA::REQ ( SHELL   => $cryptoShell, 
+                                  GETTEXT => \&i18nGettext,
+			          INFORM  => $inform,
+                                  DATA    => $text )) {
+	generalError( i18nGettext ("Cannot create a new REQ object (__KEY__)!", "__KEY__", $key));
+}
+
+if (not crypto_check_lifetime ($item, 
+			$req->getParsed()->{HEADER}->{ROLE})) {
+	# Lifetime Error
+    	generalError ($errval, $errval);
+}
+
+my $newType = $dataType;
+
+$newType =~ s/^[^\_]+_/APPROVED_/;
+
+if(not $db->updateItem ( OBJECT => $item, DATATYPE => $newType )) {
+ 	generalError( i18nGettext ("Error while updating the status ( " .
+ 		"__DATATYPE__ -> __NEWTYPE__ ) of the request (__KEY__)!", 
+ 			"__DATATYPE__", $dataType, "__NEWTYPE__", $newType,
+ 			"__KEY__", $key));
+};
+
+# if ( not $db->updateStatus ( DATATYPE=>$dataType, 
+# 				OBJECT => $item, 
+# 				NEWTYPE=>"$newType") ) {
+# 	generalError( i18nGettext ("Error while updating the status ( " .
+# 		"__DATATYPE__ -> __NEWTYPE__ ) of the request (__KEY__)!", 
+# 			"__DATATYPE__", $dataType, "__NEWTYPE__", $newType,
+# 			"__KEY__", $key));
+# }
+
+return libSendReply (
+    "TIMESTAMP"   => 1,
+    "NAME"        => gettext ("Certificate Signing Request Approved"),
+    "EXPLANATION" => gettext("Certificate Request Successfully approved.").
+		     "\n". gettext ("Signature: not available because the " .
+		     "request was not signed")
+     );
+}
+
+1;
+

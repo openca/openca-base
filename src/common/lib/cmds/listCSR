@@ -1,0 +1,398 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: listCSR
+##       Brief: Build CSR Listing
+## Description: Build CSR Listing given correct dataType
+##  Parameters: viewFrom, dataType, ra
+
+use strict;
+
+sub cmdListCSR {
+
+    our ($query, $db, $self);
+
+    # our $DEBUG =1;
+
+    my $from     = ( $query->param( 'viewFrom' ) or 0 );
+    my $dataType = $query->param( 'dataType' );
+    my $rows = $query->param( 'rows' );
+
+    my ($name, $exp);
+    my ($item_list, $cmd_panel, $cmd_list, $hidden_list) = 
+		(undef, undef, undef, undef);
+
+    my ( $dateColTitle, @cols, @list );
+
+    my ( $searchParams, $rowParams );
+
+    $item_list->{CLASS} = "lists";
+
+    my $colNum = 0;
+    ## Differentiate the list parameters
+    if(  $dataType eq "PENDING_REQUEST" ) {
+        $name = "Pending Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submitted On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+    } elsif( $dataType eq "NEW_REQUEST" ) {
+        $name = "New Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submitted On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+    } elsif	( $dataType eq "RENEW_REQUEST" ) {
+        $name = "Renewed Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Renewed On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } elsif	( $dataType eq "RENEW_APPROVED" ) {
+        $name = "Approved Renewal Certificate Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Renewed On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } elsif( $dataType eq  "SIGNED_REQUEST" ) {
+        $name = "Signed Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Signed On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } elsif( $dataType eq  "APPROVED_REQUEST" ) {
+        $name = "Approved Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sel");;
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Approved On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } elsif ( $dataType eq "DELETED_REQUEST" ) {
+        $name = "Deleted Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Deleted On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } elsif ( $dataType eq "ARCHIVED_REQUEST" ) {
+        $name = "Archived Certificate Signing Requests";
+        $item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Submit Name");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Archived On");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Role");
+        $item_list->{HEAD}->[$colNum++] = gettext ("LOA");
+        $item_list->{HEAD}->[$colNum++] = gettext ("Sign");
+    } else {
+	generalError(gettext("The requested list is not available."));
+    }
+
+    ## Get required parameters ( return only the value string )
+    my $maxItems = getRequired( "maxReturnedItems" );
+    # my $elements = $db->elements( DATATYPE=>$dataType );
+
+    my $ra  = ( $query->param('ra') or "All" );
+    my $loa = ( $query->param('loa') or "" );
+    my $role = ( $query->param('role') or "All" );
+
+    my $search = undef;
+
+    $ra = "All" if $ra eq gettext("All");
+    $role = "All" if $role eq gettext("All");
+    $loa = "All" if $loa eq gettext("All");
+
+    if ( ($ra ne "") and ($ra !~ /All/i) ) {
+	$search->{RA} = $query->param('ra');
+    }
+
+    if ( ($loa ne "") and ($loa !~ /All/i ) ) {
+	$search->{LOA} = $query->param('loa');
+    }
+
+    if ( ($role ne "") and ($role !~ /All/i ) ) {
+	$search->{ROLE} = $query->param('role');
+    }
+
+    # if ( $rows eq "" ) {
+# 		$rowParams->{DATATYPE} = $dataType;
+# 		$rowParams->{MODE} = 'COUNT';
+# 
+# 		$rows = $db->searchItems ( %{ $rowParams }, %{ $search } );
+ #    }
+
+    # Now let's put all the parameters for the search
+    $searchParams->{DATATYPE} = $dataType;
+    $searchParams->{ITEMS}    = $maxItems;
+    $searchParams->{FROM}     = $from;
+
+    @list = $db->searchItems ( %{ $searchParams }, %{ $search } );
+
+    $cmd_panel->[0] = libBuildRefs(
+			DATATYPE  => $dataType,
+			MAXITEMS  => $maxItems,
+			SEARCH    => $search );
+
+#    if ( scalar @list < 1 ) {
+#
+#        $cmd_panel->[0] = libBuildRefs(
+#			DATATYPE  => $dataType,
+#                        ELEMENTS  => $rows,
+#                        MAXITEMS  => $maxItems,
+#                        MODE      => "EXP",
+#                        NOW_FIRST => $from,
+#                        NOW_LAST  => 0,
+#                        FIRST     => 0,
+#                        LAST      => 0);
+#
+#    } else {
+#
+#	my $firstItem = undef;
+#	my $lastItem = undef;
+#
+#	my $firstSerial = 0;
+#	my $lastSerial = 0;
+#
+#	my $nowFirst = 0;
+#	my $nowLast = 0;
+#
+#	$firstItem = libDBGetFirstItem ( $dataType );
+#	$lastItem = libDBGetLastItem ( $dataType );
+#
+#	if( $firstItem ) {
+#		$firstSerial = $firstItem->getSerial( $dataType );
+#	};
+#
+#	$lastSerial = $firstSerial;
+#
+#	if( $lastItem ) {
+#		$lastSerial = $lastItem->getSerial( $dataType );
+#	};
+#
+#	if( $list[0] ) {
+#		$nowFirst = $list[0]->getSerial( $dataType );
+#	} else {
+#		$nowFirst = $firstSerial;
+#	};
+#
+#	if ( $list[ scalar (@list) - 1] ) {
+#		$nowLast = $list[ scalar (@list) - 1]->getSerial($dataType);
+#	} else {
+#		$nowLast = $lastSerial;
+#	};
+#
+#        $cmd_panel->[0] = libBuildRefs(
+#                        DATATYPE  => $dataType,
+#                        ELEMENTS  => $rows,
+#                        MAXITEMS  => $maxItems,
+#                        MODE      => "EXP",
+#                        NOW_FIRST => $nowFirst,
+#                        NOW_LAST  => $nowLast,
+#                        FIRST     => $firstSerial,
+#                        LAST      => $lastSerial,
+#			SEARCH	  => $search );
+#
+#    }
+
+    # $cmd_list->{HEAD}->[0] = gettext("Operations");
+    my $confirm = gettext("This will delete all selected requests."). '\n' .
+		  gettext("Do you want to continue ?");
+    $hidden_list->{"cmd"} = "deleteListCSR";
+    $hidden_list->{"dataType"} = "$dataType";
+    if ( $dataType !~ /DELETED|ARCHIVED/ ) {
+      $hidden_list->{"caller"} = $query->param("HTTP_FULL_CGI_SCRIPT");
+      $cmd_list->{BODY}->[0]->[1] = "<input type='button' name='setRequests'".
+	  " value='Select all Requests' onClick='OpenCA.setAllCheckbox(\"delete\", true, \"OPENCA\"); return true;' />";
+      $cmd_list->{BODY}->[0]->[2] = "<input type='button' name='unsetRequests'".
+	  " value='Clear all Requests' onClick='OpenCA.setAllCheckbox(\"delete\", false, \"OPENCA\"); return true;' />";
+      $cmd_list->{BODY}->[0]->[3] = "<input type='button' name='delRequests'".
+	  " value='Delete Selected Requests' onClick='confirm(\"$confirm\") ".
+	  " && submit();' />";
+    }
+
+    ## get list of the LOAs type
+    my  $loaOption = getRequired('USE_LOAS');
+    my ($loaTwig, $xmlLOA, %LOALevels, );
+    if ($loaOption =~ m/yes/i) {
+        $loaTwig = loadConfigXML ('LOAConfiguration');
+        if (not $loaTwig) {
+            generalError (gettext ("Cannot load menu configration"));
+        }
+
+        #$xmlLOA = $twig->get_xpath('loa');
+        my @loaList;
+        for my $al ($loaTwig->get_xpath("loa")) {
+            $xmlLOA = gettext(($al->first_child('name'))->field);
+            $LOALevels{gettext(($al->first_child('level'))->field)}=$xmlLOA;
+
+            push (@loaList, $xmlLOA);
+            debug_cmds ("listCSR: \@loadList @loaList");
+            debug_cmds ("listCSR: LOALevel 10: $LOALevels{10}");
+        }
+    }
+
+    ## Process all CSRs
+    $item_list->{BODY} = [];
+    foreach my $req ( @list ) {
+        my ( $head, $parsed, $format, $key, $ser_col, $serial, $date, $loa  );
+        my @vals;
+
+        ## We have no problem either if it is a PEM or SPKAC
+        ## request as the REQ mod will try to recognize it.
+        ## my $req = new OpenCA::REQ( SHELL=>$openssl,
+        ##                         DATA=>$reqData);
+
+        next if (not $req);
+
+        my $pos = scalar @{$item_list->{BODY}};
+        my $index = 0;
+        $parsed = $req->getParsed();
+        $head   = $parsed->{HEADER};
+        $key    = $req->getSerial();
+
+        $serial = $req->getSerial();
+
+        if ( not $serial ) {
+            $serial = "<CENTER>---</CENTER>";
+        };
+
+        my $lnk = new CGI({cmd=>"viewCSR", dataType=>"$dataType", key=>$key});
+        $ser_col = $lnk->a({-class=>"list", -href=>"?".$lnk->query_string()}, "$serial");
+
+        ## get the name of the loa to display
+        if ($loaOption =~ m/yes/i)
+        {	
+            $loa = $LOALevels{$head->{LOA}};
+            debug_cmds ("listCSR: LOA in head is $head->{LOA} and loa is $loa");
+        }
+
+	if ( $dataType !~ /^(DELETED|ARCHIVED)/i ) {
+        	$item_list->{BODY}->[$pos]->[$index++] = '<input ' .
+			'type="checkbox" name="delete" value="' .
+			$serial . '" />';
+	}
+
+        $item_list->{BODY}->[$pos]->[$index++] = $ser_col;
+        if ( $head->{SUBJECT} =~ /CN=([^\,]+)/gi ) {
+            $item_list->{BODY}->[$pos]->[$index++] = $1;
+        } elsif ( $parsed->{CN} ) {
+            $item_list->{BODY}->[$pos]->[$index++] = $parsed->{CN};
+        } elsif ( $parsed->{DN} =~ /CN=([^\,]+)/gi ) {
+            $item_list->{BODY}->[$pos]->[$index++] = $1;
+        } elsif ( $parsed->{DN} ) {
+            $item_list->{BODY}->[$pos]->[$index++] = $parsed->{DN};
+        } else {
+            $item_list->{BODY}->[$pos]->[$index++] = "<CENTER>---</CENTER>";
+        }
+
+        if ( $dataType !~ /(NEW|PENDING|RENEW|APPROVED)/i ) {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                ( $head->{DELETED} or 
+			$head->{DELETED_AFTER} or 
+			$head->{ARCHIVED_AFTER} or gettext("n/a"));
+        } else {
+		my $now = $cryptoShell->getNumericDateDays();
+		my $date = ( $head->{APPROVED} or $head->{APPROVED_AFTER} or 
+			$head->{NOTBEFORE} );
+		my $numDate = undef;
+		my $style = "";
+
+		if( $date ) {
+			my $elapsed = 0;
+			$numDate = $cryptoShell->getNumericDateDays ( $date );
+			$elapsed = $now - $numDate;
+
+			if ( $elapsed < 8 ) {
+				$style = "color: green;";
+			} elsif ( $elapsed < 15 ) {
+				$style = "color: #a30;";
+			} elsif ( $elapsed < 22 ) {
+				$style = "color: red;";
+			} else {
+				$style = "color: red; font-width: bold;";
+			};
+
+		} else {
+			$date = gettext ("n/a");
+		}
+		
+            $item_list->{BODY}->[$pos]->[$index++] =
+			"<span style='" . $style . "'>$date</span>";
+        }
+        $item_list->{BODY}->[$pos]->[$index++] =
+            ($head->{ROLE} or gettext("n/a"));
+			
+        $item_list->{BODY}->[$pos]->[$index++] =
+            ($loa or gettext("n/a"));
+
+	my $errStyle = 	"border: 1px; border-style: solid; " .
+			"border-color: black; background-color: red; " .
+			"width; 1em; color: white; text-align: center; " .
+			"font-weight: bold;";
+
+	my $okStyle = "border: 1px; border-style: solid; " .
+		      "border-color: black; background-color: green; " .
+		      "width; 1em; text-align: center; font-weight: bold;";
+
+	my $naStyle = "border: 1px; border-style: solid; " .
+		      "border-color: black; background-color: #ddd; " .
+		      "width; 1em; text-align: center; font-weight: bold;";
+
+          if ($dataType !~ /(NEW|PENDING)/) {
+            ## get operator from first signature
+            if ( $parsed->{TYPE} =~ /with .* Sign/i ) {
+              if (my $sig = libGetSignatureObject ( OBJECT => $req )) {
+                if (my $cert = libGetSignerCertificateDB( SIGNATURE=> $sig )) {
+                    $item_list->{BODY}->[$pos]->[$index++] =
+                        "<a class=\"list\" href=\"$self?cmd=viewCert&key=".
+                        $cert->getSerial()."\" style='color: white;'>".
+			"<div style='$okStyle'>Ok</div>" . "</a>";
+                        # $cert->getParsed()->{HEX_SERIAL} ."</a>";
+                } else {
+                    $item_list->{BODY}->[$pos]->[$index++] =
+			"<div style='$errStyle'>Error</div>";
+                }
+	     } else {
+		$item_list->{BODY}->[$pos]->[$index++] =
+			"<div style='$errStyle'>Error</div>";
+	     }
+           } else {
+                my $operator = ( $parsed->{OPERATOR} or 
+					$head->{OPERATOR} or gettext("n/a"));
+                if ($operator =~ /n\/a/i) {
+                        $operator = gettext("n/a");
+                }
+                $item_list->{BODY}->[$pos]->[$index++] = 
+			"<div style='$naStyle'>$operator</div>";
+            }
+	}
+
+    }
+
+    return libSendReply (
+                         "NAME"      => gettext ($name),
+                         "ITEM_LIST" => $item_list,
+                         "CMD_PANEL" => $cmd_panel,
+			 "CMD_LIST"  => $cmd_list,
+			 "HIDDEN_LIST" => $hidden_list,
+                         "TIMESTAMP" => 1
+                        );
+}
+
+1;
+

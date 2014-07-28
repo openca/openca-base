@@ -1,0 +1,15 @@
+common/lib/functions/crypto-utils.lib
+common/lib/functions/datasource-utils.lib
+common/lib/functions/export-import.lib
+common/lib/functions/ldap-utils.lib
+common/lib/functions/log-utils.lib
+common/lib/functions/mail-utils.lib
+common/lib/functions/misc-utils.lib
+common/lib/functions/rbac-utils.lib
+common/lib/functions/request-utils.lib
+common/lib/functions/initCGI
+common/lib/functions/initDB
+common/lib/functions/initDBI
+common/lib/functions/initLDAP
+common/lib/functions/initRBAC
+common/lib/functions/initServer

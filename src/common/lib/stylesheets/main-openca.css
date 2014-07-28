@@ -1,0 +1,676 @@
+/* General (Main page) CSS definitions
+ * (C) 1998-2010 by Massimiliano Pala and OpenCA Group
+ * OpenCA Licensed Software
+*/
+
+body {
+	font-size: 0.9em;
+	font-family: Sans-Serif;
+}
+
+table.getParams {
+    width: 550px;
+}
+
+table.global {
+    width:  90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    border-width: 0px;
+    padding: 0px;
+    margin: 0px;
+    /* background-color: #ddddee; */
+}
+
+/*
+.extraRef {
+    width: 100%;
+    white-space: nowrap;
+    background-color: #eeeef1;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.extraRef span {
+    font-size: 120%;
+    padding: 5px; 
+    border-style: solid; 
+    border-width: 1px;
+    background-color: white;
+    margin: 3px;
+    position: relative;
+    
+}
+*/
+
+.extraRefPanel {
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+    -khtml-border-radius: 9px;
+
+    border-color: gray;
+    border-style: inset;
+    border-width: 2px;
+
+    background-color: #aac;
+    background-repeat: repeat-x;
+    background-image: url('images/panel_back.png');
+    color: black;
+    font-family: Sans-Serif;
+
+    padding-top: 5px;
+    padding-bottom: 9px;
+
+    vertical-align: middle;
+    text-align: center;
+    min-width: 300px;
+}
+
+.extraRef {
+	border-style: solid;
+	border-width: 2px;
+	border-color: black;
+	background-color: #eef;
+	color: #99d;
+
+	margin: 5px 5px 5px 5px;
+	padding: 5px 10px 5px 10px;
+
+	font-weight: normal;
+	text-align: center;
+	display: inline;
+
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+}
+
+.extraRef:hover {
+	background-color: #ffa;
+	border-color: #f70;
+	/*
+	padding: 12px;
+	margin: 12px;
+
+	font-size: 14pt;
+	font-weight: bold;
+	text-align: center;
+	display: inline;
+	*/
+
+}
+
+.extraRef a {
+	color: black;
+}
+
+.extraRef a:visited {
+	color: black;
+}
+
+.extraRef a:hover {
+	color: #f70;
+}
+
+
+.extraRefSelected {
+	border-style: solid;
+	border-width: 2px;
+	/*
+	border-color: #f70;
+	background-color: #ffa;
+	*/
+	border-color: black;
+	background-color: #f70;
+	color: black;
+
+	padding: 12px;
+	margin: 12px;
+
+	font-size: 14pt;
+	font-weight: bold;
+	text-align: center;
+	display: inline;
+
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+}
+
+.extraRefSelected a {
+        color: black;
+}
+
+.extraRefSelected a:hover {
+        color: black;
+}
+
+.extraRefSelected a:visited {
+        color: black;
+}
+
+
+.page_headline {
+    font-family:      helvetica, arial;
+    font-size:        14pt;
+    font-weight:      bold;
+    color:            #264A8D;
+    background-color: #ffffff;
+    text-align:       right;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ****************************************** */
+/*           normal page definitions          */
+/* ****************************************** */
+
+/* ************** explanation ************* */
+
+th {
+    -moz-border-radius: 0px 10px 0px 0px;
+    -webkit-border-radius: 0px 10px 0px 0px;
+    -khtml-border-radius: 0px 10px 0px 0px;
+    border-radius: 0px 10px 0px 0px;
+}
+
+td {
+    -khtml-border-radius: 0px 10px 0px 0px;
+    -moz-border-radius: 0px 10px 0px 0px;
+    -webkit-border-radius: 0px 10px 0px 0px;
+    border-radius: 0px 10px 0px 0px;
+}
+
+td.explanation {
+    font-family:      helvetica;
+    background-color: #ddddee;
+    padding:          10px;
+    text-align:	      justify;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ************** timestamp ************* */
+
+.timestamp {
+    font-family:      helvetica, arial;
+    background-color: #ddddee;
+    padding:          10px;
+    text-align:	      left;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ************** info_list ************* */
+
+td.global_info_list {
+    background-color: #ddddee;
+    padding:          10px;
+    background: url(images/openca_main_back_col_2.png) #ddddee;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+td.info_list {
+    text-align: left;
+    /* font-size: 0.9em; */
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ************** item_list ************* */
+
+td.global_item_list {
+    /* background-color: #ddddee; */
+    background: url(images/openca_main_back_col_2.png) #ddddee;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    padding:          10px;
+    padding: 5px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+td.item_list {
+    text-align: left;
+}
+
+a.list {
+    color: #ff7000;
+}
+
+.agreement {
+	overflow: scroll;
+	height: 350px;
+	background: white;
+	border: solid;
+	border-width: 1px;
+	margin: 10px;
+	padding: 4px;
+	text-align: left;
+}
+
+/* ************** cmd_list ************* */
+
+td.global_cmd_list {
+    background-color: #ddddee;
+    padding:          10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ************** cmd_panel ************* */
+
+td.global_cmd_panel {
+    background-color: #ddddee;
+    padding:          10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+/* ****************************************** */
+/*             log page definitions           */
+/* ****************************************** */
+
+div.log {
+    font-family:      courier;
+    font-size:        10pt;
+    text-align:	      left;
+    /* background-color: #ddddee; */
+    background-color: white;
+    color: #264A8D;
+    margin: 30px;
+    border-style: solid;
+    border-color: #447 #ccc #ccc #447;
+    padding: 10px;
+    height: 400px;
+    width: 600px;
+    overflow: scroll;
+    /* text-align:       center; */
+}
+
+/* ****************************************** */
+/*           input type definitions           */
+/* ****************************************** */
+
+.required {
+	background-color: #ffffcd;
+	border-color: #ff7000;
+}
+
+.optional {
+	background-color: white;
+	border-color: #666699;
+}
+
+INPUT.cent {
+	width: 100px;
+	min-width: 100px;
+	border-style: none;
+	background: none;
+}
+
+INPUT {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #666699;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding: 2px;
+	background-color: white;
+	min-width: 20em;
+	width: 20em;
+}
+
+INPUT.small {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #666699;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding: 2px;
+	background-color: white;
+	min-width: 5em;
+	width: 5em;
+}
+
+INPUT.medium {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #666699;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding: 2px;
+	background-color: white;
+	min-width: 9em;
+	width: 9em;
+}
+
+UPLOAD {
+	width: 20em;
+	border-width: 1px;
+	border-color: #666699;
+}
+
+INPUT:active {
+	background-color: #ccddff;
+}
+
+INPUT:focus {
+	background-color: #ccddff;
+}
+
+SELECT {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 2px;
+	width: 20em;
+}
+
+SELECT.medium {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 2px;
+	width: 9em;
+}
+
+SELECT.small {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 2px;
+	width: 5em;
+}
+
+SELECT:focus {
+	background-color: #ccddff;
+}
+
+BUTTON {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	background: #5599ff;
+	min-width: 20em;
+	text-align: center;
+}
+
+BUTTON.small {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	background: #5599ff;
+	min-width: 5em;
+	text-align: center;
+}
+
+BUTTON:active {
+	background-color: red;
+}
+
+TEXTAREA {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	padding: 2px;
+	width: 220px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.radio {
+	width: 7px;
+	height: 7px;
+	border-width: 1px;
+	border-color: #666699;
+}
+
+input[type=checkbox] {
+	width: 7px;
+	height: 7px;
+	border-width: 1px;
+	border-color: #666699;
+}
+
+.checkbox {
+	width: 7px;
+	height: 7px;
+	border-width: 1px;
+	border-color: #666699;
+}
+
+input[type=checkbox] {
+	width: 7px;
+	height: 7px;
+	border-width: 1px;
+	border-color: #666699;
+}
+
+.cmd_panel {
+	text-align: center;
+}
+
+
+/*******************************************************/
+/*    Link Enhancements - Change from default Colors   */
+/*******************************************************/
+
+.global_item_list a {
+   color: #ea6808;
+}
+
+table.item_list {
+	width: 90%;
+	border: solid;
+	border-color: #9999bb;
+	border-width: 0px;
+	margin: 5px;
+}
+
+th.lists {
+	background: #bbbbdd; 
+	/* background: #ff7000; */
+	border: solid;
+	border-width: 1px;
+	border-color: #9999bb;
+	font-size: 12pt;
+	font-family: Sans-Serif;
+}
+
+td.lists {
+	border: solid;
+	border-color: #9999bb;
+	border-width: 1px;
+	margin: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	background-color: white;
+	font-size: 0.9em;
+	overflow: hidden;
+}
+
+th.certView {
+	/* background: #0099ff; */
+	/* background: #ff7000; */
+	background: #bbbbdd; 
+	border: solid;
+	border-width: 1px;
+	/* border-color: #9999bb; */
+	border-color: #9999bb white white #9999bb;
+	font-size: 1.1em;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	/* color: white; */
+	font-weight: bold;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+td.certView {
+	border: solid;
+	border-color: #9999bb;
+	border-width: 1px;
+	margin: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	background-color: #fefeff;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	font-size: 1.0em;
+}
+
+th.signView {
+	font-size: 1.1em;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+td.signView {
+	margin: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	font-size: 1.0em;
+}
+
+th.crlEntryList {
+	border: solid;
+	border-width: 0px;
+	border-color: #9999bb;
+	font-size: 12pt;
+	text-align: center;
+	background: #bbbbdd; 
+	border: solid;
+	border-width: 1px;
+}
+
+td.crlEntryList {
+	border: solid;
+	/* border-color: #9999bb; */
+	border-color: #559 #9999bb #9999bb #559;
+	border-width: 1px;
+	margin: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	background-color: #f6f6f6;
+	font-size: 0.9em;
+	text-align: center;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.description{
+	/* background-color: #eeeeee;
+	padding: 10px;
+	border: 1px solid;
+	border-color: black white white black;
+	*/
+}
+
+.descvalue {
+	border: solid;
+	border-color: #9999bb;
+	border-width: 1px;
+	margin: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	background-color: white;
+	width: 60%;
+	min-width: 15em;
+	text-align: left;
+}
+
+.desclabel {
+	margin: 2px;
+	padding-left: 15px;
+	padding-right: 4px;
+	font-weight: bold;
+	width: 40%;
+	min-width: 15em;
+	white-space: nowrap;
+	text-align: left;
+}
+
+
+
+.global_item_list a:visited {
+   color: #ea6808;
+}
+
+.global_info_list a {
+   color: #ea6808;
+}
+
+.global_info_list a:visited {
+   color: #ea6808;
+}
+
+.login_container{
+	margin-top:10px;
+	
+	background:#FFFFFF;
+	border:1px solid #E0E0E0;
+	padding:10px;
+	
+	/* Rounded corners */
+	-moz-border-radius:10px;
+	-khtml-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius:10px;
+
+	display: absolute;
+	float: right;
+}
+
+

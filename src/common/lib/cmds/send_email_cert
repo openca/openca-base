@@ -1,0 +1,62 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: send_email_cert
+##       Brief: send cert in PEM-format
+##     Version: $Revision: 1.3 $
+## Description: this script is used to give the user a cert
+##  Parameters: key, dataType
+
+use strict;
+
+sub cmdSend_email_cert {
+
+	## Version Information
+	$VER = '2.1.01';
+	$PRG = 'Certificates Send over HTTP';
+
+	##// Let's get parameters
+	my $type      = $query->param('type');
+	my $key       = ( $query->param('key') || $query->param('serial') );
+	my $dataType  = ( $query->param('dataType') || "VALID_CERTIFICATE" );
+
+	my $mimetype = "Content-type: application/x-X509-XXX-cert\n\n";
+	my $bgcert = '-----BEGIN CERTIFICATE-----';
+	my $endcert = '-----END CERTIFICATE-----';
+
+	my $cert;
+
+	## Now we must take different path for we can give certs for user/ca
+	## or whatever we want.
+	if ( "$type" =~ /(email|user|ca)/i ) {
+		$mimetype =~ s/XXX/$type/g;
+	}
+
+	## If we want the Text Version of the Certificate
+	if ( $type =~ /txt/i ) {
+		$mimetype = "Content-type: text/plain\n\n";
+	}
+
+	## fix the format
+	if ( $query->param ("HTTP_USER_AGENT") =~ /IE/i ) {
+		$type = "DER";
+	}
+
+	## Get the certificate from the DB
+	if ( $cert = $db->getItem(DATATYPE=>$dataType, KEY=>$key ) ) {
+		print "$mimetype";
+
+		if( $type =~ /txt/i ) {
+			print $cert->getTXT();
+		} elsif ( $type =~ /der|cer/i ) {
+			print $cert->getDER();
+		} else {
+			print $cert->getPEM();
+		}
+	} else {
+		generalError (gettext ("Cannot load certificate from the database!"));
+	}
+}
+
+1;

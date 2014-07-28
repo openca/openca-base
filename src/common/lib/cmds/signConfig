@@ -1,0 +1,94 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: signConfig
+##       Brief: signs Configuration
+## Description: signs the configuration
+
+use strict;
+
+sub cmdSignConfig {
+
+print startLogPage ( gettext("Signing the hole configuration of the Role Based Access Control ...") );
+
+## check for passphrase
+my $passwd = $query->param ('passwd');
+if ( not $passwd ) {
+  ## ask for passphrase
+  print "<p>".gettext ("Please enter the passphrase for the CA's private key.")."</p>\n";
+  print "<form action=\"$self\" method=post>\n";
+  print "<input type=hidden name=cmd value=\"signConfig\">\n";
+  print "<input type=password name=passwd value=\"\">\n";
+  print "<input type=submit value=\"".gettext ("ok")."\">\n";
+  print "</form>\n";
+} else {
+
+  ## load configuration
+  my $rights_dir  = getRequired ('RBAC_DIR')."/".
+                    getRequired ('RIGHTS_DIR');
+  my $scripts_dir = getRequired ('RBAC_DIR')."/".
+                    getRequired ('SCRIPT_CONFIG_DIR');
+
+  ## sign rights
+  print addLogSection (gettext("Try to sign the rights ..."));
+  my $ok = 1; 
+
+  ## load rights
+  opendir DIR, $rights_dir;
+  my @items = readdir DIR;
+  closedir DIR;
+
+  ## build signature
+  for my $h (@items) {
+    next if ($h =~ /^(\.|\.\.)$/);
+    if ( not $cryptoShell->sign (
+               DATA       => $h,
+               OUT_FILE   => $rights_dir."/".$h,
+               KEY_FILE   => getRequired ('CAKey'),
+               USE_ENGINE => 1,
+               CERT_FILE  => getRequired ('CACertificate'),
+               PASSWD     => $passwd
+                                 )) {
+      print addErrorLog (i18nGettext ("Cannot sign the filename __FILE__.", "__FILE__", $h));
+      $ok = 0;
+    }
+  }
+  print addLogLine( gettext("Ok.") ) if $ok;
+  print closeLogSection();
+
+  ## sign scripts
+  print addLogSection (gettext ("Try to sign the configurationfiles of the scripts ..."));
+  my $ok = 1; 
+
+  ## load scripts
+  opendir DIR, $scripts_dir;
+  my @items = grep ( /^.*\.conf$/, readdir DIR);
+  closedir DIR;
+
+  ## build signature
+  for my $h (@items) {
+    next if ($h =~ /^(\.|\.\.)$/);
+    my $h_sig = $h;
+    $h_sig =~ s/\.conf$/\.sig/;
+    if ( not $cryptoShell->sign (
+               DATA_FILE  => $scripts_dir."/".$h,
+               OUT_FILE   => $scripts_dir."/".$h_sig,
+               KEY_FILE   => getRequired ('CAKey'),
+               USE_ENGINE => 1,
+               CERT_FILE  => getRequired ('CACertificate'),
+               PASSWD     => $passwd
+                                 )) {
+      print addErrorLog ( i18nGettext("Cannot sign file __FILE__.", "__FILE__", $h));
+      $ok = 0;
+    }
+  }
+  print addLogLine( gettext("Ok.") ) if $ok;
+  print closeLogSection();
+}
+
+closePage ();
+
+}
+
+1;

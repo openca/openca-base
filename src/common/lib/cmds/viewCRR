@@ -1,0 +1,400 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: viewCRR
+##       Brief: View CRR
+##     Version: $Revision: 1.7 $
+## Description: Display given CRR to the RA Operator
+##  Parameters: dataType, key
+
+## this script supports the following configurable references
+##
+## EDIT
+## APPROVE
+## APPROVE_WITHOUT_SIGNING
+## REVOKE_CERT
+## REVOKE_CERT_NEW
+## REVOKE_CERT_PENDING
+## REVOKE_CERT_SIGNED
+## REVOKE_CERT_APPROVED
+## DELETE
+## DELETE_NEW
+## DELETE_PENDING
+## DELETE_SIGNED
+## DELETE_APPROVED
+
+use strict;
+
+sub cmdViewCRR {
+
+    ## Get the Configuration parameters ...
+    my $def;
+    my ( $myCN, $myEmail );
+    my ( $lnk, $sigInfo );
+    my $reqStatus;
+    my $tmp;
+    my ($info_list, $cmd_list, $hidden_list) = (undef, undef, undef);
+
+    my $dataType = $query->param('dataType' );
+    my $key      = $query->param('key');
+
+    my $sigInfoStyle = "position: absolute; right: 11%; border-width: 2px; " .
+		   "border-color: #fff #556 #556 #fff";
+
+    configError( gettext("Error, needed dB key!") ) if ( not $key );
+
+    if ( $dataType eq "PENDING_CRR" ) {
+	$reqStatus = gettext("Revocation Request Waiting for Approval");
+    } elsif ( $dataType eq "NEW_CRR" ) {
+	$reqStatus = gettext("New Revocation Request");
+    } elsif ( $dataType eq "SIGNED_CRR" ) {
+	$reqStatus = gettext("Signed Revocation Request Waiting for Additional Signature");
+    } elsif ( $dataType eq "APPROVED_CRR" ) {
+	$reqStatus = gettext("Approved Revocation Request");
+    } elsif ( $dataType eq "ARCHIVED_CRR" ) {
+	$reqStatus = gettext("Archived Revocation Request");
+    } elsif ( $dataType eq "DELETED_CRR" ) {
+	$reqStatus = gettext("Deleted Revocation Request");
+    } elsif ( $dataType eq "CRR" ) {
+        ## try to determine the datatype
+        if ($db->getItem ( DATATYPE => "ARCHIVED_CRR", KEY => $key )) {
+                $dataType = "ARCHIVED_CRR";
+                $reqStatus = gettext ("Archived Revocation Request");
+        } elsif ($db->getItem ( DATATYPE => "APPROVED_CRR", KEY => $key )) {
+                $dataType = "APPROVED_CRR";
+                $reqStatus = gettext ("Approved Revocation Request");
+        } elsif ($db->getItem ( DATATYPE => "DELETED_CRR", KEY => $key )) {
+                $dataType = "DELETED_CRR";
+                $reqStatus = gettext ("Deleted Revocation Request");
+        } elsif ($db->getItem ( DATATYPE => "SIGNED_CRR", KEY => $key )) {
+                $dataType = "SIGNED_CRR";
+                $reqStatus = gettext ("Signed Revocation Request Waiting for Additional Signature");
+        } elsif ($db->getItem ( DATATYPE => "PENDING_CRR", KEY => $key )) {
+                $dataType = "PENDING_CRR";
+                $reqStatus = gettext("Revocation Request Waiting for Approval");
+        } elsif ($db->getItem ( DATATYPE => "NEW_CRR", KEY => $key )) {
+                $dataType = "NEW_CRR";
+                $reqStatus = gettext("New Revocation Request");
+        } else {
+                configError ( gettext ("Cannot determine status of this request!"));
+        }
+    } else {
+	configError ( i18nGettext ("Invalid or missing dataType (__DATATYPE__)!", "__DATATYPE__", $dataType));
+    }
+
+    my $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+    configError ( gettext("CRR not present in DB!") ) if ( not $req );
+
+    ## Get the parsed Request
+    my $parsed_req = $req->getParsed();
+
+    ########################################
+    ## begin to build request for signing ##
+    ########################################
+
+    my ($header, $text);
+    my $beginHeader = "-----BEGIN HEADER-----";
+    my $endHeader = "-----END HEADER-----";
+
+    ## build header
+    $header  = "$beginHeader\r\n";
+    $header .= "TYPE = CRR\r\n";
+    $header .= "SERIAL = $key\r\n";
+    $header .= "SSL_CERT_SERIAL = " . ($req->getParsed()->{HEADER}->{SSL_CERT_SERIAL} or gettext("n/a")) . "\r\n";
+    $header .= "SSL_CERT_DN = " . ($req->getParsed()->{HEADER}->{SSL_CERT_DN} or gettext("n/a")) . "\r\n";
+    $header .= "SSL_CERT_ISSUER = " . ($req->getParsed()->{HEADER}->{SSL_CERT_ISSUER} or gettext("n/a")) . "\r\n";
+    $header .= "$endHeader\r\n";
+    ## build body
+    $text  = "SUBMIT_DATE = " . $req->getParsed()->{SUBMIT_DATE}. "\r\n";
+    $text .= "APPROVED_DATE = " . $tools->getDate() . "\r\n";
+    $text .= "CRIN = ".($req->getParsed()->{CRIN} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_REASON = ".($parsed_req->{REVOKE_REASON} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_DN = " . ($req->getParsed()->{REVOKE_CERTIFICATE_DN} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_NOTBEFORE = " . ($req->getParsed()->{REVOKE_CERTIFICATE_NOTBEFORE} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_NOTAFTER = " . ($req->getParsed()->{REVOKE_CERTIFICATE_NOTAFTER} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_SERIAL = " . ($req->getParsed()->{REVOKE_CERTIFICATE_SERIAL} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_ISSUER_DN = " . ($req->getParsed()->{REVOKE_CERTIFICATE_ISSUER_DN} or gettext("n/a")) . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_KEY_DIGEST = " . ($req->getParsed()->{REVOKE_CERTIFICATE_KEY_DIGEST} or gettext("n/a"));
+    $text .= "\r\nUSER_CRR = " . $req->getParsed()->{USER_CRR} if ($req->getParsed()->{USER_CRR});
+
+    $hidden_list->{"head"} = "$header";
+    $hidden_list->{"text"} = $text;
+    $hidden_list->{"CRL_REASON"} = $parsed_req->{REVOKE_REASON};
+    $hidden_list->{"DESCRIPTION"} = $parsed_req->{REVOKE_DESCRIPTION};;
+    
+    ######################################
+    ## prepare normal links and siginfo ##
+    ######################################
+
+    ## which cert should be revoked
+    my $cert = $db->getItem (DATATYPE => "CERTIFICATE", 
+			KEY => $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL});
+    if ($cert) {
+	if (  $cert->getParsed()->{DN_HASH}->{CN}[0] ne "" ) {
+		$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+				name=>"CN", value=>$cert->getParsed()->{DN_HASH}->{CN}[0]} );
+		$myCN = $lnk->a({-href=>"?".$lnk->query_string()}, $cert->getParsed()->{DN_HASH}->{CN}[0]);
+	}
+
+	if (  $cert->getParsed()->{EMAILADDRESS} ne "" ) {
+		$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+				name=>"EMAIL", value=>$cert->getParsed()->{EMAILADDRESS}} );
+		$myEmail = $lnk->a({-href=>"?".$lnk->query_string()}, $cert->getParsed()->{EMAILADDRESS});
+	};
+    };
+
+    ## check signature
+    if ( $req->getParsed()->{TYPE} =~ /with .*? Signature/i ) {
+	my $retCode = undef;
+
+	$lnk = new CGI({cmd=>"viewSignature", dataType=>$dataType, key=>$key});
+	$retCode = libCheckSignature( OBJECT=>$req );
+	if( ($retCode eq CRYPTO_SIGNATURE_OK) or 
+				( $retCode eq CRYPTO_SIGNER_SUSPENDED ) ) {
+		$tmp = $query->img({src=>getRequired ('ValidSigImage'),
+			border=>"0", align=>"MIDDLE", style=>"$sigInfoStyle"});
+	} else {
+		# my ( $sig, $cert, $err );
+
+		# $err = 0;
+		# if($sig = libGetSignatureObject( OBJECT=>$req )) {
+		# 	$cert = libGetSignerCertificateDB(SIGNATURE=>$sig);
+
+		# 	if ( $cert ) {
+		# 		if ( $cert->getStatus() !~ /VALID|SUSPENDED/ ){
+		# 			$err = 1;
+		# 		}
+		# 	} else {
+		# 		$err = 1;
+		# 	}
+		# }
+
+		# if ( $err eq 1 ) {
+		# 	$tmp = $query->img({-src=>getRequired ('SigErrorImage'),
+		# 			-border=>"0", -align=>"MIDDLE"});
+		# } else {
+		# 	$tmp = $query->img({src=>getRequired ('ValidSigImage'),
+		# 			border=>"0", align=>"MIDDLE"});
+		# }
+		
+		$tmp = $query->img({-src=>getRequired ('SigErrorImage'),
+				-border=>"0", -align=>"MIDDLE", 
+				-style=>"$sigInfoStyle"});
+	}
+
+	$sigInfo = $lnk->a({-href=>"?".$lnk->query_string()}, $tmp );
+	
+    } else {
+	$def = "<FONT COLOR=\"RED\">".gettext("Not Signed")."</FONT>";
+	$parsed_req->{OPERATOR} = $def;
+    }
+
+    ## try to get the issuer of the CRR
+    my $submit;
+    if ($parsed_req->{SIGNATURE}) {
+	## signature-based revocation
+	if (my $sig = libGetSignatureObject ( OBJECT => $req )) {
+		if (my $cert = libGetSignerCertificateDB( SIGNATURE=> $sig )) {
+			$submit = $cert->getParsed()->{DN};
+		} else {
+			$submit = gettext("Cannot determine certificate from signature!");
+		}
+	} else {
+		$submit = gettext ("Cannot build object from signature!");
+	}
+    } elsif ($parsed_req->{REVOKE_CERTIFICATE_DN}) {
+	## pin-based revocation
+	$submit = $parsed_req->{REVOKE_CERTIFICATE_DN};
+    } else {
+	## last chance by strong ssl-authentication
+	$submit = $req->getParsed()->{HEADER}->{SSL_CERT_DN};
+	print STDERR i18nGettext ("submitter of CRR not determinable (CRR: __SERIAL__).",
+                                  "__SERIAL__", $key)."\n";
+    }
+
+    $hidden_list->{"cmd"}      = "";
+    $hidden_list->{"signature"}= "";
+    $hidden_list->{"key"}      = $key;
+    $hidden_list->{"dataType"} = $dataType;
+
+    #####################
+    ## build info_list ##
+    #####################
+
+    my $pos = 0;
+
+    $info_list->{HEAD}->[0] = gettext ("Variable");
+    $info_list->{HEAD}->[1] = gettext ("Value");
+
+    $info_list->{HEAD}->[0] = "Request Info" . $sigInfo;
+
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Request Version");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{VERSION} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("CRR Serial Number");
+    $info_list->{BODY}->[$pos++]->[1] = ($req->getSerial() or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Request Type");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{TYPE} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Submission Date");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{SUBMIT_DATE} or 
+				$parsed_req->{HEADER}->{NOTBEFORE} or 
+					gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Submitter");
+    $info_list->{BODY}->[$pos++]->[1] = ($submit or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Reason");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{REVOKE_REASON} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Description");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{REVOKE_DESCRIPTION} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext("Cert Serial Number");
+    $info_list->{BODY}->[$pos++]->[1] = qq{<a href="}. 
+		$query->param("HTTP_CGI_SCRIPT") . 
+		qq{?cmd=viewCert;dataType=CERTIFICATE;key=} . 
+		$cert->getSerial() . qq{">} . $cert->getParsed()->{HEX_SERIAL}.
+		qq{</a>};
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Common Name");
+    $info_list->{BODY}->[$pos++]->[1] = ($myCN or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("E-Mail");
+    $info_list->{BODY}->[$pos++]->[1] = ($myEmail or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Role");
+    $info_list->{BODY}->[$pos++]->[1] = $cert->getParsed()->{HEADER}->{ROLE};
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Distinguished Name");
+    $info_list->{BODY}->[$pos++]->[1] = ($cert->getParsed()->{DN} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Approved on");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{APPROVED_DATE} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Used Identification PIN");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{CRIN} or gettext("n/a"));
+    $info_list->{BODY}->[$pos]->[0] = gettext ("Signature Algorithm");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{SIG_ALGORITHM} or gettext("n/a"));
+
+    #######################################
+    ## here starts the filtered commands ##
+    ## cmd_list                          ##
+    #######################################
+
+    $cmd_list->{HEAD}->[0] = gettext ("Operations");
+
+    my $allow = libGetPermissionHash (getRequiredList ('CmdRefs_viewCRR'));
+    my $pos = 0;
+
+    ## perhaps an operator want to have a look at the certificate
+    if ($allow->{VIEW_CERT}) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Cert's Serial Number");
+        $cmd_list->{BODY}->[$pos]->[1] = "<a href=\"".
+                            "$self?cmd=viewCert;key=".
+                            $parsed_req->{REVOKE_CERTIFICATE_SERIAL}."\">".
+                            $cert->getParsed()->{HEX_SERIAL} . "</a>";
+        $pos++;
+    }
+
+    ## perhaps an operator want to have a look at the original CRR
+    if ($allow->{VIEW_USER_CRR} and
+        $parsed_req->{USER_CRR}) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Original user CRR");
+        $cmd_list->{BODY}->[$pos]->[1] = "<a href=\"".
+                                             "?cmd=viewCRR&dataType=ARCHIVED_CRR&key=".
+                                             $parsed_req->{USER_CRR}."\">".
+                                             "$parsed_req->{USER_CRR}</a>";
+        $pos++;
+    }
+
+    ## edit CRR
+    if ( $allow->{EDIT} and
+         ($dataType =~ /NEW|PENDING/i)
+       ) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Edit the request");
+        $cmd_list->{BODY}->[$pos]->[1] = '<input type="submit" value="'.
+                                         gettext("Edit Request").
+                                         '" onClick="cmd.value='."'editCRR'".';">';
+        $pos++;
+    }
+
+    ## approve CRR
+    if ( $allow->{APPROVE} and
+         ($dataType =~ /NEW|PENDING|SIGNED/i)
+       ) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Approve and sign the request");
+        $cmd_list->{BODY}->[$pos]->[1] = '<input type="button" value="'.
+			                 gettext("Approve Request").
+			                 '" onClick="cmd.value='.
+                                         "'approveCRR'".';signForm( this.form, window )">';
+        $pos++;
+    }
+
+    ## approve CRR without signing
+    if ( $allow->{APPROVE_WITHOUT_SIGNING} and
+         ($dataType =~ /NEW|PENDING/i)
+       ) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Approve Request without Signing");
+        $cmd_list->{BODY}->[$pos]->[1] = '<input type="button" value="'.
+			                 gettext("Approve Request without Signing").
+			                 '" onClick="cmd.value='.
+                                         "'approveCRRnotSigned';if (confirm ('".
+                                         gettext ("Do you want to approve this request without signing?").
+                                         "')) {this.form.submit();}\">";
+        $pos++;
+    }
+
+    ## revoke certificate
+    if ( ( $allow->{REVOKE_CERT} and 
+           ($dataType =~ /(NEW|PENDING|SIGNED|APPROVED)/i)
+         ) or
+         ( $allow->{REVOKE_CERT_NEW} and
+           ($dataType =~ /NEW/i)
+         ) or
+         ( $allow->{REVOKE_CERT_PENDING} and
+           ($dataType =~ /PENDING/i)
+         ) or
+         ( $allow->{REVOKE_CERT_SIGNED} and
+           ($dataType =~ /SIGNED/i)
+         ) or
+         ( $allow->{REVOKE_CERT_APPROVED} and
+           ($dataType =~ /APPROVED/i)
+         )
+       ) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Revoke Certificate");
+        $cmd_list->{BODY}->[$pos]->[1] = '<input type="submit" value="'.
+			                 gettext("Revoke certificate").
+			                 '" onClick="cmd.value='."'revokeCertificate'".';">';
+        $pos++;
+    }
+
+    ## delete pending or approved CRR
+    if ( ( $allow->{DELETE} and 
+           ($dataType =~ /(NEW|SIGNED|PENDING|APPROVED)/i)
+         ) or
+         ( $allow->{DELETE_NEW} and
+           ($dataType =~ /NEW/i)
+         ) or
+         ( $allow->{DELETE_PENDING} and
+           ($dataType =~ /PENDING/i)
+         ) or
+         ( $allow->{DELETE_SIGNED} and
+           ($dataType =~ /SIGNED/i)
+         ) or
+         ( $allow->{DELETE_APPROVED} and
+           ($dataType =~ /APPROVED/i)
+         )
+       ) {
+        $cmd_list->{BODY}->[$pos]->[0] = gettext("Delete");
+        $cmd_list->{BODY}->[$pos]->[1] = '<input type="button" value="'.
+			                 gettext("Delete Request").
+			                 '" onClick="cmd.value='."'deleteCRR';if (confirm ('".
+                                         gettext ("Do you want to delete this request?").
+                                         "')) {this.form.submit();}\">";
+        $pos++;
+    }
+
+    return libSendReply (
+                         "NAME"        => $reqStatus,
+                         "EXPLANATION" => gettext ("Following you can find the CRR's details."),
+                         "TIMESTAMP"   => 1,
+                         "INFO_LIST"   => $info_list,
+                         "CMD_LIST"    => $cmd_list,
+                         "HIDDEN_LIST" => $hidden_list,
+                         # "SIGINFO"     => $sigInfo,
+                         "SIGN_FORM"   => 1
+                        );
+}
+
+1;

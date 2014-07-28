@@ -1,0 +1,165 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: crlList
+##       Brief: list CRLs
+##    Revision: $Revision: 1.8 $
+## Description: list all available CRLs
+##  Parameters: none
+
+use strict;
+
+sub cmdCrlList {
+
+our ($query, $db, $self);
+
+## Reserved variables
+my ( $page, $dataType, $crlData, $oldDataType );
+my ( $now, $today, $expires_before, $expires_after );
+
+## We need some parameters to generate the list because of
+## we do not want to generate a list of ALL issued certificates
+## so get the numer of results we should give away, then the
+## starting serial number.
+my $from     = $query->param( 'viewFrom' );
+my $to       = $query->param( 'viewTo' );
+# my $matched  = $query->param( 'rows' );
+my $dataType = $query->param( 'dataType' );
+my $oldDataType = $query->param( 'dataType' );
+
+$today = gmtime;
+$now = $cryptoShell->getNumericDate ( "$today" );
+
+if ( $dataType =~ /EXPIRED/ ) {
+	$expires_before = $now;
+} else {
+	$expires_after = $now;
+}
+
+$dataType = "CRL";
+
+## Get required parameters ( return only the value string )
+my $maxItems = getRequired( 'MaxReturnedItems' );
+
+## Set the column titles
+my @cols;
+my @crlList;
+
+my $item_list = undef;
+$item_list->{CLASS} = "lists";
+$item_list->{HEAD}->[0] = gettext ("Version");
+$item_list->{HEAD}->[1] = gettext ("Serial");
+$item_list->{HEAD}->[2] = gettext ("Last Update");
+$item_list->{HEAD}->[3] = gettext ("Next Update");
+$item_list->{BODY} = [];
+
+# if ( not $matched ) {
+# 	$matched  = $db->searchItems( 
+# 			DATATYPE=>$dataType, 
+# 			EXPIRES_BEFORE => $expires_before,
+# 			EXPIRES_AFTER  => $expires_after,
+# 			MODE=>'COUNT' );
+#} ;
+
+@crlList = $db->searchItems( 
+			DATATYPE=>$dataType,
+			EXPIRES_BEFORE => $expires_before,
+			EXPIRES_AFTER  => $expires_after,
+			FROM=>$from, ITEMS=>$maxItems);
+
+my $cmd_panel = undef;
+
+$cmd_panel->[0] = libBuildRefs (
+			DATATYPE  => $oldDataType,
+			MAXITEMS  => $maxItems );
+
+#if ((not @crlList) or ( scalar (@crlList) < 1 ) ) {
+#	$cmd_panel->[0] = libBuildRefs (
+#			ELEMENTS  => $matched,
+#			MAXITEMS  => $maxItems,
+#			DATATYPE  => $oldDataType,
+#			EXPIRES_BEFORE => $expires_before,
+#			EXPIRES_AFTER  => $expires_after,
+#			FACTOR    => 5,
+#			MODE      => "EXP",
+#			NOW_FIRST => 0,
+#			NOW_LAST  => 0,
+#			FIRST     => 0,
+#			LAST      => 0,
+#			LIST	  => undef );
+#} else {
+# 	my $nowFirst = 0;
+# 	my $nowLast = 0;
+# 	my $first = 0;
+# 	my $last = 0;
+# 
+# 	my $firstObj = undef;
+# 	my $lastObj = undef;
+# 
+# 	if ( $crlList[0] ) {
+# 		$nowFirst = $crlList[0]->getSerial( $dataType );
+# 	};
+# 
+# 	if ( $crlList[scalar(@crlList) -1] ) {
+# 		$crlList[scalar(@crlList) -1]->getSerial($dataType);
+# 	}
+# 
+# 	if ( $firstObj = libDBGetFirstItem ( $dataType ) ) {
+# 		$first = $firstObj->getSerial ( $dataType );
+# 	}
+# 
+# 	if ( $lastObj = libDBGetFirstItem ( $dataType ) ) {
+# 		$last = $lastObj->getSerial ( $dataType );
+# 	}
+# 
+# 	$cmd_panel->[0] = libBuildRefs (
+# 			ELEMENTS  => $matched,
+# 			MAXITEMS  => $maxItems,
+# 			DATATYPE  => $oldDataType,
+# 			EXPIRES_BEFORE => $expires_before,
+# 			EXPIRES_AFTER  => $expires_after,
+# 			FACTOR    => 5,
+# 			MODE      => "EXP",
+# 			NOW_FIRST => $nowFirst,
+# 			NOW_LAST  => $nowLast,
+# 			FIRST     => $first,
+# 			LAST      => $last );
+# }
+
+## Process all Files
+foreach my $crl ( @crlList ) {
+
+        my $pos = scalar @{$item_list->{BODY}};
+
+	my ( $format, $key, $type, $ser_col );
+	my @vals;
+
+	if( not defined $crl ) {
+		next;
+	}
+
+	$key  = $crl->getSerial();
+	$type = $dataType;
+
+	$ser_col = "<CENTER><a href=\"?cmd=viewCRL&dataType=$type".
+			"&key=$key\">".$crl->getParsed()->{VERSION} .
+			"</a></CENTER>";
+	$item_list->{BODY}->[$pos]->[0] = $ser_col;
+
+	## Standard to be suported extention is the SERIAL of CRL...
+	$item_list->{BODY}->[$pos]->[1] = $crl->getSerial();
+	$item_list->{BODY}->[$pos]->[2] = $crl->getParsed()->{LAST_UPDATE};
+	$item_list->{BODY}->[$pos]->[3] = $crl->getParsed()->{NEXT_UPDATE};
+}
+
+return libSendReply (
+                     "NAME"        => gettext ("Issued CRLs List"),
+                     "EXPLANATION" => gettext ("Following you can find the issued CRLs list. Use links to view more detailed information about single CRL, if you are looking for one CRL, please use the search facility."),
+                     "ITEM_LIST"   => $item_list,
+                     "CMD_PANEL"   => $cmd_panel,
+                     "TIMESTAMP"   => 1
+                    );
+}
+
+1;

@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>stopAutoCRL</name>
+            <operation>stop OnLine CRL component</operation>
+            <owner_method>CGI</owner_method>
+            <owner_argument>role</owner_argument>
+        </command>
+    </command_config>
+</openca>

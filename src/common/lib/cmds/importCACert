@@ -1,0 +1,105 @@
+## OpenCA - CA Command
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: importCACert
+##       Brief: Imports CA Certificate
+## Description: Imports Signed CA Certificate from parent CA
+##  Parameters: none
+## Cfg Keyword: UnpackArchive, ImportDev, opencadir
+
+use strict;
+
+sub cmdImportCACert {
+
+## To import the CA certificate we use the same import device as the
+## one used for the certificates (is there any reason for not doing so ?)
+## Get required parameters from the configuration file
+my $cmd        = getRequired( 'EXPORT_IMPORT_LOCAL_IMPORT' );
+my $orig       = getRequired( 'EXPORT_IMPORT_LOCAL_DEVICE' );
+my $makeCmd    = getRequired( 'MakePath');
+
+## Other reserved variables
+my $cacertFile = getRequired ( 'CACertificate' );
+my $cacertDER  = getRequired ( 'CACertificateDER' );
+my $cacertCRT  = getRequired ( 'CACertificateCRT' );
+my $cacertTXT  = getRequired ( 'CACertificateTXT' );
+my $chainDir   = getRequired ( 'ChainDir' );
+my $certDir    = getRequired ( 'CACertDir' );
+my $crt;
+
+print startLogPage(gettext("Importing CA Certificate"));
+$cmd = $query->subVar( $cmd, '@__DEVICE__@', $orig );
+$cmd = $query->subVar( $cmd, '@__DEST__@', $certDir );
+
+## If there is already a cacertfile, than we should move it to .old
+if ( -e "$cacertFile" ) {
+       $tools->moveFiles( SRC=>$cacertFile,
+                          DEST=>$cacertFile.".${$}_old");
+       print addErrorLog(i18nGettext ("Old certificate file is __FILE__.", "__FILE__", "$cacertFile.${$}_old"));
+}
+
+unlink( "$cacertDER" ) if ( -e "$cacertDER" );
+unlink( "$cacertTXT" ) if ( -e "$cacertTXT" );
+
+print addLogSection(gettext("Importing CA Certificate into filesystem ... "));
+my $ret = `$cmd 2>&1`;
+if( $? != 0 ) {
+       print addErrorLog(i18nGettext("Importing CA Certificate Failed from __DEVICE__!", "__DEVICE__", $orig) );
+       closePage();
+       return undef;
+}
+print addLogLine(gettext("Ok."));
+print addPreLogLine( $ret );
+print closeLogSection();
+
+print addLogSection(gettext("Importing CA Certificate to dB ... "));
+
+$cryptoShell->dataConvert( DATATYPE=>"CERTIFICATE",
+                          INFILE=>$cacertFile,
+                          OUTFILE=>$cacertDER,
+                          OUTFORM=>"DER" );
+
+configError( "<BR>".gettext("Error (1) while convertig certificate")."<BR>" ) if( $? != 0 );
+
+$cryptoShell->dataConvert( DATATYPE=>"CERTIFICATE",
+                          INFILE=>$cacertFile,
+                          OUTFILE=>$cacertTXT,
+                          OUTFORM=>"TXT" );
+
+configError( "<BR>".gettext("Error (2) while convertig certificate")."<BR>" ) if( $? != 0 );
+
+$crt = new OpenCA::X509( SHELL   => $cryptoShell,
+                         GETTEXT => \&i18nGettext,
+                         INFILE  => "$cacertFile" );
+if( not $crt ) {
+       configError( "<BR>".i18nGettext("Error while loading CA certificate (__FILE__).",
+                                       "__FILE__", $cacertFile) );
+} else {
+       ##// Let's link to the chain dir
+       $tools->copyFiles ( SRC=>"$cacertFile",
+                           DEST=>"$cacertCRT");
+
+       ##// Let's make the links for chain verification
+       $ret = `cd ${chainDir}; $makeCmd`;
+
+       if ( not $db->storeItem( DATATYPE=>"VALID_CA_CERTIFICATE",
+                                OBJECT=>$crt,
+                                MODE=>"INSERT")) {
+         if ( not $db->storeItem( DATATYPE=>"VALID_CA_CERTIFICATE",
+                                  OBJECT=>$crt,
+                                  MODE=>"UPDATE")) {
+               configError (gettext("Error while storing CA cert to dB!"));
+         }
+       }
+}
+
+print addLogLine( gettext("Ok.") );
+print addPreLogLine ( $crt->getTXT() );
+print addPreLogLine ( $ret );
+print closeLogSection();
+closePage();
+
+return 1;
+}
+
+1;

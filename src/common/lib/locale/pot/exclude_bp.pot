@@ -1,0 +1,724 @@
+#: common/lib/bp/check_key_params.sub:27 common/lib/bp/create_pin.sub:27
+#: common/lib/bp/backup_key.sub:27 common/lib/bp/complete_csr.sub:27
+#: common/lib/bp/create_key.sub:27 common/lib/bp/create_csr.sub:27
+#: common/lib/bp/create_cert.sub:28 common/lib/bp/enroll_pkcs12.sub:27
+#: common/lib/bp/check_csr_params.sub:27 common/lib/bp/check_pin.sub:27
+#: common/lib/bp/enroll_pin.sub:27 common/lib/bp/check_key.sub:27
+#: common/lib/bp/check_csr.sub:27
+msgid "batch_system"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:28 common/lib/bp/create_pin.sub:28
+#: common/lib/bp/backup_key.sub:28 common/lib/bp/complete_csr.sub:28
+#: common/lib/bp/create_key.sub:28 common/lib/bp/create_csr.sub:28
+#: common/lib/bp/create_cert.sub:29 common/lib/bp/enroll_pkcs12.sub:28
+#: common/lib/bp/check_csr_params.sub:28 common/lib/bp/check_pin.sub:28
+#: common/lib/bp/enroll_pin.sub:28 common/lib/bp/check_key.sub:28
+#: common/lib/bp/check_csr.sub:28
+msgid "info"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:30
+msgid "check_key_params"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:39 common/lib/bp/check_key_params.sub:40
+#: common/lib/bp/create_key.sub:78 common/lib/bp/create_key.sub:79
+msgid "/data/KEY_LENGTH"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:43 common/lib/bp/check_key_params.sub:53
+#: common/lib/bp/check_key_params.sub:60 common/lib/bp/create_pin.sub:112
+#: common/lib/bp/create_pin.sub:116 common/lib/bp/create_pin.sub:187
+#: common/lib/bp/backup_key.sub:76 common/lib/bp/create_key.sub:82
+#: common/lib/bp/create_key.sub:92 common/lib/bp/create_csr.sub:151
+#: common/lib/bp/create_csr.sub:161 common/lib/bp/enroll_pkcs12.sub:103
+#: common/lib/bp/enroll_pkcs12.sub:146 common/lib/bp/check_csr_params.sub:78
+#: common/lib/bp/check_csr_params.sub:97
+#: common/lib/bp/check_csr_params.sub:129
+#: common/lib/bp/check_csr_params.sub:148 common/lib/bp/enroll_pin.sub:51
+#: common/lib/bp/check_csr.sub:106 common/lib/bp/check_csr.sub:125
+#: common/lib/bp/check_csr.sub:149 common/lib/bp/check_csr.sub:168
+#: common/lib/bp/check_csr.sub:200
+msgid "FILENAME"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:43 common/lib/bp/check_key_params.sub:53
+#: common/lib/bp/check_key_params.sub:60 common/lib/bp/create_pin.sub:112
+#: common/lib/bp/create_pin.sub:116 common/lib/bp/backup_key.sub:76
+#: common/lib/bp/create_key.sub:82 common/lib/bp/create_key.sub:92
+#: common/lib/bp/enroll_pkcs12.sub:103 common/lib/bp/enroll_pkcs12.sub:146
+#: common/lib/bp/check_csr_params.sub:78 common/lib/bp/check_csr_params.sub:97
+#: common/lib/bp/check_csr_params.sub:129
+#: common/lib/bp/check_csr_params.sub:148 common/lib/bp/enroll_pin.sub:51
+#: common/lib/bp/check_csr.sub:106 common/lib/bp/check_csr.sub:125
+#: common/lib/bp/check_csr.sub:149 common/lib/bp/check_csr.sub:168
+#: common/lib/bp/check_csr.sub:200
+#, fuzzy
+msgid "StateMachineConfiguration"
+msgstr "Konfiguration"
+
+#: common/lib/bp/check_key_params.sub:44 common/lib/bp/check_key_params.sub:54
+#: common/lib/bp/check_key_params.sub:61 common/lib/bp/create_pin.sub:113
+#: common/lib/bp/create_pin.sub:117 common/lib/bp/backup_key.sub:77
+#: common/lib/bp/create_key.sub:83 common/lib/bp/create_key.sub:93
+#: common/lib/bp/enroll_pkcs12.sub:104 common/lib/bp/enroll_pkcs12.sub:147
+#: common/lib/bp/check_csr_params.sub:79 common/lib/bp/check_csr_params.sub:98
+#: common/lib/bp/check_csr_params.sub:130
+#: common/lib/bp/check_csr_params.sub:149 common/lib/bp/enroll_pin.sub:52
+#: common/lib/bp/check_csr.sub:107 common/lib/bp/check_csr.sub:126
+#: common/lib/bp/check_csr.sub:150 common/lib/bp/check_csr.sub:169
+#: common/lib/bp/check_csr.sub:201
+msgid "XPATH"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:44 common/lib/bp/create_key.sub:83
+msgid "statemachine/functions/create_key/default_key_length"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:45 common/lib/bp/check_key_params.sub:55
+#: common/lib/bp/check_key_params.sub:62 common/lib/bp/create_pin.sub:114
+#: common/lib/bp/create_pin.sub:118 common/lib/bp/backup_key.sub:78
+#: common/lib/bp/create_key.sub:84 common/lib/bp/create_key.sub:94
+#: common/lib/bp/enroll_pkcs12.sub:105 common/lib/bp/enroll_pkcs12.sub:148
+#: common/lib/bp/check_csr_params.sub:80 common/lib/bp/check_csr_params.sub:99
+#: common/lib/bp/check_csr_params.sub:131
+#: common/lib/bp/check_csr_params.sub:150 common/lib/bp/enroll_pin.sub:53
+#: common/lib/bp/check_csr.sub:108 common/lib/bp/check_csr.sub:127
+#: common/lib/bp/check_csr.sub:151 common/lib/bp/check_csr.sub:170
+#: common/lib/bp/check_csr.sub:202
+#, fuzzy
+msgid "COUNTER"
+msgstr "NUTZER"
+
+#: common/lib/bp/check_key_params.sub:49 common/lib/bp/check_key_params.sub:50
+#: common/lib/bp/create_key.sub:88 common/lib/bp/create_key.sub:89
+msgid "/data/KEY_ALGORITHM"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:54 common/lib/bp/create_key.sub:93
+msgid "statemachine/functions/create_key/default_key_algorithm"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:61
+msgid "statemachine/functions/create_key/minimum_key_length"
+msgstr ""
+#: common/lib/bp/check_key_params.sub:95 common/lib/bp/create_pin.sub:203
+#: common/lib/bp/backup_key.sub:188 common/lib/bp/complete_csr.sub:334
+#: common/lib/bp/create_key.sub:116 common/lib/bp/create_csr.sub:174
+#: common/lib/bp/create_cert.sub:109 common/lib/bp/enroll_pkcs12.sub:174
+#: common/lib/bp/check_csr_params.sub:201 common/lib/bp/check_pin.sub:90
+#: common/lib/bp/enroll_pin.sub:79 common/lib/bp/check_key.sub:84
+#: common/lib/bp/check_csr.sub:236
+msgid "USER"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:96 common/lib/bp/create_pin.sub:204
+#: common/lib/bp/backup_key.sub:189 common/lib/bp/complete_csr.sub:335
+#: common/lib/bp/create_key.sub:117 common/lib/bp/create_csr.sub:175
+#: common/lib/bp/create_cert.sub:110 common/lib/bp/enroll_pkcs12.sub:175
+#: common/lib/bp/check_csr_params.sub:202 common/lib/bp/check_pin.sub:91
+#: common/lib/bp/enroll_pin.sub:80 common/lib/bp/check_key.sub:85
+#: common/lib/bp/check_csr.sub:237
+msgid "PROCESS"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:97 common/lib/bp/create_pin.sub:205
+#: common/lib/bp/backup_key.sub:190 common/lib/bp/complete_csr.sub:336
+#: common/lib/bp/create_key.sub:118 common/lib/bp/create_csr.sub:176
+#: common/lib/bp/create_cert.sub:111 common/lib/bp/enroll_pkcs12.sub:176
+#: common/lib/bp/check_csr_params.sub:203 common/lib/bp/check_pin.sub:92
+#: common/lib/bp/enroll_pin.sub:81 common/lib/bp/check_key.sub:86
+#: common/lib/bp/check_csr.sub:238
+msgid "SET"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:98 common/lib/bp/create_pin.sub:206
+#: common/lib/bp/backup_key.sub:191 common/lib/bp/complete_csr.sub:337
+#: common/lib/bp/create_key.sub:119 common/lib/bp/create_csr.sub:177
+#: common/lib/bp/create_cert.sub:112 common/lib/bp/enroll_pkcs12.sub:177
+#: common/lib/bp/check_csr_params.sub:204 common/lib/bp/check_pin.sub:93
+#: common/lib/bp/enroll_pin.sub:82 common/lib/bp/check_key.sub:87
+#: common/lib/bp/check_csr.sub:239
+msgid "UNSET"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:97 common/lib/bp/create_key.sub:119
+msgid "checked_key_params"
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:98 common/lib/bp/create_key.sub:119
+#: common/lib/bp/check_pin.sub:92
+msgid "checked_pin"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:46 common/lib/bp/create_pin.sub:49
+#: common/lib/bp/create_pin.sub:53
+msgid "/private"
+msgstr ""
+#: common/lib/bp/create_pin.sub:64 common/lib/bp/create_pin.sub:67
+#: common/lib/bp/create_pin.sub:71
+msgid "/public"
+msgstr ""
+#: common/lib/bp/create_pin.sub:113
+msgid "statemachine/functions/create_pin/secure_pin_length"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:117
+msgid "statemachine/functions/create_pin/secure_pin_random"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:123 common/lib/bp/create_pin.sub:128
+msgid "PIN_LENGTH"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:124 common/lib/bp/create_pin.sub:133
+msgid "RANDOM_LENGTH"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:145 common/lib/bp/create_pin.sub:160
+msgid " ("
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:145 common/lib/bp/create_pin.sub:160
+msgid ")"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:154 common/lib/bp/create_pin.sub:169
+#: common/lib/bp/create_pin.sub:187 common/lib/bp/backup_key.sub:146
+#: common/lib/bp/backup_key.sub:159 common/lib/bp/backup_key.sub:169
+#: common/lib/bp/complete_csr.sub:299 common/lib/bp/create_csr.sub:127
+#: common/lib/bp/create_csr.sub:152 common/lib/bp/create_csr.sub:156
+#: common/lib/bp/create_csr.sub:161 common/lib/bp/enroll_pkcs12.sub:122
+msgid "DATA"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:155 common/lib/bp/backup_key.sub:147
+#: common/lib/bp/create_csr.sub:157
+msgid "ALGORITHM"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:155 common/lib/bp/backup_key.sub:147
+#: common/lib/bp/create_csr.sub:157
+msgid "sha1"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:92 common/lib/bp/create_pin.sub:94
+#: common/lib/bp/create_pin.sub:99 common/lib/bp/create_pin.sub:187
+#: common/lib/bp/create_pin.sub:189 common/lib/bp/complete_csr.sub:50
+#: common/lib/bp/complete_csr.sub:57
+msgid "/public/hashedPIN"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:95
+msgid "/public/hashedPIN."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:96
+msgid "%Y-%m-%d-%H-%M-%S"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:82 common/lib/bp/create_pin.sub:170
+#: common/lib/bp/create_pin.sub:172 common/lib/bp/create_pin.sub:188
+#: common/lib/bp/backup_key.sub:46 common/lib/bp/backup_key.sub:56
+#: common/lib/bp/backup_key.sub:64 common/lib/bp/create_key.sub:46
+#: common/lib/bp/create_key.sub:56 common/lib/bp/create_key.sub:64
+#: common/lib/bp/create_csr.sub:46 common/lib/bp/create_csr.sub:56
+#: common/lib/bp/create_csr.sub:64 common/lib/bp/enroll_pkcs12.sub:46
+#: common/lib/bp/enroll_pkcs12.sub:56 common/lib/bp/enroll_pkcs12.sub:64
+#: common/lib/bp/check_csr_params.sub:47 common/lib/bp/check_pin.sub:46
+#: common/lib/bp/check_pin.sub:56 common/lib/bp/check_pin.sub:64
+#: common/lib/bp/enroll_pin.sub:36 common/lib/bp/check_key.sub:46
+#: common/lib/bp/check_key.sub:56 common/lib/bp/check_key.sub:64
+msgid "/private/purePIN"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:170 common/lib/bp/backup_key.sub:170
+#: common/lib/bp/create_key.sub:100 common/lib/bp/enroll_pkcs12.sub:121
+msgid "OUTFILE"
+msgstr ""#: common/lib/bp/create_pin.sub:205 common/lib/bp/check_pin.sub:93
+msgid "new_pin"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:206
+msgid "error_create_pin"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:206
+msgid "new_process"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:30
+msgid "backup_key"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:64 common/lib/bp/create_key.sub:64
+#: common/lib/bp/create_csr.sub:64 common/lib/bp/enroll_pkcs12.sub:64
+#: common/lib/bp/check_pin.sub:64 common/lib/bp/check_key.sub:64
+msgid "INFILE"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:77
+msgid "statemachine/functions/backup_key/mode"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:80
+msgid "/data/backupKey"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:90
+msgid "/data/denyKeyBackup"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:90
+msgid "/data/noKeyBackup"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:124 common/lib/bp/backup_key.sub:126
+msgid "/keybackup"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:137 common/lib/bp/create_key.sub:100
+#: common/lib/bp/create_csr.sub:86 common/lib/bp/create_csr.sub:156
+#: common/lib/bp/enroll_pkcs12.sub:119 common/lib/bp/check_csr_params.sub:57
+msgid "/private/privateKey"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:150
+msgid "/keybackup/"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:150
+msgid ".enc_key"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:154 common/lib/bp/complete_csr.sub:253
+#: common/lib/bp/complete_csr.sub:257 common/lib/bp/complete_csr.sub:315
+#: common/lib/bp/create_csr.sub:138 common/lib/bp/create_cert.sub:77
+#: common/lib/bp/create_cert.sub:92 common/lib/bp/enroll_pkcs12.sub:85
+#: common/lib/bp/enroll_pkcs12.sub:123 common/lib/bp/check_csr.sub:65
+#: common/lib/bp/check_csr.sub:69 common/lib/bp/check_csr.sub:217
+msgid "DATATYPE"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:154 common/lib/bp/complete_csr.sub:253
+#: common/lib/bp/complete_csr.sub:257 common/lib/bp/create_cert.sub:77
+#: common/lib/bp/create_cert.sub:91 common/lib/bp/check_csr.sub:65
+#: common/lib/bp/check_csr.sub:69
+msgid "KEY"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:155 common/lib/bp/create_csr.sub:140
+#: common/lib/bp/enroll_pkcs12.sub:125
+msgid "INFORM"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:155 common/lib/bp/create_csr.sub:89
+#: common/lib/bp/create_csr.sub:140 common/lib/bp/enroll_pkcs12.sub:125
+msgid "PEM"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:156 common/lib/bp/enroll_pkcs12.sub:126
+msgid "OUTFORM"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:156
+msgid "PKCS8"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:157
+msgid "INPASSWD"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:158
+msgid "OUTPASSWD"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:190 common/lib/bp/check_csr_params.sub:204
+msgid "backuped_key"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:191 common/lib/bp/check_csr_params.sub:204
+#: common/lib/bp/check_key.sub:86
+msgid "checked_key"
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:191 common/lib/bp/create_key.sub:118
+#: common/lib/bp/check_key.sub:87
+msgid "new_key"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:30 common/lib/bp/complete_csr.sub:336
+#: common/lib/bp/check_csr.sub:239
+msgid "complete_csr"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:67 common/lib/bp/complete_csr.sub:74
+#: common/lib/bp/check_csr_params.sub:67
+msgid "/data/ROLE"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:84 common/lib/bp/complete_csr.sub:91
+#: common/lib/bp/create_csr.sub:74 common/lib/bp/check_csr_params.sub:118
+msgid "/data/SUBJECT"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:101 common/lib/bp/check_csr_params.sub:169
+msgid "/data"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:130 common/lib/bp/complete_csr.sub:133
+msgid "/data/"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:149
+msgid "DNS"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:151
+msgid "IP"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:157 common/lib/bp/complete_csr.sub:169
+#: common/lib/bp/complete_csr.sub:181
+msgid "SUBJECT_ALT_NAME_"
+msgstr ""
+#: common/lib/bp/complete_csr.sub:164 modules/openca-dbi/DBI.pm:151
+msgid "email"
+msgstr ""
+#: common/lib/bp/complete_csr.sub:176
+msgid "URI"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:178
+msgid "othername"
+msgstr ""
+#: common/lib/bp/complete_csr.sub:187
+msgid ","
+msgstr ""
+#: common/lib/bp/complete_csr.sub:199 common/lib/bp/complete_csr.sub:201
+msgid "/data/LOA_MODE"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:210 common/lib/bp/complete_csr.sub:212
+msgid "/data/LOA"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:231 common/lib/bp/create_csr.sub:151
+#: common/lib/bp/create_csr.sub:152 common/lib/bp/create_cert.sub:56
+#: common/lib/bp/enroll_pkcs12.sub:76 common/lib/bp/check_csr.sub:43
+msgid "/public/csrList"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:274
+msgid "-----BEGIN HEADER-----"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:275
+msgid "-----END HEADER-----"
+msgstr ""
+#: common/lib/bp/complete_csr.sub:279#: common/lib/bp/complete_csr.sub:280
+msgid "RA = BATCH SYSTEM\n"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:281 common/lib/bp/create_csr.sub:117
+msgid "SERIAL = "
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:281 common/lib/bp/complete_csr.sub:282
+#: common/lib/bp/complete_csr.sub:284 common/lib/bp/complete_csr.sub:287
+#: common/lib/bp/complete_csr.sub:288 common/lib/bp/create_csr.sub:117
+#: common/lib/bp/create_csr.sub:118 common/lib/bp/create_csr.sub:119
+#: common/lib/bp/create_csr.sub:152
+msgid "\n"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:282
+msgid "RENEW = "
+msgstr "ERNEUERT"
+#: common/lib/bp/complete_csr.sub:284
+#, fuzzy
+msgid "PIN = "
+msgstr "PIN"
+#: common/lib/bp/complete_csr.sub:286#: common/lib/bp/complete_csr.sub:287
+msgid "SCEP_TID = "
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:288
+msgid "SUBJECT_ALT_NAME = "
+msgstr ""
+#: common/lib/bp/complete_csr.sub:290#: common/lib/bp/complete_csr.sub:291#: common/lib/bp/complete_csr.sub:297 common/lib/bp/create_csr.sub:84
+#: common/lib/bp/create_csr.sub:125
+msgid "SHELL"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:298 common/lib/bp/create_csr.sub:85
+#: common/lib/bp/create_csr.sub:126
+msgid "GETTEXT"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:315 common/lib/bp/check_csr.sub:217
+msgid "_REQUEST"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:316 common/lib/bp/create_csr.sub:139
+#: common/lib/bp/check_csr.sub:218
+msgid "OBJECT"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:317 common/lib/bp/check_csr.sub:219
+msgid "NEWTYPE"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:337 common/lib/bp/create_csr.sub:176
+msgid "new_csr"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:337
+msgid "incomplete_csr"
+msgstr ""
+
+#: common/lib/bp/create_key.sub:30
+msgid "create_key"
+msgstr ""
+
+#: common/lib/bp/create_key.sub:99
+msgid "BITS"
+msgstr ""
+
+#: common/lib/bp/create_key.sub:101
+msgid "TYPE"
+msgstr ""
+
+#: common/lib/bp/create_key.sub:102 common/lib/bp/create_csr.sub:88
+#: common/lib/bp/enroll_pkcs12.sub:127
+msgid "PASSWD"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:30
+msgid "create_csr"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:86 common/lib/bp/enroll_pkcs12.sub:124
+msgid "KEYFILE"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:87
+msgid "SUBJECT"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:89
+msgid "FORMAT"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:100
+msgid "-----BEGIN HEADER-----\n"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:101
+msgid "TYPE = PKCS#10\n"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:105 common/lib/bp/create_csr.sub:116
+msgid "ModuleShift"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:116
+msgid "ModuleID"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:118
+msgid "NOTBEFORE = "
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:119
+msgid "SUBJECT = "
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:120
+msgid "-----END HEADER-----\n"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:141
+msgid "MODE"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:141
+msgid "INSERT"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:160
+msgid "/keybackup/csr_"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:160
+msgid ".keydigest"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:177 common/lib/bp/check_csr_params.sub:203
+msgid "checked_csr_params"
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:31
+msgid "create_cert"
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:111 common/lib/bp/enroll_pin.sub:82
+msgid "new_cert"
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:112 common/lib/bp/check_csr.sub:238
+msgid "checked_csr"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:30
+msgid "enroll_pkcs12"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:85
+msgid "CSR_SERIAL"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:104
+msgid "statemachine/functions/enrollment/pkcs12/dir"
+msgstr ""
+#: common/lib/bp/enroll_pkcs12.sub:117
+msgid "CACertificate"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:126
+msgid "PKCS12"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:128
+msgid "P12PASSWD"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:129
+msgid "CACERT"
+msgstr ""
+#: common/lib/bp/enroll_pkcs12.sub:147
+msgid "statemachine/functions/enrollment/pkcs12/list"
+msgstr ""
+#: common/lib/bp/enroll_pkcs12.sub:176
+msgid "enrolled_pkcs12"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:177 common/lib/bp/enroll_pin.sub:81
+msgid "enrolled_pin"
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:30 common/lib/bp/check_csr.sub:30
+msgid "check_csr"
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:121
+msgid "There is no subject specified for the workflow."
+msgstr "Es wurde kein eindeutiger Name für diesen Prozess spezifiziert."
+
+#: common/lib/bp/check_csr_params.sub:79 common/lib/bp/check_csr_params.sub:98
+#: common/lib/bp/check_csr.sub:107 common/lib/bp/check_csr.sub:126
+msgid "statemachine/functions/create_csr/allowed_roles/role"
+msgstr ""
+#: common/lib/bp/check_csr_params.sub:130
+#: common/lib/bp/check_csr_params.sub:149 common/lib/bp/check_csr.sub:150
+#: common/lib/bp/check_csr.sub:169
+msgid "statemachine/functions/create_csr/allowed_subjects/suffix"
+msgstr ""
+#: common/lib/bp/check_pin.sub:93
+msgid "error_pin_check"
+msgstr ""
+
+#: common/lib/bp/enroll_pin.sub:30
+msgid "enroll_pin"
+msgstr ""
+
+#: common/lib/bp/enroll_pin.sub:52
+msgid "statemachine/functions/enrollment/pin/waiting"
+msgstr ""
+
+#: common/lib/bp/check_key.sub:30
+msgid "check_key"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:201
+msgid "statemachine/functions/create_csr/minimum_key_length"
+msgstr ""
+#: common/lib/bp/check_csr.sub:207#: common/lib/bp/check_key_params.sub:68#: common/lib/bp/check_key_params.sub:69#: common/lib/bp/check_key_params.sub:71 common/lib/bp/check_key_params.sub:79
+#: common/lib/bp/check_key_params.sub:86
+#: common/lib/bp/check_key_params.sub:105
+#: common/lib/bp/check_key_params.sub:111 common/lib/bp/create_pin.sub:40
+#: common/lib/bp/create_pin.sub:55 common/lib/bp/create_pin.sub:73
+#: common/lib/bp/create_pin.sub:86 common/lib/bp/create_pin.sub:101
+#: common/lib/bp/create_pin.sub:138 common/lib/bp/create_pin.sub:147
+#: common/lib/bp/create_pin.sub:162 common/lib/bp/create_pin.sub:181
+#: common/lib/bp/create_pin.sub:194 common/lib/bp/create_pin.sub:213
+#: common/lib/bp/create_pin.sub:219 common/lib/bp/backup_key.sub:40
+#: common/lib/bp/backup_key.sub:50 common/lib/bp/backup_key.sub:60
+#: common/lib/bp/backup_key.sub:69 common/lib/bp/backup_key.sub:85
+#: common/lib/bp/backup_key.sub:96 common/lib/bp/backup_key.sub:115
+#: common/lib/bp/backup_key.sub:130 common/lib/bp/backup_key.sub:141
+#: common/lib/bp/backup_key.sub:163 common/lib/bp/backup_key.sub:175
+#: common/lib/bp/backup_key.sub:198 common/lib/bp/backup_key.sub:204
+#: common/lib/bp/complete_csr.sub:54 common/lib/bp/complete_csr.sub:61
+#: common/lib/bp/complete_csr.sub:71 common/lib/bp/complete_csr.sub:78
+#: common/lib/bp/complete_csr.sub:88 common/lib/bp/complete_csr.sub:95
+#: common/lib/bp/complete_csr.sub:105 common/lib/bp/complete_csr.sub:114
+#: common/lib/bp/complete_csr.sub:122 common/lib/bp/complete_csr.sub:135
+#: common/lib/bp/complete_csr.sub:160 common/lib/bp/complete_csr.sub:172
+#: common/lib/bp/complete_csr.sub:184 common/lib/bp/complete_csr.sub:193
+#: common/lib/bp/complete_csr.sub:206 common/lib/bp/complete_csr.sub:217
+#: common/lib/bp/complete_csr.sub:236 common/lib/bp/complete_csr.sub:244
+#: common/lib/bp/complete_csr.sub:263 common/lib/bp/complete_csr.sub:307
+#: common/lib/bp/complete_csr.sub:323 common/lib/bp/complete_csr.sub:344
+#: common/lib/bp/complete_csr.sub:350 common/lib/bp/create_key.sub:40
+#: common/lib/bp/create_key.sub:50 common/lib/bp/create_key.sub:60
+#: common/lib/bp/create_key.sub:69 common/lib/bp/create_key.sub:107
+#: common/lib/bp/create_key.sub:126 common/lib/bp/create_key.sub:132
+#: common/lib/bp/create_csr.sub:40 common/lib/bp/create_csr.sub:50
+#: common/lib/bp/create_csr.sub:60 common/lib/bp/create_csr.sub:69
+#: common/lib/bp/create_csr.sub:78 common/lib/bp/create_csr.sub:95
+#: common/lib/bp/create_csr.sub:111 common/lib/bp/create_csr.sub:132
+#: common/lib/bp/create_csr.sub:146 common/lib/bp/create_csr.sub:165
+#: common/lib/bp/create_csr.sub:184 common/lib/bp/create_csr.sub:190
+#: common/lib/bp/create_cert.sub:43 common/lib/bp/create_cert.sub:61
+#: common/lib/bp/create_cert.sub:69 common/lib/bp/create_cert.sub:82
+#: common/lib/bp/create_cert.sub:98 common/lib/bp/create_cert.sub:119
+#: common/lib/bp/create_cert.sub:125 common/lib/bp/enroll_pkcs12.sub:40
+#: common/lib/bp/enroll_pkcs12.sub:50 common/lib/bp/enroll_pkcs12.sub:60
+#: common/lib/bp/enroll_pkcs12.sub:69 common/lib/bp/enroll_pkcs12.sub:93
+#: common/lib/bp/enroll_pkcs12.sub:110 common/lib/bp/enroll_pkcs12.sub:135
+#: common/lib/bp/enroll_pkcs12.sub:153 common/lib/bp/enroll_pkcs12.sub:163
+#: common/lib/bp/enroll_pkcs12.sub:184 common/lib/bp/enroll_pkcs12.sub:190
+#: common/lib/bp/check_csr_params.sub:51 common/lib/bp/check_csr_params.sub:61
+#: common/lib/bp/check_csr_params.sub:72 common/lib/bp/check_csr_params.sub:85
+#: common/lib/bp/check_csr_params.sub:112
+#: common/lib/bp/check_csr_params.sub:123
+#: common/lib/bp/check_csr_params.sub:136
+#: common/lib/bp/check_csr_params.sub:163
+#: common/lib/bp/check_csr_params.sub:173
+#: common/lib/bp/check_csr_params.sub:182
+#: common/lib/bp/check_csr_params.sub:190
+#: common/lib/bp/check_csr_params.sub:211
+#: common/lib/bp/check_csr_params.sub:217 common/lib/bp/check_pin.sub:40
+#: common/lib/bp/check_pin.sub:50 common/lib/bp/check_pin.sub:60
+#: common/lib/bp/check_pin.sub:69 common/lib/bp/check_pin.sub:81
+#: common/lib/bp/check_pin.sub:100 common/lib/bp/check_pin.sub:106
+#: common/lib/bp/enroll_pin.sub:40 common/lib/bp/enroll_pin.sub:58
+#: common/lib/bp/enroll_pin.sub:68 common/lib/bp/enroll_pin.sub:89
+#: common/lib/bp/enroll_pin.sub:95 common/lib/bp/check_key.sub:40
+#: common/lib/bp/check_key.sub:50 common/lib/bp/check_key.sub:60
+#: common/lib/bp/check_key.sub:69 common/lib/bp/check_key.sub:94
+#: common/lib/bp/check_key.sub:100 common/lib/bp/check_csr.sub:48
+#: common/lib/bp/check_csr.sub:56 common/lib/bp/check_csr.sub:75
+#: common/lib/bp/check_csr.sub:97 common/lib/bp/check_csr.sub:113
+#: common/lib/bp/check_csr.sub:140 common/lib/bp/check_csr.sub:156
+#: common/lib/bp/check_csr.sub:183 common/lib/bp/check_csr.sub:193
+#: common/lib/bp/check_csr.sub:209 common/lib/bp/check_csr.sub:225
+#: common/lib/bp/check_csr.sub:246 common/lib/bp/check_csr.sub:252
+msgid "HASHREF"
+msgstr ""
+#: common/lib/bp/create_pin.sub:30 common/lib/bp/check_pin.sub:30
+msgid "create_pin"
+msgstr ""
+

@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+# Startup script for the Apache Web Server
+#
+# chkconfig: 345 85 15
+# description: Apache is a World Wide Web server.  It is used to serve \
+#	       HTML files and CGI.
+# processname: httpd.ca
+# pidfile: /var/run/ca.pid
+# config: /usr/local/apache/conf/ca.conf
+
+sdir="/usr/local/apache";
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+apache="$sdir/bin/httpd";
+conf="$sdir/conf/ca.conf";
+
+PATH=$PATH:/usr/local/apache/bin
+export PATH
+
+# Take a look in your apache config and set it as it is set there.
+pidfile="/var/run/ca.pid";
+
+# See how we were called.
+case "$1" in
+  start)
+	echo "Starting CA httpd: \c"
+	$apache -f $conf
+	echo "Done."
+	touch /var/lock/subsys/httpd.ca
+	;;
+  stop)
+	echo "Shutting down CA http: \c"
+	pid=`cat $pidfile`;
+	kill $pid
+	echo "Done."
+	rm -f /var/lock/subsys/httpd.ca
+	;;
+  status)
+	echo "CA Current Status: \c"
+	if ! [ -e $pidfile ] ; then
+		echo "Stopped."
+		exit 0
+	fi
+	pid=`cat $pidfile`;
+	stat=`ps auxw | grep "$pid" | wc -l`;
+	if [ $stat -gt 1 ] ; then
+		echo "Running."
+	else
+		echo "Stopped."
+	fi
+	;;
+  restart)
+	$0 stop
+	sleep 2
+	$0 start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|status}"
+	exit 1
+esac
+
+exit 0

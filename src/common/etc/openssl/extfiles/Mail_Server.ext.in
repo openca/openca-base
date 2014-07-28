@@ -1,0 +1,65 @@
+# These extensions are added when 'ca' signs a request.
+
+# Important explanation:
+#
+# Mailservers usually include SMTP daemons. SMTP servers act as server and
+# client because they work in a hierarchy. Some server softwares like sendmail
+# require that the SMTP server identifies itself as a SMTP client if it contacts
+# another SMTP server. Usually you only want to issue one certificate per server
+# and not one certificate per service and therefore you have to set the
+# extensions for SSL Client and SSL Server like recommended by OpenSSL (please
+# see "man x509" after you installed OpenSSL)
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+
+basicConstraints=CA:FALSE
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+
+# For an object signing certificate this would be used.
+#nsCertType = objsign
+
+# For normal client use this is typical
+nsCertType = client, server
+
+# This is typical also
+
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, serverAuth, msSGC, nsSGC
+nsComment		= "Mail-Server of @ca_organization@"
+
+# PKIX recommendations
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid
+
+# Import the email address.
+
+subjectAltName=@subject_alt_name
+
+# Copy subject details
+
+issuerAltName=issuer:copy
+
+# New PRQP support
+# - use the prqpTrustedAuthority if you use a 3rd party provided server
+# authorityInfoAccess = prqpTrustedAuthority;URI:http://prqp.openca.org/
+
+# default PRQP server, more info at http://www.openca.org/projects/prqpd/
+@authInfoAccess@
+
+# Old Netscape (ns), should be removed
+# nsCaRevocationUrl	= @NS_CRLDistributionPoint@
+# nsRevocationUrl		= @NS_CRLDistributionPoint@
+crlDistributionPoints   = @cdp_section
+
+[ subject_alt_name ]
+
+__SUBJECT_ALT_NAME__
+
+[ cdp_section ]
+
+@CRLDistributionPoints@
+
+

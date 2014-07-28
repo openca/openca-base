@@ -1,0 +1,221 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: statusAutoCA
+##       Brief: Checks the status of the Auto (On-Line) CA Daemon
+##     Version: $Revision: 1.6 $
+## Description: Checks the status of the Auto (On-Line) CA Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStatusAutoCA
+{
+	my $pidfile = undef;
+	my $pid = undef;
+	my $info_list = undef;
+	my $status = undef;
+	my $pos = 0;
+	my @stats = ();
+	my @stats2 = ();
+
+	our ($DEBUG);
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoca.pid";
+	if (libGetPidProcessStatus($pidfile))
+	{
+		$status = "Enabled";
+	}
+	else
+	{
+		$status = "Disabled";
+	}
+
+	$info_list->{CLASS} = "info_list";
+
+	$info_list->{BODY}->[$pos++]->[0] = "<h3>Daemon Status</h3>";
+
+	$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+						gettext ( "Status" ) .
+					  "</div>";
+	$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>" . 
+						gettext ( $status ) .
+					  "</div>";
+
+	if( $status =~ /Enabled/ ) {
+
+		@stats = stat( $pidfile );
+
+		my $params = startAutoCA_loadParams();
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Started On" ) . 
+					  "</div>";
+
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos++]->[0] = 
+					"<h3>Approved Requests Configuration</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Approved by (Operator Role)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues($params->{'operator'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Approved at (RAs)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues( $params->{'ra'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"RA Signature Required" .
+					"</div>";
+
+		if ( $params->{'reqsig'} eq "1" ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("Yes") .
+					"</div>";
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("No") .
+					"</div>";
+		}
+
+		$info_list->{BODY}->[$pos++]->[0] = 
+					"<h3>Request Technical Details</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Allowed Requested Role(s)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues( $params->{'role'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Allowed Requested LOA(s)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues( $params->{'loa'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Allowed Request Algorithm(s)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues( $params->{'algor'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Allowed Request Keysize(s)" .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues( $params->{'keysize'} ).
+					"</div>";
+
+		$info_list->{BODY}->[$pos++]->[0] = 
+					"<h3>Advanced (Development)</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Extended Logging (DEBUG)" .
+					"</div>";
+
+		if ( $params->{'debug'} eq "1" ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("Yes") .
+					"</div>";
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("No") .
+					"</div>";
+		}
+
+	} else {
+		my $statusfile = undef;
+		my $reason = undef;
+		my @stats2 = ();
+		my @stats = ();
+		my $started = undef;
+		my $stopped = undef;
+
+		$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoca_status.txt";
+		if( -f $pidfile ) {
+			@stats = stat ( $pidfile );
+			$started = scalar localtime $stats[10];
+		} else {
+			$started = gettext( "Unknown" );
+		}
+
+		if( -f $statusfile ) {
+			@stats2 = stat( $statusfile );
+			$stopped = scalar localtime $stats2[10];
+		} else {
+			print STDERR "ERROR::Can not find $statusfile!\n"
+				if( $DEBUG );
+			$stopped = gettext( "Unknown" );
+		}
+
+		if( not open( FD, "<$statusfile" ) ) {
+			$reason = "Undefined";
+		} else {
+			$reason = <FD>;
+			close ( FD );
+		}
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Last Started On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					$started .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Stopped On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats2[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "End Status" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					gettext ( $reason ) .
+					"</div>";
+
+	}
+
+	return libSendReply (
+                         "NAME"        => i18nGettext ("On-Line CA Daemon"),
+                         "EXPLANATION" => 
+				gettext ("Details about the On-Line CA Daemon"),
+                         "TIMESTAMP"   => 0,
+                         "INFO_LIST"   => $info_list,
+                        );
+
+}
+
+1;

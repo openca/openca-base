@@ -1,0 +1,320 @@
+## OpenCA - Daemon Utils
+## (c) 1999-2012 by Massimiliano Pala and OpenCA Labs
+##
+##   File Name: daemon-utils.lib
+##       Brief: Utils for dealing with pre-spawned daemons in OpenCA
+##     Version: $Revision: 1.9 $
+## Description: Utility functions for spawning and managing daemon
+##              processes
+##  Parameters: 
+
+use strict;
+
+## Start a Daemon Process. Used Parameters Are:
+##   PIDFILE  => $pidfile : Name sayis it all. Usually [$AUTOCONF{"var_prefix"}."name.pid"
+##   ARGS     => $args : Argument object to be passed to the new process
+##   FUNCTION => $func : Function to be executed
+##   HUP      => $func : Function to be executed when a HUP signal is received
+##   NEXT_CMD => $cmd : next openca's command to execute
+##   CLIENT_SOCK => $client : client sock coming from the Net::Server Abstraction that needs to be closed
+##   BARCH    => [ 0 | 1 ] : if set to 1, no output will be provided after spawning 
+##                           the new process
+sub start_process
+{
+  our (%AUTOCONF);
+
+  my $params   = { @_ };
+
+	my $pidfile  = $params->{PIDFILE};
+  my $next_cmd = $params->{NEXT_CMD};
+  my $function = $params->{FUNCTION};
+  my $hup_func = $params->{HUP_FUNCTION};
+	my $args     = $params->{ARGS};
+  # my $batch    = $params->{BATCH} or 0;
+  my $batch    = 0;
+
+	my $pid      = undef;
+	my $status   = undef;
+	my $db       = undef;
+
+  my $loc_ca_token = undef;
+  my $crypto_shell = undef;
+
+	## Parameters used by the issuing certificate process
+	our ($query, $errno, $errval, $ca_token, $DEBUG);
+
+	# $pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl.pid";
+  if ((not defined($params->{PIDFILE})) or ($pidfile eq ""))
+  {
+    daemonError(MSG=>"ERROR::Invalid parameter ($pidfile) set!",
+      FATAL=>1, BATCH=>$batch);
+  };
+
+	$status = libGetPidProcessStatus($pidfile);
+	if ($status gt 0)
+	{
+		daemonError( MSG => "ERROR, the On-Line Daemon is already active!",
+      FATAL => 1, BATCH => $batch);
+	}
+	elsif (not defined $status)
+	{
+		daemonError(MSG => "Can not open $pidfile!", FATAL => 1, BATCH => $batch);
+	};
+
+	if ($params->{GET_CA_TOKEN} and (not $ca_token))
+	{
+		$loc_ca_token = crypto_get_ca_token();
+		if ($loc_ca_token)
+		{
+      print STDERR "On-Line CA::Got new CA Token\n" if ($DEBUG);
+    }
+    else
+    {
+			daemonError( MSG => "ERROR, Can not get the CA_TOKEN. Please check the token password.\n",
+        FATAL => 1, BATCH => $batch);
+		}
+	}
+  else
+  {
+    $loc_ca_token = $ca_token;
+  };
+
+  if (($params->{GET_CA_TOKEN} eq 1) and ((not $loc_ca_token) or ($loc_ca_token == "")))
+  {
+			daemonError( MSG => "ERROR, Can not get the CA_TOKEN. Please check the token password.\n",
+        FATAL => 1, BATCH => $batch);
+  }
+
+	## Fork the Process
+	$pid = fork();
+
+	## Check which part of the fork are we in
+	if ($pid < 0)
+	{
+    generalError("Daemon Dispatcher can not start the requested service.");
+    return $pid;
+	}
+	elsif ($pid > 0)
+	{
+    # my $uid = $AUTOCONF{'httpd_user'};
+    # my $gid = $AUTOCONF{'httpd_group'};
+
+		if (not open(FD, ">$pidfile"))
+		{
+			daemonError("Can not write to $pidfile!", FATAL => 1, BATCH => $batch);
+		}
+		else
+		{
+			print FD "$pid";
+			close(FD);
+		};
+
+    # if ($> == 0)
+    # {
+    #  system("chown $uid:$gid $pidfile");
+    # }
+
+    if ($batch)
+    {
+      print STDERR "start_process()->Success!" if ($DEBUG);
+    }
+    else
+    {
+      ## If not in BATCH mode, we provide the nice webpage in return
+      if ((not defined($params->{NEXT_COMMAND})) or ($next_cmd eq ""))
+      {
+        print STDERR "start_process()->Displaying the success page.\n" if ($DEBUG);
+        success("Process Activated Successfully!");
+      }
+      else
+      {
+        print STDERR "start_process()->Executing next command ($next_cmd).\n" if ($DEBUG);
+		    $query->param ('cmd', $next_cmd);
+		    libExecuteCommand("$next_cmd");
+      }
+    }
+    print STDERR "start_process()->Returning to caller function.\n" if ($DEBUG);
+
+    return $pid;
+	}
+	else
+	{
+    close (STDIN);
+    close (STDOUT);
+
+    ## We have to be sure to close the Net::Server socket (which is tied
+    ## to client's STDIN / STDOUT - just closing those does not help!)
+    if ($params->{CLIENT_SOCK} && $params->{CLIENT_SOCK} ne "BATCH")
+    {
+      $params->{CLIENT_SOCK}->close;
+    }
+
+  	# our ($log, $session, $xml_cache, $crypto_layer, $access_control, %access_control_cache, $config, $ui_html);
+  	# our ($crypto_layer, $access_control, %access_control_cache, $config, $ui_html);
+    our ($crypto_layer);
+
+	  ## Get the Crypto Shell
+	  $crypto_shell = getCryptoShell();
+	  if ((not defined($crypto_shell)) or ($crypto_shell eq ""))
+  	{
+  		print STDERR "start_process()->Error::Can not Get CryptoShell!\n";
+  	};
+
+
+    ## my $uid = getpwnam($AUTOCONF{'httpd_user'});
+    ## my $gid = getgrnam($AUTOCONF{'httpd_group'});
+
+    ## if ($< == 0)
+    ## {
+    ##   print STDERR "daemon::Dropping Privileges -> $uid:$gid\n";
+
+    ##   $( = $gid;
+    ##   if ($! ne "")
+    ##   {
+    ##     print STDERR "daemon::Error Dropping Group Privileges -> $!\n";
+    ##   }
+
+    ##   $) = $gid;
+    ##   if ($! ne "")
+    ##   {
+    ##     print STDERR "daemon::Error Dropping Effective Group Privileges -> $!\n";
+    ##   }
+
+    ##   $< = $uid;
+    ##   if ($! ne "")
+    ##   {
+    ##     print STDERR "daemon::Error Dropping Real User Privileges -> $!\n";
+    ##   }
+
+    ##   $> = $uid;
+    ##   if ($! ne "")
+    ##   {
+    ##     print STDERR "daemon::Error Dropping Effective User Privileges -> $!\n";
+    ##   }
+
+    ##   print STDERR "daemon::Privileges Dropped Successfully.\n";
+    ## }
+
+	  ## Register the closing function for the HUP signal
+    if ((defined($params->{HUP_FUNCTION})) and ($hup_func ne ""))
+    {
+      my $sigset = POSIX::SigSet->new();
+      my $action = POSIX::SigAction->new($hup_func, $sigset, &POSIX::SA_NODEFER);
+
+      print STDERR "[$$] start_process()->Setting the HUP function ($hup_func)!\n" if ($DEBUG);
+      POSIX::sigaction(&POSIX::SIGHUP, $action);
+    }
+    else
+    {
+  		print STDERR "[$$] start_process()->NO HUP function ($hup_func) ?\n" if ($DEBUG);
+    }
+
+    ## Execute the main function
+    $function->(CA_TOKEN=>$loc_ca_token, CRYPTO_SHELL => $crypto_shell,
+                PIDFILE => $pidfile, ARGS => $args);
+
+    exit (1);
+  };
+}
+
+## Close a Daemon Process. 
+## Used Params are:
+##   PIDFILE => $file : pid file
+##   DB => $db : db handle
+sub close_process
+{
+  my $params = { @_ };
+
+	my $reason = shift;
+	my $statusfile = undef;
+  my $locDB = undef;
+
+  if ((not defined ($params->{STATUSFILE})) or ($params->{STATUSFILE} eq ""))
+  {
+    print STDERR "close_process()::error::no statusfile passed (" .  $params->{STATUSFILE} . ")\n";
+    return undef;
+  };
+
+  ## Get the Statusfile
+	$statusfile = $params->{PIDFILE};
+	if (($reason eq "HUP") or ($reason eq ""))
+	{
+		$reason = gettext("Process Stopped from CA Interface");
+	};
+
+  if ((not defined($params->{DB})) or (not $params->{DB}))
+  {
+    printf STDERR "close_process()::error::no DB handle passed!";
+    return undef;
+  };
+
+  ## Disconnect from the Database
+  $locDB = $params->{DB};
+	$locDB->disconnect();
+
+	# Unrecoverable Error
+	if (not open(FD, ">$statusfile"))
+	{
+		print STDERR "ERROR: Can not write to statusfile ($statusfile)";
+		exit(1);
+	}
+	else
+	{
+		print FD "$reason";
+		close( FD );
+	};
+
+	exit(1);
+}
+
+## Util Function to check if a value is in an array
+sub ValueIsInArray
+{
+	my $val = shift;
+	my $list = shift;
+	my @foo = undef;
+
+	if (ref($list) =~ /ARRAY/)
+	{
+		@foo = @{ $list };
+	}
+	else
+	{
+		@foo = split( "\0",$list );
+	};
+
+	if (grep( /$val/, @foo))
+	{
+		return 1;
+	}
+
+	return undef;
+}
+
+sub daemonError 
+{
+  our ($DEBUG);
+
+  my $keys = { @_ };
+
+  my $msg   = $keys->{MSG};
+  my $batch = $keys->{BATCH};
+  my $fatal = $keys->{FATAL};
+
+  if ($batch)
+  {
+    print STDERR "$msg\n" if ($DEBUG or $fatal);
+  }
+  elsif ($fatal)
+  {
+    generalError($msg);
+  }
+  elsif ($DEBUG)
+  {
+    print STDERR "daemonError()->$msg\n";
+  }
+
+  return 1;
+}
+
+1;

@@ -1,0 +1,68 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapUpdateCRL
+##       Brief: Add the most actual CRL to LDAP server
+## Description: Add the most actual CRL to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapUpdateCRL {
+
+print startLogPage (gettext ("Updating the CRL on the LDAP ..."));
+
+print addLogSection (gettext ("Loading CRL ..."));
+my $crl = LDAP_get_crl ();
+if ($crl) {
+	print addPreLogLine (i18nGettext ("loaded CRL __CRL_SERIAL__", "__CRL_SERIAL__", $crl->getSerial()));
+} else {
+	print addPreLogLine ("<FONT COLOR=#FF0000>".gettext ("Cannot load most actual CRL")."</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+print closeLogSection ();
+
+print addLogSection (gettext ("Checking the configuration for a special issuer ..."));
+my $dn = getRequired ('LDAP_CRL_Issuer');
+if (not $dn) {
+	print addPreLogLine (gettext ("No special issuer was specified!"));
+} else {
+	print addPreLogLine (i18nGettext ("Special issuer is __DN__.", "__DN__", $dn));
+	$crl->{parsedItem}->{ISSUER} = $dn;
+}
+print closeLogSection ();
+
+print addLogSection (i18nGettext ("Pushing CRL __CRL_SERIAL__ to LDAP ...", "__CRL_SERIAL__", $crl->getSerial()));
+my $result = eximObjectToLDAP ( CRL => $crl );
+
+if ($result and $result->{STATUS}) {
+        print addPreLogLine (
+              gettext ("Added CRL to LDAP").
+              "\n\t".
+              i18nGettext ("Last Update: __LAST_UPDATE__", "__LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE}).
+              "\n\t".
+              i18nGettext ("Next Update: __NEXT_UPDATE__", "__NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE}).
+              "\n");
+} else {
+        print addPreLogLine ( "<FONT COLOR=#FF0000>".
+              i18nGettext ("Cannot write CRL to LDAP (error __ERRNO__: __ERRVAL__)",
+                           "__ERRNO__", $result->{CODE},
+                           "__ERRVAL__", $result->{DESC}).
+              "\n\t".
+              i18nGettext ("Last Update: __LAST_UPDATE__", "__LAST_UPDATE__", $crl->getParsed()->{LAST_UPDATE}).
+              "\n\t".
+              i18nGettext ("Next Update: __NEXT_UPDATE__", "__NEXT_UPDATE__", $crl->getParsed()->{NEXT_UPDATE}).
+              "\n".
+              "</FONT>");
+}
+
+print closeLogSection ();
+
+closePage ();
+
+}
+
+1;

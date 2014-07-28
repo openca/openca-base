@@ -1,0 +1,194 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: getcert
+##       Brief: send certs
+## Description: send certificates over http (used for certificateenrollment) 
+##  Parameters: 
+
+use strict;
+
+sub cmdGetcert {
+
+    our ( $query, $db, $DEBUG, $tools, $cryptoShell );
+
+    ##// Let's get parameters
+    my $type      = $query->param('type');
+    my $key       = ( $query->param('key') || $query->param('serial') );
+    my $dataType  = ( $query->param('dataType') || "VALID_CERTIFICATE" );
+
+    my $cert = undef;
+
+    ## Certificates directory
+    my $tmpdir   = getRequired( 'tempdir' );
+
+    ## which type is requested?
+    if ($type =~ /CSR/i) {
+        my @list = $db->searchItems (DATATYPE => $dataType, CSR_SERIAL => $key);
+        $cert = $list[0] if (@list);
+    } elsif ($type =~ /BATCH/i) {
+        my $batch_dir = getRequired ("BP_DIR");
+
+        ## build the directory path for the ID
+        my $id_dir = $batch_dir;
+        my $h_id   = $key;
+        while ($h_id !~ /^$/) {
+            $id_dir .= "/".substr $h_id, 0, 1;
+            $h_id =~ s/^.//;
+        }
+
+        ## check that the directory not exist
+        if (-d $id_dir) {
+            ## checking that this directory is only part of a tree
+            if (not -f $id_dir."/ID") {
+                generalError (
+                              i18nGettext ( "Directory __DIR__ exists but it is not the directory of a user. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                              "__DIR__", $id_dir,
+                              "__ID__", $key));
+            }
+        } else {
+            generalError (
+                          i18nGettext ( "Directory __DIR__ does not exist. Cannot update a nonexistent user. Ignoring dataset of ID __ID__",
+                          "__DIR__", $id_dir,
+                          "__ID__", $key));
+        }
+
+        ## load latest request serial
+        my $old_serial = $tools->getFile ($id_dir."/.csr");
+        $old_serial =~ s/\n.*$//; ## use only the last csr
+        if (not $old_serial) {
+            generalError (i18nGettext ("There is no old request. Ignoring dataset of ID __ID__.", "__ID__", $key));
+        }
+
+        ## load cert
+        my @list = $db->searchItems (DATATYPE => $dataType, CSR_SERIAL => $old_serial);
+        $cert = $list[0] if (@list);
+    } else {
+        $cert = $db->getItem(DATATYPE => $dataType, KEY => $key);
+    }
+
+    ## Error if the certificate is not present in DBMS
+    if ( not $cert ) {
+        generalError (gettext ("Cannot load certificate from the database!"));
+    }
+
+    my $mycert = $cert->getPEM();
+
+    if (not $mycert){
+        generalError (gettext ("Cannot load necessary form!"));
+    } else {
+	my $parsedCert = $cert->getParsed();
+
+        if ( $parsedCert->{PRIVKEY} ne "" ) {
+		# Send the .p12 file
+	
+		$query->delete("GET_PARAMS_STEP", "passwd");
+
+		$query->param( "-name" => "format_send_cert_key", 
+						"-value" => "pkcs12" );
+
+		$query->param( "-name" => "HIDDEN_key", "-value" => "$key" );
+		$query->param( "-name" => "key", "-value" => "$key" );
+
+		$query->param( "-name" => "GET_PARAMS_CMD", 
+				"-value" => "send_cert_key" );
+
+		libExecuteCommand( "getParams" );
+
+		return 1;
+	}
+    }
+
+    ## Get User Agent
+    my $agent = $query->param ("AGENT_NAME");
+
+    if ( $agent =~ /MSIE/i ) {
+        ## MS Internet Explorer
+
+        my $cacert = getRequired( "CACertificate" );
+
+        my $fileName= $tmpdir."/${$}_getcert.pem";
+        if (not $tools->saveFile ( FILENAME => $fileName, DATA => $mycert )) {
+            generalError (gettext ("Cannot write PEM-formatted certificate into temporary file!"));
+        }
+        my $certpk7 = $cryptoShell->crl2pkcs7 ( 
+                                        OUTFORM   => 'PEM',
+                                        # if the user load the CA-certificate before he start
+                                        # the request then we must not send the CA-certificate
+                                        CERTSLIST => ["$cacert","$fileName"] );
+                                        # CERTSLIST => [$fileName]);
+        unlink ( $fileName );
+        if (not $certpk7) {
+            generalError (gettext ("Cannot convert certifcate to PKCS#7!"));
+        }
+
+        $certpk7 =~ s/\n//g;
+        $certpk7 =~ s/-----BEGIN PKCS7-----//g;
+        $certpk7 =~ s/-----END PKCS7-----//g;
+
+        my $hidden_list = undef;
+        my $exp = '<a class="normal" name="result">Installing certificate...</a>';
+        $hidden_list->{"cert"} = $certpk7;
+
+	if( ($query->param("AGENT_OS_NAME") =~ /Windows NT/) &&
+			($query->param("AGENT_OS_VERSION") >= 6 )) {
+		return libSendReply (
+                             "NAME"           => gettext ("Certificate Installation for IE (Vista)"),
+                             "EXPLANATION"    => $exp,
+                             "HIDDEN_LIST"    => $hidden_list,
+                             "VISTA_ENROLL_CERT" => 1
+			);
+
+	} else {
+        	return libSendReply (
+                             "NAME"           => gettext ("Certificate Installation for Internet Explorer"),
+                             "EXPLANATION"    => $exp,
+                             "HIDDEN_LIST"    => $hidden_list,
+                             "IE_ENROLL_CERT" => 1
+                            );
+	}
+    } else {
+        ## Mozilla, Opera
+        print "Content-type: application/x-x509-user-cert\n\n";
+        print $mycert;
+    }
+
+}
+
+sub getParamsGetcert
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("In the e-mail you should have received from us that states the certificate issuing process has been completed, it is reported a serial number that must be used at this time.\nIt is necessary that you proceed from the same computer from wich has been generated the certification request.\n\nPlease fill in the form with the serial number you received and click on the 'Continue' button.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Serial Number")."</td>\n".
+                   '    <td><input TYPE=text NAME="serial" SIZE="10"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Type of Serial")."</td>\n".
+                   "    <td>\n".
+                   "      <select name=\"type\">\n".
+                   "         <option value=\"CERTIFICATE\">".gettext("Certificate's Serial")."</option>\n".
+                   "         <option value=\"CSR\">".gettext("Request's Serial")."</option>\n".
+                   "         <option value=\"BATCH\">".gettext("Your ID")."</option>\n".
+                   "       </select>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+
+1;

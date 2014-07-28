@@ -1,0 +1,289 @@
+#!/bin/sh
+
+## Written by Michael Bell for the OpenCA project 2004
+## (C) Copyright 2004 The OpenCA Project. All rights reserved.
+## Same license like complete OpenCA distribution
+
+## $Revision: 1.33 $
+
+## This file is for developers and package maintainers only.
+## It demonstrates how to generate all the necessary files
+## before you can compile OpenCA if you have some problems
+## with the results of our autotool versions.
+## This file is also used to create releases and snapshots.
+
+## hack for Debian because behaviour under SuSE is different
+## looks like there was a change in GNU make
+## MAKEFILE = $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+
+MAKEFILE = Makefile.devel
+
+TOP	= .
+include $(TOP)/Makefile.global-vars
+
+default:	help
+
+info help:
+	@echo "force-auto-files  enforce the generation of all autotool files"
+	@echo "auto-files        generate all nonexisting or outdated autotool files"
+	@echo "dist              generate distribution"
+	@echo "rpm               generate distribution rpm"
+	@echo "snap              generate snapshot"
+	@echo "clean             cleanup files"
+
+########################################################
+##               BEGIN AUTOTOOL STUFF                 ##
+########################################################
+
+## we always do a complete run of the autotools to avoid
+## version problems with the different autotools
+
+## enforce a new generation
+
+force-auto-files:
+	make -f $(MAKEFILE) auto-root
+	make -f $(MAKEFILE) clean
+
+	# make -f $(MAKEFILE) auto-scep
+	# make -f $(MAKEFILE) auto-openca-sv
+
+## files and their dependiencies
+
+auto-files:	configure \
+	# src/scep/configure src/scep/Makefile.in src/scep/src/Makefile.in \
+	# src/openca-sv/configure src/openca-sv/Makefile.in src/openca-sv/src/Makefile.in
+
+configure:	configure.in
+	make -f $(MAKEFILE) auto-root
+
+# src/scep/configure: src/scep/configure.in
+# 	make -f $(MAKEFILE) auto-scep
+
+# src/scep/Makefile.in:	src/scep/Makefile.am
+# 	make -f $(MAKEFILE) auto-scep
+
+# src/scep/src/Makefile.in:	src/scep/src/Makefile.am
+# 	make -f $(MAKEFILE) auto-scep
+
+# src/openca-sv/configure:	src/openca-sv/configure.in
+# 	make -f $(MAKEFILE) auto-openca-sv
+
+# src/openca-sv/Makefile.in:	src/openca-sv/Makefile.am
+# 	make -f $(MAKEFILE) auto-openca-sv
+
+# src/openca-sv/src/Makefile.in:	src/openca-sv/src/Makefile.am
+# 	make -f $(MAKEFILE) auto-openca-sv
+
+## autotool runs
+
+auto-root:
+	@rm -f configure || echo configure already removed
+	aclocal   ##Pick up any changed autoconf macros
+	autoconf
+
+# auto-scep:
+# 	make -f $(MAKEFILE) auto-clean SUBTARGET=src/scep
+# 	cd src/scep; aclocal -I . -I build
+# 	cd src/scep; libtoolize --automake --copy --force
+# 	cd src/scep; automake --add-missing --copy --gnu
+# 	cd src/scep; autoconf
+# 	cp src/scep/build/install-sh src/scep
+# 	cp src/scep/build/install-sh .
+
+# auto-openca-sv:
+# 	make -f $(MAKEFILE) auto-clean SUBTARGET=src/openca-sv
+# 	cd src/openca-sv; aclocal -I . -I build
+# 	cd src/openca-sv; libtoolize --automake --copy --force
+# 	cd src/openca-sv; automake --add-missing --copy --gnu
+# 	cd src/openca-sv; autoconf
+# 	cp src/openca-sv/build/install-sh src/openca-sv
+
+auto-clean:
+	@cd $(SUBTARGET);	\
+		rm aclocal.m4 -f   || echo aclocal.m4 already removed;	\
+		rm configure -f    || echo configure already removed;	\
+		rm install-sh -f   || echo install-sh already removed;	\
+		rm libtool -f      || echo libtool already removed
+	@cd $(SUBTARGET)/build;		\
+		rm aclocal.m4* -f  || echo ac_locals already removed;	\
+		rm acx_* -f        || echo acx_* files already removed;	\
+		rm compile -f      || echo compile already removed;	\
+		rm config.guess -f || echo config.guess already removed;	\
+		rm config.sub -f   || echo config.sub already removed; 	\
+		rm depcomp -f      || echo depcomp already removed;	\
+		rm install-sh -f   || echo install-sh already removed;	\
+		rm ltmain.sh -f    || echo ltmain.sh already removed;	\
+		rm missing -f      || echo missing already removed;	\
+		rm mkinstalldirs -f|| echo mkinstalldirs already removed;	\
+		rm ylwrap -f       || echo ylwrap already removed
+	make -f $(MAKEFILE) clean-autom4te SUBTARGET=$(SUBTARGET)
+
+clean:
+	make -f $(MAKEFILE) clean-autom4te SUBTARGET=.
+	make -f $(MAKEFILE) clean-autom4te SUBTARGET=src/ocspd
+	make -f $(MAKEFILE) clean-autom4te SUBTARGET=src/openca-sv
+	make -f $(MAKEFILE) clean-autom4te SUBTARGET=src/scep
+
+clean-autom4te:
+	# rm $(SUBTARGET)/autom4te.cache/output.0
+	# rm $(SUBTARGET)/autom4te.cache/requests
+	# rm $(SUBTARGET)/autom4te.cache/traces.0
+	# rmdir $(SUBTARGET)/autom4te.cache
+	rm -rf $(SUBTARGET)/autom4te.cache
+
+########################################################
+##                END AUTOTOOL STUFF                  ##
+########################################################
+
+########################################################
+##               BEGIN RELEASE STUFF                  ##
+########################################################
+
+########################## BINARY DISTRO STUFF ###########################
+
+MAKEFILE=Makefile
+TODAY=`date +%Y%m%d`
+
+TODAY	= `/bin/date +%Y%m%d`
+VERSION	= `cat VERSION | sed -e s/-[0-9a-zA-Z-]*//`
+
+MINOR   = "1"
+RC		= $(MINOR)
+
+PKGNAME = "openca-base"
+TARGET_DIR = "/tmp/build-$(PKGNAME)-$(VERSION)"
+# IB_OUTPUT=`find $(HOME)/installbuilder* -name output`
+
+dist:
+	make -f $(MAKEFILE) source VERSION=$(VERSION)
+
+snap:
+	make -f $(MAKEFILE) source VERSION=SNAP-$(TODAY)
+
+source:
+	@echo
+	@echo "Cleaning up sources if necessary $(PKGNAME)-$(VERSION) ... "
+	@if [ -e $(PKGNAME)-$(VERSION).tar.gz ]; then \
+		rm $(PKGNAME)-*$(VERSION).tar.gz; \
+	fi ; \
+	touch tmp.po~; FILES=`find . -name "*.po~" -print`; rm $$FILES ; \
+	echo "done."
+	@echo -n "Creating GZIP TAR archive $(PKGNAME)-$(VERSION).tar.gz ... " ; \
+	mkdir -p /tmp/$(PKGNAME)-source/$(PKGNAME)-$(VERSION) ; \
+	tar cpf - * | tar xf - -C /tmp/$(PKGNAME)-source/$(PKGNAME)-$(VERSION) ; \
+	( \
+		cd /tmp/$(PKGNAME)-source/$(PKGNAME)-$(VERSION) ; \
+		make -f Makefile distclean ; \
+	) ; \
+	( \
+		cd /tmp/$(PKGNAME)-source ; \
+		tar cpf $(PKGNAME)-$(VERSION).tar --exclude "CVS" $(PKGNAME)-$(VERSION); \
+		gzip $(PKGNAME)-$(VERSION).tar; \
+	) ; \
+	mv /tmp/$(PKGNAME)-source/$(PKGNAME)-$(VERSION).tar.gz . ; \
+	rm -rf /tmp/$(PKGNAME)-source/ ; \
+	echo "done."
+	@echo
+
+rpm: rpmbuild
+
+rpmbuild:
+	@echo
+	@echo -n "Cleaning up old RPMs ... "
+	@for i in $(PKGNAME)*.rpm ; do \
+	 rm -f $$i ; \
+	 done
+	@echo "Done."
+	@echo -n "Creating spec file ... " ; \
+	filename=OpenCA.spec.orig ; \
+	if [ -e "contrib/$$filename" ] ; then \
+		echo "($$filename)"; \
+		cat "contrib/$$filename" | \
+			sed -e "s|@VERSION@|$(VERSION)|g" | \
+			sed -e "s|@RC@|$(RC)|g" | \
+			sed -e "s|@PKGNAME@|$(PKGNAME)|g" | \
+			sed -e "s|@build_root@|$(TARGET_DIR)|g" | \
+			sed -e "s|@openca_user@|$(openca_user)|g" | \
+			sed -e "s|@openca_group@|$(openca_group)|g" | \
+			sed -e "s|@httpd_user@|$(httpd_user)|g" | \
+			sed -e "s|@httpd_group@|$(httpd_group)|g" | \
+			sed -e "s|@httpd_fs_prefix@|$(httpd_fs_prefix)|g" | \
+			sed -e "s|@BUILDROOT@|$(TARGET_DIR)|g" > \
+			"contrib/OpenCA.spec" ; \
+	else \
+		echo "contrib/$$filename ... not found" ; \
+		exit 1 ; \
+	fi ; \
+	make -s -f $(MAKEFILE) source VERSION=$(VERSION) ; \
+	echo "Building RPM package(s)... " ; \
+	topdir="/tmp/rpmbuild" ; \
+	[ -d "$$topdir" ] && sudo rm -rf "$$topdir" ; \
+	sudo rpmbuild --define "_topdir $$topdir" -ta "$(PKGNAME)-$(VERSION).tar.gz" ; \
+	sudo mv $$topdir/RPMS/*/$(PKGNAME)*.rpm . ; \
+	sudo mv $$topdir/SRPMS/$(PKGNAME)*.src.rpm . ; \
+	echo
+
+
+#	if [ -d "/usr/src/redhat/BUILD" ] ; then \
+#		sudo rm -rf /usr/src/redhat/BUILD/$(PKGNAME)* ; \
+#	fi; \
+#	if [ -d "$(HOME)/rpmbuild" ] ; then \
+#		sudo rm -rf "$(HOME)/rpmbuild/BUILD/$(PKGNAME)*" ; \
+#	fi ; \
+# 	sudo mv /usr/src/redhat/RPMS/*/$(PKGNAME)*.rpm . 2>/dev/null || \
+# 	sudo mv $(HOME)/tmp/rpm/RPMS/*/$(PKGNAME)*.rpm . 2>/dev/null || \
+# 	sudo mv $(HOME)/rpmbuild/RPMS/*/$(PKGNAME)*.rpm . 2>/dev/null ; \
+# 	sudo mv /usr/src/redhat/SRPMS/$(PKGNAME)*.src.rpm . 2>/dev/null || \
+# 	sudo mv $(HOME)/tmp/rpm/SRPMS/$(PKGNAME)*.src.rpm . 2>/dev/null || \
+# 	sudo mv $(HOME)/rpmbuild/SRPMS/$(PKGNAME)*.src.rpm . 2>/dev/null ; \
+# 	echo
+
+pkgconfig-old:
+	@echo "IBOUT=$(IB_OUTPUT)"
+	@if [ "$(DIST_NAME)" = "darwin" ] ; then \
+		rm -rf $(PKGNAME)-*.app ; \
+		$(INSTALL_BUILDER) build contrib/$(PKGNAME)*.xml && \
+		$(SHELL) -c "cp -r "$(IB_OUTPUT)/$(PKGNAME)-*" ." ; \
+		o=`find . -name $(PKGNAME)-*.app` ; \
+		zip -rq "$$o.zip" "$$o" && rm -rf "$$o" ; \
+		rm -r $(IB_OUTPUT)/$$o ; \
+	else \
+		sudo $(INSTALL_BUILDER) build contrib/install-builder/$(PKGNAME).xml && \
+		$(SHELL) -c "cp -r "$(IB_OUTPUT)/$(PKGNAME)-*" ." ; \
+			$(SHELL) -c "rm -f $(IB_OUTPUT)/$(PKGNAME)-*" ; \
+	fi
+
+bin pkgbuild:
+	@sudo rm -rf "$(TARGET_DIR)" ; \
+	./configure --prefix=/opt/openca --with-build-dir="$(TARGET_DIR)" ; \
+	$(MAKE) -f Makefile ; \
+	sudo DESTDIR="$(TARGET_DIR)" $(MAKE) -f Makefile install-offline install-online ; \
+	sudo $(MAKE) -f Makefile pkgconfig
+
+pkgconfig:
+	@if [ "$(DIST_NAME)" = "darwin" ] ; then \
+		IB_OUTPUT=`find $(HOME)/installbuilder*/ -maxdepth 1 -name output` ; \
+		rm -rf $(PACKAGE_NAME)-*.app ; \
+		$(INSTALL_BUILDER) build contrib/install-builder/$(PKGNAME)*.xml && \
+		hdiutil create -srcfolder "$$IB_OUTPUT" \
+			-volname "$(PACKAGE_NAME) v$(VERSION) Install" \
+			"$(PACKAGE_NAME)-$(VERSION)-$(RC)-osx-$(ARCH_TARGET).dmg" ; \
+		rm -r $$IB_OUTPUT/$(PACKAGE_NAME)-*.app ; \
+	else \
+		ret=`echo ${build_os} | grep 'solaris'`; \
+		if [ $$? -eq 0 ] ; then \
+		   IB_OUTPUT=`find $(MY_HOME)/installbuilder*/* -name output` ; \
+		else \
+		   IB_OUTPUT=`find $(MY_HOME)/installbuilder*/ -maxdepth 1 -name output` ; \
+		fi ; \
+		sudo $(INSTALL_BUILDER) build contrib/install-builder/$(PKGNAME)*.xml && \
+		$(SHELL) -c "cp -r $$IB_OUTPUT/$(PACKAGE_NAME)-* ." ; \
+			$(SHELL) -c "sudo rm -f $$IB_OUTPUT/$(PACKAGE_NAME)-*" ; \
+	fi
+
+
+
+########################################################
+########################################################
+##                END RELEASE STUFF                   ##
+########################################################

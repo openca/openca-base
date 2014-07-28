@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>approveCRRnotSigned</name>
+            <operation>crr approve without signature</operation>
+            <owner_method>CRR_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

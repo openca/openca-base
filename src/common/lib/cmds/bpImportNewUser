@@ -1,0 +1,154 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpImportNewUser
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: import new users of the PKI
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpImportNewUser {
+
+our ($xml_cache, $tools);
+
+print startLogPage (gettext ("Import New User Batch Processor"));
+
+print addLogSection (gettext ("Importing data ..."));
+my $tmpdir = createDirectory ();
+if (not eximIOImport (DIR => $tmpdir)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot extract archive from import device!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+print addLogLine (gettext ("completed."));
+print closeLogSection ();
+
+print addLogSection (gettext ("Running batch processor ..."));
+
+## datadirectory for the batchprocessor
+my $batch_dir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+my $batch_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/import_new_user_file" ],
+           COUNTER  => [ 0 ]);
+
+## open file
+if (not open (FD, $tmpdir."/".$batch_file)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot open file with data for batch processor!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+
+## file format is as follows:
+##
+## file   ::= ( serial . "\n" )*
+## serial ::= this is a user name or ID
+##
+
+## loop
+my $line = undef;
+while (not eof FD) {
+
+	## ignore blank lines
+	do {
+		$line = <FD> if ($line =~ /^\s*\r?\n*$/);
+		next if (not $line and eof FD);
+	} while ($line =~ /^\s*\r?\n*$/);
+        $line =~ s/^(\s*\r?\n*)*//g;
+
+	## scanning for the new user
+	my $ID = $line;
+	$ID =~ s/^\s*//;
+	$ID =~ s/\s*$//;
+        $ID =~ s/\s/_/g;
+        $ID =~ s/\n//;
+        $line =~ s/^[^\n]*\n?//;
+
+	## check parameter
+	if (not $ID) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no ID!").
+				"</FONT>");
+		next;
+	}
+
+	## build the directory path for the ID
+	my $id_dir = $batch_dir;
+	my $h_id   = $ID;
+	while ($h_id !~ /^$/) {
+		$id_dir .= "/".substr $h_id, 0, 1;
+		$h_id =~ s/^.//;
+	}
+
+	## check that the directory not exist
+	if (-d $id_dir) {
+		## checking that this directory is only part of a tree
+		if (-f $id_dir."/ID") {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+					i18nGettext (
+                      "ID __ID__ already exists. Ignoring dataset.",
+                      "__ID__", $ID).
+					"</FONT>");
+			next;
+		}
+	} else {
+		## create the directory
+		my $ret = `mkdir -p $id_dir/workflows`;
+		if ( $? ) {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+					i18nGettext (
+                      "Cannot create directory __DIR__. Ignoring dataset of ID __ID__.",
+                      "__DIR__", $id_dir,
+                      "__ID__", $ID).
+					"</FONT>");
+			next;
+		}
+	}
+
+	## create the user
+	if (not $tools->saveFile (FILENAME => $id_dir."/ID", DATA => $ID)) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+                  "Cannot write file __FILE__. Aborting ...",
+                  "__FILE__", "$id_dir/ID").
+				"</FONT>");
+		next;
+	}
+	$ID = "";
+
+	## write out message
+	print addPreLogLine ("<FONT COLOR=#00FF00>".
+			i18nGettext ("ID __ID__ successfully imported.", "__ID__", $tools->getFile ($id_dir."/ID")).
+			"</FONT>");
+}
+
+close FD;
+
+print addPreLogLine ("");
+print addLogLine (gettext ("Batch processor finished"));
+print closeLogSection ();
+
+removeDirectory ($tmpdir);
+
+closePage();
+
+}
+
+sub getParamsBpImportNewUser
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

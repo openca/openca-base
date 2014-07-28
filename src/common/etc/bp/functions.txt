@@ -1,0 +1,16 @@
+create_pin
+check_pin
+check_key_params
+create_key
+check_key
+backup_key
+check_csr_params
+create_csr
+complete_csr
+check_csr
+upload_csr
+receive_csr
+create_cert
+enroll_pin
+enroll_pkcs12
+postproc_cert

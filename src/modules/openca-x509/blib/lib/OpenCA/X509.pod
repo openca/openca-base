@@ -1,0 +1,152 @@
+=head1 NAME
+
+OpenCA::X509 - Perl extension for basic handling x509 Certificates.
+
+=head1 SYNOPSIS
+
+use OpenCA::X509;
+
+=head1 DESCRIPTION
+
+This module contains all functions needed for handling of X509
+certificates. It requires some parameters to be passed such as
+a reference to a OpenCA::OpenSSL instance. 
+ 
+This module provides an interface to X509 structures, no specific
+crypto functions are performed (see the OpenCA::OpenSSL module
+for this). When not said different, default operational format is
+PEM.
+
+=head1 FUNCTIONS
+
+=head2 sub new () - Create a new instance of the Class.
+
+	This function creates an instance of the module. If you
+	provide a certificate it will be parsed and stored in
+	local variable(s) for later usage. The function will return
+	a blessed reference.
+
+	Accepted parameters are:
+
+		SHELL       - Reference to an initialized
+			      OpenCA::OpenSSL instance;
+		DATA        - Certificate to stored in structure(*);
+		INFILE      - Certificate file(*);
+		FORMAT	    - Format of the provided certificate,
+			      one of PEM|DER|NET(*);
+
+	(*) - Optional parameter.
+
+	EXAMPLE:
+
+	      $x509 = new OpenCA::X509( SHELL=>$crypto,
+					CERTIFICATE=>$self->{cert});
+
+=head2 sub getParsed () - Get an hash structure from certificate
+
+	By calling this function you can retrieve a reference to the
+	parsed certificate (PERL hash). This structure will include,
+	for example:
+
+		$ret->{SERIAL}		## Serial Number
+                $ret->{DN}		## Subject DN
+                $ret->{EMAIL}		## Subject e-mail
+                $ret->{CN}		## Subject CN
+                $ret->{OU}		## Subject OU (list)
+                $ret->{O}		## Subject Organization
+                $ret->{L}		## Subject Locality
+                $ret->{S}		## Subject State
+                $ret->{C}		## Subject Country
+                $ret->{ISSUER}		## Issuer DN
+                $ret->{NOTBEFORE}	## Not Before Date
+                $ret->{NOTAFTER}	## Not After Date (Expiration)
+                $ret->{PK_ALGORITHM}	## Algorithm used (RSA,DSA,..)
+                $ret->{KEYSIZE}		## Modulus (Size in bits)
+                $ret->{PUBKEY}		## Public Key (Base64)
+                $ret->{FINGERPRINT}	## Certificate Fingerprint
+                $ret->{HASH}		## Hash
+                $ret->{EXPONENT}	## Exponent
+
+	EXAMPLE:
+
+		my $self->{parsedItem} = $x509->parseCertificate();
+
+		print $self->{parsedItem}->{SERIAL};
+		foreach $ou ( @{ $self->{parsedItem}->{OU} } ) {
+			print "OU=$ou, ";
+		}
+
+=head2 sub status () - Get certificate status
+
+	Get certificate status using provided OpenCA::CRL initialized
+	reference as argument. Returned status can be Valid, Revoked,
+	Expired and Unknown. Accepted arguments:
+
+		CRL   - Crl to check certificate status;
+
+	The returned structure is:
+
+		$status->{STATUS};
+		$status->{REVOKATION_DATE};
+		$status->{EXPIRATION_DATE};
+
+	EXAMPLE:
+
+		my $status = $x509->status( CRL=>$crl );
+		print $status->{STATUS};
+
+=head2 sub getPEM () - Get certificate in PEM format.
+
+	Get certificate in PEM format.
+
+	EXAMPLE:
+
+		$pem = $x509->getPEM();
+
+=head2 sub getPEMHeader () - Get certificate's header in PEM format.
+
+	Get certificate's header in PEM format.
+
+	EXAMPLE:
+
+		$pem = $x509->getPEMHeader();
+
+=head2 sub getDER () - Get certificate in DER format.
+
+	Get certificate in DER format.
+
+	EXAMPLE:
+
+		$der = $x509->getDER();
+
+=head2 sub getTXT () - Get certificate in TXT format.
+
+	Get certificate in TXT format.
+
+	EXAMPLE:
+
+		$der = $x509->getTXT();
+
+=head2 sub setHeaderAttribute
+
+	Set an attribute in the header of a certificate.
+	The certifcate must be in format PEM. The header
+	is available via getHeader (). Attributes which
+	are longer than one line are supported
+	(e.g. PKCS7-signatures).
+
+        EXAMPLE:
+
+		$x509->setHeaderAttribute ( ROLE => "User" );
+                $cert = $x509->getPEMHeader ()."\n";
+		        $x509->getPEM ();
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+OpenCA::OpenSSL, OpenCA::CRL, OpenCA::REQ, OpenCA::X509
+
+=cut

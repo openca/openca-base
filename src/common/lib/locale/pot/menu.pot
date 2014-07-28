@@ -1,0 +1,526 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-17 18:40-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: web-interfaces/batch/batch-menu.xml.in:3
+#: web-interfaces/ldap/ldap-menu.xml.in:3 web-interfaces/ra/ra-menu.xml.in:3
+msgid "General"
+msgstr ""
+
+#: web-interfaces/batch/batch-menu.xml.in:4 web-interfaces/ca/ca-menu.xml.in:4
+#: web-interfaces/ldap/ldap-menu.xml.in:4
+#: web-interfaces/node/node-menu.xml.in:4 web-interfaces/pub/pub-menu.xml.in:4
+#: web-interfaces/ra/ra-menu.xml.in:4
+msgid "Home"
+msgstr ""
+
+
+#: web-interfaces/batch/batch-menu.xml.in:5
+#: web-interfaces/node/node-menu.xml.in:5
+msgid "Server Info"
+msgstr ""
+
+
+#: web-interfaces/batch/batch-menu.xml.in:7
+#: web-interfaces/ca/ca-menu.xml.in:24 web-interfaces/ldap/ldap-menu.xml.in:6
+#: web-interfaces/node/node-menu.xml.in:21
+#: web-interfaces/pub/pub-menu.xml.in:10 web-interfaces/ra/ra-menu.xml.in:6
+msgid "Go To..."
+msgstr ""
+
+#: web-interfaces/batch/batch-menu.xml.in:8
+#: web-interfaces/ldap/ldap-menu.xml.in:7
+#: web-interfaces/node/node-menu.xml.in:22 web-interfaces/ra/ra-menu.xml.in:7
+msgid "CA Interface"
+msgstr ""
+#: web-interfaces/batch/batch-menu.xml.in:9
+#: web-interfaces/ca/ca-menu.xml.in:25 web-interfaces/ldap/ldap-menu.xml.in:8
+#: web-interfaces/node/node-menu.xml.in:23
+msgid "RA Interface"
+msgstr ""
+#: web-interfaces/batch/batch-menu.xml.in:11
+#: web-interfaces/ca/ca-menu.xml.in:27 web-interfaces/ldap/ldap-menu.xml.in:10
+#: web-interfaces/node/node-menu.xml.in:25 web-interfaces/ra/ra-menu.xml.in:8
+msgid "Public Interface"
+msgstr ""
+#: web-interfaces/batch/batch-menu.xml.in:13
+#: web-interfaces/ca/ca-menu.xml.in:30 web-interfaces/node/node-menu.xml.in:27
+#: web-interfaces/ra/ra-menu.xml.in:11
+msgid "LDAP Management"
+msgstr ""
+#: web-interfaces/batch/batch-menu.xml.in:14
+#: web-interfaces/ca/ca-menu.xml.in:29 web-interfaces/ldap/ldap-menu.xml.in:12
+#: web-interfaces/ra/ra-menu.xml.in:10
+msgid "Node Management"
+msgstr ""
+#: web-interfaces/batch/batch-menu.xml.in:17
+#: web-interfaces/ca/ca-menu.xml.in:33 web-interfaces/ldap/ldap-menu.xml.in:15
+#: web-interfaces/node/node-menu.xml.in:30 web-interfaces/ra/ra-menu.xml.in:14
+msgid "Logout"
+msgstr ""
+
+
+#: web-interfaces/batch/batch-menu.xml.in:22
+#: web-interfaces/ca/ca-menu.xml.in:79
+msgid "Revoke Certificates"
+msgstr ""
+
+
+#: web-interfaces/batch/batch-menu.xml.in:25
+msgid "Workflow Management"
+msgstr ""
+
+
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:3 web-interfaces/node/node-menu.xml.in:3
+msgid "PKI Init &amp; Config"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:6
+msgid "Initialization"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:7
+msgid "DB, Key and Cert Init"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:8
+msgid "CA Administrator"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:9
+msgid "RA Certificate"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:13
+msgid "View Rights"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:14
+msgid "View Modules"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:16
+msgid "Sign Config"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:19
+msgid "HSM Management"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:20
+msgid "HSM Login"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:21
+msgid "HSM Logout"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:26 web-interfaces/node/node-menu.xml.in:24
+msgid "Batch Interface"
+msgstr ""
+#: web-interfaces/ca/ca-menu.xml.in:38 web-interfaces/ca/ca-menu.xml.in:46
+#: web-interfaces/ra/ra-menu.xml.in:19 web-interfaces/ra/ra-menu.xml.in:27
+msgid "Pending"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:40 web-interfaces/ca/ca-menu.xml.in:48
+#: web-interfaces/ra/ra-menu.xml.in:21 web-interfaces/ra/ra-menu.xml.in:29
+msgid "Signing Required"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:42 web-interfaces/ca/ca-menu.xml.in:50
+#: web-interfaces/ra/ra-menu.xml.in:23 web-interfaces/ra/ra-menu.xml.in:31
+msgid "Approved"
+msgstr ""
+
+
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:56
+msgid "Issue New CRLs"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:59
+msgid "Auto Certificate Issuing"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:60 web-interfaces/ra/ra-menu.xml.in:38
+msgid "Activate"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:62 web-interfaces/ca/ca-menu.xml.in:69
+#: web-interfaces/ra/ra-menu.xml.in:39
+msgid "Deactivate"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:64 web-interfaces/ca/ca-menu.xml.in:72
+#: web-interfaces/ra/ra-menu.xml.in:41
+msgid "Status"
+msgstr ""
+
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:75
+msgid "Auto Certificate Renewal"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:76
+msgid "Batch Processing"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:77
+msgid "Issue Certificates"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:83 web-interfaces/ra/ra-menu.xml.in:51
+msgid "Information"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:84 web-interfaces/ra/ra-menu.xml.in:52
+msgid "CA Certificates"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:85 web-interfaces/ca/ca-menu.xml.in:110
+#: web-interfaces/ldap/ldap-menu.xml.in:50 web-interfaces/ra/ra-menu.xml.in:53
+#: web-interfaces/ra/ra-menu.xml.in:78
+msgid "Valid"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:86 web-interfaces/ca/ca-menu.xml.in:92
+#: web-interfaces/ca/ca-menu.xml.in:111
+#: web-interfaces/ldap/ldap-menu.xml.in:26
+#: web-interfaces/ldap/ldap-menu.xml.in:32
+#: web-interfaces/ldap/ldap-menu.xml.in:51 web-interfaces/ra/ra-menu.xml.in:54
+#: web-interfaces/ra/ra-menu.xml.in:60 web-interfaces/ra/ra-menu.xml.in:79
+msgid "Expired"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:88 web-interfaces/ca/ca-menu.xml.in:97
+#: web-interfaces/ca/ca-menu.xml.in:102 web-interfaces/ca/ca-menu.xml.in:106
+#: web-interfaces/ldap/ldap-menu.xml.in:28
+#: web-interfaces/ldap/ldap-menu.xml.in:37
+#: web-interfaces/ldap/ldap-menu.xml.in:42
+#: web-interfaces/ldap/ldap-menu.xml.in:46 web-interfaces/ra/ra-menu.xml.in:56
+#: web-interfaces/ra/ra-menu.xml.in:65 web-interfaces/ra/ra-menu.xml.in:70
+#: web-interfaces/ra/ra-menu.xml.in:74
+msgid "Deleted"
+msgstr ""
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:94 web-interfaces/ldap/ldap-menu.xml.in:34
+#: web-interfaces/ra/ra-menu.xml.in:62
+msgid "Suspended"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:95 web-interfaces/ldap/ldap-menu.xml.in:35
+#: web-interfaces/ra/ra-menu.xml.in:63
+msgid "Revoked"
+msgstr ""
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:100
+#: web-interfaces/ldap/ldap-menu.xml.in:40 web-interfaces/ra/ra-menu.xml.in:68
+msgid "Certificate Requests"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:101
+#: web-interfaces/ldap/ldap-menu.xml.in:41 web-interfaces/ra/ra-menu.xml.in:69
+msgid "Archived"
+msgstr ""
+
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:109
+#: web-interfaces/ldap/ldap-menu.xml.in:49 web-interfaces/ra/ra-menu.xml.in:77
+msgid "CRLs"
+msgstr ""
+
+
+
+#: web-interfaces/ca/ca-menu.xml.in:114
+#: web-interfaces/ldap/ldap-menu.xml.in:54 web-interfaces/ra/ra-menu.xml.in:82
+msgid "Search"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:115
+#: web-interfaces/ldap/ldap-menu.xml.in:55 web-interfaces/ra/ra-menu.xml.in:83
+msgid "Certificates"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:116
+#: web-interfaces/ldap/ldap-menu.xml.in:56 web-interfaces/ra/ra-menu.xml.in:84
+msgid "Requests"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:119
+#: web-interfaces/ldap/ldap-menu.xml.in:59 web-interfaces/ra/ra-menu.xml.in:87
+msgid "Help"
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:120
+#: web-interfaces/ldap/ldap-menu.xml.in:60 web-interfaces/ra/ra-menu.xml.in:88
+msgid "OpenCA PKI Guide"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:121
+#: web-interfaces/ldap/ldap-menu.xml.in:61 web-interfaces/ra/ra-menu.xml.in:89
+msgid "OpenCA PKI Home"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:123
+#: web-interfaces/ldap/ldap-menu.xml.in:63
+#: web-interfaces/pub/pub-menu.xml.in:15 web-interfaces/ra/ra-menu.xml.in:91
+msgid "About OpenCA..."
+msgstr ""
+
+#: web-interfaces/ca/ca-menu.xml.in:128
+#: web-interfaces/ldap/ldap-menu.xml.in:68 web-interfaces/ra/ra-menu.xml.in:96
+msgid "Spanish"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:130
+#: web-interfaces/ldap/ldap-menu.xml.in:70 web-interfaces/ra/ra-menu.xml.in:98
+msgid "Italian"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:132
+#: web-interfaces/ldap/ldap-menu.xml.in:72
+#: web-interfaces/ra/ra-menu.xml.in:100
+msgid "French"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:134
+#: web-interfaces/ldap/ldap-menu.xml.in:74
+#: web-interfaces/ra/ra-menu.xml.in:102
+msgid "Japanese"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:136
+#: web-interfaces/ldap/ldap-menu.xml.in:76
+#: web-interfaces/ra/ra-menu.xml.in:104
+msgid "Greek"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:138
+#: web-interfaces/ldap/ldap-menu.xml.in:78
+#: web-interfaces/ra/ra-menu.xml.in:106
+msgid "Polish"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:140
+#: web-interfaces/ldap/ldap-menu.xml.in:80
+#: web-interfaces/ra/ra-menu.xml.in:108
+msgid "Slovene"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:142
+#: web-interfaces/ldap/ldap-menu.xml.in:82
+#: web-interfaces/ra/ra-menu.xml.in:110
+msgid "Russian"
+msgstr ""
+
+
+#: web-interfaces/ca/ca-menu.xml.in:144
+#: web-interfaces/ldap/ldap-menu.xml.in:84
+#: web-interfaces/ra/ra-menu.xml.in:112
+msgid "German"
+msgstr ""
+
+
+#: web-interfaces/ldap/ldap-menu.xml.in:19
+msgid "Update Issued Certificates"
+msgstr ""
+
+
+#: web-interfaces/ldap/ldap-menu.xml.in:21
+msgid "Update CRL"
+msgstr ""
+
+
+#: web-interfaces/node/node-menu.xml.in:7
+msgid "Configuration.."
+msgstr ""
+
+#: web-interfaces/node/node-menu.xml.in:8
+msgid "Import Configuration"
+msgstr ""
+
+
+#: web-interfaces/node/node-menu.xml.in:10
+msgid "Init Database"
+msgstr ""
+
+#: web-interfaces/node/node-menu.xml.in:12
+msgid "HSM Management.."
+msgstr ""
+
+#: web-interfaces/node/node-menu.xml.in:13
+msgid "Stop HSM Tokens"
+msgstr ""
+
+
+
+#: web-interfaces/pub/pub-menu.xml.in:3
+msgid "PKI Info"
+msgstr ""
+
+#: web-interfaces/pub/pub-menu.xml.in:6
+msgid "Get CA Certificate"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:7 web-interfaces/pub/pub-menu.xml.in:24
+msgid "Get Current CRL"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:8
+msgid "Get CA Policy"
+msgstr ""
+#: web-interfaces/pub/pub-menu.xml.in:11
+msgid "OpenCA Labs"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:12
+msgid "OpenCA PKI Project"
+msgstr ""
+
+#: web-interfaces/pub/pub-menu.xml.in:19
+msgid "Install My Certificate"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:21
+msgid "Revoke My Certificate"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:22
+msgid "Test My Certificate"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:29
+msgid "Expired Certificates"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:31
+msgid "Suspended Certificates"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:32
+msgid "Revoked Certificates"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:34
+msgid "Pending Certificate Requests"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:35
+msgid "Pending Revocation Requests"
+msgstr ""
+
+
+#: web-interfaces/pub/pub-menu.xml.in:37
+msgid "Current CRL"
+msgstr ""
+
+#: web-interfaces/pub/pub-menu.xml.in:38
+msgid "Expired CRLs"
+msgstr ""
+
+#: web-interfaces/pub/pub-menu.xml.in:40
+msgid "Search Certificates"
+msgstr ""
+
+#: web-interfaces/pub/pub-menu.xml.in:41
+msgid "Search Requests"
+msgstr ""
+
+
+
+
+
+
+
+#: web-interfaces/ra/ra-menu.xml.in:37
+msgid "Auto E-Mail"
+msgstr ""
+
+
+
+
+#: web-interfaces/ra/ra-menu.xml.in:44
+msgid "Manual E-Mail"
+msgstr ""
+
+#: web-interfaces/ra/ra-menu.xml.in:45
+msgid "Newly Issued Certs Holders"
+msgstr ""
+
+
+#: web-interfaces/ra/ra-menu.xml.in:46
+msgid "Selected Certs Holders"
+msgstr ""
+
+#: web-interfaces/ra/ra-menu.xml.in:48
+msgid "Warn Expiring Certs Holders"
+msgstr ""
+
+

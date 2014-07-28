@@ -1,0 +1,211 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: backup_key.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: backup a checked key
+## Description: 
+
+use strict;
+
+sub workflow_backup_key
+{
+    ## general global stuff
+    our $state_machine;
+    our ($tools, $xml_cache, $cryptoShell, $bp_token, $keybackup_token);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "backup_key";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## the token of the batch system must be activated
+
+    if (not $bp_token or not $bp_token->keyOnline)
+    {
+        my $msg = gettext ("The crypto token of the batch system was not activated.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -105, $msg ];
+    }
+
+    ## is there a pin ?
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no usable PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+
+    ## load PIN
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no PIN file which could be used to create the new key.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+    my $pin = $bp_token->decrypt (
+                  INFILE     => $home."/private/purePIN",
+                                  );
+    if (not $pin) {
+        my $msg = gettext ("The PIN file cannot be decrypted.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+
+    ## evaluate configuration
+    ## keywords: DENY, ALLOW, RECOMMEND, FORCE
+    my $backup_mode = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/backup_key/mode" ],
+           COUNTER  => [ 0 ]);
+    my $backup_key = undef;
+    if (-e $home."/data/backupKey") {
+        if ($backup_mode =~ /DENY/i)
+        {
+            my $msg = gettext ("The process requests a keybackup but this is generally forbidden.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -150, $msg ];
+        } else {
+            $backup_key = 1;
+        }
+    } elsif (-e $home."/data/denyKeyBackup" or -e $home."/data/noKeyBackup")
+    {
+        if ($backup_mode =~ /FORCE/i)
+        {
+            my $msg = gettext ("The process denies the keybackup but this is generally enforced.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -160, $msg ];
+        } else {
+            $backup_key = 0;
+        }
+    } else {
+        if ($backup_mode =~ /(FORCE|RECOMMEND)/i)
+        {
+            $backup_key = 1;
+        } else {
+            $backup_key = 0;
+        }
+    }
+
+    ## stop operations if keybackup is not necessary
+    if (not defined $backup_key)
+    {
+            my $msg = gettext ("The operational mode of the keybackup cannot be determined.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -170, $msg ];
+    }
+    my $return_msg = "";
+    if (not $backup_key)
+    {
+        $return_msg = gettext ("Key was not backuped because of the configuration. This is not an error.");
+    } else {
+        ## check that the directory for the keybackup is present
+        if (not -d $home."/keybackup") {
+            my $umask = umask 0077;
+            if (not mkdir $home."/keybackup") {
+                umask $umask;
+                my $msg = gettext ("The directory for the keybackup cannot be created.");
+                $journal->{message} .= $msg;
+                $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+                return [ -180, $msg ];
+            }
+            umask $umask;
+        }
+
+        ## load the key
+        my $private_key = $tools->getFile ($home."/private/privateKey");
+        if (not $private_key) {
+            my $msg = gettext ("Cannot load the key from the private key file.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -190, $msg ];
+        }
+
+        ## get a hash from the key
+        my $digest = $cryptoShell->getDigest (DATA      => $private_key,
+                                              ALGORITHM => "sha1");
+
+        ## check that the key is not already backuped
+        my $filename = $home."/keybackup/".$digest.".enc_key";
+        if (-f $filename) {
+            $return_msg = gettext ("The key was already backuped.");
+        } else {
+            my $clear_key = $cryptoShell->dataConvert (DATATYPE  => "KEY",
+	                                               INFORM    => "PEM",
+	                                               OUTFORM   => "PKCS8",
+	                                               INPASSWD  => $pin,
+	                                               OUTPASSWD => "",
+	                                               DATA      => $private_key );
+            if (not $clear_key) {
+                my $msg = gettext ("Cannot decrypt the private key.");
+                $journal->{message} .= $msg;
+                $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+                return [ -200, $msg ];
+            }
+
+            ## encrypt the key
+            if (not $keybackup_token->encrypt (
+                        DATA         => $clear_key,
+                        OUTFILE      => $filename
+                                              ))
+            {
+                my $msg = gettext ("Cannot encrypt and store the private key.");
+                $journal->{message} .= $msg;
+                $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+                return [ -210, $msg ];
+            }
+
+            $return_msg = gettext ("The key was backuped.");
+        }
+    }
+
+    $journal->{message} .= $return_msg;
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "backuped_key" ],
+                                "UNSET"   => [ "checked_key", "new_key" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -220, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, $return_msg ];
+}
+
+1;

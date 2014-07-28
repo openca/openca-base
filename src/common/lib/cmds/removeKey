@@ -1,0 +1,80 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: removeKey
+##       Brief: remove the key from the database
+##     Version: $Revision: 1.2 $
+## Description: remove the key from the database finally
+##  Parameters: 
+
+use strict;
+
+sub cmdRemoveKey {
+
+	## Check FORM : try to identify if the form has already been
+	## completed and needs confirmation or if we are in the earlier
+	## status ( checking for the correct parameters )
+
+	## Status of FORM, possible values (in this order):
+	my $KEY         = $query->param('key');
+	my $OPERATION   = $query->param('operation');
+	my $DATATYPE    = $query->param('dataType');
+	$DATATYPE       = "VALID_CERTIFICATE" if (not $DATATYPE);
+
+	## check for the old passphrase or is it a new change?
+	if (not $OPERATION) {
+            my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+            $hidden_list->{"cmd"}       = "removeKey";
+            $hidden_list->{"dataType"}  = $DATATYPE;
+            $hidden_list->{"operation"} = "removeKey";
+            $hidden_list->{"key"}       = $KEY;
+
+            $info_list->{BODY}->[0]->[0] = gettext ("Certificate Serial Number");
+            $info_list->{BODY}->[0]->[1] = $KEY;
+
+            $cmd_panel->[0] = '<input type="submit" value="'.gettext ("OK").'">';
+            $cmd_panel->[1] = '<input type="submit" name="cancel" value="'.gettext ("Cancel").
+                              '" onClick="this.form.cmd.value='."'viewCSR'".';">';
+
+            return libSendReply (
+                                 "NAME"        => gettext ("Remove Key"),
+                                 "EXPLANATION" => gettext ("Remove the key from the database"),
+                                 "HIDDEN_LIST" => $hidden_list,
+                                 "INFO_LIST"   => $info_list,
+                                 "CMD_PANEL"   => $cmd_panel
+                                );
+	}
+
+	## load cert with key
+	my $cert = $db->getItem ( DATATYPE => $DATATYPE, KEY => $KEY);
+	if ( not $cert ) {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+	my $key = $cert->getParsed()->{PRIVKEY};
+
+	## build new cert
+	my $new_cert = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                          GETTEXT => \&i18nGettext,
+					  DATA    => $cert->getPEMHeader ().
+					  	     $cert->getPEM () );
+	if ( not $new_cert ) {
+		generalError (gettext ("Cannot create new certificate without key!"));
+	}
+
+	## store cert without key
+	if (not $db->storeItem ( DATATYPE => $DATATYPE, OBJECT => $new_cert, MODE => "UPDATE" )) {
+		generalError (gettext ("Cannot store changed certificate and key in the database!").
+                              "<br>".$db->errval(),
+		              $db->errno());
+	}
+
+	## Send Success Page
+	success(gettext ("The key was successfully removed from the database.") );
+
+	return 1;
+}
+
+1;
+

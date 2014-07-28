@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>genCRLfromFile</name>
+            <operation>crl generation from file</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

@@ -1,0 +1,503 @@
+=head1 NAME
+
+OpenCA::OpenSSL - Perl Crypto Extention to OpenSSL
+
+=head1 SYNOPSIS
+
+  use OpenCA::OpenSSL;
+
+=head1 DESCRIPTION
+
+This Perl Module implements an interface to the openssl backend
+program. It actually uses the openssl command and it is not fully
+integrated as PERL/C mixture.
+
+Passing parameters to functions should be very simple as them have
+no particular order and have, often, self-explaining name. Each
+parameter should be passed to the function like this:
+
+	... ( NAME=>VALUE, NAME=>VALUE, ... );
+
+=head1 FUNCTIONS
+
+=head2 sub new () - Creates a new Class instance.
+
+	This functions creates a new instance of the class. It accepts
+	only one parameter: the path to the backend command (openssl).
+	This is due because if it cannot find the openssl command it
+	will return an uninitialized class (default value is /usr/bin/
+	openssl which may not fit many distributions/OSs)
+
+	EXAMPLE:
+
+		my $openssl->new OpenCA::OpenSSL( $path );
+
+=head2 sub setParams () - Set internal module variables.
+
+	This function can handle the internal module data such as the
+	backend path or the tmp dir. Accepted parameters are:
+
+		SHELL   - Path to the openssl command.
+		CONFIG  - Path to the openssl config file.
+		TMPDIR  - Temporary files directory.
+		STDERR  - Where to redirect the STDERR file.
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$openssl->setParams( SHELL=>'/usr/local/ssl/bin/openssl',
+				     CONFIG=>$ca/stuff/openssl.cnf,
+				     TMPDIR=>'/tmp',
+				     STDERR=>'/dev/null' );
+
+=head2 sub errno () - Get last command errno value.
+
+	This functions returns last operation's errno value. Non
+        zero value means there has been an error.
+
+	EXAMPLE:
+
+		print $openssl->errno;
+
+=head2 sub errval () - Get last command errval value.
+
+	This functions returns last operation's errval value. This
+        value usually has a brief error description.
+
+	EXAMPLE:
+
+		print $openssl->errval;
+
+=head2 sub genKey () - Generate a private Key.
+
+	This functions let you generate a new private key. Accepted
+	parameters are:
+
+		BITS      - key lengh in bits(*);
+		OUTFILE   - Output file name(*);
+		ALGORITHM - Encryption Algorithm to be used(*);
+		PASSWD    - Password to be used when encrypting(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		my $key = $openssl->genKey( BITS=>1024 );
+
+=head2 sub genReq () - Generate a new Request.
+
+	This function generate a new certificate request. Accepted
+	parameters are:
+
+		OUTFILE  - Output file(*);
+		KEYFILE  - File containing the key;
+		PASSWD   - Password to decript key (if needed) (*);
+		DN       - Subject list (as required by openssl, see
+			   the openssl.cnf doc on policy);
+		SUBJECT  - DN string (use this instead of passing separate
+                           attributes list)(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		my $req = $openssl->genReq( KEYFILE=>"00_key.pem",
+			DN => [ "madwolf@openca.org","Max","","","" ] );
+
+		my $req = $openssl->genReq( KEYFILE=>"00_key.pem",
+			SUBJECT => "CN=Madwolf, O=OpenCA, C=IT" );
+
+
+=head2 sub genCert () - Generate a certificate from a request.
+
+	This function let you generate a new certificate starting
+	from the request file. It is used for self-signed certificate
+	as it simply converts the request into a x509 structure.
+	Accepted parameters are:
+
+		OUTFILE   - Output file(*);
+		KEYFILE   - File containing the private key;
+		REQFILE   - Request File;
+		PASSWD    - Password to decrypt private key(*);
+		DAYS      - Validity days(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$cert = $openssl->genCert( KEYFILE=>"priv_key.pem",
+			REQFILE=>"req.pem",
+			DAYS=>"720" );
+
+=head2 sub crl2pkcs7 () - Convert a crl and/or certs into pkcs7 structure.
+
+	This function converts certificates (optional) and a crl
+	(also optional) into a pkcs7 structure. It is used to build
+	strucutures to load certificates/crls into some browsers.
+	Accepted parameters are:
+
+		DATA      - PEM|DER formatted CRL(*);
+		INFORM    - Input crl format (DER|PEM) (*);
+		OUTFORM   - Output pkcs7 structure format (DER|PEM) (*);
+		INFILE    - Input crl file (*);
+		OUTFILE   - Output pkcs7 file (*);
+		CERTSLIST - List of files containing certificates to
+                            be added to the pkcs7 structure (*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$pkcs7 = $openssl->crl2pkcs7( DATA=>$crl->getPEM(),
+				CERTSLIST=>[ "cert1.pem", "cert2.pem" ]);
+
+=head2 sub dataConvert () - Convert data to different format.
+
+	This functions will convert data you pass to another format. Ir
+	requires you to provide with the data's type and IN/OUT format.
+	Accepted parameters are:
+
+		DATA    - Data to be processed;
+		INFILE  - Data file to be processed (one of DATA and
+		  	  INFILE are required and exclusive);
+		KEYFILE  - file with the priv. key (* PEM to PKCS12 only).
+		           Not needed if key is presented in DATA or INFILE too.
+		DATATYPE - Data type ( CRL | CERTIFICATE | REQUEST );
+		OUTFORM  - Output format (PEM|DER|NET|TXT)(*);
+		INFORM   - Input format (PEM|DER|NET|TXT)(*);
+		OUTFILE  - Output file(*);
+		PASSWD   - priv. key password (* PKCS12 to PEM only)
+			   omitting the PASSWD leads into an unencrypted priv. key 
+		ALGO     - des,des3 or idea. Default is des3 encryption for priv. key
+		P12PASSWD - PKCS12 export password (* only needed for PKCS12)
+		NOKEYS   - extract only the certificate (* PKCS12 to PEM only)
+		           No need for the PASSWD parameter with this option.
+		CACERT	- CA-certificate to add if OUTFORM is PKCS#12
+
+	(*) - Optional parameters;
+
+	EXAMPLES:
+		# PEM file to TXT format
+		print $openssl->dataConvert( INFILE=>"crl.pem",
+			OUTFORM=>"TXT" );
+
+		# PEM file to PKCS12 format, priv key will be des3 encrypted
+		print $openssl->dataConvert( INFILE=>"crl.pem",
+			DATATYPE=>'CERTIFICATE',
+			OUTFORM=>"PKCS12",
+			PASSWD=>$pem_pass,
+			P12PASSWD=>$export_pass );
+
+		# PKCS12 data to PEM formated certificate (no key)
+		print $openssl->dataConvert( DATA=>$pkcs12_cert,
+			DATATYPE=>'CERTIFICATE',
+			INFORM=>"PKCS12",
+			NOKEYS=>1,
+			P12PASSWD=>$export_pass );
+
+=head2 sub  issueCert () - Issue a certificate.
+
+	This function should be used when you have a CA certificate and
+	a request (either DER|PEM|SPKAC) and want to issue the certificate.
+	Parameters used will override the configuration values (remember
+	to set to appropriate value the CONFIG with the setParams func).
+	Accepted parameters are:
+
+		REQDATA       - Request;
+		REQFILE       - File containing the request (one of
+				REQDATA, REQFILE or REQFILES are required);
+		REQFILES      - An array ref to an array of files that
+				contain the request.
+		OUTDIR        - What directory to put the files from 
+				REQFILES. (This is required iff 
+				you use REQFILES.)
+		INFORM        - Input format (PEM|DER|NET|SPKAC)(*);
+		PRESERVE_DN   - Preserve DN order (Y|N)(*);
+		CA_NAME	      - CA sub section to be used (take a
+				look at the OpenSSL docs for adding
+				support of multiple CAs to the conf
+				file)(*);
+		CAKEY	      - CA key file;
+		CACERT	      - CA certificate file;
+		DAYS	      - Days the certificate will be valid(*);
+		START_DATE    - Starting validity date (YYMMDDHHMMSSZ)(*);
+		END_DATE      - Ending validity date (YYMMDDHHMMSSZ)(*);
+		PASSWD	      - Password to decrypt priv. CA key(*);
+		EXTS	      - Extentions to be used (configuration
+				section of the openssl.cnf file)(*);
+		REQTYPE	      - Request type (NETSCAPE|MSIE)(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$openssl->issueCert( REQFILE=>"myreq",
+			INFORM=>SPKAC,
+			PRESERVE_DN=>Y,
+			CAKEY=>$ca/private/cakey.pem,
+			CACERT=>$ca/cacert.pem,
+			PASSWD=>$passwd,
+			REQTYPE=>NETSCAPE );
+
+=head2 sub revoke () - Revoke a certificate.
+
+	This function is used to revoke a certificate. Accepted parameters
+	are:
+
+		CAKEY   - CA private key file(*);
+		CACERT  - CA certificate file(*);
+		PASSWD  - Password to decrypt priv. CA key(*);
+		INFILE  - Input PEM formatted certificate filename(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		if( not $openssl->revoke( INFILE=>$certFile ) ) {
+			print "Error while revoking certificate!";
+		}
+
+=head2 sub issueCrl () - Issue a CRL.
+
+	This function is used to issue a CRL. Accepted parameters
+	are:
+
+		CAKEY   - CA private key file;
+		CACERT  - CA certificate file;
+		PASSWD  - Password to decrypt priv. CA key(*);
+		DAYS    - Days the CRL will be valid for(*);
+		EXTS    - Extentions to be added ( see the openssl.cnf
+			  pages for more help on this )(*);
+		EXTFILE - Extensions file to be used (*);
+		OUTFILE - Output file(*);
+		OUTFORM - Output format (PEM|DER|NET|TXT)(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		print $openssl->issueCrl( CAKEY=>"$ca/private/cakey.pem",
+					  CACERT=>"$ca/cacert.pem",
+					  DAYS=>7,
+					  OUTFORM=>TXT );
+
+=head2 sub SPKAC () - Get SPKAC infos.
+
+	This function returns a text containing all major info
+	about an spkac structure. Accepted parameters are:
+
+		SPKAC     - spkac data ( SPKAC = .... ) (*);
+		INFILE	  - An spkac request file (*);
+		OUTFILE   - Output file (*);
+		
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		print $openssl->SPKAC( SPKAC=>$data, OUTFILE=>$target );
+
+=head2 sub pkcs7Certs () - Get PKCS7 structure certificate(s).
+
+	This function returns a PEM formatted (file or ret value)
+	contained in the pkcs7 structure. Accepted parameters are:
+
+		PKCS7     - pkcs7 data (*);
+		INFILE	  - A pkcs7 (signature?) file (*);
+		OUTFILE   - Output file (*);
+		
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		print $openssl->pkcs7Cert( PKCS7=>$data, OUTFILE=>$target );
+
+=head2 sub getDigest () - Get a message digest.
+
+	This function returns a message digest. Default digest
+	algorithm used is MD5. Accepted parameters are:
+
+		DATA      - Data on which to perform digest;
+		ALGORITHM - Algorithm to be used(*);
+		
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		print $openssl->getDigest( DATA=>$data,
+					   ALGORITHM=>sha1);
+
+=head2 sub updateDB () - Updates the OpenSSL index.txt
+
+	This functions updates the index.txt file and returns the
+	output of the command in the form:
+
+		<SER>=Expired
+
+	Accepted parameters are:
+
+		CAKEY   - CA private key file;
+		CACERT  - CA certificate file;
+		PASSWD  - Password to decrypt priv. CA key(*);
+		OUTFILE - Output file(*);
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$ret = $openssl->updateDB();
+
+=head1 Exportable constants
+
+  CTX_TEST
+  EXFLAG_BCONS
+  EXFLAG_CA
+  EXFLAG_INVALID
+  EXFLAG_KUSAGE
+  EXFLAG_NSCERT
+  EXFLAG_SET
+  EXFLAG_SS
+  EXFLAG_V1
+  EXFLAG_XKUSAGE
+  GEN_DIRNAME
+  GEN_DNS
+  GEN_EDIPARTY
+  GEN_EMAIL
+  GEN_IPADD
+  GEN_OTHERNAME
+  GEN_RID
+  GEN_URI
+  GEN_X400
+  KU_CRL_SIGN
+  KU_DATA_ENCIPHERMENT
+  KU_DECIPHER_ONLY
+  KU_DIGITAL_SIGNATURE
+  KU_ENCIPHER_ONLY
+  KU_KEY_AGREEMENT
+  KU_KEY_CERT_SIGN
+  KU_KEY_ENCIPHERMENT
+  KU_NON_REPUDIATION
+  NS_OBJSIGN
+  NS_OBJSIGN_CA
+  NS_SMIME
+  NS_SMIME_CA
+  NS_SSL_CA
+  NS_SSL_CLIENT
+  NS_SSL_SERVER
+  X509V3_EXT_CTX_DEP
+  X509V3_EXT_DYNAMIC
+  X509V3_EXT_MULTILINE
+  X509V3_F_COPY_EMAIL
+  X509V3_F_COPY_ISSUER
+  X509V3_F_DO_EXT_CONF
+  X509V3_F_DO_EXT_I2D
+  X509V3_F_HEX_TO_STRING
+  X509V3_F_I2S_ASN1_ENUMERATED
+  X509V3_F_I2S_ASN1_INTEGER
+  X509V3_F_I2V_AUTHORITY_INFO_ACCESS
+  X509V3_F_NOTICE_SECTION
+  X509V3_F_NREF_NOS
+  X509V3_F_POLICY_SECTION
+  X509V3_F_R2I_CERTPOL
+  X509V3_F_S2I_ASN1_IA5STRING
+  X509V3_F_S2I_ASN1_INTEGER
+  X509V3_F_S2I_ASN1_OCTET_STRING
+  X509V3_F_S2I_ASN1_SKEY_ID
+  X509V3_F_S2I_S2I_SKEY_ID
+  X509V3_F_STRING_TO_HEX
+  X509V3_F_SXNET_ADD_ASC
+  X509V3_F_SXNET_ADD_ID_INTEGER
+  X509V3_F_SXNET_ADD_ID_ULONG
+  X509V3_F_SXNET_GET_ID_ASC
+  X509V3_F_SXNET_GET_ID_ULONG
+  X509V3_F_V2I_ACCESS_DESCRIPTION
+  X509V3_F_V2I_ASN1_BIT_STRING
+  X509V3_F_V2I_AUTHORITY_KEYID
+  X509V3_F_V2I_BASIC_CONSTRAINTS
+  X509V3_F_V2I_CRLD
+  X509V3_F_V2I_EXT_KU
+  X509V3_F_V2I_GENERAL_NAME
+  X509V3_F_V2I_GENERAL_NAMES
+  X509V3_F_V3_GENERIC_EXTENSION
+  X509V3_F_X509V3_ADD_VALUE
+  X509V3_F_X509V3_EXT_ADD
+  X509V3_F_X509V3_EXT_ADD_ALIAS
+  X509V3_F_X509V3_EXT_CONF
+  X509V3_F_X509V3_EXT_I2D
+  X509V3_F_X509V3_GET_VALUE_BOOL
+  X509V3_F_X509V3_PARSE_LIST
+  X509V3_F_X509_PURPOSE_ADD
+  X509V3_R_BAD_IP_ADDRESS
+  X509V3_R_BAD_OBJECT
+  X509V3_R_BN_DEC2BN_ERROR
+  X509V3_R_BN_TO_ASN1_INTEGER_ERROR
+  X509V3_R_DUPLICATE_ZONE_ID
+  X509V3_R_ERROR_CONVERTING_ZONE
+  X509V3_R_ERROR_IN_EXTENSION
+  X509V3_R_EXPECTED_A_SECTION_NAME
+  X509V3_R_EXTENSION_NAME_ERROR
+  X509V3_R_EXTENSION_NOT_FOUND
+  X509V3_R_EXTENSION_SETTING_NOT_SUPPORTED
+  X509V3_R_EXTENSION_VALUE_ERROR
+  X509V3_R_ILLEGAL_HEX_DIGIT
+  X509V3_R_INVALID_BOOLEAN_STRING
+  X509V3_R_INVALID_EXTENSION_STRING
+  X509V3_R_INVALID_NAME
+  X509V3_R_INVALID_NULL_ARGUMENT
+  X509V3_R_INVALID_NULL_NAME
+  X509V3_R_INVALID_NULL_VALUE
+  X509V3_R_INVALID_NUMBER
+  X509V3_R_INVALID_NUMBERS
+  X509V3_R_INVALID_OBJECT_IDENTIFIER
+  X509V3_R_INVALID_OPTION
+  X509V3_R_INVALID_POLICY_IDENTIFIER
+  X509V3_R_INVALID_SECTION
+  X509V3_R_INVALID_SYNTAX
+  X509V3_R_ISSUER_DECODE_ERROR
+  X509V3_R_MISSING_VALUE
+  X509V3_R_NEED_ORGANIZATION_AND_NUMBERS
+  X509V3_R_NO_CONFIG_DATABASE
+  X509V3_R_NO_ISSUER_CERTIFICATE
+  X509V3_R_NO_ISSUER_DETAILS
+  X509V3_R_NO_POLICY_IDENTIFIER
+  X509V3_R_NO_PUBLIC_KEY
+  X509V3_R_NO_SUBJECT_DETAILS
+  X509V3_R_ODD_NUMBER_OF_DIGITS
+  X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS
+  X509V3_R_UNABLE_TO_GET_ISSUER_KEYID
+  X509V3_R_UNKNOWN_BIT_STRING_ARGUMENT
+  X509V3_R_UNKNOWN_EXTENSION
+  X509V3_R_UNKNOWN_EXTENSION_NAME
+  X509V3_R_UNKNOWN_OPTION
+  X509V3_R_UNSUPPORTED_OPTION
+  X509V3_R_USER_TOO_LONG
+  X509_PURPOSE_ANY
+  X509_PURPOSE_CRL_SIGN
+  X509_PURPOSE_DYNAMIC
+  X509_PURPOSE_DYNAMIC_NAME
+  X509_PURPOSE_MAX
+  X509_PURPOSE_MIN
+  X509_PURPOSE_NS_SSL_SERVER
+  X509_PURPOSE_SMIME_ENCRYPT
+  X509_PURPOSE_SMIME_SIGN
+  X509_PURPOSE_SSL_CLIENT
+  X509_PURPOSE_SSL_SERVER
+  XKU_CODE_SIGN
+  XKU_SGC
+  XKU_SMIME
+  XKU_SSL_CLIENT
+  XKU_SSL_SERVER
+
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+Julio Sanchez, E<lt>j_sanchez@localdomainE<gt>
+
+=head1 SEE ALSO
+
+OpenCA::X509, OpenCA::CRL, OpenCA::REQ, OpenCA::TRIStateCGI,
+OpenCA::Configuration
+
+=cut
+

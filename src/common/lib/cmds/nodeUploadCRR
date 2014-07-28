@@ -1,0 +1,31 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeUploadCRR
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: export CRRs
+## Description: exports the CRRs to a removable media
+
+use strict;
+
+sub cmdNodeUploadCRR {
+
+	print startLogPage ( gettext ("Exporting the CRRs to a higher level of the hierarchy ...") );
+
+	my $tmp = createStructure ();
+	eximUploadCRRs   ( $tmp );
+	eximUploadCommit ( $tmp );
+	eximIOUpload     ( $tmp );
+	removeDirectory  ( $tmp );
+
+	closePage ();
+
+}
+
+sub getParamsNodeUploadCRR
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

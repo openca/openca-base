@@ -1,0 +1,22 @@
+## OpenCA - CA Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: importDB
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports DB
+## Description: imports from a removable media
+
+use strict;
+
+sub cmdImportDB {
+
+	print startLogPage ( gettext("Importing Database ...") );
+
+	importDB ();
+
+	print closePage ();
+
+	return 1;
+}
+
+1;

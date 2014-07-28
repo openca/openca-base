@@ -1,0 +1,308 @@
+<HTML>
+<HEAD>
+<TITLE>OpenCA::OpenSSL - Perl Crypto Extention to OpenSSL</TITLE>
+<LINK REV="made" HREF="mailto:root@porky.devel.redhat.com">
+</HEAD>
+
+<BODY>
+
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#NAME">NAME</A>
+	<LI><A HREF="#SYNOPSIS">SYNOPSIS</A>
+	<LI><A HREF="#DESCRIPTION">DESCRIPTION</A>
+	<LI><A HREF="#FUNCTIONS">FUNCTIONS</A>
+	<UL>
+
+		<LI><A HREF="#sub_new_Creates_a_new_Class">sub new () - Creates a new Class instance.</A>
+		<LI><A HREF="#sub_setParams_Set_internal_">sub setParams () - Set internal module variables.</A>
+		<LI><A HREF="#sub_genKey_Generate_a_priva">sub genKey () - Generate a private Key.</A>
+		<LI><A HREF="#sub_genReq_Generate_a_new_R">sub genReq () - Generate a new Request.</A>
+		<LI><A HREF="#sub_genCert_Generate_a_cert">sub genCert () - Generate a certificate from a request.</A>
+		<LI><A HREF="#sub_dataConvert_Convert_dat">sub dataConvert () - Convert data to different format.</A>
+		<LI><A HREF="#sub_issueCert_Issue_a_certi">sub  issueCert () - Issue a certificate.</A>
+		<LI><A HREF="#sub_issueCrl_Issue_a_CRL_">sub issueCrl () - Issue a CRL.</A>
+		<LI><A HREF="#sub_SPKAC_Get_SPKAC_infos_">sub SPKAC () - Get SPKAC infos.</A>
+	</UL>
+
+	<LI><A HREF="#AUTHOR">AUTHOR</A>
+	<LI><A HREF="#SEE_ALSO">SEE ALSO</A>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<H1><A NAME="NAME">NAME</A></H1>
+<P>
+OpenCA::OpenSSL - Perl Crypto Extention to OpenSSL
+
+<P>
+<HR>
+<H1><A NAME="SYNOPSIS">SYNOPSIS</A></H1>
+<P>
+<PRE>  use OpenCA::OpenSSL;
+</PRE>
+<P>
+<HR>
+<H1><A NAME="DESCRIPTION">DESCRIPTION</A></H1>
+<P>
+This Perl Module implements an interface to the openssl backend program. It
+actually uses the openssl command and it is not fully integrated as PERL/C
+mixture.
+
+<P>
+Passing parameters to functions should be very simple as them have no
+particular order and have, often, self-explaining name. Each parameter
+should be passed to the function like this:
+
+<P>
+<PRE>        ... ( NAME=&gt;VALUE, NAME=&gt;VALUE, ... );
+</PRE>
+<P>
+<HR>
+<H1><A NAME="FUNCTIONS">FUNCTIONS</A></H1>
+<P>
+<HR>
+<H2><A NAME="sub_new_Creates_a_new_Class">sub new () - Creates a new Class instance.</A></H2>
+<P>
+<PRE>        This functions creates a new instance of the class. It accepts
+        only one parameter: the path to the backend command (openssl).
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                my $openssl-&gt;new OpenCA::OpenSSL( $path );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_setParams_Set_internal_">sub setParams () - Set internal module variables.</A></H2>
+<P>
+<PRE>        This function can handle the internal module data such as the
+        backend path or the tmp dir. Accepted parameters are:
+</PRE>
+<P>
+<PRE>                SHELL   - Path to the openssl command.
+                CONFIG  - Path to the openssl config file.
+                TMPDIR  - Temporary files directory.
+                STDERR  - Where to redirect the STDERR file.
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                $openssl-&gt;setParams( SHELL=&gt;'/usr/local/ssl/bin/openssl',
+                                     CONFIG=&gt;$ca/stuff/openssl.cnf,
+                                     TMPDIR=&gt;'/tmp',
+                                     STDERR=&gt;'/dev/null' );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_genKey_Generate_a_priva">sub genKey () - Generate a private Key.</A></H2>
+<P>
+<PRE>        This functions let you generate a new private key. Accepted
+        parameters are:
+</PRE>
+<P>
+<PRE>                BITS      - key lengh in bits(*);
+                OUTFILE   - Output file name(*);
+                ALGORITHM - Encryption Algorithm to be used(*);
+                PASSWD    - Password to be used when encrypting(*);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                my $key = $openssl-&gt;genKey( BITS=&gt;1024 );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_genReq_Generate_a_new_R">sub genReq () - Generate a new Request.</A></H2>
+<P>
+<PRE>        This function generate a new certificate request. Accepted
+        parameters are:
+</PRE>
+<P>
+<PRE>                OUTFILE  - Output file(*);
+                KEYFILE  - File containing the key;
+                PASSWD   - Password to decript key (if needed) (*);
+                DN       - Subject list (as required by openssl, see
+                           the openssl.cnf doc on policy);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                my $req = $openssl-&gt;genReq( KEYFILE=&gt;&quot;00_key.pem&quot;,
+                        DN =&gt; [ &quot;madwolf@openca.org&quot;,&quot;Max&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot; ] );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_genCert_Generate_a_cert">sub genCert () - Generate a certificate from a request.</A></H2>
+<P>
+<PRE>        This function let you generate a new certificate starting
+        from the request file. It is used for self-signed certificate
+        as it simply converts the request into a x509 structure.
+        Accepted parameters are:
+</PRE>
+<P>
+<PRE>                OUTFILE   - Output file(*);
+                KEYFILE   - File containing the private key;
+                REQFILE   - Request File;
+                PASSWD    - Password to decrypt private key(*);
+                DAYS      - Validity days(*);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                $cert = $openssl-&gt;genCert( KEYFILE=&gt;&quot;priv_key.pem&quot;,
+                        REQFILE=&gt;&quot;req.pem&quot;,
+                        DAYS=&gt;&quot;720&quot; );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_dataConvert_Convert_dat">sub dataConvert () - Convert data to different format.</A></H2>
+<P>
+<PRE>        This functions will convert data you pass to another format. Ir
+        requires you to provide with the data's type and IN/OUT format.
+        Accepted parameters are:
+</PRE>
+<P>
+<PRE>                DATA    - Data to be processed;
+                INFILE  - Data file to be processed (one of DATA and
+                          INFILE are required and exclusive);
+                DATATYPE - Data type ( CRL | CERTIFICATE | REQUEST );
+                OUTFORM  - Output format (PEM|DER|NET|TXT)(*);
+                INFORM   - Input format (PEM|DER|NET|TXT)(*);
+                OUTFILE  - Output file(*);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                print $openssl-&gt;dataConvert( INFILE=&gt;&quot;crl.pem&quot;,
+                        OUTFORM=&gt;&quot;TXT&quot; );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_issueCert_Issue_a_certi">sub  issueCert () - Issue a certificate.</A></H2>
+<P>
+<PRE>        This function should be used when you have a CA certificate and
+        a request (either DER|PEM|SPKAC) and want to issue the certificate.
+        Parameters used will override the configuration values (remember
+        to set to appropriate value the CONFIG with the setParams func).
+        Accepted parameters are:
+</PRE>
+<P>
+<PRE>                REQDATA       - Request;
+                REQFILE       - File containing the request (one of
+                                REQDATA and REQFILE are required);
+                INFORM        - Input format (PEM|DER|NET|SPKAC)(*);
+                PRESERVE_DN   - Preserve DN order (Y|N)(*);
+                CAKEY         - CA key file;
+                CACERT        - CA certificate file;
+                DAYS          - Days the certificate will be valid(*);
+                PASSWD        - Password to decrypt priv. CA key(*);
+                EXTS          - Extentions to be used (configuration
+                                section of the openssl.cnf file)(*);
+                REQTYPE       - Request type (NETSCAPE|MSIE)(*);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                $openssl-&gt;issueCert( REQFILE=&gt;&quot;myreq&quot;,
+                        INFORM=&gt;SPKAC,
+                        PRESERVE_DN=&gt;Y,
+                        CAKEY=&gt;$ca/private/cakey.pem,
+                        CACERT=&gt;$ca/cacert.pem,
+                        PASSWD=&gt;$passwd,
+                        REQTYPE=&gt;NETSCAPE );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_issueCrl_Issue_a_CRL_">sub issueCrl () - Issue a CRL.</A></H2>
+<P>
+<PRE>        This function is used to issue a CRL. Accepted parameters
+        are:
+</PRE>
+<P>
+<PRE>                CAKEY   - CA private key file;
+                CACERT  - CA certificate file;
+                PASSWD  - Password to decrypt priv. CA key(*);
+                DAYS    - Days the CRL will be valid for(*);
+                EXTS    - Extentions to be added ( see the openssl.cnf
+                          pages for more help on this )(*);
+                OUTFILE - Output file(*);
+                OUTFORM - Output format (PEM|DER|NET|TXT)(*);
+</PRE>
+<P>
+<PRE>        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                print $openssl-&gt;issueCrl( CAKEY=&gt;&quot;$ca/private/cakey.pem&quot;,
+                                          CACERT=&gt;&quot;$ca/cacert.pem&quot;,
+                                          DAYS=&gt;7,
+                                          OUTFORM=&gt;TXT );
+</PRE>
+<P>
+<HR>
+<H2><A NAME="sub_SPKAC_Get_SPKAC_infos_">sub SPKAC () - Get SPKAC infos.</A></H2>
+<P>
+<PRE>        This function returns a text containing all major info
+        about an spkac structure. Accepted parameters are:
+</PRE>
+<P>
+<PRE>                SPKAC     - spkac data ( SPKAC = .... ) (*);
+                INFILE    - An spkac request file (*);
+                OUTFILE   - Output file (*);
+                
+        (*) - Optional parameters;
+</PRE>
+<P>
+<PRE>        EXAMPLE:
+</PRE>
+<P>
+<PRE>                print $openssl-&gt;SPKAC( SPKAC=&gt;$data, OUTFILE=&gt;$target );
+</PRE>
+<P>
+<HR>
+<H1><A NAME="AUTHOR">AUTHOR</A></H1>
+<P>
+Massimiliano Pala &lt;<A
+HREF="mailto:madwolf@openca.org">madwolf@openca.org</A>&gt;
+
+<P>
+<HR>
+<H1><A NAME="SEE_ALSO">SEE ALSO</A></H1>
+<P>
+OpenCA::X509, OpenCA::CRL, OpenCA::REQ, OpenCA::TRIStateCGI,
+OpenCA::Configuration
+
+</BODY>
+
+</HTML>

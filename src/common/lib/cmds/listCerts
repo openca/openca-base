@@ -1,0 +1,111 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: certsList
+##//       Brief: build Certificates' listing
+##// Description: Build Certificates' listing given the dataType
+##  Parameters: dataType, viewFrom, rows
+
+use strict;
+
+
+sub cmdListCerts {
+
+our ( $query, $db, $self, $tools, $cryptoShell );
+
+## Reserved variables
+my ( $page, $certData, $sheet );
+
+## We need some parameters to generate the list because of
+## we do not want to generate a list of ALL issued certificates
+## so get the numer of results we should give away, then the
+## starting serial number.
+my $from     = $query->param( 'viewFrom' );
+# my $matched  = $query->param( 'rows' );
+my $dataType = $query->param( 'dataType' );
+my $status   = $dataType;
+$status      =~ s/_.*//;
+
+## Get required parameters ( return only the value string )
+my $maxItems = getRequired( 'MaxReturnedItems' );
+my $uptime   = $tools->getDate();
+my $colNum   = 0;
+
+my ($item_list, $cmd_panel) = (undef, undef);
+
+my $exp = gettext ("Following you can find the issued certificates list. Use links to view more detailed information about single certificate, if you are looking for one certificate, please use the search facility.");
+my $name = i18nGettext ("__STATUS__ Certificate List",
+                        "__STATUS__", gettext ($status));
+
+$item_list->{CLASS} = "lists";
+
+$colNum = 0;
+$item_list->{HEAD}->[$colNum++] = gettext ("Serial");
+$item_list->{HEAD}->[$colNum++] = gettext ("Common Name");
+$item_list->{HEAD}->[$colNum++] = gettext ("Email");
+$item_list->{HEAD}->[$colNum++] = gettext ("Role");
+$item_list->{BODY} = [];
+
+## Get the List of Items
+my @certsList = $db->listItems( DATATYPE=>$dataType,
+			FROM=>$from, ITEMS=>$maxItems );
+
+if ( not @certsList ) {
+	@certsList = ();
+}
+
+## Build the Reference Panel
+$cmd_panel->[0] = libBuildRefs( MAXITEMS  => $maxItems,
+			        DATATYPE  => $dataType );
+
+## Process all Files
+my $pos = 0;
+foreach my $cert ( @certsList ) {
+
+	my ( $format, $key, $type, $ser_col, $check, $myCol );
+	my @vals = ();
+	my $hex = undef;
+	my $newDataType = undef;
+
+	if ( not $cert ) {
+		print STDERR "listCerts()->dbError: certificate object not " .
+			"returned correctly (" . $db->{errno} . ":" .
+				$db->{errval} . "\n";
+		next;
+	}
+
+	# ( $newDataType ) = ( $dataType =~ /[^\_]+\_(.*)/ );
+
+	$key  = $cert->getSerial( "$dataType" );
+	$hex  = $cert->getParsed->{HEX_SERIAL};
+	$type = $dataType;
+
+	$ser_col = qq{<a class="list" href="$self?cmd=viewCert&dataType=$type} .
+		   qq{&key=$key">$hex</a>};
+
+	$myCol = 0;
+        $item_list->{BODY}->[$pos]->[$myCol++] = $ser_col;
+        $item_list->{BODY}->[$pos]->[$myCol++] = 
+		( $cert->getParsed()->{DN_HASH}->{CN}[0] || 
+			"<CENTER>---</CENTER>");
+        $item_list->{BODY}->[$pos]->[$myCol++] = 
+		( $cert->getParsed()->{EMAILADDRESS} || 
+			"<CENTER>---</CENTER>");
+        $item_list->{BODY}->[$pos]->[$myCol] = 
+		( $cert->getParsed()->{HEADER}->{ROLE} || 
+			"<CENTER>".gettext ("n/a")."</CENTER>");
+	$pos++;
+}
+
+return libSendReply (
+                     "NAME"        => $name,
+                     "EXPLANATION" => $exp,
+                     "ITEM_LIST"   => $item_list,
+                     "TIMESTAMP"   => 1,
+                     "CMD_PANEL"   => $cmd_panel
+                    );
+}
+
+1;
+

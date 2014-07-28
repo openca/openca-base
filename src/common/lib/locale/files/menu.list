@@ -1,0 +1,6 @@
+web-interfaces/batch/batch-menu.xml.in
+web-interfaces/ca/ca-menu.xml.in
+web-interfaces/ldap/ldap-menu.xml.in
+web-interfaces/node/node-menu.xml.in
+web-interfaces/pub/pub-menu.xml.in
+web-interfaces/ra/ra-menu.xml.in

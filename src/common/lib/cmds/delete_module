@@ -1,0 +1,41 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001 The OpenCA Project
+##
+##   File Name: delete_module
+##       Brief: delete_module
+## Description: delete a module
+##  Parameters: -
+
+use strict;
+
+sub cmdDelete_module {
+
+    our $query;
+
+    my $twig = loadConfigXML ('ModuleConfiguration');
+    my $delete = 0;
+
+    ## search for a module with a matching id
+    foreach my $module (($twig->get_xpath ('access_control/modules/module')))
+    {
+        if (($module->first_child ('id'))->field == $query->param ('id'))
+        {
+            ## delete module
+            $delete = 1;
+            $module->cut;
+            last;
+        }
+    }
+
+    generalError (gettext ("Module cannot be deleted from the configuration because it is not present in the configurationfile."))
+        if (not $delete);
+
+    ## write the configuration
+    writeConfigXML ($twig, 'ModuleConfiguration');
+
+    libExecuteCommand ("show_modules");
+
+}
+
+1;

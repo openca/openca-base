@@ -1,0 +1,6 @@
+ScriptAlias @batch_cgi_url_prefix@ @batch_cgi_fs_prefix@
+ScriptAlias @ca_cgi_url_prefix@ @ca_cgi_fs_prefix@
+
+Alias @batch_htdocs_url_prefix@ @batch_htdocs_fs_prefix@
+Alias @ca_htdocs_url_prefix@ @ca_htdocs_fs_prefix@
+

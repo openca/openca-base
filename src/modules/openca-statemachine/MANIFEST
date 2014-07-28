@@ -1,0 +1,11 @@
+Changes
+StateMachine.pm
+MANIFEST
+MODEL
+LICENSE
+README
+Makefile.PL
+t/1.t
+t/2.t
+t/3.t
+t/4.t

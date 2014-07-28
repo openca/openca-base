@@ -1,0 +1,149 @@
+## OpenCA - Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: warnExpiring
+##       Brief: warn users if their cert expires
+## Description: warn users if their certificate expires in the
+##              configured time
+##  Parameters:
+
+## highly experimental actually and not linked to any webinterface
+
+use strict;
+
+our ($LANGUAGE);
+
+sub cmdWarnExpiring {
+
+    my $service_email = getRequired ('SERVICE_MAIL_ACCOUNT');
+    my $filename      = $query->subVar (getRequired ('WARN_EXPIRING_MSG'), "__LANGUAGE__", $LANGUAGE);
+    my $advance       = getRequired ('WARN_EXPIRING_DAYS');
+    my $msg_template  = $tools->getFile ($filename);
+    return configError (i18nGettext ("Cannot load the message template __FILE__.",
+                                     "__FILE__", $filename))
+        if (not $msg_template);
+
+    print startLogPage (gettext ("Warn owners of expiring certificates"));
+
+    print addLogSection   (gettext ("Configuration ..."));
+    print addPreLogLine   (i18nGettext ("Checked timeframe (days) ... __DAYS__", "__DAYS__", $advance));
+    print closeLogSection;
+
+    my $now = time;
+    ## 86400 is one day
+    my $limit = $now + $advance*86400;
+
+    use Time::Local;
+    use MIME::Base64;
+    use MIME::Lite;
+
+    my $cert = $db->getNextItem( DATATYPE=>'VALID_CERTIFICATE', KEY=>-1 );
+
+    $DEBUG = 0;
+
+    print addLogSection (gettext ("Checking certificate ..."));
+
+    ## Process all Files
+    while ( $cert ) {
+
+        my $key  = $cert->getSerial();
+        print i18nGettext ("Seen certificate with key __SERIAL__",
+                           "__SERIAL__", $key)."<br>\n" if $DEBUG;
+
+        my $email   = $cert->getParsed()->{EMAILADDRESS};
+
+        unless ($email) {
+           my $csr_serial = $cert->getParsed()->{HEADER}->{CSR_SERIAL};
+           my $csr = $db->getItem( DATATYPE=>'ARCHIVED_REQUEST', KEY=>$csr_serial );
+           $email = $csr->getParsed()->{HEADER}->{ADDITIONAL_ATTRIBUTE_EMAIL};
+           $email ||= $service_email;
+        }
+
+        my $cn      = $cert->getParsed()->{DN_HASH}->{CN}[0];
+        my $subject = $cert->getParsed()->{DN};
+        my $expires = $cert->getParsed()->{NOTAFTER};
+
+        my $expire_date = $cryptoShell->getNumericDate($expires);
+        my ($yyyy,$mm,$dd,$HH,$MM,$SS) =
+            ( $expire_date =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+
+        printf "Parsed expire date %d-%d-%d %d:%d<br>\n",
+               $yyyy, $mm, $dd, $HH, $MM, $SS if $DEBUG;
+        my $expiry_ts = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+	
+        print "cert:$key<br>now:$now<br>expires at:$expire_date<br>in seconds:$expiry_ts<br>\n" if $DEBUG;
+        if ( $expiry_ts < $now ) {
+            print addPreLogLine ("<font color=#888888>".
+                           i18nGettext ("__SERIAL__ - expired since __DATE__",
+                                        "__SERIAL__", $key,
+                                        "__DATE__", $expires). 
+                           "</font>"); 
+        } elsif ( $expiry_ts < $limit ) {
+            print addPreLogLine ("<font color=#ff0000>".
+                           i18nGettext ("__SERIAL__ - expires at __DATE__",
+                                        "__SERIAL__", $key,
+                                        "__DATE__", $expires).
+                           "</font>"); 
+
+            my $text = $msg_template;
+            $text = $query->subVar ($text, '__CERT_SERIAL__',   $key);
+            $text = $query->subVar ($text, '__CERT_SUBJECT__',  $subject);
+            $text = $query->subVar ($text, '__CERT_EMAIL__',    $email);
+            $text = $query->subVar ($text, '__CERT_NOTAFTER__', $expires);
+            $text = $query->subVar ($text, '__CERT_CN__',       $cn);
+
+            my $encoding = 'UTF-8';
+
+            my $from = gettext ("PKI Certificate Manager");
+            my $enc_from = MIME::Base64::encode($from,"");
+            $from = "=?" . $encoding . "?B?" . $enc_from . "?=" . " <".$service_email.">";
+
+            my $enc_to = MIME::Base64::encode($cn,"");
+            my $to = "=?" . $encoding . "?B?" . $enc_to . "?=" . " <$email>";
+
+            my $subject = i18nGettext ("Certificate __SERIAL__ will expiring","__SERIAL__", $key);
+            my $enc_subject = MIME::Base64::encode($subject,"");
+            $subject = "=?" . $encoding . "?B?" . $enc_subject . "?=";
+
+            my $msg = MIME::Lite->new(
+                          From    => $from,
+                          To      => $to,
+                          Subject => $subject,
+                          Type    =>'TEXT',
+                          Encoding =>'8bit',
+                          Data    =>$text
+                                     );
+            $msg->attr("content-type.charset" => $encoding);
+
+            print $msg->as_string if ($DEBUG);
+            if ($msg->send)
+            {
+                print addPreLogLine ("<font color=#00ff00>".
+                                     i18nGettext ("__SERIAL__ - message sent to __EMAIL__",
+                                                  "__SERIAL__", $key,
+                                                  "__EMAIL__",  $email).
+                                     "</font>");
+            } else {
+                print addPreLogLine ("<font color=#ff0000>".
+                                     i18nGettext ("__SERIAL__ - cannot send message to __EMAIL__",
+                                                  "__SERIAL__", $key,
+                                                  "__EMAIL__",  $email).
+                                     "</font>");
+            }
+
+        #} else { ## --> all ok and nothing to do
+        #    print addPreLogLine ("<font color=#00ff00>".
+        #                   i18nGettext ("__SERIAL__ - nothing to do",
+        #                                "__SERIAL__", $key).
+        #                   "</font>"); 
+        }
+
+    	$cert = $db->getNextItem( DATATYPE=>'VALID_CERTIFICATE', KEY=>$key );
+    }
+    print closeLogSection;
+
+    print closeLogPage;
+    return 1;
+}
+
+1;

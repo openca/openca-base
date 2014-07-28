@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>bpImportUpdateUser</name>
+            <operation>batchprocessor import update of user data</operation>
+            <owner_method>any</owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

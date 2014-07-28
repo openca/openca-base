@@ -1,0 +1,113 @@
+## OpenCA - Public Web-Gateway Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: approveCRRnotSigned
+##       Brief: store the revreq to the DB
+##     Version: $Revision: 1.2 $
+## Description: store the revreq to the DB for RA Operator approval
+##  Parameters: head, text, signature
+
+use strict;
+
+sub cmdApproveCRRnotSigned {
+
+our ($cryptoShell, $query, $db);
+
+## Reserved variables
+my ( $text, $cert, @search, $certTable );
+
+## To aprove a Request, we need it signed by the RA operator
+my $beginHeader = "-----BEGIN HEADER-----";
+my $endHeader = "-----END HEADER-----";
+
+## Get the parameters
+my $head        = $query->param('head');
+my $body        = $query->param('text');
+
+my $req_txt = $head . $body;
+
+## Try to build the REQ object
+my $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                            GETTEXT => \&i18nGettext,
+                            DATA    => $req_txt );
+if( not $req ) {
+	configError( gettext ("Error while creating the request."));
+}
+
+## check for the old request and attach the signature of the user
+my $h = $db->getItem (DATATYPE => "CRR", KEY => $req->getSerial());
+$req_txt .= $h->getParsed()->{SIGNATURE} if ($h);
+
+$req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                         GETTEXT => \&i18nGettext,
+                         DATA    => $req_txt );
+
+if( not $req ) {
+	configError( gettext ("Error while creating the request."));
+}
+
+## download the certificate
+my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", 
+		KEY => $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL} );
+
+if ($cert->{STATUS} !~ /VALID|SUSPENDED/ ) {
+	print STDERR "ERROR: Certificate pointed by CRR is not VALID or ".
+		"SUSPENDED (STATUS => " . $cert->{STATUS} . ")\n";
+	generalError (i18nGettext ( "ERROR, certificate __SERIAL__ is not " . 
+			"VALID or SUSPENDED",
+			"__SERIAL__", $cert->getSerial()));
+}
+
+if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	print STDERR "SECURITY ALERT BY PKI: database failed while loading " .
+		     "the certificate ". 
+		     $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL}."\n";
+	configError( gettext ("Error while loading the affected certificate."));
+}
+
+if ( not $db->updateItem ( OBJECT => $req, DATATYPE => "APPROVED_CRR" )) {
+	print STDERR "SECURITY ALERT BY PKI: database failed while storing " .
+		"a correct CRR which follows\n".  $req_txt."\n";
+		generalError( gettext ("Error while storing the request."));
+}
+
+# if ( not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"PENDING_CRR", NEWTYPE => "APPROVED_CRR" ) and
+#      not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"SIGNED_CRR", NEWTYPE => "APPROVED_CRR" ) and
+#      not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"NEW_CRR", NEWTYPE => "APPROVED_CRR" )) {
+# 	if ( not $db->storeItem( OBJECT=>$req, DATATYPE=>"APPROVED_CRR", MODE => "INSERT" )) {
+# 		print STDERR "SECURITY ALERT BY PKI: database failed during storing a correct CRR which follows\n".
+# 			$req_txt."\n";
+# 		configError( gettext ("Error while storing the request."));
+# 	}
+# }
+
+if (not $db->updateItem (OBJECT => $cert, DATATYPE=>"SUSPENDED_CERTIFICATE")) {
+	print STDERR "SECURITY ALERT BY PKI: database failed while storing " .
+		"a correct CRR which follows\n".  $req_txt."\n";
+		generalError( gettext("Failed to change certificate's state."));
+}
+
+# if (not (
+#      $db->updateStatus ( OBJECT => $cert, DATATYPE=>"VALID_CERTIFICATE", NEWTYPE => "SUSPENDED_CERTIFICATE") or
+#      $db->updateStatus ( OBJECT => $cert, DATATYPE=>"EXPIRED_CERTIFICATE", NEWTYPE => "SUSPENDED_CERTIFICATE"))) {
+# 	if ( not $db->getItem (DATATYPE=>"SUSPENDED_CERTIFICATE", KEY=>$cert->getSerial()) and
+# 	     not $db->getItem (DATATYPE=>"REVOKED_CERTIFICATE",   KEY=>$cert->getSerial()) ) {
+# 		print STDERR "SECURITY ALERT BY PKI: database failed during storing a correct CRR which follows\n".
+# 			$req_txt."\n";
+# 		configError( gettext ("Failed to change the certificate's state."));
+# 	}
+# }
+
+my $message = i18nGettext ("Your revocation request has been accepted and is now <B>waiting to be processed</B>.\n If you want to check out if the request has been correctly received, you can see the __BEGIN_LINK__ Approved Revocation Requests List __END_LINK__.",
+                           "__BEGIN_LINK__", '<a href="?cmd=listCRR&dataType=APPROVED_CRR">',
+                           "__END_LINK__", "</a>");
+
+return libSendReply (
+                     "TIMESTAMP"   => 1,
+                     "NAME"        => gettext ("Revocation Request Approved without Signature"),
+                     "EXPLANATION" => $message
+                    );
+}
+
+1;

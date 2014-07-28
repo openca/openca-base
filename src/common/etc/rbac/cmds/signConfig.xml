@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>signConfig</name>
+            <operation>access control sign configuration</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

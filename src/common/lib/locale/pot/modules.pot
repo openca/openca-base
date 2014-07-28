@@ -1,0 +1,3050 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: modules/openca-ui-html/HTML.pm:179 modules/openca-ui-html/HTML.pm:268
+#: modules/openca-ui-html/HTML.pm:269 modules/openca-ui-html/HTML.pm:270
+#: modules/openca-ui-html/HTML.pm:276 modules/openca-ui-html/HTML.pm:459
+#: modules/openca-ui-html/HTML.pm:472 modules/openca-ui-html/HTML.pm:498
+#: modules/openca-ui-html/HTML.pm:513 modules/openca-ui-html/HTML.pm:690
+#: modules/openca-statemachine/StateMachine.pm:212
+#: modules/openca-statemachine/StateMachine.pm:218
+#: modules/openca-statemachine/StateMachine.pm:261
+#: modules/openca-statemachine/StateMachine.pm:347
+#: modules/openca-statemachine/StateMachine.pm:421
+#: modules/openca-statemachine/StateMachine.pm:505
+#: modules/openca-pkcs7/PKCS7.pm:181 modules/openca-pkcs7/PKCS7.pm:194
+#: modules/openca-pkcs7/PKCS7.pm:207 modules/openca-tools/Tools.pm:128
+#: modules/openca-tools/Tools.pm:146 modules/openca-tools/Tools.pm:463
+#: modules/openca-tristatecgi/TRIStateCGI.pm:178
+#: modules/openca-tristatecgi/TRIStateCGI.pm:180
+#: modules/openca-tristatecgi/TRIStateCGI.pm:189
+#: modules/openca-tristatecgi/TRIStateCGI.pm:244
+#: modules/openca-tristatecgi/TRIStateCGI.pm:258
+#: modules/openca-tristatecgi/TRIStateCGI.pm:304
+#: modules/openca-tristatecgi/TRIStateCGI.pm:652
+#: modules/openca-tristatecgi/TRIStateCGI.pm:655
+#: modules/openca-openssl/OpenSSL/SMIME.pm:59
+#: modules/openca-openssl/OpenSSL/SMIME.pm:82
+#: modules/openca-openssl/OpenSSL/SMIME.pm:150
+#: modules/openca-openssl/OpenSSL/SMIME.pm:168
+#: modules/openca-openssl/OpenSSL/SMIME.pm:191
+#: modules/openca-openssl/OpenSSL/SMIME.pm:230
+#: modules/openca-openssl/OpenSSL/SMIME.pm:249
+#: modules/openca-openssl/OpenSSL/SMIME.pm:285
+#: modules/openca-openssl/OpenSSL/SMIME.pm:351
+#: modules/openca-openssl/OpenSSL/SMIME.pm:400
+#: modules/openca-openssl/OpenSSL/SMIME.pm:461
+#: modules/openca-openssl/OpenSSL/SMIME.pm:531
+#: modules/openca-openssl/OpenSSL/SMIME.pm:591
+#: modules/openca-openssl/OpenSSL/SMIME.pm:592
+#: modules/openca-openssl/OpenSSL/SMIME.pm:614
+#: modules/openca-openssl/OpenSSL/SMIME.pm:615
+#: modules/openca-openssl/OpenSSL/SMIME.pm:714
+#: modules/openca-openssl/OpenSSL/SMIME.pm:761
+#: modules/openca-openssl/OpenSSL/SMIME.pm:811
+#: modules/openca-openssl/OpenSSL/SMIME.pm:812
+#: modules/openca-openssl/OpenSSL/SMIME.pm:851
+#: modules/openca-openssl/OpenSSL/SMIME.pm:916
+#: modules/openca-openssl/OpenSSL/SMIME.pm:954
+#: modules/openca-openssl/OpenSSL.pm:191 modules/openca-openssl/OpenSSL.pm:326
+#: modules/openca-openssl/OpenSSL.pm:355 modules/openca-openssl/OpenSSL.pm:374
+#: modules/openca-openssl/OpenSSL.pm:376 modules/openca-openssl/OpenSSL.pm:381
+#: modules/openca-openssl/OpenSSL.pm:385 modules/openca-openssl/OpenSSL.pm:450
+#: modules/openca-openssl/OpenSSL.pm:454 modules/openca-openssl/OpenSSL.pm:458
+#: modules/openca-openssl/OpenSSL.pm:539 modules/openca-openssl/OpenSSL.pm:545
+#: modules/openca-openssl/OpenSSL.pm:577 modules/openca-openssl/OpenSSL.pm:594
+#: modules/openca-openssl/OpenSSL.pm:676 modules/openca-openssl/OpenSSL.pm:692
+#: modules/openca-openssl/OpenSSL.pm:696 modules/openca-openssl/OpenSSL.pm:705
+#: modules/openca-openssl/OpenSSL.pm:726 modules/openca-openssl/OpenSSL.pm:756
+#: modules/openca-openssl/OpenSSL.pm:757 modules/openca-openssl/OpenSSL.pm:764
+#: modules/openca-openssl/OpenSSL.pm:780 modules/openca-openssl/OpenSSL.pm:782
+#: modules/openca-openssl/OpenSSL.pm:784 modules/openca-openssl/OpenSSL.pm:791
+#: modules/openca-openssl/OpenSSL.pm:803 modules/openca-openssl/OpenSSL.pm:805
+#: modules/openca-openssl/OpenSSL.pm:937 modules/openca-openssl/OpenSSL.pm:949
+#: modules/openca-openssl/OpenSSL.pm:1086
+#: modules/openca-openssl/OpenSSL.pm:1120
+#: modules/openca-openssl/OpenSSL.pm:1270
+#: modules/openca-openssl/OpenSSL.pm:1370
+#: modules/openca-openssl/OpenSSL.pm:1371
+#: modules/openca-openssl/OpenSSL.pm:1374
+#: modules/openca-openssl/OpenSSL.pm:1376
+#: modules/openca-openssl/OpenSSL.pm:1431
+#: modules/openca-openssl/OpenSSL.pm:1438
+#: modules/openca-openssl/OpenSSL.pm:1439
+#: modules/openca-openssl/OpenSSL.pm:1442
+#: modules/openca-openssl/OpenSSL.pm:1444
+#: modules/openca-openssl/OpenSSL.pm:1445
+#: modules/openca-openssl/OpenSSL.pm:1446
+#: modules/openca-openssl/OpenSSL.pm:1447
+#: modules/openca-openssl/OpenSSL.pm:1448
+#: modules/openca-openssl/OpenSSL.pm:1475
+#: modules/openca-openssl/OpenSSL.pm:1505
+#: modules/openca-openssl/OpenSSL.pm:1509
+#: modules/openca-openssl/OpenSSL.pm:1525
+#: modules/openca-openssl/OpenSSL.pm:1526
+#: modules/openca-openssl/OpenSSL.pm:1535
+#: modules/openca-openssl/OpenSSL.pm:1545
+#: modules/openca-openssl/OpenSSL.pm:1560
+#: modules/openca-openssl/OpenSSL.pm:1598
+#: modules/openca-openssl/OpenSSL.pm:3043
+#: modules/openca-openssl/OpenSSL.pm:3062
+#: modules/openca-openssl/OpenSSL.pm:3078 modules/openca-x509/X509.pm:152
+#: modules/openca-x509/X509.pm:166 modules/openca-x509/X509.pm:192
+#: modules/openca-x509/X509.pm:194 modules/openca-x509/X509.pm:196
+#: modules/openca-x509/X509.pm:492 modules/openca-x509/X509.pm:658
+#: modules/openca-x509/X509.pm:667 modules/openca-ac/AC.pm:83
+#: modules/openca-ac/AC.pm:98 modules/openca-ac/AC.pm:125
+#: modules/openca-ac/AC.pm:186 modules/openca-ac/AC.pm:664
+#: modules/openca-ac/AC.pm:665 modules/openca-ac/AC.pm:666
+#: modules/openca-ac/AC.pm:667 modules/openca-ac/AC.pm:669
+#: modules/openca-ac/AC.pm:1525 modules/openca-ac/AC.pm:1647
+#: modules/openca-ac/AC.pm:1657 modules/openca-ac/AC.pm:1970
+#: modules/openca-ac/AC.pm:1971 modules/openca-ac/AC.pm:1978
+#: modules/openca-ac/AC.pm:1979 modules/openca-ac/AC.pm:2004
+#: modules/openca-ac/AC.pm:2061 modules/openca-ac/AC.pm:2213
+#: modules/openca-db/DB.pm:402 modules/openca-db/DB.pm:911
+#: modules/openca-db/DB.pm:982
+#: modules/openca-configuration/Configuration.pm:93
+#: modules/openca-configuration/Configuration.pm:114
+#: modules/openca-configuration/Configuration.pm:126
+#: modules/openca-crypto/Token/OpenSSL.pm:138 modules/openca-dbi/DBI.pm:88
+#: modules/openca-dbi/DBI.pm:600 modules/openca-dbi/DBI.pm:695
+#: modules/openca-dbi/DBI.pm:700 modules/openca-dbi/DBI.pm:833
+#: modules/openca-dbi/DBI.pm:955 modules/openca-dbi/DBI.pm:1092
+#: modules/openca-dbi/DBI.pm:1093 modules/openca-dbi/DBI.pm:1458
+#: modules/openca-dbi/DBI.pm:1522 modules/openca-dbi/DBI.pm:1533
+#: modules/openca-dbi/DBI.pm:1737 modules/openca-dbi/DBI.pm:1781
+#: modules/openca-dbi/DBI.pm:2629 modules/openca-dbi/DBI.pm:2932
+#: modules/openca-dbi/DBI.pm:2971 modules/openca-dbi/DBI.pm:3096
+#: modules/openca-dbi/DBI.pm:3386 modules/openca-dbi/DBI.pm:3413
+#: modules/openca-crl/CRL.pm:141 modules/openca-crl/CRL.pm:184
+#: modules/openca-crl/CRL.pm:209 modules/openca-crl/CRL.pm:211
+#: modules/openca-crl/CRL.pm:213 modules/openca-crl/CRL.pm:255
+#: modules/openca-crl/CRL.pm:407 modules/openca-crl/CRL.pm:411
+#: modules/openca-ldap/LDAP.pm:387 modules/openca-ldap/LDAP.pm:723
+#: modules/openca-log/Log.pm:326 modules/openca-log/Log.pm:358
+#: modules/openca-log/Logger/Syslog/Sys.pm:92
+#: modules/openca-log/Logger/XML.pm:269 modules/openca-log/Logger/XML.pm:274
+#: modules/openca-log/Logger/XML.pm:279 modules/openca-log/Logger/XML.pm:478
+#: modules/openca-log/Logger/XML.pm:479 modules/openca-log/Logger/XML.pm:721
+#: modules/openca-log/Logger/XML.pm:805 modules/openca-req/REQ.pm:140
+#: modules/openca-req/REQ.pm:177 modules/openca-req/REQ.pm:194
+#: modules/openca-req/REQ.pm:205 modules/openca-req/REQ.pm:237
+#: modules/openca-req/REQ.pm:238 modules/openca-req/REQ.pm:239
+#: modules/openca-req/REQ.pm:560 modules/openca-session/Session.pm:97
+#: modules/openca-session/Session.pm:184
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-17 18:40-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: modules/openca-ui-html/HTML.pm:79
+msgid "OpenCA::UI::HTML->new: ignoring wrong parameter __NAME__"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:142 modules/openca-ui-html/HTML.pm:807
+#: modules/openca-tristatecgi/TRIStateCGI.pm:289
+msgid "itle"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:142 modules/openca-ui-html/HTML.pm:148
+msgid "Configuration Error"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:143 modules/openca-ui-html/HTML.pm:808
+msgid "ang"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:144 modules/openca-ui-html/HTML.pm:809
+msgid "ncoding"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:145 modules/openca-ui-html/HTML.pm:817
+#: modules/openca-tristatecgi/TRIStateCGI.pm:290
+msgid "GCOLOR"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:147
+msgid "Error 690"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:151
+msgid "OpenCA: Error Trapped: __ERRVAL__"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:171
+msgid "General Error"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:172
+msgid "<span style=\"color: red;\">"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:173
+msgid "</span>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:175
+msgid "<input type=\"button\" value=\"Back\" onClick=\"history.back();\" />"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:180
+msgid "&nbsp;<input type=\"button\" value=\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:181
+msgid "\" onClick='window.location.href=\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:182
+msgid "\";' />"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:185
+msgid "&nbsp;"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:193 modules/openca-ac/AC.pm:1581
+#: modules/openca-ac/AC.pm:1674 modules/openca-ac/AC.pm:2299
+msgid "MENU"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:198
+msgid "OpenCA: General error trapped __ERRNO__: __ERRVAL__"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:283
+msgid "AGENT_OS_NAME"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:284
+msgid "AGENT_OS_VERSION"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:291 modules/openca-ui-html/HTML.pm:698
+msgid "\" />\n"
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:296 modules/openca-ui-html/HTML.pm:703
+msgid "/openca-menu.js\"></script>"
+msgstr ""
+
+
+
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:337
+msgid "onLoad=\"enumCSP();\" "
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:344
+msgid "onLoad=\"ieInitVista();\" "
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:366 modules/openca-ui-html/HTML.pm:368
+msgid "onLoad=\"InstallCertIE(document.OPENCA);\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:370
+msgid "onLoad=\"enumCSP();\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:372
+msgid "onLoad=\"ieInitVista();\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:374
+msgid "onLoad=\"InstallCertNSS(document.OPENCA);\""
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:379
+msgid "<body class=\"back\" "
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:384 modules/openca-ui-html/HTML.pm:709
+#: modules/openca-ui-html/HTML.pm:822
+msgid "/menu/"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:385 modules/openca-ui-html/HTML.pm:710
+#: modules/openca-ui-html/HTML.pm:823
+msgid "/menu.xml\",\"menu\", \";xsrf_protection_token="
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:392 modules/openca-ui-html/HTML.pm:398
+msgid "ethod"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:393 modules/openca-ui-html/HTML.pm:399
+#: modules/openca-tristatecgi/TRIStateCGI.pm:530
+#: modules/openca-tristatecgi/TRIStateCGI.pm:580
+#: modules/openca-tristatecgi/TRIStateCGI.pm:616
+msgid "ame"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:394
+msgid "arget"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:395 modules/openca-ui-html/HTML.pm:400
+msgid "ction"
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:440 modules/openca-ui-html/HTML.pm:741
+msgid "%A %e %B %T UTC"
+msgstr ""
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:458 modules/openca-ui-html/HTML.pm:471
+msgid "item_list"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:463 modules/openca-ui-html/HTML.pm:504
+msgid "<th class=\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:477 modules/openca-ui-html/HTML.pm:524
+msgid "<td class=\""
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:496 modules/openca-ui-html/HTML.pm:511
+msgid "info_list"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:520
+msgid "<th colspan=\"2\" class=\""
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:805
+msgid "Proceeding"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:810
+msgid "cript"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:811
+msgid "ype"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:811
+msgid "JAVASCRIPT"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:812
+msgid "rc"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:813
+msgid "/openca-menu.js"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:814
+msgid "tyle"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:814
+msgid "src"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:815
+msgid "/default.css"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:816
+msgid "harset"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:818
+msgid "EXT"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:830
+msgid "Please wait until operation completes"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:31
+msgid "functions"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:32
+msgid "states"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:33
+msgid "users"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:34
+msgid "workflows"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:169
+msgid "Global file with user and process list is missing."
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:190#: modules/openca-statemachine/StateMachine.pm:222#: modules/openca-statemachine/StateMachine.pm:227#: modules/openca-statemachine/StateMachine.pm:228#: modules/openca-statemachine/StateMachine.pm:330
+#: modules/openca-statemachine/StateMachine.pm:340
+msgid "The used state __STATE__ is no valid state."
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:407
+msgid "The state __STATE__ does not exist in the configuration."
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:424
+msgid "Cannot load file __FILENAME__."
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:434#: modules/openca-statemachine/StateMachine.pm:450
+#: modules/openca-log/Logger/XML.pm:146 modules/openca-log/Logger/XML.pm:723
+msgid "Cannot open file __FILENAME__ for writing."
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:457#: modules/openca-statemachine/StateMachine.pm:460#: modules/openca-statemachine/StateMachine.pm:463#: modules/openca-statemachine/StateMachine.pm:478#: modules/openca-statemachine/StateMachine.pm:487#: modules/openca-pkcs7/PKCS7.pm:77 modules/openca-ac/AC.pm:1592
+#: modules/openca-ac/AC.pm:1598 modules/openca-ac/AC.pm:1657
+msgid "signature"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:84
+#: modules/openca-tristatecgi/TRIStateCGI.pm:97
+#: modules/openca-openssl/OpenSSL/SMIME.pm:59 modules/openca-dbi/DBI.pm:187
+msgid "status"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:85
+msgid "statusStack"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:87
+msgid "opaquesig"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:88
+msgid "ignoreErrors"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:89
+msgid "ignoreErrorsHash"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:137
+msgid "OpenCA::PKCS7->new: The translation function must be specified."
+msgstr ""
+#: modules/openca-pkcs7/PKCS7.pm:183 modules/openca-pkcs7/PKCS7.pm:209#: modules/openca-pkcs7/PKCS7.pm:185 modules/openca-pkcs7/PKCS7.pm:211
+msgid "OpenCA::PKCS7->new: Cannot open infile __FILENAME__ for reading."
+msgstr ""
+#: modules/openca-pkcs7/PKCS7.pm:196#: modules/openca-pkcs7/PKCS7.pm:198
+msgid "OpenCA::PKCS7->new: Cannot open datafile __FILENAME__ for reading."
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:220
+msgid "OpenCA::PKCS7->new: Cannot initialize signature (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:234
+msgid "OpenCA::PKCS7->initSignature: No signature specified."
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:237
+msgid "OpenCA::PKCS7->initSignature: No data specified."
+msgstr ""
+
+
+#: modules/openca-pkcs7/PKCS7.pm:257 modules/openca-pkcs7/PKCS7.pm:384
+msgid "OPAQUESIGNATURE"
+msgstr ""
+
+
+
+
+
+#: modules/openca-pkcs7/PKCS7.pm:351
+#, perl-brace-format
+msgid "self->{statusStack} is not an Arrayref"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:363
+msgid "OpenCA::PKCS7->getSigner: The signature was not parsed."
+msgstr ""
+
+
+#: modules/openca-pkcs7/PKCS7.pm:399
+msgid "OpenCA::PKCS7->verifyChain: The crypto-backend fails."
+msgstr ""
+#: modules/openca-tools/Tools.pm:118#: modules/openca-tools/Tools.pm:131 modules/openca-tools/Tools.pm:152#: modules/openca-tools/Tools.pm:135#: modules/openca-tools/Tools.pm:155#: modules/openca-tools/Tools.pm:155#: modules/openca-tools/Tools.pm:170#: modules/openca-tools/Tools.pm:173
+msgid "copyFiles: variable dump"
+msgstr ""
+#: modules/openca-tools/Tools.pm:175
+msgid "copyFiles: filelist = "
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:183
+msgid "The file __FILENAME__ does not exist."
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:188
+msgid "The source __SRC__ is a directory."
+msgstr ""
+#: modules/openca-tools/Tools.pm:196#: modules/openca-tools/Tools.pm:201#: modules/openca-tools/Tools.pm:202#: modules/openca-tools/Tools.pm:203#: modules/openca-tools/Tools.pm:204#: modules/openca-tools/Tools.pm:205#: modules/openca-tools/Tools.pm:211
+msgid "copyFiles: copying completed"
+msgstr ""
+#: modules/openca-tools/Tools.pm:239#: modules/openca-tools/Tools.pm:369 modules/openca-tools/Tools.pm:374#: modules/openca-tools/Tools.pm:369#: modules/openca-tools/Tools.pm:374#: modules/openca-tools/Tools.pm:444
+msgid "XML::Twig cannot be created"
+msgstr ""
+
+
+
+#: modules/openca-tools/Tools.pm:484
+msgid "There is no software configuration in the XML configuration file."
+msgstr ""
+
+
+
+#: modules/openca-tools/Tools.pm:510 modules/openca-tools/Tools.pm:522
+#: modules/openca-openssl/OpenSSL.pm:1190
+#: modules/openca-openssl/OpenSSL.pm:1206 modules/openca-x509/X509.pm:364
+#: modules/openca-x509/X509.pm:380 modules/openca-ac/AC.pm:815
+#: modules/openca-ac/AC.pm:895 modules/openca-ac/AC.pm:975
+#: modules/openca-ac/AC.pm:1443 modules/openca-ac/AC.pm:1539
+#: modules/openca-ac/AC.pm:1647 modules/openca-ac/AC.pm:1656
+#: modules/openca-ac/AC.pm:2231 modules/openca-ac/AC.pm:2261
+#: modules/openca-ac/AC.pm:2268 modules/openca-crypto/Crypto.pm:197
+#: modules/openca-crypto/Crypto.pm:223 modules/openca-crypto/Crypto.pm:417
+#: modules/openca-crypto/Crypto.pm:448 modules/openca-log/Log.pm:116
+#: modules/openca-log/Log.pm:147 modules/openca-req/REQ.pm:631
+#: modules/openca-req/REQ.pm:647
+msgid "name"
+msgstr ""
+
+
+#: modules/openca-tools/Tools.pm:515 modules/openca-tools/Tools.pm:523
+#: modules/openca-tools/Tools.pm:524 modules/openca-tools/Tools.pm:525
+#: modules/openca-openssl/OpenSSL.pm:1203 modules/openca-x509/X509.pm:377
+#: modules/openca-ac/AC.pm:982 modules/openca-crypto/Crypto.pm:229
+#: modules/openca-req/REQ.pm:644
+msgid "value"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:127
+#: modules/openca-tristatecgi/TRIStateCGI.pm:173
+msgid "OPTIONAL"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:168
+msgid "-optional"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:183
+msgid "Error (max. __MAXLEN__)"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:192
+msgid "Error (min. __MINLEN__)"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:208
+msgid "[a-zA-Z ,._:'`\\/()!;]+"
+msgstr ""#: modules/openca-tristatecgi/TRIStateCGI.pm:219
+msgid "_LETTERS"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:227
+msgid "UTF8"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:229
+msgid "UTF-8_LETTERS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:230
+msgid "UTF_8_LETTERS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:233
+#: modules/openca-tristatecgi/TRIStateCGI.pm:255
+msgid "UTF8_LETTERS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:236
+#: modules/openca-tristatecgi/TRIStateCGI.pm:256
+msgid "UTF8_MIXED"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:246
+msgid "Use only letters"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:247
+msgid "Use only chars"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:248
+msgid "Use only LATIN1 chars"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:249
+msgid "Use only LATIN1 chars/numbers"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:250
+msgid "Use only numbers"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:251
+msgid "Use only chars and numbers."
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:252
+msgid "Use xx/xx/xxxx format."
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:253
+msgid "Use ++xx-xxx-xxxxxx format."
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:255
+msgid "Use only UTF8 letters"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:256
+msgid "Use only UTF8 letters and numbers"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:257
+msgid "Use aaa.bbb.ccc.ddd format."
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:257
+msgid "IPV4_ADDRESS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:258
+msgid "Undefined Error"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:260
+msgid "Error. __ERRVAL__"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:289
+msgid "Error Accessing the Service"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:304#: modules/openca-tristatecgi/TRIStateCGI.pm:345#: modules/openca-tristatecgi/TRIStateCGI.pm:378#: modules/openca-tristatecgi/TRIStateCGI.pm:380#: modules/openca-tristatecgi/TRIStateCGI.pm:381#: modules/openca-tristatecgi/TRIStateCGI.pm:384#: modules/openca-tristatecgi/TRIStateCGI.pm:385#: modules/openca-tristatecgi/TRIStateCGI.pm:386#: modules/openca-tristatecgi/TRIStateCGI.pm:389#: modules/openca-tristatecgi/TRIStateCGI.pm:408#: modules/openca-tristatecgi/TRIStateCGI.pm:414#: modules/openca-tristatecgi/TRIStateCGI.pm:419#: modules/openca-tristatecgi/TRIStateCGI.pm:443#: modules/openca-tristatecgi/TRIStateCGI.pm:478
+#: modules/openca-tristatecgi/TRIStateCGI.pm:595
+#: modules/openca-tristatecgi/TRIStateCGI.pm:625
+msgid "No Extra References"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:483
+#: modules/openca-tristatecgi/TRIStateCGI.pm:607
+#: modules/openca-tristatecgi/TRIStateCGI.pm:673
+msgid "Extra References"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:530
+#: modules/openca-tristatecgi/TRIStateCGI.pm:580
+#: modules/openca-tristatecgi/TRIStateCGI.pm:616
+msgid "alue"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:616#: modules/openca-tristatecgi/TRIStateCGI.pm:618#: modules/openca-tristatecgi/TRIStateCGI.pm:620#: modules/openca-tristatecgi/TRIStateCGI.pm:631#: modules/openca-tristatecgi/TRIStateCGI.pm:657
+msgid "?cmd="
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:660
+msgid "HEX"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:681#: modules/openca-tristatecgi/TRIStateCGI.pm:683#: modules/openca-tristatecgi/TRIStateCGI.pm:687#: modules/openca-tristatecgi/TRIStateCGI.pm:689#: modules/openca-tristatecgi/TRIStateCGI.pm:692#: modules/openca-tristatecgi/TRIStateCGI.pm:713#: modules/openca-tristatecgi/TRIStateCGI.pm:714#: modules/openca-openssl/OpenSSL/SMIME.pm:93
+#: modules/openca-openssl/OpenSSL/SMIME.pm:98
+msgid "OpenCA::OpenSSL::SMIME->_save_tmp: Error writing in tempfile"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:104
+msgid "OpenCA::OpenSSL::SMIME->_save_tmp: Error closing tempfile"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:129#: modules/openca-openssl/OpenSSL/SMIME.pm:130#: modules/openca-openssl/OpenSSL/SMIME.pm:141
+msgid "OpenCA::OpenSSL::SMIME->"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:158
+msgid "OpenCA::OpenSSL::SMIME->_sync_data: Error parsing input file"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:162
+msgid "OpenCA::OpenSSL::SMIME->_sync_data: Error parsing into MIME::Entity"
+msgstr ""
+
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:178
+msgid "OpenCA::OpenSSL::SMIME->_sync_data: Error closing tempfile"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:287
+msgid "OpenCA::OpenSSL::SMIME->_strip_headers: no entity found"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:306
+msgid "Invalid invocation"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:334
+msgid "OpenCA::OpenSSL::SMIME->new: Missing required parameter: GETTEXT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:337
+msgid "OpenCA::OpenSSL::SMIME->new: Missing required parameter: SHELL"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:340
+msgid "OpenCA::OpenSSL::SMIME->new: Invalid required parameter: SHELL"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:368
+msgid "OpenCA::OpenSSL::SMIME->set_params: Invalid parameter for CA_CERTS"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:374
+msgid "OpenCA::OpenSSL::SMIME->set_params: Invalid array element for CA_CERTS"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:386
+msgid "OpenCA::OpenSSL::SMIME->set_params: Invalid data source"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:404
+msgid "OpenCA::OpenSSL::SMIME->set_params: Invalid argument to DATA"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:420
+msgid "OpenCA::OpenSSL::SMIME->set_params: Missing data source"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:464
+msgid "OpenCA::OpenSSL::SMIME->sign: Missing required parameter: CERTIFICATE"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:467
+msgid "OpenCA::OpenSSL::SMIME->sign: Invalid required parameter: CERTIFICATE"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:470
+msgid "OpenCA::OpenSSL::SMIME->sign: Missing required parameter: PRIVATE_KEY"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:509
+msgid "OpenCA::OpenSSL::SMIME->sign: Can't duplicate headers cache for backup"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:513
+msgid "OpenCA::OpenSSL::SMIME->sign: Can't duplicate message for backup"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:535
+#: modules/openca-openssl/OpenSSL/SMIME.pm:634
+#: modules/openca-openssl/OpenSSL/SMIME.pm:765
+#: modules/openca-openssl/OpenSSL/SMIME.pm:855
+#: modules/openca-openssl/OpenSSL.pm:229
+msgid "KEYFORM"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:576
+msgid "OpenCA::OpenSSL::SMIME->sign: unknown problem signing: __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:601
+msgid "OpenCA::OpenSSL::SMIME->verify: Invalid argument for CERTIFICATE"
+msgstr ""
+
+
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:670
+msgid "message not signed"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:673
+msgid "invalid certificate chain"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:675
+msgid "no chain of trust supplied"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:677
+msgid "certificate has expired"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:679
+msgid "certificate is not yet valid"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:681
+msgid "unknown certificate problem: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:684
+msgid "corrupted message"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:687
+#: modules/openca-openssl/OpenSSL/SMIME.pm:890
+msgid "OpenCA::OpenSSL::SMIME->verify: found invalid mime stream"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:690
+#: modules/openca-openssl/OpenSSL/SMIME.pm:893
+msgid "OpenCA::OpenSSL::SMIME->verify: missing file"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:693
+#: modules/openca-openssl/OpenSSL/SMIME.pm:896
+msgid "OpenCA::OpenSSL::SMIME->verify: unknown error: __ERRVAL__"
+msgstr ""
+
+
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:724
+msgid "OpenCA::OpenSSL::SMIME->encrypt: Invalid cipher: __CIPHER__"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:746
+msgid "OpenCA::OpenSSL::SMIME->encrypt: Can't duplicate message for backup"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:887
+msgid "this certificate can't decrypt this message"
+msgstr ""
+
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:960
+msgid "OpenCA::OpenSSL::SMIME->get_mime: Error closing tempfile"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:157#: modules/openca-openssl/OpenSSL.pm:161#: modules/openca-openssl/OpenSSL.pm:165#: modules/openca-openssl/OpenSSL.pm:169#: modules/openca-openssl/OpenSSL.pm:173#: modules/openca-openssl/OpenSSL.pm:181
+msgid "There is no translation function specified."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:187
+msgid "There is no path to OpenSSL specified."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:211#: modules/openca-openssl/OpenSSL.pm:296#: modules/openca-openssl/OpenSSL.pm:297 modules/openca-log/Logger/XML.pm:84#: modules/openca-openssl/OpenSSL.pm:327
+msgid "dsa"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:333#: modules/openca-openssl/OpenSSL.pm:335 modules/openca-openssl/OpenSSL.pm:369#: modules/openca-openssl/OpenSSL.pm:341
+msgid "2048"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:346
+msgid "OpenCA::OpenSSL->genKey: Cannot execute command (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:360
+msgid "ecparam -genkey -noout "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:362
+msgid "gen"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:365
+msgid "genrsa "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:372 modules/openca-openssl/OpenSSL.pm:449
+msgid "ecdsa"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:374
+msgid "aes256 "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:382 modules/openca-openssl/OpenSSL.pm:578#: modules/openca-openssl/OpenSSL.pm:386#: modules/openca-openssl/OpenSSL.pm:388 modules/openca-openssl/OpenSSL.pm:470#: modules/openca-openssl/OpenSSL.pm:397
+msgid " -name secp112r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:399
+msgid " -name secp128r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:401
+msgid " -name secp160r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:403
+msgid " -name prime192v1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:405 modules/openca-openssl/OpenSSL.pm:414
+msgid " -name secp224r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:407
+msgid " -name prime256v1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:409
+msgid " -name secp384r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:411
+msgid " -name secp521r1 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:422
+msgid "OpenCA::OpenSSL->genKey: You must specify a key length for ECDSA keys."
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:452
+msgid "ec "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:455
+msgid "-ecdsa "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:505
+msgid "req -new "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:511
+msgid "OpenCA::OpenSSL->genReq: No keyfile specified."
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:533
+msgid "genReq: the subject of the request is not defined"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:535
+msgid "OpenCA::OpenSSL->genReq: The subject of the request is not defined."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:555 modules/openca-openssl/OpenSSL.pm:687
+#: modules/openca-openssl/OpenSSL.pm:1280
+msgid "-multivalue-rdn "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:562#: modules/openca-openssl/OpenSSL.pm:569 modules/openca-openssl/OpenSSL.pm:783#: modules/openca-openssl/OpenSSL.pm:575#: modules/openca-openssl/OpenSSL.pm:580#: modules/openca-openssl/OpenSSL.pm:586
+msgid "OpenCA::OpenSSL->genReq: Cannot execute command (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:597
+msgid "OpenCA::OpenSSL->genReq: Cannot open tmpfile __FILENAME__ for reading."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:632#: modules/openca-openssl/OpenSSL.pm:657
+msgid "req -x509 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:663
+msgid "OpenCA::OpenSSL->genCert: No keyfile specified."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:668
+msgid "OpenCA::OpenSSL->genCert: No requestfile specified."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:698#: modules/openca-openssl/OpenSSL.pm:701#: modules/openca-openssl/OpenSSL.pm:703
+msgid "-extensions \""
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:703
+msgid "\" "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:708#: modules/openca-openssl/OpenSSL.pm:720
+msgid "OpenCA::OpenSSL->genCert: OpenSSL failed (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:729
+msgid "OpenCA::OpenSSL->genCert: Cannot open tmpfile __FILENAME__ for reading."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:754
+msgid "crl2pkcs7 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:759
+msgid "-nocrl "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:766#: modules/openca-openssl/OpenSSL.pm:772#: modules/openca-openssl/OpenSSL.pm:777#: modules/openca-openssl/OpenSSL.pm:781#: modules/openca-openssl/OpenSSL.pm:790#: modules/openca-openssl/OpenSSL.pm:791#: modules/openca-openssl/OpenSSL.pm:798
+msgid "OpenCA::OpenSSL->crl2pkcs7: OpenSSL fails (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+
+
+
+
+
+
+#: modules/openca-openssl/OpenSSL.pm:912
+msgid "OpenCA::OpenSSL->dataConvert: The specified inputfile doesn't exist."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:917#: modules/openca-openssl/OpenSSL.pm:918
+msgid "dataConvert: the data is like follows"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:921#: modules/openca-openssl/OpenSSL.pm:936#: modules/openca-openssl/OpenSSL.pm:940
+msgid "crl "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:943
+msgid "pkcs12 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:945
+msgid "x509 -nameopt RFC2253,-esc_msb "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:948
+msgid "req -nameopt RFC2253,-esc_msb "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:956
+msgid "pkcs8 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:958
+msgid "rsa "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1005#: modules/openca-openssl/OpenSSL.pm:1012
+msgid "-text "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1032#: modules/openca-openssl/OpenSSL.pm:1043#: modules/openca-openssl/OpenSSL.pm:1059#: modules/openca-openssl/OpenSSL.pm:1067
+msgid "dataConvert: p12pass is set"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1068
+msgid "dataConvert: passwd is set"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1069
+msgid "dataConvert: inpwd is set"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1070
+msgid "dataConvert: outpwd is set"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1081#: modules/openca-openssl/OpenSSL.pm:1083#: modules/openca-openssl/OpenSSL.pm:1084#: modules/openca-openssl/OpenSSL.pm:1087
+msgid "dataConvert: using infile"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1090
+msgid "dataConvert: data piping is no longer supported - please use tmp files"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1092
+msgid "OpenCA::OpenSSL->dataConvert: Data piping is no longer supported."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1095
+msgid "dataConvert: openssl itself successful"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1101
+msgid "dataConvert: passphrases deleted"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1105
+msgid "OpenCA::OpenSSL->dataConvert: OpenSSL failed (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1116
+msgid "dataConvert: return 1 and infile deleted if temporary"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1122#: modules/openca-openssl/OpenSSL.pm:1134
+msgid "dataConvert: return result like follows"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1216#: modules/openca-openssl/OpenSSL.pm:1218
+msgid "issueCert: subject parsed by X500::DN"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1220
+msgid "issueCert: cannot create X500::DN-object"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1222
+msgid "OpenCA::OpenSSL->issueCert: Cannot create X500::DN-object."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1235
+msgid "OpenCA::OpenSSL->issueCert: No request specified."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1240#: modules/openca-openssl/OpenSSL.pm:1241
+msgid "issueCert: the data is like follows"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1244#: modules/openca-openssl/OpenSSL.pm:1258
+msgid "ca -batch "
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:1314
+msgid "OpenCA::OpenSSL->issueCert: OpenSSL fails (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1320
+msgid "issueCert: certificate issued successfully"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1362
+msgid "OpenCA::OpenSSL->revoke: No inputfile specified."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1378#: modules/openca-openssl/OpenSSL.pm:1425
+msgid "ca -gencrl "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1436#: modules/openca-openssl/OpenSSL.pm:1445#: modules/openca-openssl/OpenSSL.pm:1446#: modules/openca-openssl/OpenSSL.pm:1447#: modules/openca-openssl/OpenSSL.pm:1448#: modules/openca-openssl/OpenSSL.pm:1457
+msgid "OpenCA::OpenSSL->issueCrl: OpenSSL failed (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1465 modules/openca-db/DB.pm:220
+#: modules/openca-dbi/DBI.pm:130 modules/openca-dbi/DBI.pm:260
+#: modules/openca-dbi/DBI.pm:1200 modules/openca-dbi/DBI.pm:1207
+#: modules/openca-dbi/DBI.pm:1658 modules/openca-dbi/DBI.pm:2925
+#: modules/openca-dbi/DBI.pm:3197 modules/openca-crl/CRL.pm:339
+#: modules/openca-crl/CRL.pm:360 modules/openca-crl/CRL.pm:378
+msgid "CRL"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1500
+msgid "spkac -verify "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1510#: modules/openca-openssl/OpenSSL.pm:1511#: modules/openca-openssl/OpenSSL.pm:1513
+msgid "OpenCA::OpenSSL->SPKAC: Cannot open infile __FILENAME__ for writing."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1539
+msgid "OpenCA::OpenSSL->SPKAC: OpenSSL failed (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1552
+msgid "OpenCA::OpenSSL->SPKAC: Cannot open tmpfile __FILENAME__."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1588
+msgid "sha256"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1592
+msgid "OpenCA::OpenSSL->getDigest: No data specified."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1602
+msgid "INPUT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1607
+msgid "OpenCA::OpenSSL->getDigest: OpenSSL failed (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1646
+msgid "verify: cannot open command"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1648
+msgid "OpenCA::OpenSSL->verify: No input source specified."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1656
+msgid "OpenCA::OpenSSL->verify: Cannot open datafile __FILENAME__ for writing."
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1670
+msgid "OpenCA::OpenSSL->verify: Cannot open sigfile __FILENAME__ for writing."
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1682
+msgid "-verbose "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1684#: modules/openca-openssl/OpenSSL.pm:1685#: modules/openca-openssl/OpenSSL.pm:1688
+msgid "-no_chain "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1690#: modules/openca-openssl/OpenSSL.pm:1693#: modules/openca-openssl/OpenSSL.pm:1696
+msgid " 2>&1"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1700#: modules/openca-openssl/OpenSSL.pm:1720
+msgid "verify: error detected"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1722
+msgid "verify: deleting error"
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#: modules/openca-openssl/OpenSSL.pm:2016
+msgid "encrypt: error detected"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2018
+msgid "encrypt: deleting error"
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#: modules/openca-openssl/OpenSSL.pm:2397#: modules/openca-openssl/OpenSSL.pm:2453#: modules/openca-openssl/OpenSSL.pm:2453#: modules/openca-openssl/OpenSSL.pm:2454#: modules/openca-openssl/OpenSSL.pm:2455#: modules/openca-openssl/OpenSSL.pm:2456#: modules/openca-openssl/OpenSSL.pm:2570#: modules/openca-openssl/OpenSSL.pm:3029#: modules/openca-openssl/OpenSSL.pm:3056
+msgid "_execute_command: executing stdout callback"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3058
+msgid "_execute_command: stdout callback executed"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3067
+msgid "<NOT LOGGED>"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:3088#: modules/openca-openssl/OpenSSL.pm:3092
+msgid " -pre "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:3108
+msgid " -post "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:3125
+msgid "_build_engine_params: GET_PIN_CALLBACK used"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3128
+msgid "_build_engine_params: GET_PIN_CALLBACK not present or not used"
+msgstr ""
+#: modules/openca-x509/X509.pm:149
+msgid "OpenCA::X509::new start"
+msgstr ""
+#: modules/openca-x509/X509.pm:156
+msgid "OpenCA::X509->new: Cannot open infile __FILENAME__ for reading."
+msgstr ""
+
+#: modules/openca-x509/X509.pm:164
+msgid "OpenCA::X509::item loaded ("
+msgstr ""
+
+#: modules/openca-x509/X509.pm:169
+msgid "OpenCA::X509::init starting"
+msgstr ""
+
+
+#: modules/openca-x509/X509.pm:177
+msgid "OpenCA::X509::init returned"
+msgstr ""
+#: modules/openca-x509/X509.pm:189
+msgid "OpenCA::X509->init: No certificate present."
+msgstr ""
+
+#: modules/openca-x509/X509.pm:200
+msgid "OpenCA::X509->init: Cannot parse certificate (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:298
+msgid "OpenCA::X509->getParsed: The certificate was not parsed."
+msgstr ""
+
+#: modules/openca-x509/X509.pm:315
+msgid "OpenCA::X509::parseCert() start"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:318
+msgid "OpenCA::X509::parseCert() getCertAttribute(DER)"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:325
+msgid "OpenCA::X509::parseCert() getCertAttribute(PEM)"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:327
+msgid "OpenCA::X509::parseCert() getPem -> "
+msgstr ""
+#: modules/openca-x509/X509.pm:394 modules/openca-x509/X509.pm:419#: modules/openca-x509/X509.pm:432
+msgid "OpenCA::X509->parseCert: ISSUER_HASH: "
+msgstr ""
+#: modules/openca-x509/X509.pm:486#: modules/openca-x509/X509.pm:491
+msgid "X509v3 Basic Constraints"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:510 modules/openca-ldap/LDAP.pm:357
+msgid "X509v3 Subject Alternative Name"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:533 modules/openca-x509/X509.pm:565
+#: modules/openca-x509/X509.pm:585 modules/openca-x509/X509.pm:650
+#: modules/openca-ac/AC.pm:1985 modules/openca-ac/AC.pm:1987
+#: modules/openca-ac/AC.pm:2041 modules/openca-db/DB.pm:219
+#: modules/openca-dbi/DBI.pm:127 modules/openca-dbi/DBI.pm:217
+#: modules/openca-dbi/DBI.pm:2923
+msgid "CERTIFICATE"
+msgstr ""
+
+
+#: modules/openca-x509/X509.pm:552
+msgid "OpenCA::X509->getPEMHeader: There is no PEM-header available."
+msgstr ""
+
+
+
+#: modules/openca-x509/X509.pm:617
+msgid "OpenCA::X509->setHeaderAttribute: The certificate is not in PEM-format."
+msgstr ""
+#: modules/openca-x509/X509.pm:716#: modules/openca-ac/AC.pm:41
+msgid "use Net::LDAPS;"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:43
+msgid "Error in use Net::LDAPS"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:94
+msgid "There is no log facility defined."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:100
+msgid "The configfile was not specified."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:131
+msgid "OpenCA Log error: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:192
+msgid "value position=\"0\""
+msgstr ""
+#: modules/openca-ac/AC.pm:214#: modules/openca-ac/AC.pm:229
+msgid "loadConfig: entering function"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:238
+msgid "loadConfig: leaving function successfully"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:246
+msgid "    loading channel configuration ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:292
+msgid "Connection verification"
+msgstr ""
+#: modules/openca-ac/AC.pm:303#: modules/openca-ac/AC.pm:315
+msgid "loadLoginConfig: entering function"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:325 modules/openca-ac/AC.pm:489
+msgid "Authentication verification"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:329 modules/openca-ac/AC.pm:493
+msgid "loadLoginConfig: leaving function successfully"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:337
+msgid "loadLDAPLoginConfig: entering function"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:343
+msgid "access_control/login/ldapdata/host"
+msgstr ""
+#: modules/openca-ac/AC.pm:350
+msgid "access_control/login/ldapdata/port"
+msgstr ""
+#: modules/openca-ac/AC.pm:357
+msgid "access_control/login/ldapdata/base"
+msgstr ""
+#: modules/openca-ac/AC.pm:364
+msgid "access_control/login/ldapdata/version"
+msgstr ""
+#: modules/openca-ac/AC.pm:374
+msgid "access_control/login/ldapdata/binddn"
+msgstr ""
+#: modules/openca-ac/AC.pm:381
+msgid "access_control/login/ldapdata/bindpw"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:383
+msgid "        LDAP bindpw: XXXXXXXX"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:389
+msgid "access_control/login/ldapdata/usetls"
+msgstr ""
+#: modules/openca-ac/AC.pm:396
+msgid "access_control/login/ldapdata/cacertpath"
+msgstr ""
+#: modules/openca-ac/AC.pm:403 modules/openca-ac/AC.pm:410
+msgid "yes"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:403
+msgid "starttls"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:407
+msgid "LDAP Login config error: you need to specify cacertpath for TLS."
+msgstr ""
+#: modules/openca-ac/AC.pm:424
+msgid "access_control/login/ldapdata/searchattr"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:426
+msgid "        LDAP search attrib: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:432
+msgid "access_control/login/ldapdata/searchvalueprefix"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:434
+msgid "        LDAP search value prefix: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:440
+msgid "access_control/login/ldapdata/ldapauthmethattr"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:442
+msgid "        LDAP authmeth attribute: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:448
+msgid "access_control/login/ldapdata/ldapdefaultauthmeth"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:450
+msgid "        LDAP defaultauthmeth: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:456
+msgid "access_control/login/ldapdata/ldappwattr"
+msgstr ""
+#: modules/openca-ac/AC.pm:463
+msgid "access_control/login/ldapdata/ldappwattrhash"
+msgstr ""
+#: modules/openca-ac/AC.pm:470
+msgid "access_control/login/passwd/roleattribute"
+msgstr ""
+#: modules/openca-ac/AC.pm:480 modules/openca-ac/AC.pm:1393
+#: modules/openca-ac/AC.pm:1402
+msgid "access_control/login/passwd/rolemapping"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:482
+msgid "        number of roles defined: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:506
+msgid "Module ID loading"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:526
+msgid "loadRoleConfig: entering function"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:539
+msgid "loadRoleConfig: leaving function successfully"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:546
+msgid "loadOperationConfig: entering function"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:559
+msgid "loadOperationConfig: leaving function successfully"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:575
+msgid "ACL mode determination"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:587
+msgid "The mode of the access control list (ACL) cannot be determined."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:600
+msgid "Loading ACL"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:618
+msgid "ACL loading"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:623
+msgid "The access control list is empty."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:632 modules/openca-dbi/DBI.pm:191
+msgid "module"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:636 modules/openca-ac/AC.pm:816
+#: modules/openca-ac/AC.pm:896 modules/openca-ac/AC.pm:1402
+#: modules/openca-ac/AC.pm:1470 modules/openca-ac/AC.pm:2232
+#: modules/openca-dbi/DBI.pm:179
+msgid "role"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:640
+msgid "operation"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:644
+msgid "owner"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:678
+msgid "apache_ssl"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:707
+msgid "OPENCA_AC_CHANNEL_HTTPS_SECRETKEYSIZE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:722
+msgid "Aborting connection - you are using a wrong channel (__CHANNEL__)."
+msgstr ""
+#: modules/openca-ac/AC.pm:731#: modules/openca-ac/AC.pm:738
+msgid "Aborting connection - you are using the wrong computer (__SOURCE__)."
+msgstr ""
+#: modules/openca-ac/AC.pm:755 modules/openca-ac/AC.pm:771#: modules/openca-ac/AC.pm:809
+msgid "No login"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:810
+msgid "::DEBUG => 740201\n"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:817 modules/openca-ac/AC.pm:897
+msgid "entrydn"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:832
+msgid "::DEBUG => 7402011\n"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:856
+msgid "OPENCA_AC_INTERFACE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:865 modules/openca-ac/AC.pm:870
+msgid "xsrf_protection_token"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:868
+msgid "Potential XSRF attack"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:869
+msgid "XSRF token: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:871
+msgid "SHA1 hash of session ID: "
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:919
+msgid "    Try to login ....."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:927
+msgid "        type ..... passwd"
+msgstr ""
+#: modules/openca-ac/AC.pm:945
+msgid "        database ... externalcommand"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:953
+msgid "access_control/login/command"
+msgstr ""
+#: modules/openca-ac/AC.pm:960
+msgid "loading environment variable settings"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:967 modules/openca-ac/AC.pm:975
+#: modules/openca-ac/AC.pm:982
+msgid "access_control/login/setenv"
+msgstr ""
+#: modules/openca-ac/AC.pm:989#: modules/openca-ac/AC.pm:999#: modules/openca-ac/AC.pm:1011#: modules/openca-ac/AC.pm:1014#: modules/openca-ac/AC.pm:1196
+msgid "LDAP Login: user not found."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1203
+msgid "LDAP Login: more than one user found."
+msgstr ""
+#: modules/openca-ac/AC.pm:1261
+msgid "       Found auth meth"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1262 modules/openca-ac/AC.pm:1277
+msgid "pwattr"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1264
+msgid "Error pwattr method chosen without pw attr in entry"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1266
+msgid "LDAP Login: password attribute is missing in the entry."
+msgstr ""
+#: modules/openca-ac/AC.pm:1283#: modules/openca-ac/AC.pm:1297
+msgid "Digest: SHA1\n"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1298
+msgid "String: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1300
+msgid "SHA1:   "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1316
+msgid "LDAP Login config error: unknown passphrasehashing algorithm."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1331
+#, perl-brace-format
+msgid "value contains {X}Y="
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1333
+msgid "        comparing |"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1333
+msgid "| with |"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1337 modules/openca-ac/AC.pm:1360
+#: modules/openca-ac/AC.pm:1708
+msgid "LDAP Login failed."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1340
+msgid "bind"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1349 modules/openca-ac/AC.pm:1697
+#: modules/openca-ldap/LDAP.pm:347 modules/openca-ldap/LDAP.pm:601
+#: modules/openca-ldap/LDAP.pm:821
+msgid "LDAP-bind failed: __ERRVAL__"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1352 modules/openca-ac/AC.pm:1700
+msgid "invalid ldap credentials in configuration"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1354
+msgid "LDAP Login: Cannot bind to server."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1355 modules/openca-ac/AC.pm:1703
+msgid "bind error:     "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1356 modules/openca-ac/AC.pm:1704
+msgid "bind servererr: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1357 modules/openca-ac/AC.pm:1705
+msgid "bind mesg code: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1364
+msgid "        LDAP Login successfull"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1370
+msgid "        ldap unbind success "
+msgstr ""
+#: modules/openca-ac/AC.pm:1377
+msgid "LDAP Login config error: unknown authentication method."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1386
+msgid "looking for the role"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1393
+msgid "roleattributevalue"
+msgstr ""
+#: modules/openca-ac/AC.pm:1412
+msgid "no role found for user."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1414
+msgid "LDAP Login: no role found for user."
+msgstr ""
+#: modules/openca-ac/AC.pm:1423
+msgid "end of LDAP Auth Module"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1456 modules/openca-ac/AC.pm:1505
+msgid "Login failed."
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:1513
+msgid "Login database determination"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1517
+msgid "An unknown database type was specified in the configuration!"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1529
+msgid "ull"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1529
+msgid "elative"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:1534
+msgid "nLoad"
+msgstr ""
+#: modules/openca-ac/AC.pm:1544 modules/openca-ac/AC.pm:2273
+msgid "Reset"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1551
+msgid "access_control/login/loginheadline"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1556
+msgid "access_control/login/loginprompt"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1561 modules/openca-ac/AC.pm:1668
+msgid "Login to OpenCA"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1567
+msgid "Login"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1571 modules/openca-ac/AC.pm:2285
+msgid "Password"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1597 modules/openca-ac/AC.pm:1651
+msgid "challenge"
+msgstr ""
+#: modules/openca-ac/AC.pm:1661
+msgid "Sign and Login"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1664
+msgid "Challenge"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1669
+msgid "Please sign the challenge"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1680
+msgid "An unknown login type was specified in the configuration!"
+msgstr ""
+#: modules/openca-ac/AC.pm:1714#: modules/openca-ac/AC.pm:1732
+msgid "Session killed (normal logout)."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1794
+msgid "Loading directory with command configuration"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:1809
+msgid "Loading command name"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:1821#: modules/openca-ac/AC.pm:1893
+msgid "VALID_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1896
+msgid "Cannot load certificate __SUBJECT__ from the database."
+msgstr ""
+
+
+
+
+#: modules/openca-ac/AC.pm:1989 modules/openca-ac/AC.pm:1990
+#: modules/openca-ac/AC.pm:2001 modules/openca-db/DB.pm:219
+#: modules/openca-db/DB.pm:478 modules/openca-dbi/DBI.pm:128
+#: modules/openca-dbi/DBI.pm:231 modules/openca-dbi/DBI.pm:1734
+#: modules/openca-dbi/DBI.pm:2921
+msgid "CA_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1996 modules/openca-ac/AC.pm:2044
+msgid "Cannot load certificate __SERIAL__ from the database."
+msgstr ""
+#: modules/openca-ac/AC.pm:2014 modules/openca-db/DB.pm:220
+#: modules/openca-dbi/DBI.pm:126 modules/openca-dbi/DBI.pm:200
+#: modules/openca-dbi/DBI.pm:2927 modules/openca-req/REQ.pm:226
+#: modules/openca-req/REQ.pm:446 modules/openca-req/REQ.pm:447
+#: modules/openca-req/REQ.pm:448 modules/openca-req/REQ.pm:449
+#: modules/openca-req/REQ.pm:450 modules/openca-req/REQ.pm:741
+#: modules/openca-req/REQ.pm:776 modules/openca-req/REQ.pm:810
+msgid "REQUEST"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2018
+msgid "Cannot load CSR __SERIAL__ from the database."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2030 modules/openca-db/DB.pm:219
+#: modules/openca-dbi/DBI.pm:129 modules/openca-dbi/DBI.pm:243
+#: modules/openca-dbi/DBI.pm:2929 modules/openca-req/REQ.pm:199
+#: modules/openca-req/REQ.pm:266 modules/openca-req/REQ.pm:479
+#: modules/openca-req/REQ.pm:593
+msgid "CRR"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2034
+msgid "Cannot load CRR __SERIAL__ from the database."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2066#: modules/openca-ac/AC.pm:2078#: modules/openca-ac/AC.pm:2079#: modules/openca-ac/AC.pm:2080#: modules/openca-ac/AC.pm:2085#: modules/openca-ac/AC.pm:2086#: modules/openca-ac/AC.pm:2087#: modules/openca-ac/AC.pm:2088#: modules/openca-ac/AC.pm:2104
+msgid "Permission denied."
+msgstr ""
+#: modules/openca-ac/AC.pm:2137#: modules/openca-ac/AC.pm:2152 modules/openca-session/Session.pm:118
+#: modules/openca-session/Session.pm:125 modules/openca-session/Session.pm:147
+msgid "Directory"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2155
+msgid "ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2160
+msgid "deleted"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2294
+msgid "Token Login"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2295
+msgid "Please enter your credentials."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2305 modules/openca-crypto/Crypto.pm:289
+msgid "The requested token is not configured (__NAME__)."
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:2357
+msgid "             msg code: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2358
+msgid "             msg error: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2359
+msgid "             msg error name: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2360
+msgid "             msg error text: "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:2361
+msgid "             msg error desc: "
+msgstr ""
+
+#: modules/openca-db/DB.pm:163
+msgid "OpenCA::DB->new: No translation function present."
+msgstr ""
+
+#: modules/openca-db/DB.pm:166
+msgid "OpenCA::DB->new: No crypto-backend present."
+msgstr ""
+
+#: modules/openca-db/DB.pm:169
+msgid "OpenCA::DB->new: No databasedirectory present."
+msgstr ""
+
+#: modules/openca-db/DB.pm:172
+msgid "certificates"
+msgstr ""
+
+#: modules/openca-db/DB.pm:195
+msgid "OpenCA::DB->new: Cannot initialize OpenCA::Tools."
+msgstr ""
+
+#: modules/openca-db/DB.pm:202
+msgid "OpenCA::DB->new: Cannot open databasedirectory."
+msgstr ""#: modules/openca-db/DB.pm:248 modules/openca-db/DB.pm:325#: modules/openca-db/DB.pm:249#: modules/openca-db/DB.pm:267 modules/openca-db/DB.pm:271
+#: modules/openca-db/DB.pm:401 modules/openca-db/DB.pm:566
+#: modules/openca-db/DB.pm:568 modules/openca-db/DB.pm:570
+#: modules/openca-db/DB.pm:722 modules/openca-db/DB.pm:968
+#: modules/openca-dbi/DBI.pm:272 modules/openca-dbi/DBI.pm:1132
+#: modules/openca-dbi/DBI.pm:1559 modules/openca-dbi/DBI.pm:2855
+#: modules/openca-dbi/DBI.pm:2869
+msgid "VALID"
+msgstr ""
+
+#: modules/openca-db/DB.pm:267 modules/openca-db/DB.pm:401
+#: modules/openca-db/DB.pm:568 modules/openca-dbi/DBI.pm:278
+#: modules/openca-crl/CRL.pm:236
+msgid "REVOKED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:267 modules/openca-db/DB.pm:401
+#: modules/openca-db/DB.pm:568 modules/openca-dbi/DBI.pm:277
+msgid "SUSPENDED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:267 modules/openca-db/DB.pm:271
+#: modules/openca-db/DB.pm:401 modules/openca-db/DB.pm:566
+#: modules/openca-db/DB.pm:568 modules/openca-dbi/DBI.pm:281
+#: modules/openca-dbi/DBI.pm:1572 modules/openca-dbi/DBI.pm:1605
+#: modules/openca-dbi/DBI.pm:1619 modules/openca-dbi/DBI.pm:2859
+msgid "EXPIRED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-db/DB.pm:574
+#: modules/openca-dbi/DBI.pm:280
+msgid "ARCHIVED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-db/DB.pm:574
+#: modules/openca-dbi/DBI.pm:284
+msgid "NEW"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-dbi/DBI.pm:273
+msgid "RENEW"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-db/DB.pm:574
+#: modules/openca-db/DB.pm:969 modules/openca-dbi/DBI.pm:275
+msgid "PENDING"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-db/DB.pm:574
+#: modules/openca-dbi/DBI.pm:285
+msgid "SIGNED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:400
+#: modules/openca-db/DB.pm:572 modules/openca-db/DB.pm:574
+#: modules/openca-dbi/DBI.pm:276
+msgid "APPROVED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:269 modules/openca-db/DB.pm:271
+#: modules/openca-db/DB.pm:400 modules/openca-db/DB.pm:572
+#: modules/openca-db/DB.pm:574 modules/openca-dbi/DBI.pm:279
+msgid "DELETED"
+msgstr ""
+
+#: modules/openca-db/DB.pm:301
+msgid "OpenCA::DB->dbOpen: No filename specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:304
+msgid "OpenCA::DB->dbOpen: No datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:307
+msgid "OpenCA::DB->dbOpen: No status specified."
+msgstr ""
+#: modules/openca-db/DB.pm:324
+msgid "OpenCA::DB->dbOpen: Cannot initialize DBMS (__FILE__)."
+msgstr ""
+
+#: modules/openca-db/DB.pm:339
+msgid "OpenCA::DB->dbOpen: Cannot initialize searchengine (__FILE__)."
+msgstr ""
+
+#: modules/openca-db/DB.pm:384
+msgid "OpenCA::DB->storeItem: No datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:387
+msgid "OpenCA::DB->storeItem: No object specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:396
+msgid "OpenCA::DB->storeItem: Object has no serial number."
+msgstr ""
+
+#: modules/openca-db/DB.pm:416
+msgid "OpenCA::DB->storeItem: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+
+#: modules/openca-db/DB.pm:503
+msgid "OpenCA::DB->getSearchAttributes: No datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:553
+msgid "OpenCA::DB->getItem: No datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:556
+msgid "OpenCA::DB->getItem: No key specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:578
+msgid "OpenCA:DB->getItem: Unknown basetype."
+msgstr ""
+
+
+#: modules/openca-db/DB.pm:598
+msgid "OpenCA::DB->getItem: Cannot open database (__ERRNO__). __ERRVAL"
+msgstr ""
+
+#: modules/openca-db/DB.pm:605
+msgid "OpenCA::DB->getItem: The content of the databasefield is empty."
+msgstr ""
+
+#: modules/openca-db/DB.pm:636
+msgid "OpenCA::DB->getNextItem: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-db/DB.pm:673
+msgid "OpenCA::DB->getPrevItem: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-db/DB.pm:710
+msgid "OpenCA::DB->deleteItem: No datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:713
+msgid "OpenCA::DB->deleteItem: No key specified."
+msgstr ""
+
+
+#: modules/openca-db/DB.pm:730
+msgid "OpenCA::DB->deleteItem: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+
+#: modules/openca-db/DB.pm:819
+msgid "OpenCA::DB->elements: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-db/DB.pm:893
+msgid "OpenCA::DB->searchItems: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-db/DB.pm:963
+msgid "OpenCA::DB->listItems: There is no datatype specified."
+msgstr ""
+
+#: modules/openca-db/DB.pm:974
+msgid "OpenCA::DB->listItems: Cannot open database (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+
+#: modules/openca-db/DB.pm:1043
+msgid "OpenCA::DB->createObject: Cannot determine the objecttype."
+msgstr ""
+
+#: modules/openca-db/DB.pm:1074
+msgid "OpenCA::DB->getHeader: The object has no header."
+msgstr ""
+#: modules/openca-db/DB.pm:1079#: modules/openca-db/DB.pm:1081#: modules/openca-db/DB.pm:1102#: modules/openca-db/DB.pm:1102#: modules/openca-crypto/Token/Empty.pm:68 modules/openca-ldap/LDAP.pm:35#: modules/openca-crypto/Token/Empty.pm:81 modules/openca-crypto/Crypto.pm:125#: modules/openca-crypto/Token/Empty.pm:92#: modules/openca-crypto/Token/OpenSSL.pm:66
+msgid "Crypto layer is not defined."
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:69
+msgid "The name of the token is not defined."
+msgstr ""
+#: modules/openca-crypto/Token/OpenSSL.pm:102 modules/openca-log/Log.pm:52#: modules/openca-crypto/Token/OpenSSL.pm:125#: modules/openca-crypto/Token/OpenSSL.pm:143
+msgid "Wrong passphrase for private key!"
+msgstr ""
+#: modules/openca-crypto/Token/OpenSSL.pm:212
+msgid "OpenCA::OpenSSL is missing a function. __FUNCTION__"
+msgstr ""
+#: modules/openca-crypto/Token/LunaCA3.pm:45
+msgid "LD_LIBRARY_PATH"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:45
+msgid ":/apps/usr/luna/lib"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:71
+msgid "LunaCA3"
+msgstr ""
+#: modules/openca-crypto/Token/LunaCA3.pm:86
+msgid "Cannot use the private key of the CA (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:91
+msgid "                 OK"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:92
+msgid " ENGINE_INIT:"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:105
+msgid "initing OpenSSL"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:112
+msgid "module ready"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:147
+msgid "starting autoloader"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:150
+msgid "even openssl cannot handle this function"
+msgstr ""
+#: modules/openca-crypto/Token/LunaCA3.pm:162
+msgid "starting openssl"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:167
+msgid "openssl called"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:173
+msgid "entering fucntion"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:188
+msgid "executing login"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:193
+msgid "login failed"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:197
+msgid "login succeeded"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:200
+msgid "touching session file"
+msgstr ""
+
+
+#: modules/openca-crypto/Token/LunaCA3.pm:292#: modules/openca-crypto/Crypto.pm:58#: modules/openca-crypto/Crypto.pm:59#: modules/openca-crypto/Crypto.pm:69
+msgid "There was token specified but there is no configurationfile."
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:93#: modules/openca-crypto/Crypto.pm:147 modules/openca-crypto/Crypto.pm:182
+msgid "No default token specified."
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:159
+msgid "The token is not present in the system"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:164
+msgid "The token is not usable."
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:225#: modules/openca-crypto/Crypto.pm:231#: modules/openca-crypto/Crypto.pm:259#: modules/openca-crypto/Crypto.pm:276#: modules/openca-crypto/Crypto.pm:281
+msgid "Cannot create new OpenCA Token object. __ERRVAL__"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:300#: modules/openca-crypto/Crypto.pm:304#: modules/openca-crypto/Crypto.pm:305#: modules/openca-crypto/Crypto.pm:308#: modules/openca-crypto/Crypto.pm:311#: modules/openca-crypto/Crypto.pm:318#: modules/openca-crypto/Crypto.pm:338
+msgid "No default token specified"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:345
+msgid "The token is not present."
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:376 modules/openca-crypto/Crypto.pm:429
+#: modules/openca-crypto/Crypto.pm:457 modules/openca-crypto/Crypto.pm:496
+msgid "Logout of at minimum one token failed"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:389 modules/openca-crypto/Crypto.pm:420
+#: modules/openca-crypto/Crypto.pm:451
+msgid "The token __NAME__ cannot be initialized."
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:424
+msgid "The token __NAME__ cannot be used."
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:471
+msgid "There is no default token specified."
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:475
+msgid "The default token is not present."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:85
+msgid "setlocale"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:126
+msgid "request"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:127 modules/openca-ldap/LDAP.pm:164
+#: modules/openca-ldap/LDAP.pm:455
+msgid "certificate"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:157
+msgid "CERTIFICATE_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:158
+msgid "REVOKE_CERTIFICATE_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:159
+msgid "CA_CERTIFICATE_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:160
+msgid "REQUEST_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:161
+msgid "CSR_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:162
+msgid "CRR_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:163
+msgid "CRL_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:164
+msgid "LOG_ORDERBY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:170
+msgid "cn"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:171
+msgid "email"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:174 modules/openca-dbi/DBI.pm:208
+#: modules/openca-dbi/DBI.pm:253
+msgid "Operator"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:188
+msgid "reason"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:366
+msgid "MISSING_DATABASE_TYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:367
+msgid "MISSING_DATABASE_NAME"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:368
+msgid "MISSING_DATABASE_USER"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:369
+msgid "MISSING_DATABASE_PASSWD"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:375 modules/openca-dbi/DBI.pm:472
+msgid "CONNECT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:379 modules/openca-dbi/DBI.pm:476
+msgid "PREPARE_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:380 modules/openca-dbi/DBI.pm:477
+msgid "EXECUTE_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:382 modules/openca-dbi/DBI.pm:479
+msgid "SELECT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:383 modules/openca-dbi/DBI.pm:480
+msgid "UPDATE_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:384 modules/openca-dbi/DBI.pm:481
+msgid "INSERT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:385 modules/openca-dbi/DBI.pm:482
+msgid "DELETE_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:386 modules/openca-dbi/DBI.pm:483
+msgid "COMMIT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:387 modules/openca-dbi/DBI.pm:484
+msgid "ROLLBACK_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:388 modules/openca-dbi/DBI.pm:485
+msgid "DISCONNECT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:389 modules/openca-dbi/DBI.pm:486
+msgid "SEQUENCE_GENERATOR_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:395 modules/openca-ldap/LDAP.pm:541
+msgid "Success"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:396
+msgid "Unexpected Error"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:397
+msgid "Possible Attack"
+msgstr ""
+
+
+#: modules/openca-dbi/DBI.pm:420
+msgid "The table certificate already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:421
+msgid "The table ca_certificate already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:422
+msgid "The table crr already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:423
+msgid "The table crl already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:424
+msgid "The table log already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:425
+msgid "The table signature already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:426
+msgid "The sequence generator already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:427
+msgid "The table rbac already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:428
+msgid "The table request already exists."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:430
+msgid "Cannot drop the table ca_certificate."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:431
+msgid "Cannot drop the table crr."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:432
+msgid "Cannot drop the table crl."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:433
+msgid "Cannot drop the table log."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:434
+msgid "Cannot drop the table signature."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:435
+msgid "Cannot drop the sequence generator."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:436
+msgid "Cannot drop the table rbac."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:437
+msgid "Cannot drop the table request."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:438
+msgid "Cannot drop the table certificate."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:440
+msgid "Cannot create the table ca_certificate."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:441
+msgid "Cannot create the table crr."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:442
+msgid "Cannot create the table crl."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:443
+msgid "Cannot create the table log."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:444
+msgid "Cannot create the table signature."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:445
+msgid "Cannot create the sequence generator."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:446
+msgid "Cannot create the table rbac."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:447
+msgid "Cannot create the table request."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:448
+msgid "Cannot create the table certificate."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:450
+msgid "Cannot init sequence generator."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:459
+msgid "There is an illegal or unsupported argument."
+msgstr ""
+
+
+#: modules/openca-dbi/DBI.pm:461
+msgid "The translation function is missing."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:462
+msgid "10072"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:462
+msgid "The database type is missing."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:463
+msgid "10073"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:463
+msgid "The database name is missing."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:464
+msgid "10074"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:464
+msgid "The database user is missing."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:465
+msgid "10075"
+msgstr ""
+
+
+#: modules/openca-dbi/DBI.pm:467
+msgid "Do not commit if the database or the module itself fails."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:657
+msgid "new: rewrite table spaces if necessary (namespace)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:792
+msgid "utf8"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:795
+msgid "connect: Setting characterset if the database support it ..."
+msgstr ""
+#: modules/openca-dbi/DBI.pm:798
+msgid "connect: Characterset fixed if possible"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:832 modules/openca-dbi/DBI.pm:848
+#: modules/openca-dbi/DBI.pm:877 modules/openca-dbi/DBI.pm:967
+msgid "DRYRUN"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:838#: modules/openca-dbi/DBI.pm:846
+msgid "initDB: oracle_home"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:953#: modules/openca-dbi/DBI.pm:969
+msgid ";"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1163#: modules/openca-dbi/DBI.pm:1246#: modules/openca-dbi/DBI.pm:1332#: modules/openca-dbi/DBI.pm:1391#: modules/openca-dbi/DBI.pm:1403#: modules/openca-dbi/DBI.pm:1477
+msgid " set status = 'EXPIRED' where ( last_update > ? ) or (next_update < ? )"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1488
+msgid "updateCRLStatus: doQuery failure detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1500
+msgid " set status = 'VALID' where ( last_update < ? ) and (next_update > ? )"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1511
+msgid "updateCRLStatus: doQuery failure detected 2"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1548
+msgid " set status = 'EXPIRED' where "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1554 modules/openca-dbi/DBI.pm:1611
+msgid " < ? ) and ( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1556 modules/openca-dbi/DBI.pm:1568
+#: modules/openca-dbi/DBI.pm:1602 modules/openca-dbi/DBI.pm:1615
+msgid " like ? ) "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1562 modules/openca-dbi/DBI.pm:1609
+msgid " (( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1564
+msgid "  > ? ) or ( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1566 modules/openca-dbi/DBI.pm:1613
+msgid " < ? )) and ( "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1581
+msgid "updateObjStatus: doQuery failure detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1594
+msgid " set status = 'VALID' where "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1600
+msgid " > ? ) and ( "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1625
+msgid "updateObjStatus: doQuery failure detected 2"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1768#: modules/openca-dbi/DBI.pm:1967
+msgid "keysList: Entering function keysList"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1988
+msgid "select "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1990
+msgid " from "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2009
+msgid "keysList: item: "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2117 modules/openca-dbi/DBI.pm:2447
+msgid "COUNT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2118
+msgid "count(*)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2119 modules/openca-dbi/DBI.pm:2451
+msgid "KEYLIST"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2144
+msgid ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<\n"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2145
+msgid "EXPIRES_BEFORE => "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2146
+msgid "EXPIRES_AFTER => "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2147
+msgid "TABLE => "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2148
+msgid ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2158 modules/openca-dbi/DBI.pm:2188
+msgid " < ? )"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2219 modules/openca-dbi/DBI.pm:2264
+msgid " > ? ) "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2235 modules/openca-dbi/DBI.pm:2260
+msgid " < ? ) "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2288#: modules/openca-dbi/DBI.pm:2301
+msgid "ARGUMENT IS AN ARRAY!!!\n"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2314 modules/openca-dbi/DBI.pm:2332
+#: modules/openca-dbi/DBI.pm:2352
+msgid " in ( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2316 modules/openca-dbi/DBI.pm:2334
+#: modules/openca-dbi/DBI.pm:2354
+msgid " ? ,"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2319 modules/openca-dbi/DBI.pm:2337
+#: modules/openca-dbi/DBI.pm:2357
+msgid " ) "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2323 modules/openca-dbi/DBI.pm:2342
+#: modules/openca-dbi/DBI.pm:2362
+msgid ") "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2329
+msgid "( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2339
+msgid " = ? "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2359
+msgid " like ? "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2385 modules/openca-dbi/DBI.pm:2554
+msgid "_ORDERBY"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2425
+msgid "searchItems: errstr(undef is OK): "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2563#: modules/openca-dbi/DBI.pm:2633#: modules/openca-dbi/DBI.pm:2636#: modules/openca-dbi/DBI.pm:2640#: modules/openca-dbi/DBI.pm:2645#: modules/openca-dbi/DBI.pm:2740
+msgid "EXPIRES_BEFORE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2741
+msgid "EXPIRES_AFTER"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2822#: modules/openca-dbi/DBI.pm:2867#: modules/openca-dbi/DBI.pm:2900#: modules/openca-dbi/DBI.pm:2953#: modules/openca-dbi/DBI.pm:2965#: modules/openca-dbi/DBI.pm:2973#: modules/openca-dbi/DBI.pm:3005
+msgid "01"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3008
+msgid "02"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3011
+msgid "03"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3014
+msgid "04"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3017
+msgid "05"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3020
+msgid "06"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3023
+msgid "07"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3026
+msgid "08"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3029
+msgid "09"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3032
+msgid "10"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3035
+msgid "11"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3038
+msgid "12"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:3090 modules/openca-dbi/DBI.pm:3092#: modules/openca-dbi/DBI.pm:3106
+msgid "doQuery: prepare returned undef"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:3179#: modules/openca-dbi/DBI.pm:3180#: modules/openca-dbi/DBI.pm:3212
+msgid "getResultItem: cannot determine table"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3299
+msgid "WARNING: commit failed when destroying db handler\n"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3300
+msgid "         rollback() called."
+msgstr ""
+#: modules/openca-dbi/DBI.pm:3331
+msgid "Entering set_error ..."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3343
+msgid "set_error: gettext is not defined"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3350
+msgid "set_error: errno and errval set"
+msgstr ""#: modules/openca-dbi/DBI.pm:3370#: modules/openca-dbi/DBI.pm:3371#: modules/openca-dbi/DBI.pm:3422
+msgid "'"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:3422
+msgid "' )"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:128
+msgid "OpenCA::CRL->new: There is no crypto-backend specified."
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:145
+msgid "OpenCA::CRL->new: Cannot open infile __FILENAME__ for reading."
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:171
+msgid "HOURS"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:177 modules/openca-crl/CRL.pm:191
+msgid "OpenCA::CRL->new: Failed to issue a new CRL (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:206
+msgid "OpenCA::CRL->init: There is no CRL present."
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:217
+msgid "OpenCA::CRL->init: Cannot parse CRL (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:244
+msgid "OpenCA::CRL->parseCRL: Cryptobackend fails (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:324
+msgid "OpenCA::CRL->getParsed: The CRL was not parsed."
+msgstr ""
+
+
+
+
+#: modules/openca-ldap/LDAP.pm:47
+msgid "OpenCA::LDAP->"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:89
+msgid "OpenCA::LDAP->new: The translation function must be specified."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:92
+msgid "OpenCA::LDAP->new: The XML cache must be specified."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:95
+msgid "OpenCA::LDAP->new: The LDAP configuration file must be specified."
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:139#: modules/openca-ldap/LDAP.pm:167#: modules/openca-ldap/LDAP.pm:171#: modules/openca-ldap/LDAP.pm:183#: modules/openca-ldap/LDAP.pm:189 modules/openca-ldap/LDAP.pm:206#: modules/openca-ldap/LDAP.pm:278 modules/openca-ldap/LDAP.pm:574
+#: modules/openca-ldap/LDAP.pm:804
+msgid "No object specified."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:341 modules/openca-ldap/LDAP.pm:595
+#: modules/openca-ldap/LDAP.pm:815
+msgid "Connection refused by server."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:366
+msgid "DirName"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:382
+msgid "Distinguished name conflicts with basedn(s)."
+msgstr ""
+
+
+
+#: modules/openca-ldap/LDAP.pm:500#: modules/openca-ldap/LDAP.pm:505 modules/openca-ldap/LDAP.pm:510#: modules/openca-ldap/LDAP.pm:517#: modules/openca-ldap/LDAP.pm:535
+msgid "LDAP-add failed: __ERRVAL__"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:646 modules/openca-ldap/LDAP.pm:862
+msgid "Search for the attribute failed."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:654 modules/openca-ldap/LDAP.pm:707
+#: modules/openca-ldap/LDAP.pm:870 modules/openca-ldap/LDAP.pm:964
+msgid "LDAP-search failed but the function returned no message-object."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:699
+msgid "Search for the attribute mail failed."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:750
+msgid "Error __ERRNO__: __ERRVAL__"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:760
+msgid "Attribute successfully inserted."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:762 modules/openca-ldap/LDAP.pm:765
+#: modules/openca-ldap/LDAP.pm:925 modules/openca-ldap/LDAP.pm:928
+msgid "Success (__MESSAGE__)"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:914
+msgid "Unknown Error ( __ERRNO__ )"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:923
+msgid "Attribute successfully deleted."
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:954
+msgid "get_attribute: LDAP Search Mesg-Code "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:955
+msgid "get_attribute: LDAP Search Mesg-Count "
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:1261#: modules/openca-ldap/LDAP.pm:1269 modules/openca-ldap/LDAP.pm:1305#: modules/openca-ldap/LDAP.pm:1272 modules/openca-ldap/LDAP.pm:1308#: modules/openca-ldap/LDAP.pm:1277#: modules/openca-ldap/LDAP.pm:1287#: modules/openca-ldap/LDAP.pm:1292#: modules/openca-ldap/LDAP.pm:1297#: modules/openca-log/Log.pm:75#: modules/openca-log/Log.pm:135
+msgid "OpenCA LOG: There is a log slot without a logger!"
+msgstr ""
+#: modules/openca-log/Log.pm:151#: modules/openca-log/Log.pm:236
+msgid "There is no appropriate logger."
+msgstr ""
+
+#: modules/openca-log/Log.pm:249
+msgid "addMessage failed for log slot __SLOT__ (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-log/Log.pm:286 modules/openca-log/Logger/XML.pm:104
+#: modules/openca-log/Logger/Syslog.pm:148
+msgid "Search"
+msgstr ""
+
+#: modules/openca-log/Log.pm:353 modules/openca-log/Logger/XML.pm:105
+#: modules/openca-log/Logger/Syslog.pm:149
+msgid "Recovery"
+msgstr ""
+#: modules/openca-log/Logger/Syslog/Sys.pm:52#: modules/openca-log/Logger/Syslog/Sys.pm:59#: modules/openca-log/Logger/Syslog/Sys.pm:60#: modules/openca-log/Logger/Syslog/Sys.pm:61#: modules/openca-log/Logger/Syslog/Sys.pm:62#: modules/openca-log/Logger/XML.pm:57
+msgid "You must specify a translation function."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:60
+msgid "You must specify the used directory."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:63
+msgid "The specified file must be a directory."
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:135 modules/openca-log/Logger/XML.pm:169
+#: modules/openca-log/Logger/XML.pm:176
+msgid "Cannot create directory __DIR__."
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:150
+msgid "Cannot write to file __FILENAME__."
+msgstr ""
+
+
+#: modules/openca-log/Logger/XML.pm:250
+msgid "The requested item is not present."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:346
+msgid "Cannot update index __NAME__ __TYPE__ (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:372
+msgid "Cannot open database __FILE__."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:418
+msgid "Cannot insert __ID__ to database."
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:498#: modules/openca-log/Logger/XML.pm:527#: modules/openca-log/Logger/XML.pm:530
+msgid "_search_type: result list is empty"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:601#: modules/openca-log/Logger/XML.pm:618#: modules/openca-log/Logger/XML.pm:620#: modules/openca-log/Logger/XML.pm:669#: modules/openca-log/Logger/XML.pm:760#: modules/openca-log/Logger/XML.pm:761#: modules/openca-log/Logger/XML.pm:792#: modules/openca-log/Logger/XML.pm:801#: modules/openca-log/Logger/XML.pm:810#: modules/openca-log/Logger/XML.pm:832#: modules/openca-log/Logger/XML.pm:847#: modules/openca-log/Logger/XML.pm:849#: modules/openca-log/Logger/XML.pm:854#: modules/openca-log/Logger/Syslog.pm:55
+msgid "OpenCA PKI Logging"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:58
+msgid "514"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:62
+msgid "The translation function must be specified."
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:65
+msgid "Type of Syslog was not specified."
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:68
+msgid "Type of Syslog is not supported."
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:79
+msgid "Cannot load class OpenCA::Logger::Syslog::__CLASS__. __ERRVAL__"
+msgstr ""
+#: modules/openca-log/Logger/Syslog.pm:92
+msgid "Cannot initialize new syslog object. __ERRVAL__"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:158
+msgid "Cannot write to syslogdevice."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:153
+msgid "OpenCA::REQ->new: The translation function is not specified."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:156
+msgid "OpenCA::REQ->new: The backend is not specified."
+msgstr ""
+
+
+#: modules/openca-req/REQ.pm:181
+msgid "OpenCA::REQ->new: Cannot open infile __FILENAME__ for reading."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:189
+msgid "Cannot read request from infile __FILENAME__."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:211
+msgid "OpenCA::REQ->new: Cannot initialize request (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:232 modules/openca-req/REQ.pm:244
+#: modules/openca-req/REQ.pm:257 modules/openca-req/REQ.pm:270
+msgid "OpenCA::REQ->init: Cannot parse request (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:276
+msgid "OpenCA::REQ->init: Unknown request's format."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:288
+msgid "OpenCA::REQ->getParsed: SPKAC-request was not parsed."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:293
+msgid "OpenCA::REQ->getParsed: CRR was not parsed."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:298
+msgid "OpenCA::REQ->getParsed: Request was not parsed."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:436
+msgid "There is no complete request available."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:458
+msgid "OpenCA::REQ->parseReq: This is a HEADER only."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:463
+msgid "OpenCA::REQ->init: The request has no body."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:467
+msgid "OpenCA::REQ->init: The request has no body and has not the type HEADER."
+msgstr ""
+#: modules/openca-req/REQ.pm:524
+msgid "OpenCA::REQ->parseReq: show all extensions and their values<br>\n"
+msgstr ""
+#: modules/openca-req/REQ.pm:527#: modules/openca-req/REQ.pm:665 modules/openca-req/REQ.pm:676#: modules/openca-req/REQ.pm:766
+msgid "OpenCA::REQ->getPEM: The request is a CRR."
+msgstr ""
+
+
+#: modules/openca-req/REQ.pm:787
+msgid "OpenCA::REQ->getPEM: The request is not available in PEM-format."
+msgstr ""
+
+
+#: modules/openca-req/REQ.pm:801
+msgid "OpenCA::REQ->getDER: The request is a CRR."
+msgstr ""
+
+
+#: modules/openca-req/REQ.pm:821
+msgid "OpenCA::REQ->getDER: The request is not available in DER-format."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:875
+msgid "OpenCA::REQ->setHeaderAttribute: The request is not in PEM-format."
+msgstr ""
+
+#: modules/openca-req/REQ.pm:877
+msgid "REQ->setHeaderAttribute: correct format - PEM"
+msgstr ""
+#: modules/openca-session/Session.pm:161 modules/openca-session/Session.pm:182
+msgid "ookie"
+msgstr ""
+
+

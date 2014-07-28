@@ -1,0 +1,31 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeEnrollCRL
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: exports CRLs
+## Description: exports to a removable media
+
+use strict;
+
+sub cmdNodeEnrollCRL {
+
+	print startLogPage ( gettext("Exporting all CRLs to a lower level of the hierarchy ...") );
+
+	my $tmp = createStructure ();
+	eximEnrollCRLs   ( $tmp );
+	eximEnrollCommit ( $tmp );
+	eximIOEnroll     ( $tmp );
+	removeDirectory  ( $tmp );
+
+	closePage ();
+
+}
+
+sub getParamsNodeEnrollCRL
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

@@ -1,0 +1,6 @@
+# Installation details for UBUNTU installation
+In ubuntu platforms, in addition to the software listed in the
+general INSTALL file, you might need to install the following
+pacakges:
+o libdb-dev (Berkeley DB devel files)
+o libexpat1-dev (Expat XML parsing library devel files)

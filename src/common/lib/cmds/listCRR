@@ -1,0 +1,254 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: listCRR
+##       Brief: Build CRR Listing
+## Description: Build CRR Listing given correct dataType
+##  Parameters: viewFrom, dataType, ra
+
+use strict;
+
+sub cmdListCRR {
+
+    our ($query, $db, $self);
+
+    # our $DEBUG = 1;
+
+    my $from     = ( $query->param( 'viewFrom' ) or 0 );
+    my $dataType = $query->param( 'dataType' );
+    my ($name, $exp);
+    my ($item_list, $cmd_panel) = (undef, undef);
+
+    my ( $dateColTitle, $rows, @cols, @list );
+
+    $item_list->{CLASS} = "lists";
+
+    ## Differentiate the list parameters
+    if ( $dataType eq "NEW_CRR" ) {
+	$name = "New Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Sig");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Submitted On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } elsif ( $dataType eq "PENDING_CRR" ) {
+	$name = "Pending Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Sig");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Submitted On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } elsif ( $dataType eq "SIGNED_CRR" ) {
+	$name = "Signed Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Operator");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Signed On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } elsif ( $dataType eq "APPROVED_CRR" ) {
+	$name = "Approved Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Operator");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Approved On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } elsif ( $dataType eq "ARCHIVED_CRR" ) {
+	$name = "Archived Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Operator");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Archived On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } elsif ( $dataType eq "DELETED_CRR" ) {
+	$name = "Archived Certificate Revocation Requests";
+        $item_list->{HEAD}->[0] = gettext ("Operator");
+        $item_list->{HEAD}->[1] = gettext ("Certificate's Serial");
+        $item_list->{HEAD}->[2] = gettext ("Submit Name");
+        $item_list->{HEAD}->[3] = gettext ("Deleted On");
+        $item_list->{HEAD}->[4] = gettext ("Affected Role");
+    } else {
+	configError(gettext("The requested list is not available."));
+    }
+
+    ## Get required parameters ( return only the value string )
+    my $maxItems = getRequired( "maxReturnedItems" );
+    # my $elements = $db->elements( DATATYPE=>$dataType );
+
+    $cmd_panel->[0] = libBuildRefs( MAXITEMS  => $maxItems,
+			        DATATYPE  => $dataType );
+
+    # $rows = $elements;
+    # @list = $db->listItems( DATATYPE => $dataType, 
+    @list = $db->searchItems( DATATYPE => $dataType, 
+                            ITEMS    => $maxItems,
+                            FROM     => $from );
+
+    # if ((not @list) or ( scalar (@list) < 1 )) {
+    #     $cmd_panel->[0] = libBuildRefs(
+    #                     ELEMENTS  => $rows,
+    #                     MAXITEMS  => $maxItems,
+# 			DATATYPE  => $dataType,
+#                         MODE      => "EXP",
+#                         NOW_FIRST => 0,
+#                         NOW_LAST  => 0,
+#                         FIRST     => 0,
+#                         LAST      => 0);
+#     } else {
+# 	my $nowFirst = 0;
+# 	my $nowLast = 0;
+# 	my $first = 0;
+# 	my $last = 0;
+# 
+# 	my $firstObj = undef;
+# 	my $lastObj = undef;
+# 
+# 	if ( $list[0] ) {
+# 		$nowFirst = $list[0]->getSerial( $dataType );
+# 	};
+# 
+# 	if ( $list[scalar(@list) -1] ) {
+# 		$list[scalar(@list) -1]->getSerial($dataType);
+# 	}
+# 
+# 	if ( $firstObj = libDBGetFirstItem ( $dataType ) ) {
+# 		$first = $firstObj->getSerial ( $dataType );
+# 	}
+# 
+# 	if ( $lastObj = libDBGetFirstItem ( $dataType ) ) {
+# 		$last = $lastObj->getSerial ( $dataType );
+# 	}
+# 
+# 	$cmd_panel->[0] = libBuildRefs (
+# 			ELEMENTS  => $rows,
+# 			MAXITEMS  => $maxItems,
+# 			DATATYPE  => $dataType,
+# 			MODE      => "EXP",
+# 			NOW_FIRST => $nowFirst,
+# 			NOW_LAST  => $nowLast,
+# 			FIRST     => $first,
+# 			LAST      => $last );
+#     }
+
+    ## Process all CRRs
+    $item_list->{BODY} = [];
+    foreach my $req ( @list ) {
+        my ( $head, $parsed, $format, $key, $ser_col, $serial, $loa  );
+        my @vals;
+
+        next if (not $req);
+
+        my $pos = scalar @{$item_list->{BODY}};
+        my $index = 0;
+        $parsed = $req->getParsed ();
+       	$head   = $parsed->{HEADER};
+       	$key    = $req->getSerial ();
+
+       	$serial = $parsed->{REVOKE_CERTIFICATE_SERIAL};
+       	my $crr_cert = $db->getItem (DATATYPE => "CERTIFICATE", KEY => $serial);
+
+        if ( not $serial ) {
+            $serial = "<CENTER>" . gettext ("n/a") . "</CENTER>";
+        } else {
+		$serial = $crr_cert->getParsed()->{HEX_SERIAL};
+	}
+
+        if ($dataType =~ /(NEW|PENDING)/) {
+            if ($parsed->{SIGNATURE}) {
+                ## signature-based revocation
+                if (my $sig = libGetSignatureObject ( OBJECT => $req )) {
+                    if (my $cert = libGetSignerCertificateDB( SIGNATURE=> $sig )) {
+                        $item_list->{BODY}->[$pos]->[$index++] =
+                            $cert->getParsed()->{DN_HASH}->{CN}[0];
+                    } else {
+                        $item_list->{BODY}->[$pos]->[$index++] =
+				"<center>" . gettext ("n/a") . "</center>";
+                        	print STDERR i18nGettext ("Cannot determine certificate from signature (CRR: __SERIAL__).", "__SERIAL__", $key)."\n";
+                    }
+                } else {
+                   $item_list->{BODY}->[$pos]->[$index++] =
+				"<center>" . gettext ("n/a") . "</center>";
+				
+                   print STDERR i18nGettext ("Cannot build object from " .
+			"signature (CRR: __SERIAL__).", "__SERIAL__",$key)."\n";
+                }
+            } elsif ($parsed->{REVOKE_CERTIFICATE_DN}) {
+                ## pin-based revocation
+                ( $item_list->{BODY}->[$pos]->[$index++] ) =
+                    ( $parsed->{REVOKE_CERTIFICATE_DN} =~ /CN\s*=\s*([^\,]+)/);
+            } else {
+                ## last chance by strong ssl-authentication
+                $item_list->{BODY}->[$pos]->[$index++] = $head->{SSL_CERT_DN};
+                print STDERR i18nGettext ("submitter of CRR not determinable ".
+				"(CRR: __SERIAL__).", "__SERIAL__", $key)."\n";
+            }
+       	} else {
+            # get operator from first signature
+            if (not $req->getParsed()->{SIGNATURE}) {
+  	        $item_list->{BODY}->[$pos]->[$index++] =
+                    gettext("(No Signature)");
+            } else {
+                if (my $sig = libGetSignatureObject ( OBJECT => $req )) {
+                    if (my $cert = libGetSignerCertificateDB( SIGNATURE=> $sig )) {
+  	                $item_list->{BODY}->[$pos]->[$index++] =
+                            "<a class=\"list\" href=\"$self?cmd=viewCert&key=".
+                            $cert->getSerial()."\">".
+                            $cert->getParsed()->{HEX_SERIAL}."</a>";
+                    } else {
+                        $item_list->{BODY}->[$pos]->[$index++] =
+                            gettext ("Cannot determine certificate from signature!");
+                        print STDERR i18nGettext ("Cannot determine certificate from signature (CRR: __SERIAL__).",
+                                                  "__SERIAL__", $key)."\n";
+                    }
+                } else {
+                    $item_list->{BODY}->[$pos]->[$index++] =
+                        gettext ("Cannot build PKCS#7-object from signature!");
+                    print STDERR i18nGettext ("Cannot build object from signature (CRR: __SERIAL__).",
+                                              "__SERIAL__", $key)."\n";
+                }
+            }
+        }
+
+        $ser_col = "<a class=\"list\" href=\"$self?cmd=viewCRR&dataType=$dataType" .
+                   "&key=$key\">". $serial ."</a>";
+
+        $item_list->{BODY}->[$pos]->[$index++] = $ser_col;
+        $item_list->{BODY}->[$pos]->[$index++] =
+	    ( $crr_cert->getParsed()->{DN_HASH}->{CN}[0]
+			or "<center>---</center>" );
+           #( $parsed->{REVOKE_CERTIFICATE_DN} or "<CENTER>---</CENTER>" );
+
+	if ( $dataType =~ /DELETED/i ) {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                (  $parsed->{HEADER}->{DELETED_AFTER} or gettext ("n/a"));
+	} elsif ( $dataType =~ /APPROVED/i ) {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                (  $head->{APPROVED_AFTER} or gettext ("n/a"));
+	} elsif ( $dataType =~ /ARCHIVED/i ) {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                (  $head->{ARCHIVED_AFTER} or gettext ("n/a"));
+        } else {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                (  $parsed->{SUBMIT_DATE} or $parsed->{NOTAFTER} or
+							gettext ("n/a"));
+        }
+
+        if ($crr_cert) {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                ($crr_cert->getParsed()->{HEADER}->{ROLE} or gettext("n/a"));
+        } else {
+            $item_list->{BODY}->[$pos]->[$index++] =
+                gettext("Cannot load affected certificate!");
+        }
+    }
+
+    return libSendReply (
+                         "NAME"      => gettext ($name),
+                         "ITEM_LIST" => $item_list,
+                         "CMD_PANEL" => $cmd_panel,
+                         "TIMESTAMP" => 1
+                        );
+}
+
+1;
+

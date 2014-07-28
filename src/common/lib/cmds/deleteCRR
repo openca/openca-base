@@ -1,0 +1,89 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: deleleCRR
+##       Brief: Delete a CRR
+##     Version: $Revision: 1.3 $
+## Description: Move a request to the DELETED_CRR dB
+##  Parameters: key, dataType
+
+use strict;
+
+sub cmdDeleteCRR {
+
+our ($query, $tools, $db);
+
+## Get the parameters
+my $key		= $query->param('key');
+my $dataType	= $query->param('dataType');
+
+my $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key);
+if ( not $req ) {
+	configError (i18nGettext ("No __KEY__ found in __DATATYPE__!",
+                              "__KEY__", $key,
+                              "__DATATYPE__", $dataType));
+}
+
+$req->getParsed()->{HEADER}->{DELETED} = $tools->getDate();
+$req->getParsed()->{HEADER}->{OPERATOR} = 
+				( $ENV{'SSL_CLIENT_M_SERIAL'} or undef );
+
+my $cert_serial = $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+
+# if ( not $db->updateItem ( OBJECT => $req, DATATYPE => "DELETED_CRR" )) {
+if ( not $db->updateItem ( OBJECT => $req, DATATYPE => "DELETED_CRR" )) {
+	generalError (i18nGettext ("Error changing CRR's status to DELETED (__KEY__)!", "__KEY__", $key));
+}
+	
+# if ( not $db->updateStatus( DATATYPE=>$dataType, 
+# 			NEWTYPE=>"DELETED_CRR", OBJECT=>$req)) {
+# 	configError (i18nGettext ("Error changing CRR's status to DELETED (__KEY__)!", "__KEY__", $key));
+# }
+
+my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $cert_serial );
+
+if ( not defined $cert ) {
+	generalError ( i18nGettext ("Certificate __SER__ not in database!",
+		"__SER__", $cert_serial ));
+}
+
+# $cert->{INVALIDITY_REASON} = "";
+# $cert->{SUSPENDED_AFTER} = "";
+# $cert->{REVOKED_AFTER} = "";
+
+if ( not $db->updateItem ( OBJECT => $cert, 
+		DATATYPE          => "VALID_CERTIFICATE",
+		SUSPENDED_AFTER   => '',
+		INVALIDITY_REASON => '' ) ) {
+	generalError ( i18nGettext ( "Error in restoring __SER__ certificate!",
+		"__SER__", $cert_serial ));
+}
+
+# my @crrList = $db->searchItems (DATATYPE => "PENDING_CRR",
+#                                 REVOKE_CERTIFICATE_SERIAL => $cert_serial);
+# if (!scalar @crrList) {
+#     @crrList = $db->searchItems (DATATYPE => "APPROVED_CRR",
+#                                  REVOKE_CERTIFICATE_SERIAL => $cert_serial);
+# }
+# if (!scalar @crrList) {
+#     @crrList = $db->searchItems (DATATYPE => "ARCHIVED_CRR",
+#                                  REVOKE_CERTIFICATE_SERIAL => $cert_serial);
+# }
+# 
+# if (!scalar @crrList) {
+#     my $cert = $db->getItem (DATATYPE => "CERTIFICATE", KEY => $cert_serial);
+# 
+#     if ($cert) {
+#         $db->updateStatus (DATATYPE => "SUSPENDED_CERTIFICATE",
+#                            NEWTYPE => "VALID_CERTIFICATE",
+#                            OBJECT => $cert);
+#     }
+# }
+
+## Send Success Page
+success (gettext ("Certificate Revocation Request Successfully deleted."));
+
+}
+
+1;

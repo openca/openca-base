@@ -1,0 +1,272 @@
+## OpenCA - RA Server Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: changeReq
+##       Brief: change Request
+## Description: change an edited pending request
+##  Parameters: key, dataType, EMAILADDRESS, CN, O, C, S, L
+
+use strict;
+
+sub cmdChangeCSR {
+
+our ($DEBUG, $query, $db, $errval, $errno, $cryptoShell);
+
+## To aprove a Request, we need it signed by the RA operator
+my $beginHeader = "-----BEGIN HEADER-----";
+my $endHeader = "-----END HEADER-----";
+
+## Get the parameters
+my $key		= $query->param('key');
+my $dataType	= $query->param('dataType');
+my $role	= $query->param('ROLE');
+
+my $daysOption = getRequired('CHANGE_DAYS');
+if ($daysOption = ~ m/yes/i) {
+	$daysOption = 1;
+} else {
+	$daysOption = 0;
+}
+my ($days, $notafter, $notbefore) = (0, 0, 0);
+if ($daysOption)
+{
+    $days      = $query->param('DAYS');
+    if ($query->param('NOTAFTER_0') and
+        $query->param('NOTAFTER_1') and
+        $query->param('NOTAFTER_2'))
+    {
+        $notafter = $query->param('NOTAFTER_0').
+                    $query->param('NOTAFTER_1').
+                    $query->param('NOTAFTER_2').
+                    $query->param('NOTAFTER_3').
+                    $query->param('NOTAFTER_4').
+                    $query->param('NOTAFTER_5');
+        $notafter =~ s/^..//;
+    }
+    if ($query->param('NOTBEFORE_0') and
+        $query->param('NOTBEFORE_1') and
+        $query->param('NOTBEFORE_2'))
+    {
+        $notbefore = $query->param('NOTBEFORE_0').
+                    $query->param('NOTBEFORE_1').
+                    $query->param('NOTBEFORE_2').
+                    $query->param('NOTBEFORE_3').
+                    $query->param('NOTBEFORE_4').
+                    $query->param('NOTBEFORE_5');
+        $notbefore =~ s/^..//;
+    }
+    debug_cmds ("changeCSR: days: $days");
+    debug_cmds ("changeCSR: notafter: $notafter");
+    debug_cmds ("changeCSR: notbefore: $notbefore");
+}
+
+my  $loaOption = getRequired('USE_LOAS');
+my $tmpLoa;
+if ($loaOption =~ m/yes/i)
+{
+	print STDERR "cmds->changeCSR: in the first If block of changeCSR<br>\n" if ($DEBUG);
+	$tmpLoa	= $query->param('LOA');
+	print STDERR "cmds->changeCSR: tmpLoa $tmpLoa <br>\n" if ($DEBUG);
+}
+###################
+## build subject ##
+###################
+
+my $subj = "";
+my $counter = 0;
+
+## scan while component is present
+while ($query->param ("SUBJECT_ATTRIBUTE_${counter}_0"))
+{
+    my $attr_counter = 0;
+
+    ## scan while there is an attribute
+    while ($query->param ("SUBJECT_ATTRIBUTE_${counter}_${attr_counter}") and
+           $query->param ("SUBJECT_ATTRIBUTE_${counter}_${attr_counter}") !~ /^\s*$/
+          )
+    {    
+        ## ignore if there is no value
+        if (not defined $query->param ("SUBJECT_VALUE_${counter}_${attr_counter}") or
+            $query->param ("SUBJECT_VALUE_${counter}_${attr_counter}") eq "")
+        {
+            $attr_counter++;
+            next;
+        }
+
+        my $attr_name  = $query->param ("SUBJECT_ATTRIBUTE_${counter}_${attr_counter}");
+        my $attr_value = $query->param ("SUBJECT_VALUE_${counter}_${attr_counter}");
+        $attr_value =~ s/\+/\\+/;
+        if (not $attr_counter)
+        {
+            $subj .= ", " if (length ($subj));
+        } else {
+            $subj .= "+";
+        }
+        $subj .= $attr_name."=".$attr_value;
+        $attr_counter++;
+    }
+    $counter++;
+}
+
+##########################
+## build subjectAltName ##
+##########################
+
+my $subjectAltName = "";
+my $counter = 0;
+
+## scan while component is present
+while ($query->param ("SUBJECT_ALT_NAME_ATTRIBUTE_${counter}"))
+{
+    ## ignore if there is no value
+    if (not defined $query->param ("SUBJECT_ALT_NAME_VALUE_${counter}") or
+        $query->param ("SUBJECT_ALT_NAME_VALUE_${counter}") eq "" or
+        $query->param ("SUBJECT_ALT_NAME_ATTRIBUTE_${counter}") =~ /^\s*$/)
+    {
+        $counter++;
+        next;
+    }
+
+    $subjectAltName .= ", " if (length($subjectAltName));
+    my $value = $query->param ("SUBJECT_ALT_NAME_VALUE_${counter}");
+
+    # skip empty values
+    next if ($value eq "");
+
+    $value =~ s/,/\\,/g;
+    $subjectAltName .= $query->param ("SUBJECT_ALT_NAME_ATTRIBUTE_${counter}").
+                    ":".$value;
+    $counter++;
+}
+
+my $req		= $db->getItem( DATATYPE=>$dataType, KEY=>$key);
+my $parsed	= $req->getParsed();
+
+my ( $head, $text, $newREQ, $tmp, $format, $tmpSubj );
+
+##// If it doesn't exists the file, report error
+if( not $req ) {
+	configError(i18nGettext ("Error: Request __CSR_SERIAL__ not found!", "__CSR_SERIAL__", $key));
+}
+
+################################
+## modify parsed header infos ##
+################################
+
+my %header = %{$parsed->{HEADER}}; ## should be copy by value
+
+## not taken from parsed header
+$header{TYPE}             = $parsed->{TYPE};
+$header{SERIAL}           = $req->getSerial();
+$header{ROLE}             = $role;
+
+## if we are using the DAYS stuff
+$header{DAYS} 		  = $days      if ($days);
+$header{CERT_NOTAFTER} 	  = $notafter  if ($notafter);
+$header{CERT_NOTBEFORE}	  = $notbefore if ($notbefore);
+
+## if we are using the LOA stuff 
+if ($loaOption =~ m/yes/i)
+{
+	$header{LOA}	  = $tmpLoa;
+}
+$header{SUBJECT}          = $subj;
+$header{SUBJECT_ALT_NAME} = $subjectAltName;
+
+## perhaps we can find an operator
+$header{OPERATOR} = 
+    ( $ENV{'SSL_CLIENT_CERT_SERIAL'} or $ENV{'SSL_CLIENT_M_SERIAL'});
+if( $header{OPERATOR} eq "" ) {
+    $header{OPERATOR} = undef;
+} else {
+    if ( length( $header{OPERATOR} ) % 2 ) {
+        $header{OPERATOR} = "0".$header{OPERATOR};
+    }
+}
+
+## load additional header attributes
+my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+foreach my $attr (@additionalAttributes)
+{
+    $header {'ADDITIONAL_ATTRIBUTE_'.uc $attr} = $query->param ('ADDITIONAL_ATTRIBUTE_'.uc ($attr));
+}
+
+###########################
+## build modified header ##
+###########################
+
+## preserve parsed header information
+## static: RA, RENEW, OPERATOR, NOTBEFORE, APPROVED, PIN
+##         SUBJECT, SUBJECT_ALT_NAME, ROLE, SERIAL, TYPE
+## header-only requests: KEY_ALGORITHM, KEY_BITS
+## dynamic attributes introduced by Bahaaldin Al-Amood
+$head  = "$beginHeader\n";
+foreach my $attribute (sort keys %header)
+{
+    $head .= uc ($attribute)." = ".$header{$attribute}."\n";
+    if ($DEBUG)
+    {
+	$tmp=uc ($attribute)." = ".$header{$attribute}."\n"."<br>";
+	print STDERR "cmds->changeCSR: $tmp\n";
+    }
+}
+$head .= "$endHeader\n";
+
+##########################################
+## create the modified CSR object again ##
+##########################################
+
+if ( $parsed->{TYPE} =~ /(PKCS#10|IE|HEADER)/ ) {
+	$format = "PEM";
+} else {
+	$format = "SPKAC";
+}
+
+my $text = $req->getParsed()->{BODY};
+my $keypair = $req->getKey();
+
+## Create a new REQ object (if we modified something we should
+## store modifications) and save the value.
+if ($parsed->{HEADER}->{TYPE} =~ /HEADER/i) {
+	$newREQ = $head;
+} else {
+	$newREQ = $head . $text . $keypair;
+}
+
+my $item = new OpenCA::REQ( SHELL   => $cryptoShell,
+                            DATA    => $newREQ,
+                            GETTEXT => \&i18nGettext,
+			    INFORM  => $format);
+
+## check the lifetime of the new cert
+## block all operations if there is a timing problem
+if (not crypto_check_lifetime ($item, $role))
+{
+    generalError ($errval, $errno);
+}
+
+if( not $item ) {
+       	configError( i18nGettext ("Cannot create a new REQ object (__ERRVAL__)", 
+                                  "__ERRVAL__", $OpenCA::REQ::errval),
+                     $OpenCA::REQ::errno );
+}
+
+if ( not $db->updateItem ( OBJECT => $item, DATATYPE => "PENDING_REQUEST" )) {
+	generalError (gettext ("Error while storing REQ!") . "<br/>" .
+		"[" . $db->{errval} . "]" . "<br />$newREQ" );
+}
+
+# if( not $db->updateStatus( DATATYPE=>$dataType,
+#                            OBJECT=>$item,
+#                            NEWTYPE=>'PENDING_REQUEST' ) ) {
+#        	configError (gettext ("Error while storing REQ!"));
+# }
+
+$query->param (-name => 'dataType', -value => 'PENDING_REQUEST');
+
+libExecuteCommand ("viewCSR");
+
+}
+
+1;

@@ -1,0 +1,301 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpViewProcess
+##       Brief: view user of batch processor
+## Description: 
+##  Parameters: ID
+
+use strict;
+
+sub cmdBpViewProcess {
+
+    our ($xml_cache, $tools, $query, $self, $db);
+
+    my $user    = $query->param( 'USER' );
+    my $process = $query->param( 'PROCESS' );
+
+    my ( $dateColTitle, $rows, @cols, @list );
+
+    ## Get required parameters ( return only the value string )
+    my $batchdir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+
+    $batchdir .= "/".join ("/", split (/ */, $user))."/workflows/".$process;
+
+    opendir DIR, $batchdir;
+    my @list = readdir DIR;
+    closedir DIR;
+
+    my $info_list = undef;
+    $info_list->{HEAD}->[0] = gettext ("Parameter");
+    $info_list->{HEAD}->[1] = gettext ("Value");
+    $info_list->{BODY} = ();
+    $info_list->{BODY}->[0]->[0] = gettext ("User");
+    $info_list->{BODY}->[0]->[1] = $user;
+    $info_list->{BODY}->[1]->[0] = gettext ("Process");
+    $info_list->{BODY}->[1]->[1] = $process;
+
+    ## lists
+    my @csrList = ();
+
+    ## Process all Directories
+    my $pos = scalar @{$info_list->{BODY}};
+    foreach my $dirs ( @list ) {
+
+        if ($dirs =~ /^data$/) {
+
+            opendir DIR, $batchdir."/data";
+            my @h_list = readdir DIR;
+            closedir DIR;
+
+            $info_list->{BODY}->[$pos++]->[0]   = gettext ("User's data");
+
+            @h_list = sort @h_list;
+            my $subject_alt_name = "";
+            foreach my $file (@h_list) {
+
+                if ($file =~ /^SUBJECT$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Distinguished Name");
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/data/SUBJECT");
+                } elsif ($file =~ /^SUBJECT_ALT_NAME_.*$/) {
+                    $subject_alt_name .= ", " if ($subject_alt_name);
+                    $subject_alt_name .= $tools->getFile ($batchdir."/data/".$file);
+                } elsif ($file =~ /^ROLE$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Role");
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/data/ROLE");
+                } elsif ($file =~ /^\.|\.\.$/) {
+                    next;
+                } elsif ($file =~ /^LOA_MODE$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Mode of Level of Assuarance");
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/data/LOA_MODE");
+                } elsif ($file =~ /^EXPIRES$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Not after (YYMMDDhhmmss) ");
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/data/EXPIRES");
+                } else {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ($file);
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/data/".$file);
+                }
+            }
+            $info_list->{BODY}->[$pos]->[0]   = gettext ("Subject Alternative Name");
+            $info_list->{BODY}->[$pos++]->[1] = $subject_alt_name;
+
+            if (getRequired ("BP_KEY_BACKUP_MODE") =~ /DENY/) {
+                $info_list->{BODY}->[$pos]->[0]   = gettext ("Key Backup overwritten by configuration");
+                $info_list->{BODY}->[$pos++]->[1] = gettext ("permission denied");
+            } elsif (getRequired ("BP_KEY_BACKUP_MODE") =~ /FORCE/) {
+                $info_list->{BODY}->[$pos]->[0]   = gettext ("Key Backup overwritten by configuration");
+                $info_list->{BODY}->[$pos++]->[1] = gettext ("backup enforced");
+            } 
+
+        } elsif ($dirs =~ /^public$/) {
+
+            opendir DIR, $batchdir."/public";
+            my @h_list = readdir DIR;
+            closedir DIR;
+
+            $info_list->{BODY}->[$pos++]->[0]   = gettext ("Public data of the batch processors");
+
+            foreach my $file (@h_list) {
+
+                if ($file =~ /^hashedPIN$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Hashed PIN");
+                    $info_list->{BODY}->[$pos++]->[1] = $tools->getFile ($batchdir."/public/hashedPIN");
+                } elsif ($file =~ /^csrList$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Issued Requests");
+                    my $reqfile = $tools->getFile ($batchdir."/public/csrList");
+                    @csrList    = split /\n/, $reqfile;
+                    my $links = "";
+                    my $old = undef;
+                    foreach my $req (@csrList) {
+                        next if ($req eq $old);
+                        $old = $req;
+                        $links .= "<br>\n"
+                            if ($links);
+                        $links .= "<a href=\"$self?cmd=viewCSR&key=$req&dataType=REQUEST\">$req</a>";
+                    }
+                    $info_list->{BODY}->[$pos++]->[1] = $links;
+
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Issued Certificates");
+                    my $links = "";
+                    my $old = undef;
+                    foreach my $csr (@csrList) {
+                        next if ($csr eq $old);
+                        $old = $csr;
+                        my @certList = $db->searchItems (DATATYPE=>'CERTIFICATE', CSR_SERIAL=>$csr);
+                        foreach my $cert (@certList) {
+                            $links .= "<br>\n"
+                                if ($links);
+                            $links .= "<a href=\"$self?cmd=viewCert&key=".$cert->getSerial()."\">".$cert->getSerial()."</a>";
+                        }
+                    }
+                    $info_list->{BODY}->[$pos++]->[1] = $links;
+                } elsif ($file =~ /^\.|\.\.$/) {
+                    next;
+                } else {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Unknown File");
+                    $info_list->{BODY}->[$pos++]->[1] = $file;
+                }
+            }
+
+        } elsif ($dirs =~ /^private$/) {
+
+            opendir DIR, $batchdir."/private";
+            my @h_list = readdir DIR;
+            closedir DIR;
+
+            $info_list->{BODY}->[$pos++]->[0]   = gettext ("Private data of the batch processors");
+
+            foreach my $file (@h_list) {
+
+                if ($file =~ /^purePIN$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("PIN");
+                    $info_list->{BODY}->[$pos++]->[1] = "<pre>".$tools->getFile ($batchdir."/private/purePIN")."</pre>";
+                } elsif ($file =~ /^privateKey$/) {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("private key");
+                    $info_list->{BODY}->[$pos++]->[1] = "<pre>".$tools->getFile ($batchdir."/private/privateKey")."</pre>";
+                } elsif ($file =~ /^\.|\.\.$/) {
+                    next;
+                } else {
+                    $info_list->{BODY}->[$pos]->[0]   = gettext ("Unknown File");
+                    $info_list->{BODY}->[$pos++]->[1] = $file;
+                }
+            }
+
+        } elsif ($dirs =~ /^keybackup$/) {
+
+            $info_list->{BODY}->[$pos++]->[0]   = gettext ("Backuped keys");
+
+            opendir DIR, $batchdir."/keybackup";
+            my @h_list = readdir DIR;
+            closedir DIR;
+
+            foreach my $file (@h_list) {
+
+                next if ($file !~ /enc_key$/i);
+
+                @cols = ();
+
+                my $key = $file;
+                $key =~ s/\.enc_key$//;
+                my $link = "<a href=\"$self?key_digest=".$key.
+                                          ";cmd=getParams".
+                                          ";USER=${user}".
+                                          ";PROCESS=${process}".
+                                          ";GET_PARAMS_CMD=bpRecoverKey\">".
+                           gettext ("Private key in PEM format")."</a>";
+                $info_list->{BODY}->[$pos]->[0]   = gettext ("Only private key");
+                $info_list->{BODY}->[$pos++]->[1] = $link;
+            }
+
+            opendir DIR, $batchdir."/keybackup";
+            my @h_list = readdir DIR;
+            closedir DIR;
+
+            foreach my $file (@h_list) {
+
+                next if ($file !~ /keydigest$/i);
+
+                my $digest = $tools->getFile ($file);
+                my $csr_serial = $file;
+                $csr_serial =~ s/.keydigest//;
+                $csr_serial =~ s/csr_//;
+                my @certList = $db->searchItems (DATATYPE=>'CERTIFICATE', CSR_SERIAL=>$csr_serial);
+                foreach my $cert (@certList) {
+
+                    ## keyrecovery
+                    my $link = "<a href=\"$self?key=".$cert->getSerial().
+                                              ";format=pkcs12".
+                                              ";USER=${user}".
+                                              ";PROCESS=${process}".
+                                              ";cmd=getParams".
+                                              ";GET_PARAMS_CMD=bpRecoverCert\">".
+                               gettext ("PKCS#12")."</a>, ".
+                               "<a href=\"$self?key=".$cert->getSerial().
+                                              ";format=pkcs8".
+                                              ";USER=${user}".
+                                              ";PROCESS=${process}".
+                                              ";cmd=getParams".
+                                              ";GET_PARAMS_CMD=bpRecoverCert\">".
+                               gettext ("PKCS#8")."</a>, ".
+                               "<a href=\"$self?key=".$cert->getSerial().
+                                              ";format=openssl".
+                                              ";USER=${user}".
+                                              ";PROCESS=${process}".
+                                              ";cmd=getParams".
+                                              ";GET_PARAMS_CMD=bpRecoverCert\">".
+                               gettext ("SSLeay")."</a>";
+                    $info_list->{BODY}->[$pos]->[0]   = i18nGettext ("Certificate __CERT_SERIAL__", "__CERT_SERIAL__", $cert->getSerial());
+                    $info_list->{BODY}->[$pos++]->[1] = $link;
+                }
+            }
+        }
+        ## other files are ignored
+
+    }
+    my $state_machine = libGetStateMachine();
+    $info_list->{BODY}->[$pos++]->[0] = gettext ("Internal Batch System States");
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Actual states of this process");
+    $info_list->{BODY}->[$pos]->[1] = "<pre>";
+    foreach my $state ($state_machine->get_user_states (
+                           USER    => $user,
+                           PROCESS => $process))
+    {
+        $info_list->{BODY}->[$pos]->[1] .= $state."\n";
+    }
+    $info_list->{BODY}->[$pos]->[1] =~ s/\n$//;
+    $info_list->{BODY}->[$pos++]->[1] .= "</pre>";
+
+    my @states = $state_machine->get_states();
+
+    $info_list->{BODY}->[$pos]->[0]   =  gettext ("Change state configuration");
+    my $select = $query->newInput (
+                                   -regx   => 'MIXED',
+                                   -intype => 'popup_menu',
+                                   -name   => 'state',
+                                   -value  => \@states);
+    my $button = "<input ".
+                 "TYPE=\"Submit\" ".
+                 "Name=\"Submit\" ".
+                 "Value=\"".gettext("Add new state")."\" ".
+                 "onClick=\"cmd.value='bpSetState';\">".
+                 "<input ".
+                 "TYPE=\"Submit\" ".
+                 "Name=\"Submit\" ".
+                 "Value=\"".gettext("Remove state")."\" ".
+                 "onClick=\"cmd.value='bpUnsetState';\">";
+    $info_list->{BODY}->[$pos++]->[1]   = $select.$button;
+
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Perform batch operation");
+    my @functions = $state_machine->get_functions();
+    my $select = $query->newInput (
+                                   -regx   => 'MIXED',
+                                   -intype => 'popup_menu',
+                                   -name   => 'FUNCTION',
+                                   -value  => \@functions);
+    my $button = "<input ".
+                 "TYPE=\"Submit\" ".
+                 "Name=\"Submit\" ".
+                 "Value=\"".gettext("Perform batch operation")."\" ".
+                 "onClick=\"cmd.value='bpDoFunction';\">";
+    $info_list->{BODY}->[$pos++]->[1]   = $select.$button;
+
+    my $hidden_list = undef;
+    $hidden_list->{"cmd"}     = "bpViewProcess";
+    $hidden_list->{"USER"}    = $user;
+    $hidden_list->{"PROCESS"} = $process;
+
+    return libSendReply (
+                     "NAME"        => gettext ("View the informations for the process of an user"),
+                     "TIMESTAMP"   => 1,
+                     "EXPLANATION" => gettext ("These are the informations about the process of an user which are available now."),
+                     "INFO_LIST"   => $info_list,
+                     "HIDDEN_LIST" => $hidden_list
+                    );
+}
+
+1;
+

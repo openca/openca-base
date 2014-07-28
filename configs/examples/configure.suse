@@ -1,0 +1,38 @@
+#!/bin/sh
+
+PREFIX=$1
+VER=0.9.2
+
+if [ -z "${PREFIX}" ] ; then
+	PREFIX=/usr/local/openca.${VER}
+fi
+
+# removed because there is a distribution dependend default
+#  --with-httpd-fs-prefix=${PREFIX}/httpd \
+
+./configure \
+  --prefix=${PREFIX} \
+  --with-openca-prefix=${PREFIX}/openca \
+  --with-etc-prefix=${PREFIX}/openca/etc \
+  --with-httpd-fs-prefix=/usr/local/httpd \
+  --with-module-prefix=${PREFIX}/modules \
+  --with-openssl-prefix=/usr/local/ssl \
+  --with-engine=no \
+  --with-web-host=localhost \
+  --with-ca-organization="OpenCA" \
+  --with-ca-country=IT \
+  --with-ca-locality=Modena \
+  --with-ldap-port=389 \
+  --with-ldap-root="cn=Manager,o=OpenCA,c=IT" \
+  --with-ldap-root-pwd="openca" \
+  --enable-ocspd \
+  --enable-db \
+  --disable-dbi \
+  --disable-rbac \
+  --with-service-mail-account="support@openca.org" \
+  --with-httpd-user=wwwrun \
+  --with-httpd-group=nogroup \
+  --with-openca-user=root \
+  --with-openca-group=nogroup \
+  --with-dist-user=michael \
+  --with-dist-group=users

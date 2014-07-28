@@ -1,0 +1,45 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeDownloadAll
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports all from a higher level
+## Description: imports all from a higher level from a removable media
+
+use strict;
+
+sub cmdNodeDownloadAll {
+
+    print startLogPage ( gettext ("Importing all available items from higher level of the hierarchy ...") );
+
+    my $tmp = createStructure ();
+    if (not eximIODownload ( $tmp )) {
+        return undef;
+    }
+    if (withLDAPsupport() and withLDAPautomatic()) {
+        eximDownloadCerts ( TMP => $tmp, LDAP => "1" );
+        eximDownloadCAs   ( TMP => $tmp, LDAP => "1" );
+        eximDownloadCRLs  ( TMP => $tmp, LDAP => "1" );
+    } else {
+        eximDownloadCerts ( TMP => $tmp, LDAP => "0" );
+        eximDownloadCAs   ( TMP => $tmp, LDAP => "0" );
+        eximDownloadCRLs  ( TMP => $tmp, LDAP => "0" );
+    }
+    eximDownloadMails         ( $tmp );
+    eximDownloadBP            ( $tmp );
+    eximDownloadConfiguration ( $tmp );
+    eximDownloadCommit        ( $tmp );
+    removeDirectory           ( $tmp );
+
+    print closePage ();
+
+    return 1;
+}
+
+sub getParamsNodeDownloadAll
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

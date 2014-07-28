@@ -1,0 +1,299 @@
+## Configuration File for OpenCA Software Package
+## (c) 1999-2002 by Massimiliano Pala and OpenCA Group
+## All Rights Reserved
+
+## Crypto Section
+## ==============
+openssl    	"@OPENSSL@"
+sslconfig  	"@etc_prefix@/openssl/openssl.cnf"
+sslindex   	"@var_prefix@/crypto/index.txt"
+sslserial  	"@var_prefix@/crypto/serial"
+MakePath   	"@MAKE@"
+
+USE_RANDOM_SERIAL	"Y"
+RANDOM_SERIAL_SIZE	10
+
+## General Section
+## ===============
+
+DEFAULT_LANGUAGE "@default_language@"
+DEFAULT_CHARSET  "@default_charset@"
+SUPPORT_EMAIL    "@support_mail_address@"
+
+## use DB or DBI here - DB is DBM-files and DBI is RDBMS
+## config DBI via DBI.conf
+DBmodule 		"@dbmodule@"
+
+CgiLibPath		"@lib_prefix@/functions"
+CgiServerType		"ca"
+CgiServerName		"@ca_prefix@"
+
+HtdocsUrlPrefix		"@ca_htdocs_url_prefix@"
+EtcPrefix		"@etc_prefix@"
+TopLogo			"@ca_htdocs_url_prefix@/images/top_logo.png"
+Organization		"@ca_organization@"
+
+## Allows for automatic Email verification - Usually not used in the
+## CA interface (if enabled verify that the CA can send Email messages)
+verifyEmailAddress  "N"
+
+## The Login feature is not supported by the interface yet, anyhow
+## this config keyword will enable the login fields to appear in the
+## top part of the UI. Enable it to see how the login fields will
+## appear in the next versions of OpenCA. To enable it, set it to
+## "Y" or "1".
+EnableLogin		"N"
+
+## The Page body is included to generate the HomePage for the server
+## to support internationalization, we look for the file with the
+## suffix for the supported language (eg., if the filename is
+## home_body.in - we look for home_body.in.en_GB if the language is
+## set to english, for home_body.in.it_IT if italian is selected, etc.)
+HOME_PAGE_BODY_INCLUDE		"@etc_prefix@/includes/home_body.inc"
+HOME_PAGE_DISPLAY_TITLE		"N"
+HOME_PAGE_DISPLAY_EASY_PANEL	"N"
+HOME_PAGE_DISPLAY_NOTICES_PANEL	"Y"
+
+SessionDir      @var_prefix@/session/cookie
+SessionLifetime 1200
+
+ModuleID		0
+ModuleShift		@module_shift@
+AccessControlConfiguration "@etc_prefix@/access_control/@ca_prefix@.xml"
+SoftwareConfiguration      "@etc_prefix@/config.xml"
+RoleConfiguration          "@etc_prefix@/rbac/roles.xml"
+ModuleConfiguration        "@etc_prefix@/rbac/modules.xml"
+TokenConfiguration         "@etc_prefix@/token.xml"
+LogConfiguration           "@etc_prefix@/log.xml"
+MenuConfiguration          "@etc_prefix@/menu.xml"
+LOAConfiguration           "@etc_prefix@/loa.xml"
+StatemachineConfiguration  "@etc_prefix@/bp/bp.xml"
+
+# New Browser Configuration
+BrowserRequestConfig       "@etc_prefix@/browser_req.xml"
+
+# Authenticated Browser Request
+AuthBrowserRequestConfig   "@etc_prefix@/auth_browser_req.xml"
+DataSourcesConfig	   "@etc_prefix@/datasources.xml"
+EnableAuthBrowserReq       "YES"
+
+SupportedKeyStrengths      "Weak" "Base" "Strong" "Advanced" "Strongest"
+
+## ==================== [ LOA Support ] =========================
+## USE_LOAS takes either YES or NO
+USE_LOAS                "@USE_LOAS@"
+
+
+MaxReturnedItems 	20
+ 
+TempDir    		"@var_prefix@/tmp"
+certsIndex 		"@var_prefix@/crypto/index.txt"
+extFilesDir		"@etc_prefix@/openssl/extfiles"
+certDir			"@var_prefix@/crypto/certs"
+lockFile		"@var_prefix@/tmp/openca-openssl.lock"
+ 
+ADDITIONAL_REQUEST_ATTRIBUTES   "requestercn" "email" "department" "telephone"
+ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE     "Name (first and Last name)" "Email" "Department"  "Telephone"
+ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE "LATIN1_LETTERS" "EMAIL" "LATIN1_LETTERS" "LATIN1_LETTERS"
+
+CSR_SUPPORTED_ATTRIBUTES            "emailAddress" "CN" "SN" "unstructuredName" "unstructuredAddress" "OU" "L" "ST" "O" "C" "DC" "serialNumber" "UID"
+CSR_DEFAULT_ATTRIBUTE_FIELDS        7
+CSR_ALLOW_MULTIVALUED_ATTRIBUTES    YES
+CSR_SUPPORTED_SUBJECT_ALT_NAMES     "email" "DNS" "IP" "DirName" "URI" "RID" "otherName" "Microsoft_GUID" "Microsoft_UPN"
+CSR_DEFAULT_SUBJECT_ALT_NAME_FIELDS 4
+
+NewCertsDir 		"@var_prefix@/crypto/certs"
+
+CmdRefs_viewCert        "REVOCATION" "SENDCERT" "SEND_CERT_KEY" "VIEW_CSR" "TOKENHANDLING" "SET_PUBLIC_PASSWD" "DELETE_PUBLIC_PASSWD"
+CmdRefs_viewCSR		"ISSUE_CERT" "DELETE" "DELETE_APPROVED" "EDIT" "GENERATE_KEY"
+CmdRefs_viewCRR		"APPROVE_WITHOUT_SIGNING" "APPROVE" "REVOKE_CERT" "DELETE" "DELETE_APPROVED" "EDIT" "VIEW_CERT" "VIEW_USER_CRR"
+CmdRefs_revoke_req	"NO_AUTH"
+REQUIRE_PASSWD_PUBLIC	"NO"
+CHANGE_DAYS             "YES"
+
+## Batch Processors
+## ================
+
+KEY_BACKUP_KEY		"@var_prefix@/crypto/keys/keybackup_key.pem"
+KEY_BACKUP_CERTIFICATE	"@var_prefix@/crypto/cacerts/keybackup_cert.pem"
+BP_KEY			"@var_prefix@/crypto/keys/bp_key.pem"
+BP_CERTIFICATE		"@var_prefix@/crypto/cacerts/bp_cert.pem"
+
+BP_DIR					"@var_prefix@/batch";
+BP_EXPORT_PKCS12_DIR	"@var_prefix@/bp/dataexchange/pkcs12"
+## use DENY, (ALLOW|OPTIONAL), (EN)FORCE
+BP_KEY_BACKUP_MODE		"ALLOW"
+
+BP_DEFAULT_KEY_ALGORITHM	"rsa"
+BP_DEFAULT_KEY_LENGTH		"1024"
+BP_MINIMUM_KEY_LENGTH		"1024"
+
+BP_File_ImportNewUser		"batch_new_user.txt"
+BP_File_ImportUpdateUser	"batch_update_user.txt"
+BP_File_ImportACL		"batch_acl.txt"
+BP_File_ExportPIN		"batch_export_pin.txt"
+
+## Images Section
+## ==============
+ValidSigImage		"@ca_htdocs_url_prefix@/images/validSig.png"
+SigErrorImage		"@ca_htdocs_url_prefix@/images/sigError.png"
+
+## First User/RA/Public Initialization Section
+## ===========================================
+
+RegistrationAuthority "Trustcenter itself" "Help Desk 1" "Help Desk 2"
+MinPinLength 10
+
+## Basic CSR Forms
+Basic_CSR_Keysizes "1024" "2048" "4096" "512" "768"
+
+DN_TYPES "BASIC"
+
+DN_TYPE_BASIC_BODY "YES"
+DN_TYPE_BASIC_KEYGEN_MODE "SERVER"
+
+DN_TYPE_BASIC_BASE     "O" "C"
+# if you have more than one OU simply add them
+# this works for all possible attributes
+# DN_TYPE_BASIC_ELEMENTS "EMAIL" "CN" "OU" "OU"
+DN_TYPE_BASIC_ELEMENTS "emailAddress" "CN" "OU"
+DN_TYPE_BASIC_NAME     "Basic User Request"
+
+DN_TYPE_BASIC_BASE_1 "@ca_organization@"
+DN_TYPE_BASIC_BASE_2 "@ca_country@"
+
+DN_TYPE_BASIC_ELEMENT_1                "E-Mail"
+DN_TYPE_BASIC_ELEMENT_1_MINIMUM_LENGTH 7
+DN_TYPE_BASIC_ELEMENT_1_REQUIRED       "YES"
+DN_TYPE_BASIC_ELEMENT_1_CHARACTERSET   "EMAIL"
+
+DN_TYPE_BASIC_ELEMENT_2                "Name"
+DN_TYPE_BASIC_ELEMENT_2_MINIMUM_LENGTH 3
+DN_TYPE_BASIC_ELEMENT_2_REQUIRED       "YES"
+DN_TYPE_BASIC_ELEMENT_2_CHARACTERSET   "@cert_chars@_LETTERS"
+
+DN_TYPE_BASIC_ELEMENT_3                "Certificate Request Group"
+DN_TYPE_BASIC_ELEMENT_3_SELECT         "Internet" "Partners" "Employees" "Trustcenter"
+DN_TYPE_BASIC_ELEMENT_3_MINIMUM_LENGTH 1
+DN_TYPE_BASIC_ELEMENT_3_REQUIRED       "YES"
+DN_TYPE_BASIC_ELEMENT_3_CHARACTERSET   "LATIN1_LETTERS"
+
+DN_TYPE_BASIC_SUBJECTALTNAMES   "email" "IP" "DNS" "DNS"
+
+DN_TYPE_BASIC_SUBJECTALTNAME_1  "alternative email"
+DN_TYPE_BASIC_SUBJECTALTNAME_1_MINIMUM_LENGTH 3
+DN_TYPE_BASIC_SUBJECTALTNAME_1_REQUIRED    "NO"
+
+DN_TYPE_BASIC_SUBJECTALTNAME_2  "IP address"
+DN_TYPE_BASIC_SUBJECTALTNAME_2_MINIMUM_LENGTH 7
+DN_TYPE_BASIC_SUBJECTALTNAME_2_REQUIRED    "NO"
+
+DN_TYPE_BASIC_SUBJECTALTNAME_3  "DNS name"
+DN_TYPE_BASIC_SUBJECTALTNAME_3_MINIMUM_LENGTH 9
+DN_TYPE_BASIC_SUBJECTALTNAME_3_REQUIRED    "NO"
+
+DN_TYPE_BASIC_SUBJECTALTNAME_4  "DNS name"
+DN_TYPE_BASIC_SUBJECTALTNAME_4_MINIMUM_LENGTH 9
+DN_TYPE_BASIC_SUBJECTALTNAME_4_REQUIRED    "NO"
+
+## Certificates Section
+## ====================
+
+CACertificate 		"@var_prefix@/crypto/cacerts/cacert.pem"
+CACertificateDER	"@var_prefix@/crypto/cacerts/cacert.der"
+CACertificateTXT	"@var_prefix@/crypto/cacerts/cacert.txt"
+CACertificateCRT	"@var_prefix@/crypto/chain/cacert.crt"
+CACertDir		"@var_prefix@/crypto/cacerts"
+ChainDir		"@var_prefix@/crypto/chain"
+ReqDir			"@var_prefix@/crypto/reqs"
+CAKey 			"@var_prefix@/crypto/keys/cakey.pem"
+CRLDir 			"@var_prefix@/crypto/crls"
+
+CAReqExtensions		"req_ext"
+CACertExtensions	"v3_ca"
+
+## Dataexchange section
+## ====================
+
+## please see *_node.conf for more details
+
+## dataexchange with a lower level of the hierarchy
+EXPORT_IMPORT_DOWN_DEVICE "@dataexchange_device_down@"
+EXPORT_IMPORT_DOWN_START  ""
+EXPORT_IMPORT_DOWN_STOP   ""
+EXPORT_IMPORT_DOWN_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+EXPORT_IMPORT_DOWN_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+EXPORT_IMPORT_DOWN_TEST   "@TAR@ -tvf @__DEVICE__@"
+
+## local dataexchange (backup, recovery and batchprocessors)
+EXPORT_IMPORT_LOCAL_DEVICE "@dataexchange_device_local@"
+EXPORT_IMPORT_LOCAL_START  ""
+EXPORT_IMPORT_LOCAL_STOP   ""
+EXPORT_IMPORT_LOCAL_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+EXPORT_IMPORT_LOCAL_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+EXPORT_IMPORT_LOCAL_TEST   "@TAR@ -tvf @__DEVICE__@"
+
+EXPORT_IMPORT_MODULES
+LOG_ENROLL_DIR "@var_prefix@/log/enroll"
+LOG_RECEIVE_DIR "@var_prefix@/log/receive"
+ENROLL_CA_CERTIFICATE_STATES @enroll_ca_certificate_states@
+
+## RBAC Section
+## ============
+#############
+# variables #
+#############
+ 
+## rights
+RBAC on
+MODULE_NAME "RA_1"
+ 
+## openssl
+OpenSSL_DIR   "@etc_prefix@/openssl/openssl"
+EXT_DIR       "@etc_prefix@/openssl/extfiles"
+OPENSSL_SAMPLE_CONF "@etc_prefix@/openssl/sample-openssl.conf"
+OPENSSL_SAMPLE_EXT  "@etc_prefix@/openssl/sample-openssl.ext"
+ 
+ 
+# genral
+RBAC_DIR          "@etc_prefix@/rbac"
+MODULES_DIR       "modules"
+SCRIPT_CONFIG_DIR "scripts"
+ROLES_DIR         "roles"
+RIGHTS_DIR        "rights"
+ 
+######################
+## support for PKIX ##
+######################
+
+SET_REQUEST_SERIAL_IN_DN "N"
+REQUEST_SERIAL_NAME "sn"
+
+SET_CERTIFICATE_SERIAL_IN_DN "N"
+CERTIFICATE_SERIAL_NAME "serialNumber"
+
+DN_WITHOUT_EMAIL "Y"
+
+AUTOMATIC_SUBJECT_ALT_NAME "Y"
+DEFAULT_SUBJECT_ALT_NAME   "Email"
+
+UNIQUE_DN "YES"
+
+######################
+## support for PINs ##
+######################
+
+USE_REQUEST_PIN      NO
+# secure PIN_LENGTH limits the PIN itself so please use
+# SECURE_PIN_RANDOM because this option ensures the number
+# of the secret random bits
+# 16 x 8 = 128 bit
+SECURE_PIN_LENGTH    0
+SECURE_PIN_RANDOM    16
+MAIL_DIR             "@var_prefix@/mail"
+CRIN_MAIL_DIR        "@var_prefix@/mail/crins"
+DEFAULT_MAIL_DIR     "@var_prefix@/mail/default"
+SERVICE_MAIL_ACCOUNT "@service_mail_account@"
+REQUEST_PIN_MAIL     "@lib_prefix@/mails/__LANGUAGE__/request_pin_mail.msg"
+SECURE_PIN_MAIL      "@lib_prefix@/mails/__LANGUAGE__/secure_pin_mail.msg"
+CONFIRM_CERT_SIGN    "@lib_prefix@/mails/__LANGUAGE__/confirm_cert_sign.msg"

@@ -1,0 +1,35 @@
+diff -ur a/src/modules/openca-dbi/DBI.pm b/src/modules/openca-dbi/DBI.pm
+--- a/src/modules/openca-dbi/DBI.pm	2012-04-05 20:54:10.000000000 +0200
++++ b/src/modules/openca-dbi/DBI.pm	2012-09-18 12:05:25.000000000 +0200
+@@ -3728,19 +3728,20 @@
+ 
+ sub debug {
+     my $self = shift;
+-    my @call = caller ( 1 );
+ 
+-    if ($_[0]) {
+-        $self->{debug_msg}[scalar @{$self->{debug_msg}}] = $_[0];
+-        $self->debug () if ($self->{DEBUG});
+-    } else {
+-        my $msg;
+-        if ( $self->{DEBUG_STDERR} ) {
+-                foreach $msg (@{$self->{debug_msg}}) {
+-                    print STDERR "OpenCA::DBI->$msg\n";
+-                }
++    if ($self->{DEBUG}) {
++        if ($_[0]) {
++            $self->{debug_msg}[scalar @{$self->{debug_msg}}] = $_[0];
++            $self->debug ();
++        } else {
++            my $msg;
++            if ( $self->{DEBUG_STDERR} ) {
++                    foreach $msg (@{$self->{debug_msg}}) {
++                        print STDERR "OpenCA::DBI->$msg\n";
++                    }
++            }
++            $self->{debug_msg} = ();
+         }
+-        $self->{debug_msg} = ();
+     }
+ }
+ 

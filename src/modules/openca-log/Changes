@@ -1,0 +1,6 @@
+Revision history for Perl extension OpenCA::Log.
+
+0.01  Mon Apr 28 09:41:03 2003
+	- original version; created by h2xs 1.21 with options
+		-X OpenCA::Log
+

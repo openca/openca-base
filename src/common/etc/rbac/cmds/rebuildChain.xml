@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>rebuildChain</name>
+            <operation>module initialization</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

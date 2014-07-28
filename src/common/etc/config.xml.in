@@ -1,0 +1,1031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openca>
+    <software_config>
+        <!--
+            ########################################################
+                                USAGE WARNING
+            ########################################################
+
+            If yo change this file then you must change all files in
+            etc which has the suffix .template. Please do this with
+            the script openca-configure.
+
+            Example:
+                    template: servers/ca.conf.template
+                    openca-configure config.xml servers/ca.conf.template servers/ca.conf
+
+            If you don't do this then you have an inconsistent
+            OpenCA installation. So this warning is serious.
+
+            You can update all templates with a simple bash script.
+            configure_etc.sh is such a script and demonstrates the
+            usage of openca-configure.
+
+            2003-Mar-12, Michael Bell <michael.bell@web.de>
+        -->
+        <prefix>@</prefix>
+        <suffix>@</suffix>
+
+        <!-- =============== -->
+        <!-- general options -->
+        <!-- =============== -->
+
+        <option>
+            <name>default_language</name>
+            <value>en_GB</value>
+        </option>
+        <option>
+            <name>default_charset</name>
+            <value>utf-8</value>
+        </option>
+        <option>
+            <!-- 
+                 cert_chars says if you want utf8 or latin1 
+                 strings to be allowed in the fields of reqs
+                 and certs. Can have values "UTF8" or "LATIN1". 
+                 If left empty or absent altogether, defaults to
+                 LATIN1 strings.
+              -->
+            <name>cert_chars</name>
+            <value>@cert_chars@</value>
+        </option>
+	<option>
+	    <name>default_web_secret</name>
+	    <value>@default_web_password@</value>
+	</option>
+	<option>
+	    <name>default_web_username</name>
+	    <value>admin</value>
+	</option>
+	<option>
+	    <name>default_web_password</name>
+	    <value>@default_web_password@</value>
+	</option>
+	<option>
+	<!-- Name of your Organization (e.g, University of ... ) -->
+	<name>organization</name>
+		<value>@ca_organization@</value>
+	</option>
+	<option>
+	<!-- 
+			Once cert_chars is UTF8 you may use 
+			strings in national languages here.
+	-->
+		<name>ca_organization</name>
+		<value>@ca_organization@</value>
+	</option>
+	<option>
+            <!-- 
+                 Once cert_chars is UTF8 you may use 
+                 strings in national languages here.
+              -->
+            <name>ca_locality</name>
+            <value>@ca_locality@</value>
+        </option>
+        <option>
+            <!-- 
+                 Once cert_chars is UTF8 you may use 
+                 strings in national languages here.
+              -->
+            <name>ca_state</name>
+            <value>@ca_state@</value>
+        </option>
+        <option>
+            <!--
+                please enter the ISO country code here
+                DE, IT, PL, UK, US ...
+                this country code is ALWAYS two characters long
+              -->
+            <name>ca_country</name>
+            <value>@ca_country@</value>
+        </option>
+        <option>
+            <name>sendmail</name>
+            <value>@configure_sendmail@</value>
+        </option>
+        <option>
+            <name>send_mail_automatic</name>
+            <value>no</value>
+        </option>
+        <option>
+            <!-- Use this for the Web Interface email link -->
+            <name>support_mail_address</name>
+            <value>@support_mail_address@</value>
+        </option>
+        <option>
+            <!-- Use this for the EMAIL sending address -->
+            <name>service_mail_account</name>
+            <value>@service_mail_account@</value>
+        </option>
+        <option>
+            <name>policy_link</name>
+            <value>https://@web_host@@htdocs_url_prefix@/pub/policy.html</value>
+        </option>
+
+        <!-- ======================== -->
+        <!-- web server configuration -->
+        <!-- ======================== -->
+        <option>
+            <name>httpd_protocol</name>
+            <value>https</value>
+        </option>
+        <option>
+            <name>httpd_host</name>
+            <value>@web_host@</value>
+        </option>
+        <option>
+            <!-- please include the colon if you specify a port        -->
+            <!-- please remember this is dependend from httpd_protocol -->
+            <name>httpd_port</name>
+            <value>:443</value>
+        </option>
+        <!--
+        <option>
+            <name>menu_logo_left</name>
+            <value>
+              - Here you can put references to the logo, you can use
+                   any html reference you want but please keep in mind that:
+                   no <> are allowed, use instead &lt; and &gt; rispectively.
+
+		   example:
+                   &lt;img src="https://xyz.org/mylogo.jpg" alt="XYZ Logo"/&gt;
+             -
+            </value>
+        </option>
+        <option>
+            <name>menu_logo_right</name>
+                &lt;a href="__HTDOCS_PREFIX__/thanks.html"&gt;
+                   &lt;img src="__HTDOCS_PREFIX__/images/openca-logo.png" alt="OpenCA Logo"/&gt;
+                &lt;/a&gt;
+            <value></value>
+        </option>
+        -->
+        <option>
+            <!--
+                You can add more CDPs here. Please enter one CDP per line.
+                This is the content of an OpenSSL configuration section.
+                Example:
+URI.1=http://pki.openca.org/pub/crl/cacrl.crl
+URI.2=ldap://pki.openca.org/cn=CA,o=OpenCA,c=US
+URI.3=http://mirror.pki.openca.org/pub/crl/cacrl.crl
+URI.4=ldap://mirror.pki.openca.org/cn=CA,o=OpenCA,c=US
+             -->
+            <name>CRLDistributionPoints</name>
+            <value>
+URI.1=http://@web_host@@htdocs_url_prefix@/pub/crl/cacrl.crl
+            </value>
+        </option>
+        <option>
+            <!--
+                You can add Authority Info Access URIs here. 
+                Please enter one URI per line.
+                This is the content of an OpenSSL configuration section.
+            -->
+            <name>authInfoAccess</name>
+            <value>
+authorityInfoAccess=caIssuers;URI:http://@web_host@@htdocs_url_prefix@/pub/cacert/cacert.crt,OCSP;URI:@ocsp_server_uri@,prqpServer;URI:@prqp_server_uri@
+	    </value>
+        </option>
+        <option>
+            <name>NS_CRLDistributionPoint</name>
+            <value>http://@web_host@@htdocs_url_prefix@/pub/crl/cacrl.crl</value>
+        </option>
+
+        <!-- ========================= -->
+        <!-- ldap server configuration -->
+        <!-- ========================= -->
+        <option>
+            <name>ldap_protocol</name>
+            <value>3</value>
+        </option>
+        <option>
+            <name>ldap_host</name>
+            <value>@web_host@</value>
+        </option>
+        <option>
+            <name>ldap_port</name>
+            <value>389</value>
+        </option>
+        <option>
+            <name>ldaproot</name>
+            <value></value>
+        </option>
+        <option>
+            <name>ldaprootpwd</name>
+            <value></value>
+        </option>
+        <option>
+            <name>useLDAP</name>
+            <value>no</value>
+        </option>
+        <option>
+            <name>update_ldap_automatic</name>
+            <value>no</value>
+        </option>
+
+        <!-- ====================== -->
+        <!-- database configuration -->
+        <!-- ====================== -->
+        <option>
+            <name>dbmodule</name>
+            <!-- you can use DB or DBI -->
+            <value>DBI</value>
+        </option>
+        <option>
+            <name>db_type</name>
+            <value>@db_type@</value>
+        </option>
+        <option>
+            <name>db_name</name>
+            <value>@db_name@</value>
+        </option>
+        <option>
+            <name>db_host</name>
+            <value>@db_host@</value>
+        </option>
+        <option>
+            <name>db_port</name>
+            <value>@db_port@</value>
+        </option>
+        <option>
+            <name>db_user</name>
+            <value>@db_user@</value>
+        </option>
+        <option>
+            <name>db_passwd</name>
+            <value>@db_passwd@</value>
+        </option>
+        <option>
+            <name>db_namespace</name>
+            <!--
+               a namespace is prefix in front of every table
+               Example: table user1
+                        ==>
+                        select * from user1.certificate;
+               This is not required for MySQL, PostgreSQL and IBM DB2.
+               Nevertheless all supported database can use such namespaces
+               and it is the default behaviour of Oracle. Oracle uses as
+               namespace usually the name of the database.
+              -->
+            <value>@db_namespace@</value>
+        </option>
+
+        <!-- ==================== -->
+        <!-- module configuration -->
+        <!-- ==================== -->
+        <option>
+            <name>module_shift</name>
+            <!-- 8 bits are enough for IDs from 0 to 255    -->
+            <!-- please remember that 0 is the ID of the CA -->
+            <value>8</value>
+        </option>
+        <option>
+            <name>ra_module_id</name>
+            <value>1</value>
+        </option>
+        <option>
+            <name>ldap_module_id</name>
+            <value>2</value>
+        </option>
+        <option>
+            <name>node_module_id</name>
+            <value>3</value>
+        </option>
+        <option>
+            <name>pub_module_id</name>
+            <value>32</value>
+        </option>
+        <option>
+            <name>scep_module_id</name>
+            <value>33</value>
+        </option>
+        <option>
+            <name>batch_module_id</name>
+            <value>128</value>
+        </option>
+
+        <!-- =============================== -->
+        <!-- configuration of relative paths -->
+        <!-- =============================== -->
+
+        <option>
+            <name>batch_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/batch</value>
+        </option>
+        <option>
+            <name>batch_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/batch</value>
+        </option>
+        <option>
+            <name>ca_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/ca</value>
+        </option>
+        <option>
+            <name>ca_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/ca</value>
+        </option>
+        <option>
+            <name>node_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/@node_prefix@</value>
+        </option>
+        <option>
+            <name>node_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/@node_prefix@</value>
+        </option>
+        <option>
+            <name>ra_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/ra</value>
+        </option>
+        <option>
+            <name>ra_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/ra</value>
+        </option>
+        <option>
+            <name>ldap_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/ldap</value>
+        </option>
+        <option>
+            <name>ldap_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/ldap</value>
+        </option>
+        <option>
+            <name>pub_htdocs_url_prefix</name>
+            <value>@htdocs_url_prefix@/pub</value>
+        </option>
+        <option>
+            <name>pub_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/pub</value>
+        </option>
+        <option>
+            <name>scep_cgi_url_prefix</name>
+            <value>@cgi_url_prefix@/scep</value>
+        </option>
+
+        <!-- ================================== 
+             configuration of Node Update paths 
+             ================================== -->
+
+        <option>
+            <name>perl_module_prefix</name>
+            <value>@module_prefix@</value>
+        </option>
+        <option>
+            <name>find_command</name>
+            <value>@FIND@ %d -name %n</value>
+        </option>
+        <option>
+            <name>web_get_command</name>
+            <value>@WGET@ -O - %h</value>
+        </option>
+
+        <!-- ================================== 
+             configuration of Node Update paths 
+             ================================== -->
+
+        <option>
+            <name>batch_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/batch</value>
+        </option>
+        <option>
+            <name>batch_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/batch</value>
+        </option>
+        <option>
+            <name>ca_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/ca</value>
+        </option>
+        <option>
+            <name>ca_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/ca</value>
+        </option>
+        <option>
+            <name>node_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/@node_prefix@</value>
+        </option>
+        <option>
+            <name>node_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/@node_prefix@</value>
+        </option>
+        <option>
+            <name>ra_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/ra</value>
+        </option>
+        <option>
+            <name>ra_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/ra</value>
+        </option>
+        <option>
+            <name>ldap_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/ldap</value>
+        </option>
+        <option>
+            <name>ldap_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/ldap</value>
+        </option>
+        <option>
+            <name>pub_htdocs_fs_prefix</name>
+            <value>@htdocs_fs_prefix@/pub</value>
+        </option>
+        <option>
+            <name>pub_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/pub</value>
+        </option>
+        <option>
+            <name>scep_cgi_fs_prefix</name>
+            <value>@cgi_fs_prefix@/scep</value>
+        </option>
+
+        <!-- ===================== -->
+        <!-- configuration of SCEP -->
+        <!-- ===================== -->
+
+        <option>
+            <name>SCEP_RA_CERT</name>
+            <value></value>
+        </option>
+        <option>
+            <name>SCEP_RA_KEY</name>
+            <value></value>
+        </option>
+        <option>
+            <name>SCEP_RA_PASSWD</name>
+            <value></value>
+        </option>
+
+        <!-- ===================== -->
+        <!-- general configuration -->
+        <!-- ===================== -->
+
+        <option>
+	    <name>USE_LOAS</name>
+	    <value>yes</value>
+	</option>
+	<option>
+            <name>prefix</name>
+            <value>@prefix@</value>
+        </option>
+        <option>
+            <name>bindir</name>
+            <value>@EXEC_PREFIX@/bin</value>
+        </option>
+        <option>
+            <name>etc_prefix</name>
+            <value>@etc_prefix@</value>
+        </option>
+        <option>
+            <name>lib_prefix</name>
+            <value>@lib_prefix@</value>
+        </option>
+        <option>
+            <name>var_prefix</name>
+            <value>@var_prefix@</value>
+        </option>
+        <option>
+            <name>batch_prefix</name>
+            <value>@batch_prefix@</value>
+        </option>
+        <option>
+            <name>ca_prefix</name>
+            <value>@ca_prefix@</value>
+        </option>
+        <option>
+            <name>ldap_prefix</name>
+            <value>@ldap_prefix@</value>
+        </option>
+        <option>
+            <name>node_prefix</name>
+            <value>@node_prefix@</value>
+        </option>
+        <option>
+            <name>pub_prefix</name>
+            <value>@pub_prefix@</value>
+        </option>
+        <option>
+            <name>ra_prefix</name>
+            <value>@ra_prefix@</value>
+        </option>
+        <option>
+            <name>scep_prefix</name>
+            <value>@scep_prefix@</value>
+        </option>
+
+
+        <!-- ========================== -->
+        <!-- dataexchange configuration -->
+        <!-- ========================== -->
+
+        <!-- there are several templates available today                    -->
+        <!--   0. no dataexchange configure - the default                   -->
+        <!--        this makes only sense for an all in one box             -->
+        <!--        it is strongly recommended to use this only for testing -->
+        <!--   1. the node acts as CA only                                  -->
+        <!--        the node exports to one or several RAs only             -->
+        <!--        the node can export to LDAP too                         -->
+        <!--   2. the node acts as RA only                                  -->
+        <!--        the node exchange data with a CA and public/scep        -->
+        <!--        the node can act as LDAP too                            -->
+        <!--        the node can export to LDAP too                         -->
+        <!--   3. the node acts as public/scep only                         -->
+        <!--        the node exchange data with a RA                        -->
+        <!--   4. the node acts as LDAP only                                -->
+        <!--        the node receives data from CA or RA                    -->
+        <!--   5. the node acts as public/scep and RA                       --> 
+        <!--        the node echanges data with a CA only                   -->
+        <!--        no support for dataexchange with additional LDAP        -->
+        <!--   6. the node acts as RA and CA                                -->
+        <!--        the node exchange data with public/scep                 -->
+        <!--        the node can export to LDAP too                         -->
+        <!--                                                                -->
+        <!--   LDAP is only relevant if it is the only protocol on the node -->
+
+
+        <!--   0. no dataexchange configure - the default                   -->
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value></value>
+            </option>
+
+        <!--   1. the node acts as CA only                                  -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED</value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value>CRINS DEFAULT</value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value>APPROVED</value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value>APPROVED</value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value></value>
+            </option>
+          -->
+
+        <!--   2. the node acts as RA only                                  -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED SIGNED PENDING NEW</value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value>PENDING NEW</value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value>PENDING RENEW NEW</value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED</value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value>CRINS DEFAULT</value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value>APPROVED</value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value>APPROVED</value>
+            </option>
+          -->
+
+        <!--   3. the node acts as public/scep only                         -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED SIGNED PENDING RENEW NEW</value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value>CRINS DEFAULT</value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value>NEW</value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value>RENEW NEW</value>
+            </option>
+          -->
+
+        <!--   4. the node acts as LDAP only                                -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED SIGNED PENDING RENEW NEW</value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value></value>
+            </option>
+          -->
+
+        <!--   5. the node acts as public/scep and RA                       -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED</value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value>CRINS DEFAULT</value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value>APPROVED</value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value>APPROVED</value>
+            </option>
+          -->
+
+        <!--   6. the node acts as RA and CA                                -->
+        <!--
+            <option>
+              <name>enroll_ca_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_certificate_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crl_states</name>
+              <value>VALID</value>
+            </option>
+            <option>
+              <name>enroll_crr_states</name>
+              <value>ARCHIVED DELETED APPROVED SIGNED PENDING NEW</value>
+            </option>
+            <option>
+              <name>enroll_csr_states</name>
+              <value>ARCHIVED DELETED</value>
+            </option>
+            <option>
+              <name>enroll_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>receive_crr_states</name>
+              <value>PENDING NEW</value>
+            </option>
+            <option>
+              <name>receive_csr_states</name>
+              <value>PENDING RENEW NEW</value>
+            </option>
+            <option>
+              <name>download_ca_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_certificate_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crl_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_csr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>download_mail_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_crr_states</name>
+              <value></value>
+            </option>
+            <option>
+              <name>upload_csr_states</name>
+              <value></value>
+            </option>
+          -->
+
+        <!-- these are the devices for the default dataexchange -->
+        <option>
+          <name>dataexchange_device_up</name>
+          <value>/dev/fd0</value>
+        </option>
+        <option>
+          <name>dataexchange_device_down</name>
+          <value>/dev/fd0</value>
+        </option>
+        <option>
+          <name>dataexchange_device_local</name>
+          <value>/tmp/openca_local</value>
+        </option>
+
+    </software_config>
+</openca>

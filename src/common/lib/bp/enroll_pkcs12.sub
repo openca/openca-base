@@ -1,0 +1,199 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: enroll_pkcs12.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: enroll a complete pkcs#12 file
+## Description: 
+
+use strict;
+
+sub workflow_enroll_pkcs12
+{
+    ## general global stuff
+    our $state_machine;
+    our ($xml_cache, $bp_token, $tools, $cryptoShell, $db);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "enroll_pkcs12";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## the token of the batch system must be activated
+
+    if (not $bp_token or not $bp_token->keyOnline)
+    {
+        my $msg = gettext ("The crypto token of the batch system was not activated.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -105, $msg ];
+    }
+
+    ## is there a pin ?
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no usable PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+
+    ## load PIN
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no PIN file which could be used to create the new key.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+    my $pin = $bp_token->decrypt (
+                  INFILE     => $home."/private/purePIN",
+                                  );
+    if (not $pin) {
+        my $msg = gettext ("The PIN file cannot be decrypted.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+
+    ## determine certificate
+
+    ## get CSRs
+    my $reqfile = $tools->getFile ($home."/public/csrList");
+    my @csrList    = split /\n/, $reqfile;
+
+    ## get last csr with cert
+    @csrList = reverse @csrList;
+    my $csr;
+    my $cert = undef;
+    while (scalar @csrList) {
+        $csr = pop @csrList;
+        my @certList = $db->searchItems (DATATYPE => "VALID_CERTIFICATE", CSR_SERIAL => $csr);
+        $cert = @certList [0] if (@certList);
+        @csrList = () if ($cert);
+    }
+    if (not $cert)
+    {
+        my $msg = gettext ("The certificate cannot be determined.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+
+    ## get pkcs#12 filename
+
+    ## this is not 100 percent save for the enrollment
+    ## but it is fair for the poor admins if something fails
+
+    my $filename = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/enrollment/pkcs12/dir" ],
+           COUNTER  => [ 0 ]);
+    if (not $filename)
+    {
+        my $msg = gettext ("Cannot get directory with PKCS#12 files.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -155, $msg ];
+    }
+
+    my $serial = $cert->getParsed()->{SERIAL};
+    $filename .= "/${user}_${workflow}_$serial.p12";
+
+    ## build pkcs#12 file
+
+    my $cacert   = getRequired ('CACertificate');
+    my $data     = $cert->getPEM();
+    my $keyfile  = $home."/private/privateKey";
+    if (not $cryptoShell->dataConvert (
+                              OUTFILE   => $filename,
+                              DATA      => $data,
+                              DATATYPE  => "CERTIFICATE",
+                              KEYFILE   => $keyfile,
+                              INFORM    => "PEM",
+                              OUTFORM   => "PKCS12",
+                              PASSWD    => $pin,
+                              P12PASSWD => $pin,
+                              CACERT    => $cacert))
+    {
+        my $msg = i18nGettext ("Cannot export PKCS#12-file because the creation of the PKCS#12-data failed (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $cryptoShell->errno(),
+                               "__ERRVAL__", $cryptoShell->errval());
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -160, $msg ];
+    }
+
+    ## create reference
+
+    my $ref = "\n${user}\n${workflow}\n$serial\n";
+
+    ## get filename for central reference file
+
+    my $filename = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/enrollment/pkcs12/list" ],
+           COUNTER  => [ 0 ]);
+    if (not $filename)
+    {
+        my $msg = gettext ("Cannot get filename for file with PKCS#12 references.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -170, $msg ];
+    }
+
+    ## write reference to file
+
+    if (not open FD, ">> $filename")
+    {
+        my $msg = gettext ("Cannot open file __FILENAME__ for attaching new data.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -180, $msg ];
+    }
+    print FD $ref;
+    close FD;
+
+    $journal->{message} .= gettext ("Write reference to file with PKCS#12 references waiting for export.");
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "enrolled_pkcs12" ],
+                                "UNSET"   => [ "enrolled_pin" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Enrolled PKCS#12.") ];
+}
+
+1;

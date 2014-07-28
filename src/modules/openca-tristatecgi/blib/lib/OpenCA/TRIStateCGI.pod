@@ -1,0 +1,42 @@
+=head1 NAME
+
+OpenCA::TRIStateCGI - Perl extension for implementing 3-state Input Objs.
+
+=head1 SYNOPSIS
+
+  use OpenCA::TRIStateCGI;
+
+=head1 DESCRIPTION
+
+Sorry, no description available. Currently implemented methods derives
+mostly from the CGI.pm module, please take a look at that docs. Added
+methods are:
+
+	status        -
+	newInput      -
+	newInputCheck -
+	checkForm     -
+	startTable    -
+	addTableLine  -
+	endTable      -
+	printCopyMsg  -
+	printError    -
+
+Deprecated methods (better use the OpenCA::Tools corresponding methods
+instead) are:
+
+	subVar        -
+	getFile       - deactivated for security reasons
+	
+
+=head1 AUTHOR
+
+Massimiliano Pala (madwolf@openca.org)
+
+=head1 SEE ALSO
+
+CGI.pm, OpenCA::Configuration, OpenCA::OpenSSL, OpenCA::X509, OpenCA::CRL,
+OpenCA::REQ, OpenCA::Tools
+
+=cut
+

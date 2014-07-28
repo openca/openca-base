@@ -1,0 +1,547 @@
+<!-- OpenCA Authenticated Request Configuration File -->
+<openca>
+   <!-- This file contains the configuration for the data
+        sources used by the Authenticated Browser Certificate Req,
+        (cmd = authenticated_csr). Most institutions would like
+        this approach as it does not require the RA to inspect the
+        data as it is automatically gathered from the source
+   -->
+   <datasources>
+      <!-- Each Datasource will be used to gather information
+           to fill in the certificate request automatically -->
+      <item>
+         <name>Dartmouth College</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.dartmouth.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>636</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>dc=dartmouth,dc=edu</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>sn</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>ldaps</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <!-- Each Entry has two properties:
+                * name - the name of the attribute in the ldap
+                * value - the name of the attribute it has to be
+                          mapped to
+                For example, to map 'phone' to 'telephoneNumber' you woud
+                use:
+
+			<entry>
+			  <name>phone</name>
+			  <value>telephoneNumber</value>
+			</entry>
+
+                 The original name from the datasource will be imported
+                 anyway.
+	   -->
+           <entry>
+             <name>dndUid</name>
+             <value>userIdentifier</value>
+           </entry>
+         </map>
+      </item>
+      <item>
+         <name>Princeton University</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.princeton.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>389</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>o=Princeton University,c=US</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>campusid</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>starttls</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <entry>
+             <name>uidNumber</name>
+             <value>uid</value>
+           </entry>
+         </map>
+      </item>
+      <item>
+         <name>MIT</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.mit.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>636</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>dc=mit,dc=edu</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>uid</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>ldaps</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <entry>
+             <name>uid</name>
+             <value>userIdentifier</value>
+           </entry>
+         </map>
+      </item>
+      <item>
+         <name>Harvard University</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.harvard.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>636</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>dc=Harvard,dc=edu</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>campusid</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>ldaps</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <entry>
+             <name>uidNumber</name>
+             <value>uid</value>
+           </entry>
+         </map>
+      </item>
+      <item>
+         <name>Berkeley University</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.berkeley.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>389</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>ou=people,dc=berkeley,dc=edu</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>campusid</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>ldaps</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <entry>
+             <name>uidNumber</name>
+             <value>uid</value>
+           </entry>
+         </map>
+      </item>
+      <item>
+         <name>Virginia Tech</name>
+         <type>ldap</type>
+         <loa>Medium</loa>
+         <address>ldap.vt.edu</address>
+	 <!-- Port: 389 is the usual for ldap. For ldaps is usually 636 -->
+         <port>636</port>
+         <attributes>
+            <!-- The list of attributes is used to provide the
+                 application (openca) with configuration details
+                 for this device -->
+            <item>
+              <name>basedn</name>
+              <value>ou=people,dc=vt,dc=edu</value>
+            </item>
+            <item>
+              <!-- use this to specify the login attribute used to bind
+                   to the ldap server -->
+              <name>loginattribute</name>
+              <value>uid</value>
+            </item>
+            <item>
+              <!-- Type of protocol used. 
+                   
+                   It can be on of 'ldap','ldaps' or 'startls'. The ldaps
+                   uses an SSLv3 tunnel to communicate with the LDAP server.
+                   Although it is not standard, it is currently more supported
+                   than the starttls one.
+              -->
+              <name>protocol</name>
+              <value>ldaps</value>
+            </item>
+            <item>
+              <!-- SSL Version: can be [ sslv2 | sslv3 | sslv23 | tlsv1 ]
+                   It defaults to 'tlsv1' -->
+              <name>sslversion</name>
+              <value>tlsv1</value>
+            </item>
+            <item>
+              <!-- 
+		   SSL Verify:
+                   ===========
+                   It is used to specify if OpenCA should verify the
+                   certificate presented in the secure connection. There
+                   are three different accepted values:
+
+                     * none - no verify
+                     * optional - verification is not mandatory
+                     * required - verification is mandatory
+
+                   NOTE: if you use 'optional' or 'required' you should
+                   also provide at least one of 'sslcapath' or 'sslcafile'
+                   where you put the certificate of the CA that issued the
+                   datasource certificate
+	      -->
+              <name>sslverify</name>
+              <value>none</value>
+            </item>
+            <item>
+              <name>sslciphers</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcapath</name>
+              <value></value>
+            </item>
+            <item>
+              <name>sslcafile</name>
+              <value></value>
+            </item>
+         </attributes>
+         <!-- Map: allows to map specific entries in the data source
+              to specific names that will be passed to openca and can
+              be accessed by the form by using the format:
+
+                  $DATA::<name>
+           -->
+         <map>
+           <entry>
+             <name>uidNumber</name>
+             <value>uid</value>
+           </entry>
+         </map>
+      </item>
+      <!-- Empty Data Source Example -->
+      <!--
+      <item>
+         <name></name>
+         <type></type>
+         <loa></loa>
+         <protocol></protocol>
+         <attributes>
+            <item>
+              <name>basedn</name>
+              <value></value>
+            </item>
+         </attributes>
+      </item>
+      -->
+   </datasources>
+</openca>

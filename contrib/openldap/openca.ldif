@@ -1,0 +1,7 @@
+dn: o=OpenCA Organization, c=IT
+objectclass: top
+objectclass: organization
+o: OpenCA Organization
+postaladdress: Via Scudari n. 20 (Modena) Italy
+postalcode: 41100
+telephonenumber: ++39 059 206992

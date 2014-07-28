@@ -1,0 +1,53 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpDeletePIN
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: delete not hashed PINs from new users
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpDeletePIN {
+
+	print startLogPage (gettext ("Delete PIN Batch Processor"));
+
+	## datadirectory for the batchprocessor
+	my $batch_dir  = getRequired ("BP_DIR");
+
+	print addLogSection (gettext ("Running batch processor ..."));
+
+	bpScanDir ($batch_dir, "bpDeletePIN");
+
+	print addPreLogLine ("");
+	print addLogLine (gettext ("Batch processor finished"));
+	print closeLogSection ();
+
+	print closePage();
+
+}
+
+sub bpDeletePIN {
+        our $tools;
+	my $dir = $_[0];
+
+	## check for ID
+	if ( (-f $dir."/ID") and
+	     (not -f $dir."/acl/newCSR") and
+	     (-f $dir."/private/purePIN") and
+	     (-f $dir."/public/hashedPIN") ) {
+
+		if (not unlink $dir."/private/purePIN") {
+			print addPreLogLine (
+				    "<FONT COLOR=#FF0000>".
+				    i18nGettext ("Cannot remove file __FILE__!", "__FILE__", "$dir/private/purePIN")."\n".
+				    "</FONT>");
+		} else {
+			print addPreLogLine (i18nGettext ("ID: __ID__ - PIN removed.", "__ID__", $tools->getFile($dir."/ID")));
+		}
+	}
+}
+
+1;

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+PID_DIR="@var_prefix@/tmp"
+FILES="xml_cache.pid openca_socket.pid openca_autoca.pid openca_autocrl.pid openca_autoemail.pid openca_autorevoke.pid"
+
+echo -n "Stopping OpenCA Daemons ... "
+
+for pid in $FILES ; do
+
+	pidfile="$PID_DIR/$pid";
+
+	if [ -f "$pidfile" ] ; then
+		PID=`cat "$pidfile" 2>/dev/null`
+		if [ -n "$PID" ] ; then
+			# kill $PID 2>/dev/null >/dev/null
+			kill $PID 2>/dev/null >/dev/null
+			rm -f $pidfile
+		fi
+	fi
+done
+
+echo Done.
+
+exit 0
+

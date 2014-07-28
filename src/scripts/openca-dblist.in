@@ -1,0 +1,49 @@
+#! @PERL@
+
+BEGIN { @AnyDBM_File::ISA = qw(DB_File GDBM_File NDBM_File ) };
+
+$VER = '0.121';
+
+## View DB - Version $VER
+## (c) 1999 by Massimiliano Pala
+## OpenCA Core Developer
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This Program let you verify the contents of the Certificates
+## DB used by the CA ( issued certificates ).
+##
+
+print "\nView DB - Version $VER\n";
+print "(c) 1999 by OpenCA Core Team\n\n";
+print "Enter The DB dir ( @var_prefix@/db ) ? ";
+
+$DIR = <STDIN>;
+
+chop($DIR);
+
+if( "$DIR" eq "" ) {
+	$DIR = '@var_prefix@/db';
+}
+
+print "Enter The db Name : ";
+$name = <STDIN>;
+chop($name);
+
+$DBM_FILE = "$DIR/$name";
+
+print "\nFILENAME => $DBM_FILE\n\n";
+
+	dbmopen( %DB, "$DBM_FILE", undef ) || die "Can't access DB!";
+	 	while ( ($key, $value) = each  %DB ) {
+			print "Found ITEM:\n";
+			print "     KEY => $key\n";
+			print "     DIM => " . length($value) . " bytes\n\n";
+	 	}
+	dbmclose( %DB );
+
+
+exit;

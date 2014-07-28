@@ -1,0 +1,8 @@
+Revision history for Perl extension OpenCA::X509.
+
+0.9.8  Thu Sep 27 19:36:03 2001
+	- patched for object creation performance, compatible
+	  with OpenCA::OpenSSL version 0.8.43 (+)
+
+0.1.0  Thu Feb 10 12:23:40 2000
+	- original version; created by h2xs 1.19

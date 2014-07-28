@@ -1,0 +1,22 @@
+## OpenCA - CA Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: exportDB
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: Exports DB
+## Description: Exports on a removable media all
+
+use strict;
+
+sub cmdExportDB {
+
+	print startLogPage ( gettext("Exporting DB ...") );
+
+	exportDB ();
+
+	closePage ();
+
+}
+
+1;
+

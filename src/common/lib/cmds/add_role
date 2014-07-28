@@ -1,0 +1,34 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: add_role
+##       Brief: add a new role
+## Description: shows a html-form where you can enter the name
+##              of the new role
+##  Parameters: none
+
+use strict;
+
+sub cmdAdd_role {
+
+    my $info_list = undef;
+    $info_list->{BODY}->[0]->[0] = gettext ("Role");
+    $info_list->{BODY}->[0]->[1] = '<input type="text" value="" name="role">';
+    my $hidden_list = undef;
+    $hidden_list->{"cmd"} = "show_prepared_role";
+    my $cmd_panel = undef;
+    $cmd_panel->[0] = '<input type="submit" value="'.gettext ("OK").'">';
+    return libSendReply (
+                         "TIMESTAMP"   => 1,
+                         "NAME"        => gettext ("Add a New Role"),
+                         "EXPLANATION" => gettext ("Please enter the name of the new role!"),
+                         "HIDDEN_LIST" => $hidden_list,
+                         "INFO_LIST"   => $info_list,
+                         "CMD_PANEL"   => $cmd_panel
+                        );
+
+}
+
+1;
+

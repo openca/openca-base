@@ -1,0 +1,149 @@
+## OpenCA - Command
+## (c) Copyright 2011 by Massimiliano Pala and OpenCA Labs
+##
+##   File Name: verifyPIN
+##       Brief: SHA1(pin)
+##     Version: $Revision: 1.3 $
+## Description: this script compares a SHA1 Fingerprint 
+##              with a generated one - for PIN verfification
+##  Parameters: pin, passwd1, passwd2
+
+use strict;
+
+sub cmdVerifyEmailError {
+	my ( $info_list, $hidden_list, $cmd_panel);
+	my $pos = 0;
+
+    $info_list->{HEAD}->[0] = gettext ("Error");
+	## $info_list->{BODY}->[$pos]->[0] = 
+	## 		gettext ("Your Email has NOT been verified successfully!");
+
+	$hidden_list->{"cmd"} = "getStaticPage";
+	$hidden_list->{"name"} = "homePage";
+	
+	$cmd_panel->[0] = '<input type=submit value="'.gettext ("Continue").'">';
+
+   return libSendReply (
+   		"NAME"        => gettext ("Email Address Verification"),
+		"DESCRIPTION" => gettext ("Your Email has NOT been verified " .
+									"successfully!"),
+		"INFO_LIST"   => $info_list,
+		"HIDDEN_LIST" => $hidden_list,
+		"CMD_PANEL"   => $cmd_panel,
+		"MENU"	   => 1,
+	);
+}
+
+sub cmdVerifyEmailSuccess {
+	my ( $info_list, $hidden_list, $cmd_panel);
+	my $pos = 0;
+
+    $info_list->{HEAD}->[0] = gettext ("Success");
+	## $info_list->{BODY}->[$pos]->[0] = 
+	## 		gettext ("Your Email has been verified successfully, thanks!");
+
+	$hidden_list->{"cmd"} = "getStaticPage";
+	$hidden_list->{"name"} = "homePage";
+	
+	$cmd_panel->[0] = '<input type=submit value="'.gettext ("Continue").'">';
+
+   return libSendReply (
+   		"NAME"        => gettext ("Email Address Verification"),
+		"DESCRIPTION" => gettext ("Your Email has been verified successfully, thanks!" ),
+		"INFO_LIST"   => $info_list,
+		"HIDDEN_LIST" => $hidden_list,
+		"CMD_PANEL"   => $cmd_panel,
+		"MENU"		  => 1,
+	);
+			    
+};
+
+sub cmdVerifyEmail {
+
+	our ($errval, $query, $cryptoShell);
+
+	my ($info_list, $cmd_panel, $req);
+
+    # my $minPinLength = getRequired('minpinlength');
+    # Removed - this verification is independent from the minpinlength
+    # as it does not input the PIN, but just verifies if it is correct!
+    
+    my $minPinLength = 0;
+
+    my $tag    = $query->param ('tag');
+    my $ser    = $query->param ('ser');
+    my $secret = getRequired('webSecret');
+	my $code   = undef;
+
+	my $info_list = undef;
+
+	if(($req = $db->getItem ( DATATYPE => "TEMP_NEW_REQUEST", 
+		KEY => $ser )) == undef ) {
+	
+		if(($req = $db->getItem ( DATATYPE => "TEMP_APPROVED_REQUEST", 
+			KEY => $ser )) == undef ) {
+
+			if(($req = $db->getItem ( DATATYPE => "PENDING_REQUEST", 
+				KEY => $ser )) == undef ) {
+
+				$req = $db->getItem(DATATYPE => "APPROVED_REQUEST", 
+					KEY => $ser);
+			};
+		};
+	};
+
+	if( $req == undef ) {
+		cmdVerifyEmailError();
+		return ( 1 );
+	};
+
+	my @emails = @{$req->getParsed()->{EMAILADDRESSES}};
+	@emails = sort @emails;
+	my $last_email = "";
+	foreach my $h (@emails) {
+		next if ($h eq $last_email);
+
+		$code = $cryptoShell->getDigest( DATA=> $ser . $h . $secret, 
+			ALGORITHM => "sha1" );
+
+		# print STDERR "verifyEmail: $ser $h TAG => $tag\n";
+		# print STDERR "verifyEmail: $ser $h Token => $code\n";
+
+		if ( "$code" eq "$tag" ) {
+			# Success!!!
+			if ( not $req->setHeaderAttribute ( "VERIFIED_EMAIL" => "$h") ) {
+				generalError ( gettext ("Error while setting verified email ".
+					"on request object"));
+				return 1;
+			};
+
+			print STDERR ">>>>>>>>>>>>>>>>>>>>>-------------------------------------\n";
+			print STDERR "Original Datatype => " . $req->{DATATYPE} . "\n";
+			print STDERR "Original Status => " . $req->{STATUS} . "\n";
+
+			## store request
+			## $req->{DATATYPE} =~ s/^TEMP_//;
+			my $status = $req->{STATUS};
+			$status =~ s/^TEMP//;
+			$req->{DATATYPE} =~ s/^TEMP//;
+			$req->setStatus( $status );
+
+			print STDERR "verifyEmail(): New Datatype is " . $req->{DATATYPE} . "\n";
+
+			if (not $db->storeItem ( DATATYPE => $req->{DATATYPE},
+					OBJECT => $req, MODE => "UPDATE" )) {
+				generalError (gettext ("Error while updating request"));
+				return 1;
+			};
+
+			cmdVerifyEmailSuccess();
+			return 1;
+		};
+	};
+
+	cmdVerifyEmailError();
+	return 1;
+
+}
+
+1;

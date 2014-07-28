@@ -1,0 +1,546 @@
+## OpenCA - RAServer Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: editCSR
+##       Brief: Edit Request
+## Description: Edit a given Request
+##  Parameters: key
+
+use strict;
+
+use X500::DN;
+
+sub cmdEditCSR {
+
+    our ($DEBUG, $db, $query, $errno, $errval, $cryptoShell);
+
+    ## Get the Configuration parameters ...
+    my ( $def );
+    my ( $myCN, $myEmail, $subject, $subjectAltName );
+    my ( @cols, $lnk, $sigInfo );
+    my ( $role, $loa, $days, $notafter, $notbefore ) = ("", "", "", "", "");
+
+    my $key      = $query->param('key');
+    my $dataType = $query->param('dataType');
+    if (not $dataType) {
+	$dataType = "PENDING_REQUEST";
+    }
+
+    configError (gettext ("Error, needed dB key!"))
+        if ( not $key );
+
+    my $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+    configError (gettext ("Request not present in DB or the status of the request was changed!"))
+        if ( not $req );
+
+    ## Get the parsed Request
+    my $parsed_req 	= $req->getParsed();
+    my $head   	= $req->getParsed()->{HEADER};
+    my $dbKey	= $req->getSerial();
+
+    if (  $parsed_req->{DN_HASH}->{CN}[0] ne "" ) {
+	$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+			name=>"CN", value=>$parsed_req->{DN_HASH}->{CN}[0]} );
+	$myCN = $lnk->a({-href=>"?".$lnk->query_string()}, $parsed_req->{DN_HASH}->{CN}[0]);
+    }
+
+    ## subject alternative name
+    if (  defined $req->getParsed()->{HEADER}->{SUBJECT_ALT_NAME} ) {
+        $subjectAltName = $req->getParsed()->{HEADER}->{SUBJECT_ALT_NAME};
+    } elsif (  $parsed_req->{EMAILADDRESS} ne "" ) {
+        $subjectAltName = "email:".$parsed_req->{EMAILADDRESS};
+    } else {
+	$subjectAltName = "";
+    }
+
+    ## email address
+    my @emails = [];
+    if (  defined $req->getParsed()->{HEADER}->{SUBJECT_ALT_NAME} ) {
+        my @subjectAltNames = split (/,/, $req->getParsed()->{HEADER}->{SUBJECT_ALT_NAME});
+        foreach my $h (@subjectAltNames) {
+                next if ($h !~ /^\s*email:/i);
+                $h =~ s/^\s*email://i;
+                push (@emails, $h);
+        }
+    }
+    if (  $req->getParsed()->{EMAILADDRESS} ne "" ) {
+        push (@emails, $req->getParsed()->{EMAILADDRESS});
+    };
+    foreach my $h (@emails) {
+        my $lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+                        name=>"EMAIL", value=>$h} );
+        $myEmail .= ", " if ($myEmail);
+        $myEmail .= $lnk->a({-href=>"?".$lnk->query_string()}, $h);
+    }
+
+    ## If the Request is signed
+    if ( $parsed_req->{TYPE} =~ /with .*? Signature/i ) {
+
+        my $tmp;
+	$lnk = new CGI({cmd=>"viewSignature", dataType=>$dataType, key=>$key});
+	if( libCheckSignature( OBJECT=>$req ) ) {
+		$tmp = $query->img({src=>getRequired ('ValidSigImage'),
+					border=>"0", align=>"MIDDLE"});
+	} else {
+		$tmp = $query->img({-src=>getRequired ('SigErrorImage'),
+					-border=>"0", -align=>"MIDDLE"});
+	}
+
+	$sigInfo = $lnk->a({-href=>"?".$lnk->query_string()}, $tmp );
+	
+    } else {
+	$def = "<FONT COLOR=\"RED\">".gettext ("Not Signed")."</FONT>";
+	$parsed_req->{OPERATOR} = $def;
+    }
+
+    #############################
+    ##    subject handling     ##
+    #############################
+
+    ## get the subject
+    if ($req->getParsed()->{HEADER}->{SUBJECT}) {
+	$subject = $req->getParsed()->{HEADER}->{SUBJECT};
+    } else {
+	$subject = $req->getParsed()->{DN};
+    }
+
+    ## Fix for empty RDNs (not handled by X500::DN)
+    $subject =~ s/\w+=\s*\,//g;
+    $subject =~ s/\w+=\s*$//;
+    $subject =~ s/^\s+//g;
+
+    ## build subject array
+    my $x500_dn = X500::DN->ParseRFC2253 ($subject);
+    my @subject_array;
+    undef @subject_array;
+    my $counter = 0;
+
+    if (not defined $x500_dn ) {
+	configError( gettext ( "Can not Parse DN" ) . " ($subject)");
+    }
+
+    foreach my $rdn ($x500_dn->getRDNs())
+    {
+        my @attr_types = $rdn->getAttributeTypes();
+        foreach my $attr_type (@attr_types)
+        {
+            my $value = $rdn->getAttributeValue ($attr_type);
+            push @{$subject_array[$counter]}, $attr_type;
+            push @{$subject_array[$counter]}, $value;
+        }
+        $counter++;
+    }
+    @subject_array = reverse @subject_array;
+
+    ## load allowed attributes and calculate tablelength
+    my @allowed_attr = getRequiredList ('CSR_SUPPORTED_ATTRIBUTES');
+    my $max_attr     = getRequired ('CSR_DEFAULT_ATTRIBUTE_FIELDS');
+    my $allow_multi  = getRequired ('CSR_ALLOW_MULTIVALUED_ATTRIBUTES');
+    $max_attr = scalar @subject_array + 1
+        if (scalar @subject_array >= $max_attr);
+
+    ## build subject table
+    $subject = $query->start_table;
+    my $subject_shift = $max_attr - scalar @subject_array;
+    for (my $i=0; $i < $subject_shift; $i++)
+    {
+        my @cols;
+        undef @cols;
+        push @cols, 
+         $query->newInput ( -regx   => 'MIXED',
+                            -intype => 'popup_menu',
+                            -name   => "SUBJECT_ATTRIBUTE_${i}_0",
+                            -values => [ " ", @allowed_attr ]);
+        push @cols, 
+         $query->newInput ( -regx   => 'LATIN1_LETTERS',
+                            -intype => 'textfield',
+                            -size   => 30,
+                            -name   => "SUBJECT_VALUE_${i}_0");
+        $subject .= $query->addTableLine(DATA=>[@cols]);
+    }
+    foreach (my $k=0; $k < scalar @subject_array; $k++)
+    {
+        my @cols;
+        undef @cols;
+        for (my $i=0; $i < scalar @{$subject_array[$k]}; $i+=2)
+        {
+            push @cols, "<b>+</b>" if (@cols and scalar @cols);
+            push @cols, 
+             $query->newInput ( -regx    => 'MIXED',
+                                -intype  => 'popup_menu',
+                                -name    => "SUBJECT_ATTRIBUTE_".($k+$subject_shift)."_".($i/2),
+                                -values  => [ " ", @allowed_attr ],
+                                -default => $subject_array[$k][$i]);
+            push @cols, 
+             $query->newInput ( -regx   => 'LATIN1_LETTERS',
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => "SUBJECT_VALUE_".($k+$subject_shift)."_".($i/2),
+                                -value  => $subject_array[$k][$i+1]);
+        }
+        if ($allow_multi =~ /YES|ON/i)
+        {
+            push @cols, "<b>+</b>";
+            push @cols, 
+             $query->newInput ( -regx    => 'MIXED',
+                                -intype  => 'popup_menu',
+                                -name    => "SUBJECT_ATTRIBUTE_".($k+$subject_shift)."_".(scalar @{$subject_array[$k]})/2,
+                                -values  => [ " ", @allowed_attr ],
+                                -default => "");
+            push @cols, 
+             $query->newInput ( -regx   => 'LATIN1_LETTERS',
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => "SUBJECT_VALUE_".($k+$subject_shift)."_".(scalar @{$subject_array[$k]})/2,
+                                -value  => "");
+        }
+        $subject .= $query->addTableLine(DATA=>[@cols]);
+    }
+    $subject .= $query->end_table;
+
+    ####################################
+    ##    subjectAltName handling     ##
+    ####################################
+
+    ## build subjectAltName array
+    my @subjectAltName_array;
+    undef @subjectAltName_array;
+    foreach my $subjectAltName_comp (crypto_get_subject_alt_names ($subjectAltName))
+    {
+        my $attr  = $subjectAltName_comp;
+        my $value = $subjectAltName_comp;
+        $attr  =~ s/\.[0-9]+=.*$//;
+        $attr  =~ s/=.*$//;
+        $value =~ s/^[^=]*=//;
+        push @subjectAltName_array, $attr;
+        push @subjectAltName_array, $value;
+    }
+
+    ## load allowed attributes and calculate tablelength
+    @allowed_attr = getRequiredList ('CSR_SUPPORTED_SUBJECT_ALT_NAMES');
+    $max_attr     = getRequired ('CSR_DEFAULT_SUBJECT_ALT_NAME_FIELDS');
+    $max_attr = scalar @subjectAltName_array + 1
+        if (scalar @subjectAltName_array/2 >= $max_attr);
+
+    ## build subjectAltName table
+    $subjectAltName = $query->start_table;
+    foreach (my $k=0; $k < (scalar @subjectAltName_array)/2; $k++)
+    {
+        my @cols;
+        undef @cols;
+        push @cols, 
+         $query->newInput ( -regx    => 'MIXED',
+                            -intype  => 'popup_menu',
+                            -name    => "SUBJECT_ALT_NAME_ATTRIBUTE_$k",
+                            -values  => [ " ", @allowed_attr ],
+                            -default => $subjectAltName_array[2*$k]);
+        push @cols, 
+         $query->newInput ( -regx   => 'LATIN1_LETTERS',
+                            -intype => 'textfield',
+                            -size   => 30,
+                            -name   => "SUBJECT_ALT_NAME_VALUE_$k",
+                            -value  => $subjectAltName_array[2*$k+1]);
+        $subjectAltName .= $query->addTableLine(DATA=>[@cols]);
+    }
+    for (my $i=(scalar @subjectAltName_array)/2; $i < $max_attr; $i++)
+    {
+        my @cols;
+        undef @cols;
+        push @cols, 
+         $query->newInput ( -regx   => 'MIXED',
+                            -intype => 'popup_menu',
+                            -name   => "SUBJECT_ALT_NAME_ATTRIBUTE_$i",
+                            -values => [ " ", @allowed_attr ]);
+        push @cols, 
+         $query->newInput ( -regx   => 'LATIN1_LETTERS',
+                            -intype => 'textfield',
+                            -size   => 30,
+                            -name   => "SUBJECT_ALT_NAME_VALUE_$i");
+        $subjectAltName .= $query->addTableLine(DATA=>[@cols]);
+    }
+    $subjectAltName .= $query->end_table;
+
+    ##########################
+    ##    role handling     ##
+    ##########################
+
+    $role = $query->newInput( -regx=>'*',
+			-intype=>"popup_menu",
+			-name=>"ROLE",
+			-values=>  [ loadRoles () ],
+			-default=>$head->{ROLE});
+
+    ############################
+    ## Validity Time handling ##
+    ############################
+
+    ## get config Option and set internal variable
+    my $daysOption = getRequired('CHANGE_DAYS');
+    if ($daysOption =~ m/yes/i){
+        $daysOption = 1;
+    } else {
+        $daysOption = 0;
+    }
+
+    ## fill field with standard value, if no value is present
+    if ($daysOption)
+    {
+        $days = $query->newInput( -regx => 'NUMERIC',
+					  -intype => 'textfield',
+					  -size => 5,
+					  -name => "DAYS",
+					  -value => $head->{DAYS});
+        my @timestampa = ($head->{CERT_NOTAFTER} =~ m/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/);
+        my @timestampb = ($head->{CERT_NOTBEFORE} =~ m/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/);
+        $timestampa[0] += 2000 if ($timestampa[0]);
+        $timestampb[0] += 2000 if ($timestampb[0]);
+        for (my $i=0; $i<6; $i++)
+        {
+            my $size = 2;
+            $size = 4 if (not $i);
+            if ($i == 1 or $i == 2)
+            {
+                $notafter .= "-";
+                $notbefore .= "-";
+            }
+            if ($i == 3)
+            {
+                $notafter .= " ";
+                $notbefore .= " ";
+            }
+            if ($i == 4 or $i == 5)
+            {
+                $notafter .= ":";
+                $notbefore .= ":";
+            }
+            $notafter .= $query->newInput( -regx => 'NUMERIC',
+				          -intype => 'textfield',
+					  -size => $size,
+					  -name => "NOTAFTER_${i}",
+					  -value => $timestampa[$i]);
+            $notbefore .= $query->newInput( -regx => 'NUMERIC',
+				          -intype => 'textfield',
+					  -size => $size,
+					  -name => "NOTBEFORE_${i}",
+					  -value => $timestampb[$i]);
+        }
+    }
+
+    ##################
+    ## LOA handling ##
+    ##################
+
+    ## read the loa.xml file and get the values
+    ## get list of the LOAs type
+    my  $loaOption = getRequired('USE_LOAS');
+    my ($loaTwig, $xmlLOA, %LOALevels,  @loaList, %LOAhash);
+    if ($loaOption =~ m/yes/i)
+    {
+        $loaTwig = loadConfigXML ('LOAConfiguration');
+        if (not $loaTwig) {
+            generalError (gettext ("Cannot load menu configration"));
+        }
+
+        #$xmlLOA = $twig->get_xpath('loa');
+        for my $al ($loaTwig->get_xpath("loa"))
+        {
+            $xmlLOA = gettext(($al->first_child('name'))->field);
+
+            $LOALevels{$xmlLOA}=gettext(($al->first_child('level'))->field);
+            $LOAhash{gettext(($al->first_child('level'))->field)}=$xmlLOA;
+
+            push (@loaList, $xmlLOA);
+            debug_cmds ("editCSR: \@loadList @loaList");
+            debug_cmds ("editCSR: LOALevel 10: $LOALevels{10}");
+        }
+    }
+	
+    my $loaName =  $LOAhash{$head->{LOA}};
+    debug_cmds ("editCSR: loaName $loaName");
+    $loa = $query->newInput( -regx=>'*',
+                             -intype=>"popup_menu",
+                             -name=>"LOA",
+                             -values=>  [ @loaList ],
+                             -default=>$loaName);
+
+    ## put the numeric value of the loa in the pop up_menu instead of the
+    ## name as a value to pass to the next page.
+    ##
+    my $index=0;
+    while ($index <= $#loaList)
+    {
+        debug_cmds ("editCSR: index of loaList: $index");
+        my $temp ="value="."\"".$loaList[$index]."\"";
+        debug_cmds ("editCSR: value of loa: $temp");
+        my $numericValue="value="."\"". $LOALevels{$loaList[$index]}."\"";
+        debug_cmds ("editCSR: numeric loa: $LOALevels{$loaList[$index]}");
+        debug_cmds ("editCSR: numeric value of loa: $numericValue");
+        $loa = $query->subVar( $loa,$temp, $numericValue);
+        $index ++;
+    }
+
+    ###################################
+    ## additional attribute handling ##
+    ###################################
+
+    my @my2ParamValues = ();
+    my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+    my @additionalAttributesStringType = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE');
+    my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+
+    my $counter = 0;
+    foreach my $attribute (@additionalAttributes)
+    {
+        ## determine the attribute
+        my $attVar;
+        if($additionalAttributesDisplayValue[$counter])
+        {
+            $attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+        } else {
+            generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the configuration."));
+        }
+        my $tempAttribute = uc $attribute;
+
+        ## determine the content type
+        my $stringType = "LATIN1_LETTERS";
+        if ( $additionalAttributesStringType[$counter])
+        {
+            $stringType = $additionalAttributesStringType[$counter];
+        }
+
+        ## build the attribute list
+        push @my2ParamValues ,({
+             NAME => $tempAttribute,
+             ROW  => [ gettext($attVar),
+                       $query->newInput ( -regx    => $stringType,
+                                          -intype  => 'textfield',
+                                          -size    => 30,
+                                          -name    => 'ADDITIONAL_ATTRIBUTE_'.$tempAttribute,
+                                          -check   => 'fill',
+                                          -default => $head->{'ADDITIONAL_ATTRIBUTE_'.$tempAttribute} )
+                     ]
+                           });
+        $counter ++;
+    }
+
+    ##############################
+    ##    table construction    ##
+    ##############################
+
+    my ($info_list, $hidden_list, $cmd_list) = (undef, undef, undef);
+    # $cmd_panel->[0] = '<input type="submit" value="'.gettext ("OK").'">';
+    # $cmd_panel->[1] = '<input type="reset" name="reset" value="'.gettext ("Reset").'">';
+
+    $info_list->{HEAD}->[0] = gettext ("Variable");
+    $info_list->{HEAD}->[1] = gettext ("Value");
+
+    my %header = %{$head}; ## copy by value
+    my $pos = 0;
+
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Request Version");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{VERSION} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Serial Number");
+    $info_list->{BODY}->[$pos++]->[1] = ($req->getSerial() or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Request Type");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{TYPE} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Submission Date");
+    $info_list->{BODY}->[$pos++]->[1] = ($head->{NOTBEFORE} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Subject alternative name");
+    $info_list->{BODY}->[$pos++]->[1] = $subjectAltName;
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Subject");
+    $info_list->{BODY}->[$pos++]->[1] = $subject;
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Role");
+    $info_list->{BODY}->[$pos++]->[1] = $role;
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Valid for ## days");
+    if ($daysOption)
+    {
+	$info_list->{BODY}->[$pos++]->[1] = $days;
+        $info_list->{BODY}->[$pos]->[0]   = gettext ("Not after (YYYY-MM-DD hh:mm:ss)");
+	$info_list->{BODY}->[$pos++]->[1] = $notafter;
+        $info_list->{BODY}->[$pos]->[0]   = gettext ("Not before (YYYY-MM-DD hh:mm:ss)");
+	$info_list->{BODY}->[$pos++]->[1] = $notbefore;
+    } else {
+	$info_list->{BODY}->[$pos++]->[1] = gettext ("n/a");
+	delete $header{DAYS};
+	delete $header{NOTAFTER};
+	delete $header{NOTBEFORE};
+    }
+    if (not crypto_check_lifetime ($req, $head->{ROLE}))
+    {
+        $info_list->{BODY}->[$pos++]->[1] .= "\n".$errval."\n";
+        $errno  = 0;
+        $errval = "";
+    }
+    $info_list->{BODY}->[$pos]->[0] = gettext ("LOA");
+    if ($loaOption =~ m/yes/i)
+    {
+        $info_list->{BODY}->[$pos++]->[1] = $loa;
+    } else {
+        $info_list->{BODY}->[$pos++]->[1] = gettext ("n/a");
+        delete $header{LOA};
+    }
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Used Identification PIN");
+    $info_list->{BODY}->[$pos++]->[1] = ($head->{PIN} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Modulus (key size)");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{KEYSIZE} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Public Key Algorithm");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{PK_ALGORITHM} or gettext ("n/a"));
+    $info_list->{BODY}->[$pos]->[0]   = gettext ("Signature Algorithm");
+    $info_list->{BODY}->[$pos++]->[1] = ($parsed_req->{SIG_ALGORITHM} or gettext ("n/a"));
+
+    ## remove already displayed data
+    delete $header{TYPE};
+    delete $header{SERIAL};
+    delete $header{DAYS};
+    delete $header{NOTBEFORE};
+    delete $header{NOTAFTER};
+    delete $header{LOA};
+    delete $header{SUBJECT_ALT_NAME};
+    delete $header{SUBJECT};
+    delete $header{ROLE};
+    delete $header{PIN};
+
+    foreach my $attribute (@my2ParamValues)
+    {
+        my $pos = scalar @{$info_list->{BODY}};
+        $info_list->{BODY}->[$pos]->[0] = $attribute->{ROW}->[0];
+        $info_list->{BODY}->[$pos]->[1] = $attribute->{ROW}->[1];
+        delete $header{'ADDITIONAL_ATTRIBUTE_'.$attribute->{NAME}};
+    }
+
+    ## show the rest of the data in the header
+    foreach my $attribute (sort keys %header)
+    {
+        my $pos = scalar @{$info_list->{BODY}};
+        $info_list->{BODY}->[$pos]->[0] = gettext($attribute);
+        $info_list->{BODY}->[$pos]->[1] = ($header{$attribute} or gettext("n/a"));
+    }
+
+    #########################
+    ## build command panel ##
+    #########################
+
+    $cmd_list->{BODY}->[0]->[0] = gettext ("Submit the changed request");
+    $cmd_list->{BODY}->[0]->[1] = '<input type="submit" name="OK" value="'.
+                                  gettext ("OK").'" onClick="cmd.value='."'changeCSR'".'">';
+    $cmd_list->{BODY}->[1]->[0] = gettext ("Cancel the changes");
+    $cmd_list->{BODY}->[1]->[1] = '<input type="submit" name="Cancel" value="'.
+                                  gettext ("Cancel").'" onClick="cmd.value='."'viewCSR'".'">';
+
+    $hidden_list->{"key"}      = $dbKey;
+    $hidden_list->{"dataType"} = $dataType;
+    $hidden_list->{"cmd"} = $query->param( 'cmd' );
+
+    return libSendReply (
+                     "NAME"        => gettext ("Certificate Signing Request Waiting for Approval"),
+                     "EXPLANATION" => gettext ("Now you can edit the data of the CSR."),
+                     "INFO_LIST"   => $info_list,
+                     "HIDDEN_LIST" => $hidden_list,
+                     "CMD_LIST"   => $cmd_list,
+                     "SIGINFO"     => $sigInfo
+                        );
+}
+
+1;

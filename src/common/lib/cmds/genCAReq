@@ -1,0 +1,206 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: genCAReq
+##       Brief: Generate CA Request
+##// Description: Generate CA's certificate Request
+##  Parameters: email, cn, ou, o, c, pwd
+
+use strict;
+
+our ($msg);
+
+our ($journal, $query, $tools, $crypto_layer, $cryptoShell, $db);
+
+sub cmdGenCAReq {
+
+## This command will generate the $openca/ca_req.pem
+## that should be exported to the root ca for approval
+
+
+## Get the parameters
+my $dn		= $query->param('dn');
+my $alt		= $query->param('subjectAltName');
+
+my $careqFile	= getRequired ( 'ReqDir' ) . '/careq.pem';
+my $careqExts	= getRequired ( 'CAReqExtensions' );
+
+## Other reserved variables
+my ( $page, $ret, $key );
+
+my $ca_token = $crypto_layer->getToken ('CA');
+if (not ($ca_token->keyOnline || $ca_token->login))
+{
+	my $msg = gettext ("Initializing CA token ... ").
+	         "<FONT color=#ff0000>".gettext ("FAILED")."</FONT><br>\n".
+	         i18nGettext ("Token's errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval);
+        generalError ($msg, $ca_token->errno);
+}
+
+## Remove the old careq file, it is not important to keep a
+## copy of it. As it is very simple to generate a new one.
+unlink( "$careqFile") if( -e "$careqFile" );
+
+## Send parameters: it is important that you send them
+## in the same order as they are asked for. This means
+## email->cn->ou->o->c
+
+# $ENV{'subjectAltName'} = getRequired ( "SERVICE_MAIL_ACCOUNT" );
+
+if (not $ca_token->genReq(
+			OUTFILE       => "$careqFile",
+			EXTENSIONS    => "$careqExts",
+			SUBJECT       => "$dn")) {
+	generalError (gettext ("OpenCA::OpenSSL failed.")."<br>\n".
+			$OpenCA::OpenSSL::errval, $OpenCA::OpenSSL::errno);
+}
+
+## Try loading the Req File
+my $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                            GETTEXT => \&i18nGettext,
+                            INFILE  => "$careqFile" );
+
+if( not $req ) {
+	my $msg = "<BR>".gettext ("Cannot initialize an new object of OpenCA::REQ.")."<BR><BR>\n";
+	$msg .= "(Subject: $dn)<br><br>\n";
+	$msg .= $OpenCA::REQ::errval;
+	generalError ( $msg, $OpenCA::REQ::errno );
+}
+
+my $info_list = undef;
+$info_list->{BODY}->[0]->[0] = '';
+$info_list->{BODY}->[0]->[1] = "<pre>".$req->getTXT()."</pre>";
+
+return libSendReply (
+                     "NAME"        => gettext ("CA Certificate Signing Request"),
+                     "EXPLANATION" => gettext ("Following you can find the result of the generation process.").
+                                      $msg,
+                     "INFO_LIST"   => $info_list
+                    );
+}
+
+sub getParamsGenCAReq
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+
+        my $message = gettext ("Now you will be prompted with questions about the CA certificate request to be generated. All fields can be skipped by simply inserting empty values. You can abort the process at any by using the back button of your browser. You must confirm the complete distinguished name at the end. There you can enter a full flexible distinguished name too. Are you sure you want to continue?");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Domain Component')." [DC] (eg., org or net)</td>\n".
+                   '    <td><input type="text" name="subject_dc1" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Domain Component')." [DC] (eg., openca or mydomain)</td>\n".
+                   '    <td><input type="text" name="subject_dc2" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Domain Component')." [DC] (eg., pki or subdomain)</td>\n".
+                   '    <td><input type="text" name="subject_dc3" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+        # $result .= "  <tr>\n".
+        #            "    <td>".gettext ("E-mail address (PKIX deprecated)")."</td>\n".
+        #            '    <td><input type="text" name="subject_emailAddress" size="30" value=""></td>'.
+        #            "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Common Name') . " (e.g., CertAuth 1)</td>\n".
+                   '    <td><input type="text" name="subject_cn" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Organizational Unit Name') ." (e.g. MyUnit)</td>\n".
+                   '    <td><input type="text" name="subject_ou" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Organization') . " (e.g. OpenCA Labs)</td>\n".
+                   '    <td><input type="text" name="subject_o" size="30" value="' . getRequired("Organization") . '"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('Locality (e.g., Modena)')."</td>\n".
+                   '    <td><input type="text" name="subject_l" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('State/Province (e.g., NY)')."</td>\n".
+                   '    <td><input type="text" name="subject_st" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ('ISO 3166 Country Code (e.g. IT, DE, US, ...)')."</td>\n".
+                   '    <td><input type="text" name="subject_c" size="30" value=""></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+
+    } elsif ($_[0] == 1) {
+
+        ## here we build the subject
+
+        my $subject = "";
+
+	## New DC support
+        $subject .= 'DC='.$query->param ('subject_dc1').','
+            if ($query->param ('subject_dc1'));
+
+        $subject .= 'DC='.$query->param ('subject_dc2').','
+            if ($query->param ('subject_dc2'));
+
+        $subject .= 'DC='.$query->param ('subject_dc3').','
+            if ($query->param ('subject_dc3'));
+
+        $subject .= 'emailAddress='.$query->param ('subject_emailAddress').','
+            if ($query->param ('subject_emailAddress'));
+
+	## Standard Fields
+        $subject .= 'CN='.$query->param ('subject_cn').','
+            if ($query->param ('subject_cn'));
+        $subject .= 'OU='.$query->param ('subject_ou').','
+            if ($query->param ('subject_ou'));
+        $subject .= 'O='.$query->param ('subject_o').','
+            if ($query->param ('subject_o'));
+        $subject .= 'ST='.$query->param ('subject_st').','
+            if ($query->param ('subject_st'));
+        $subject .= 'L='.$query->param ('subject_l').','
+            if ($query->param ('subject_l'));
+        $subject .= 'C='.$query->param ('subject_c').','
+            if ($query->param ('subject_c'));
+
+	## Email is deprecated
+	$subject =~ s/,$//;
+
+        ## build the html stuff
+
+        my $message = gettext ('Please check the generated DN to be correct or enter a complete different DN. The used attributes must exactly match the definitions of OpenSSL!');
+
+        $result = "<table style='padding: 5px;'>\n";
+        $result .= "  <tr><td style='margin: 5px;'>".$message."</td></tr>\n";
+
+        $result .= "  <tr>\n".
+                   '    <td style="text-align: center;"><br />' .
+		   '       <input style="width: 90%; margin: 5px;" ' .
+		   '       type="text" ' .
+		   '       name="dn" value="'.$subject.'"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+
+    return $result;
+
+}
+
+1;
+
+

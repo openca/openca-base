@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>importCACert</name>
+            <operation>initialization of ca-certificate</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

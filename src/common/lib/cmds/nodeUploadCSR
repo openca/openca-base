@@ -1,0 +1,31 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeUploadCSR
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: export requests
+## Description: exports the requests to a removable media
+
+use strict;
+
+sub cmdNodeUploadCSR {
+
+	print startLogPage ( gettext("Exporting the requests to a higher level of the hierarchy ...") );
+
+	my $tmp = createStructure ();
+	eximUploadCSRs   ( $tmp );
+	eximUploadCommit ( $tmp );
+	eximIOUpload     ( $tmp );
+	removeDirectory  ( $tmp );
+
+	closePage ();
+
+}
+
+sub getParamsNodeUploadCSR
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

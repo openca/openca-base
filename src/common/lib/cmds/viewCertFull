@@ -1,0 +1,499 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: viewCertFull
+##       Brief: Display a certificate
+##     Version: $Revision: 1.9 $
+## Description: Display certificate data
+##  Parameters: dataType, key
+
+## this script supports the following configurable references
+##
+## INSTALL_CERT
+## LDAP
+## REVOCATION
+## SENDCERT
+## SEND_CERT_KEY
+## VIEW_CSR
+## TOKENHANDLING
+## MAIL
+## SET_PUBLIC_PASSWD
+## DELETE_PUBLIC_PASSWD
+
+use strict;
+
+our ( $query, $db, $self, $tools, $cryptoShell );
+
+sub cmdViewCertFull {
+
+    my ($info_list, $cmd_list, $hidden_list, $cmd_panel) = (undef, undef, undef, undef);
+    my ($hidden_pos, $info_pos, $cmd_pos) = (0, 0, 0);
+
+    ## Get the Serial Number
+    my $key      = $query->param( 'key' );
+    my $dataType = $query->param( 'dataType' );
+    my $status = undef;
+    my $reason = undef;
+
+    my @certDataTypes = ( "VALID_CERTIFICATE", "EXPIRED_CERTIFICATE", 
+			  "SUSPENDED_CERTIFICATE", "REVOKED_CERTIFICATE" );
+
+    if( not $key and ($key != 0)) {
+	configError( gettext ("Error, missing key!") );
+    }
+
+    if ( not $dataType ) {
+	$dataType = "CERTIFICATE";
+    }
+
+    if ( $dataType =~ /^VALID_CERTIFICATE/ ) {
+	$status = gettext ("Valid");
+    } elsif ( $dataType =~ /^EXPIRED_CERTIFICATE/ ) {
+	$status = gettext("Expired");
+    } elsif ( $dataType =~ /^SUSPENDED_CERTIFICATE/ ) {
+	$status = gettext("Suspended");
+    } elsif ( $dataType =~ /^REVOKED_CERTIFICATE/ ) {
+	$status = gettext("Revoked");
+    } elsif ( $dataType =~ /^VALID_CA_CERTIFICATE/ ) {
+	$status = gettext("Valid");
+    } elsif ( $dataType =~ /^EXPIRED_CA_CERTIFICATE/ ) {
+	$status = gettext("Expired");
+    } elsif ( $dataType =~ /^CA_CERTIFICATE/ ) {
+	## try to determine the datatype
+	if ($db->getItem ( DATATYPE => "VALID_CA_CERTIFICATE", KEY => $key )) {
+		$dataType = "VALID_CA_CERTIFICATE";
+		$status   = gettext("Valid");
+	} elsif ($db->getItem ( DATATYPE => "EXPIRED_CA_CERTIFICATE", KEY => $key )) {
+		$dataType = "EXPIRED_CA_CERTIFICATE";
+		$status   = gettext("Expired");
+	} else {
+		configError ( gettext ("Cannot determine status of this CA-Certificate!"));
+	}
+    } elsif ( $dataType =~ /^CERTIFICATE/ ) {
+	## try to determine the datatype
+	if ($db->getItem ( DATATYPE => "VALID_CERTIFICATE", KEY => $key )) {
+		$dataType = "VALID_CERTIFICATE";
+		$status   = gettext("Valid");
+	} elsif ($db->getItem ( DATATYPE => "EXPIRED_CERTIFICATE", KEY => $key )) {
+		$dataType = "EXPIRED_CERTIFICATE";
+		$status   = gettext("Expired");
+	} elsif ($db->getItem ( DATATYPE => "SUSPENDED_CERTIFICATE", KEY => $key )) {
+		$dataType = "SUSPENDED_CERTIFICATE";
+		$status   = gettext("Suspended");
+	} elsif ($db->getItem ( DATATYPE => "REVOKED_CERTIFICATE", KEY => $key )) {
+		$dataType = "REVOKED_CERTIFICATE";
+		$status   = gettext("Revoked");
+	} else {
+		configError ( gettext ("Cannot determine status of this Certificate!"));
+	}
+    } else {
+	configError (i18nGettext ("DataType not supported (__DATATYPE__)!", "__DATATYPE__", $dataType));
+    }
+
+    my $cert  = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+    configError( i18nGettext ("Error __ERRNO__, unable to get cert from dB! (__ERRVAL__)",
+                              "__ERRNO__", $db->errno(),
+                              "__ERRVAL__", $db->errval())) if( not $cert );
+
+    my $parsedCert = $cert->getParsed();
+
+    ## build emailaddress string
+    my $emails = "";
+    foreach my $email (@{$parsedCert->{EMAILADDRESSES}})
+    {
+        $emails .= ", " if ($emails);
+        $emails .= $email;
+    }
+
+    $hidden_list->{"cmd"}            = "";
+    $hidden_list->{"GET_PARAMS_CMD"} = "";
+    $hidden_list->{"passwd"}         = "";
+    $hidden_list->{"key"}            = $key;
+    $hidden_list->{"HIDDEN_key"}     = $key;
+    $hidden_list->{"dataType"}       = $dataType;
+    $hidden_list->{"dn"}             = $parsedCert->{DN};
+    $hidden_list->{"new_dn"}         = "";
+    $hidden_list->{"name"}           = "PUBLIC";
+    $hidden_list->{"format"}         = "";
+    $hidden_list->{"text"}           = "";
+    $hidden_list->{"signature"}      = "";
+
+    my $tmpIssuer = $parsedCert->{ISSUER};
+    my $tmpDN     = $parsedCert->{DN};
+    my $tmpStatus = $status;
+
+    ## old version - if it can be removed then simply remove it
+    $tmpIssuer =~ s/[\/,]\s*(?=[A-Za-z0-9\-]+=)/<BR>\n/g;
+    $tmpDN     =~ s/[\/,]\s*(?=[A-Za-z0-9\-]+=)/<BR>\n/g;
+
+    my $now = timestamp();
+
+    if ( $cert->getStatus() =~ /VALID/i ) {
+	# if ($now >
+	   # $cryptoShell->getNumericDate ($parsedCert->{NOTAFTER})) {
+		$tmpStatus = qq{<font color="green">} . $tmpStatus .
+			     qq{</font>};
+	# }
+    } elsif ( $cert->getStatus() =~ /REVOKED/gi ) {
+	$tmpStatus = i18nGettext ("Revoked on __DATE__", "__DATE__", $parsedCert->{HEADER}->{REVOKED_AFTER});
+	$tmpStatus = qq{<font color="red">} . $tmpStatus . qq{</font>};
+    } elsif ( $cert->getStatus() =~ /EXPIRED/i ) {
+	# if ($now <=
+	#     $cryptoShell->getNumericDate ($parsedCert->{NOTAFTER})) {
+		$tmpStatus = qq{<font color="#A63">} . gettext("Expired") .
+			     qq{</font>};
+	# }
+    } elsif ( $cert->getStatus() =~ /^SUSPENDED/ ) {
+	$tmpStatus = qq{<font color="red">} . $tmpStatus . qq{</font>};
+    }
+
+    my $download = '?cmd=send_email_cert;type=email;key='.$cert->getSerial();
+    my $revoke   = '?cmd=revoke_req;key='.$cert->getSerial();
+
+    # $info_list->{HEAD}->[0] = gettext("General Information");
+    # $info_list->{HEAD}->[0] = gettext("General Information");
+
+ 
+    $info_list->{CLASS} = "certView";
+    $info_list->{BODY}->[$info_pos++]->[0]   = "<b>General Information</b>";
+    # $info_list->{BODY}->[$info_pos]->[0]   = "<br/>";
+    # $info_list->{BODY}->[$info_pos++]->[1]   = "<br/>";
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" .
+						gettext("Certificate Version");
+					     "</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($parsedCert->{VERSION} or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" . gettext("Serial Number") .
+					     "</b>";
+    # $info_list->{BODY}->[$info_pos++]->[1] = $cert->getSerial()." (0x".sprintf("%X",$cert->getSerial()).")";
+    $info_list->{BODY}->[$info_pos++]->[1] = $cert->getSerial() . " (" . $parsedCert->{HEX_SERIAL} . ")";
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" . gettext("Common Name") .
+					     "</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($parsedCert->{DN_HASH}->{CN}[0] or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" . gettext("E-Mail") . "</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($emails or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" . 
+						gettext("Distinguished Name") .
+						"</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($tmpDN or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" . gettext("Role"). "</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($parsedCert->{HEADER}->{ROLE} or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" .gettext("Fingerprint").
+						"</b>";
+    $info_list->{BODY}->[$info_pos]->[1] = "SHA1:";
+    for ( my $i = 0; $i < length( $parsedCert->{FINGERPRINT}); $i += 2 ) {
+	$info_list->{BODY}->[$info_pos]->[1] .= ":" if ( $i > 0 );
+	$info_list->{BODY}->[$info_pos]->[1] .= 
+			uc ( substr( $parsedCert->{FINGERPRINT}, $i, 2 ));
+    }
+    $info_pos++;
+
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>".gettext("Issued by")."</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($tmpIssuer or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>".gettext("Valid From")."</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($parsedCert->{NOTBEFORE} or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>".gettext("Expiration on")."</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($parsedCert->{NOTAFTER} or gettext("n/a"));
+    $info_list->{BODY}->[$info_pos]->[0]   = "<b>" .gettext("Current Status")."</b>";
+    $info_list->{BODY}->[$info_pos++]->[1] = ($tmpStatus or gettext("n/a"));
+
+    if ( $cert->getStatus() =~ /SUSPENDED/i ) {
+	foreach my $crrStatus ( "APPROVED", "SIGNED", "PENDING", "NEW" ) {
+		my @crrList = $db->searchItems( DATATYPE => "$crrStatus"."CRR",
+			REVOKE_CERTIFICATE_SERIAL => $cert->getSerial());
+
+		if ( $db->{errno} ne 0 ) {
+			print STDERR "viewCertFull()->dbError::" .
+				$db->{errno} . "::".$db->{errval}."\n";
+			next;
+		}
+
+		if( $#crrList >= 0 ) {
+			my $crr;
+
+			$crr = $crrList[$#crrList];
+
+			$reason = qq{<font color='red'>} .
+					$crr->getParsed()->{REVOKE_REASON} .
+					" (CRR " . $crr->getSerial() . ")" .
+				  qq{</font>};
+			last;
+		}
+	}
+	if ( $reason eq "" ) {
+		$reason = qq{<font color='red'>} . gettext ("Unknown") .
+			  qq{</font>};
+	}
+	$info_list->{BODY}->[$info_pos]->[0] = "<b>" . gettext ("Reason") .
+				"</b>";
+	$info_list->{BODY}->[$info_pos++]->[1] = gettext ("$reason");
+	
+    } elsif ( $cert->getStatus() =~ /REVOKED/ ) {
+
+	my @crrList = $db->searchItems ( DATATYPE => "ARCHIVED_CRR",
+		REVOKE_CERTIFICATE_SERIAL => $cert->getSerial());
+
+	if ( $db->{errno} ne 0 ) {
+		print STDERR "viewCertFull()->dbError::" .
+			$db->{errno} . "::".$db->{errval}."\n";
+	} else {
+		if( $#crrList >= 0 ) {
+			my $crr;
+
+			$crr = $crrList[$#crrList];
+
+			$reason = qq{<font color='red'>} .
+				$crr->getParsed()->{REVOKE_REASON} .
+				" (CRR " . $crr->getSerial() . ")" .
+				  qq{</font>};
+		} else {
+			$reason = qq{<font color='red'>} . gettext ("Unknown") .
+				  qq{</font>};
+		}
+
+		$info_list->{BODY}->[$info_pos]->[0] = "<b>" . 
+					gettext ("Reason") .  "</b>";
+		$info_list->{BODY}->[$info_pos++]->[1] = gettext ("$reason");
+	}
+    }
+
+    # $info_list->{BODY}->[$info_pos]->[0]   = "<br/>";
+    # $info_list->{BODY}->[$info_pos++]->[1]   = "<br/>";
+    $info_list->{BODY}->[$info_pos++]->[0]   = "<b>" .gettext("Extensions")."</b>";
+    # $info_list->{BODY}->[$info_pos]->[0]   = "<br/>";
+    # $info_list->{BODY}->[$info_pos++]->[1]   = "<br/>";
+    foreach my $h (sort keys %{$parsedCert->{OPENSSL_EXTENSIONS}}) {
+	my $value = "";
+	foreach my $hh (@{$parsedCert->{OPENSSL_EXTENSIONS}->{$h}}) {
+		$value .= "<br />" if ($value);
+		$value .= $hh;
+	}
+        $info_list->{BODY}->[$info_pos]->[0]   = "<b>".gettext($h)."</b>";
+        $info_list->{BODY}->[$info_pos]->[0]   =~ s/X509v3\s+//;
+        $info_list->{BODY}->[$info_pos++]->[1] = $value;
+    }
+
+    #######################################
+    ## here starts the filtered commands ##
+    ## here starts the filtered commands ##
+    ## cmd_list                          ##
+    #######################################
+
+    $cmd_list->{HEAD}->[0] = gettext ("Operations");
+
+    my $allow = libGetPermissionHash (getRequiredList ('CmdRefs_viewCert'));
+
+    ## perhaps an operator want to have a look at the request
+    if ($allow->{VIEW_CSR} and
+        $parsedCert->{HEADER}->{CSR_SERIAL}
+       ) {
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("CSR's Serial Number");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = "<a href=\"".
+                                             "?cmd=viewCSR&dataType=ARCHIVED_REQUEST&key=".
+                                             $parsedCert->{HEADER}->{CSR_SERIAL}."\">".
+                                             "$parsedCert->{HEADER}->{CSR_SERIAL}</a>";
+        $cmd_pos++;
+    }
+
+    ## download certs in different formats
+    if ( $allow->{SENDCERT} and
+         ($dataType =~ /(VALID|EXPIRED|SUSPENDED)/i)
+       ) {
+	my $select = "<select " .
+		     " class=\"medium\" name=\"format_sendcert\">\n".
+			"<option class=\"medium\" value=\"crt\">Browser</option>\n".
+			"<option class=\"medium\" value=\"txt\">Text</option>\n".
+			"<option class=\"medium\" value=\"pem\">PEM</option>\n".
+			"<option class=\"medium\" value=\"der\">Binary (DER)</option>\n".
+			"<option class=\"medium\" value=\"cer\">Binary (CER)</option>\n".
+			"</select> &nbsp; ";
+	my $button = "<input ".
+			"TYPE=\"Submit\" ".
+			"Name=\"Submit\" ".
+			"Value=\"".gettext("Get")."\" ".
+			"Class=\"medium\" " .
+			"onClick=\"cmd.value='sendcert';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Certificate");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $select.$button;
+        $cmd_pos++;
+    }
+
+    ## prepare download of private keys
+    if ( $allow->{SEND_CERT_KEY} and $parsedCert->{PRIVKEY}) {
+	my $select = "<select class=\"medium\" name=\"format_send_cert_key\">\n".
+			"<option class=\"medium\" value=\"openssl\">SSLeay (mod_ssl)</option>\n".
+			"<option class=\"medium\" value=\"pkcs8\">PKCS#8</option>\n".
+			"<option class=\"medium\" value=\"pkcs12\">PKCS#12</option>\n".
+			"</select> &nbsp; ";
+	my $button = "<input ".
+			"TYPE=\"Submit\" ".
+			"Name=\"Submit\" ".
+			"Value=\"".gettext("Download")."\" ".
+			"Class=\"medium\" " .
+			"onClick=\"cmd.value='getParams';GET_PARAMS_CMD.value='send_cert_key';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Certificate and Keypair");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $select.$button;
+        $cmd_pos++;
+	## Change passphrase
+	my $change_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Value=\"".gettext("Change")."\" ".
+                        "onClick=\"cmd.value='changePasswd'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Change Passphrase");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $change_button;
+        $cmd_pos++;
+	## Remove private key from DB
+	my $remove_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Remove")."\" ".
+			# "class=\"medium\" " .
+                        "onClick=\"cmd.value='removeKey'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Remove Key from database");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $remove_button;
+        $cmd_pos++;
+    }
+
+    ## prepare the actualization of the LDAP
+    if ( $allow->{LDAP} and
+         (getRequired ('LDAP') =~ /y/i)
+       ) {
+	## update cert on LDAP
+	my $ldap_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Add to LDAP")."\" ".
+			# "class=\"medium\" " .
+                        "onClick=\"cmd.value='ldapAddCert'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Add the certificate to LDAP");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ldap_button;
+        $cmd_pos++;
+	## update cert on LDAP with modified DN
+	$ldap_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Add to LDAP with modified DN")."\" ".
+                        "onClick=\"cmd.value='getParams';GET_PARAMS_CMD.value='ldapAddCertByName';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Add the certificate to LDAP but with changed DN");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ldap_button;
+        $cmd_pos++;
+	## delete cert from LDAP
+	$ldap_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Delete from LDAP")."\" ".
+			# "Class=\"medium\" " .
+                        "onClick=\"cmd.value='ldapDeleteCert'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Delete the certificate from LDAP");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ldap_button;
+        $cmd_pos++;
+	## delete cert from LDAP with modified DN
+	$ldap_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Delete from LDAP with modified DN")."\" ".
+			# "Class=\"medium\" " .
+                        "onClick=\"cmd.value='getParams';GET_PARAMS_CMD.value='ldapDeleteCertByName';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Delete the certificate from LDAP but with changed DN");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ldap_button;
+        $cmd_pos++;
+    }
+    if ($allow->{TOKENHANDLING} and
+        not $parsedCert->{IS_CA} and
+        $status ne gettext("Revoked") and
+        $status ne gettext("Suspended")
+       )
+    {
+	my $ra_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+			# "Class=\"medium\" " .
+                        "Value=\"".gettext("Install Certificate")."\" ".
+                        "onClick=\"cmd.value='getcert'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Tokenhandling");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ra_button;
+        $cmd_pos++;
+    }
+    if ($allow->{MAIL}) {
+	my $ra_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Write a mail")."\" ".
+			# "Class=\"medium\" " .
+                        "onClick=\"cmd.value='writeCertMail'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Send mail to the User");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ra_button;
+        $cmd_pos++;
+    }
+
+    ## set enrollment passphrase for certificate and private key on public gateway
+    if ( $allow->{SET_PUBLIC_PASSWD} and
+         $parsedCert->{KEY} and
+         ($dataType =~ /(VALID|EXPIRED|SUSPENDED)/i)
+       ) {
+	my $button = "<input ".
+			"TYPE=\"Submit\" ".
+			"Name=\"Submit\" ".
+			"Value=\"".gettext("Set passphrase")."\" ".
+			# "Class=\"medium\" " .
+			"onClick=\"cmd.value='setPasswd';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Set passphrase for key enrollment");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $button;
+        $cmd_pos++;
+    }
+    if ( $allow->{DELETE_PUBLIC_PASSWD} and
+         $parsedCert->{KEY} and
+         ($dataType =~ /(VALID|EXPIRED|SUSPENDED)/i)
+       ) {
+	my $button = "<input ".
+			"TYPE=\"Submit\" ".
+			"Name=\"Submit\" ".
+			"Value=\"".gettext("Delete passphrase")."\" ".
+			# "Class=\"medium\" " .
+			"onClick=\"cmd.value='deletePasswd';\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Delete passphrase for key enrollment");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $button;
+        $cmd_pos++;
+    }
+
+    ## revoke cert
+    if ( $allow->{REVOCATION} and
+         $status ne gettext("Revoked")
+       )
+    {
+	my $ra_button = "<input ".
+                        "TYPE=\"Submit\" ".
+                        "Name=\"Submit\" ".
+                        "Value=\"".gettext("Revoke")."\" ".
+			# "Class=\"medium\" " .
+                        "onClick=\"cmd.value='revoke_req'\">";
+        $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Start Revocation");
+        $cmd_list->{BODY}->[$cmd_pos]->[1] = $ra_button;
+        $cmd_pos++;
+    }
+
+    if ($allow->{INSTALL_CERT}) {
+	if ($dataType =~ /(VALID|EXPIRED|SUSPENDED)_CERTIFICATE/) {
+            $cmd_panel->[0] = 
+			"<a href=\"".$download."\" onClick=\"alert('The Certificate will be installed under Other People Certificates Tab');\"".
+			" style=\"margin: 3px; padding: 3px; border: solid; border-width: 1px; background: #fafaff; color: black;\">".
+			gettext("Install the certificate")."</a>";
+            $cmd_panel->[1] = 
+			"<a href=\"".$revoke."\"".
+			" style=\"margin: 3px; padding: 3px; border: solid; border-width: 1px; background: #fafaff; color: black;\">".
+			gettext("Revoke the certificate")."</a>";
+	}
+    }
+
+    return libSendReply (
+                         "NAME"        => i18nGettext ("__STATUS__ Certificate", "__STATUS__", $status),
+                         "EXPLANATION" => gettext ("Following you can find the certificate details."),
+                         "TIMESTAMP"   => 1,
+                         "INFO_LIST"   => $info_list,
+                         "CMD_LIST"    => $cmd_list,
+                         "CMD_PANEL"   => $cmd_panel,
+                         "HIDDEN_LIST" => $hidden_list
+                        );
+}
+1;

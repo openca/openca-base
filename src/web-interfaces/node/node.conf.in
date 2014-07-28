@@ -1,0 +1,213 @@
+## Configuration File for RA Manager Utility
+## (c) 1998-2002 by Massimiliano Pala - All Rights Reserved
+
+## LDAP Section:
+## =============
+
+LDAP "@useLDAP@"
+updateLDAPautomatic "@update_ldap_automatic@"
+
+## Crypto Section
+## ==============
+openssl    	"@OPENSSL@"
+sslconfig  	"@etc_prefix@/openssl/openssl.cnf"
+sslindex   	"@var_prefix@/crypto/index.txt"
+sslserial  	"@var_prefix@/crypto/serial"
+OCSPindex	"@var_prefix@/crypto/ocsp_index.txt"
+OpenCA_SV_Path	"@EXEC_PREFIX@/bin/openca-sv"
+MakePath   	"@MAKE@"
+
+## General Section
+## ===============
+
+DEFAULT_LANGUAGE "@default_language@"
+DEFAULT_CHARSET  "@default_charset@"
+SUPPORT_EMAIL    "@support_mail_address@"
+
+## Updates Management
+Updates	 	"Y"
+CgiLibPath      "@lib_prefix@/functions"
+CgiCmdsPath     "@lib_prefix@/cmds"
+CgiServerType	"node"
+CgiServerName	"@node_prefix@"
+
+PerlModulesPath "@perl_modules_prefix@"
+WebGetCommand   "@web_get_command@"
+FindCommnad     "@find_command@"
+
+ModuleID	@node_module_id@
+ModuleShift	@module_shift@
+
+HtdocsUrlPrefix		"@node_htdocs_url_prefix@"
+EtcPrefix		"@etc_prefix@"
+TopLogo			"@node_htdocs_url_prefix@/images/top_logo.png"
+Organization		"@ca_organization@"
+
+## The Login feature is not supported by the interface yet, anyhow
+## this config keyword will enable the login fields to appear in the
+## top part of the UI. Enable it to see how the login fields will
+## appear in the next versions of OpenCA. To enable it, set it to
+## "Y" or "1".
+EnableLogin		"N"
+
+## The Page body is included to generate the HomePage for the server
+## to support internationalization, we look for the file with the
+## suffix for the supported language (eg., if the filename is
+## home_body.in - we look for home_body.in.en_GB if the language is
+## set to english, for home_body.in.it_IT if italian is selected, etc.)
+HOME_PAGE_BODY_INCLUDE		"@etc_prefix@/includes/home_body.inc"
+HOME_PAGE_DISPLAY_TITLE		"N"
+HOME_PAGE_DISPLAY_EASY_PANEL	"N"
+HOME_PAGE_DISPLAY_NOTICES_PANEL	"Y"
+
+SessionDir      @var_prefix@/session/cookie
+SessionLifetime 1200
+
+DBmodule 	"@dbmodule@"
+AccessControlConfiguration "@etc_prefix@/access_control/@node_prefix@.xml"
+SoftwareConfiguration      "@etc_prefix@/config.xml"
+RoleConfiguration          "@etc_prefix@/rbac/roles.xml"
+ModuleConfiguration        "@etc_prefix@/rbac/modules.xml"
+TokenConfiguration         "@etc_prefix@/token.xml"
+LogConfiguration           "@etc_prefix@/log.xml"
+MenuConfiguration          "@etc_prefix@/menu.xml"
+BackupConfiguration        "@etc_prefix@/backup.xml"
+LDAPConfiguration          "@etc_prefix@/ldap.xml"
+
+CertDir		"@var_prefix@/crypto/certs"
+TempDir 	"@var_prefix@/tmp"
+LOG_DIR 	"@var_prefix@/log"
+BP_DIR		"@var_prefix@/batch"
+BP_EXPORT_PKCS12_DIR    "@var_prefix@/bp/dataexchange/pkcs12"
+MaxReturnedItems 20
+
+## Certificates and CRLs Section
+## =============================
+
+CACertificate 		"@var_prefix@/crypto/cacerts/cacert.pem"
+CACertificateDER 	"@var_prefix@/crypto/cacerts/cacert.der"
+CACertificateTXT	"@var_prefix@/crypto/cacerts/cacert.txt"
+CACertificateCRT 	"@var_prefix@/crypto/chain/cacert.crt"
+CACertsDir 		"@var_prefix@/crypto/cacerts"
+CertsDir 		"@var_prefix@/crypto/certs"
+ChainDir	 	"@var_prefix@/crypto/chain"
+CRLDir			"@var_prefix@/crypto/crls"
+
+## Mail Section
+## ============
+##
+## The RA Manager program needs to send an e-mail to each user when he
+## certificate has been successuffly published. Because of this you
+## have to configure the sendmail program to use the right server.
+## Watch out for mail attacs. Secure yourself.
+
+## Do you want to send mail when certificate is published ?
+warnuser yes
+
+## Now let's define the command line for the sendmail with right options
+mailcommand          "@sendmail@"
+SERVICE_MAIL_ACCOUNT "@service_mail_account@"
+
+## Dataexchange section
+## ====================
+
+## dataexchange with a higher level of the hierarchy
+EXPORT_IMPORT_UP_DEVICE "@dataexchange_device_up@"
+EXPORT_IMPORT_UP_START  ""
+EXPORT_IMPORT_UP_STOP   ""
+EXPORT_IMPORT_UP_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+EXPORT_IMPORT_UP_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+EXPORT_IMPORT_UP_TEST   "@TAR@ -tvf @__DEVICE__@"
+
+## dataexchange with a lower level of the hierarchy
+EXPORT_IMPORT_DOWN_DEVICE "@dataexchange_device_down@"
+EXPORT_IMPORT_DOWN_START  ""
+EXPORT_IMPORT_DOWN_STOP   ""
+EXPORT_IMPORT_DOWN_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+EXPORT_IMPORT_DOWN_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+EXPORT_IMPORT_DOWN_TEST   "@TAR@ -tvf @__DEVICE__@"
+
+## local dataexchange (backup, recovery and batchprocessors)
+EXPORT_IMPORT_LOCAL_DEVICE "@dataexchange_device_local@"
+EXPORT_IMPORT_LOCAL_START  ""
+EXPORT_IMPORT_LOCAL_STOP   ""
+EXPORT_IMPORT_LOCAL_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+EXPORT_IMPORT_LOCAL_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+EXPORT_IMPORT_LOCAL_TEST   "@TAR@ -tvf @__DEVICE__@"
+
+##
+## Example with scp and temporary online CA
+##
+## CA-node:
+## --------
+## EXPORT_IMPORT_DOWN_DEVICE "openca.tar"
+## EXPORT_IMPORT_DOWN_START  "/sbin/ifconfig eth0 up"
+## EXPORT_IMPORT_DOWN_STOP   "/sbin/ifconfig eth0 down"
+## EXPORT_IMPORT_DOWN_EXPORT "@TAR@ -cvpf @var_prefix@/tmp/@__DEVICE__@ -C @__SRC__@ ." "/usr/bin/scp @var_prefix@/tmp/@__DEVICE__@ openca@ra.openca.org:/usr/local/OpenCA/var/tmp/" "rm @var_prefix@/tmp/@__DEVICE__@"
+## EXPORT_IMPORT_DOWN_IMPORT "/usr/bin/scp openca@ra.openca.org:/usr/local/OpenCA/var/tmp/@__DEVICE__@ @var_prefix@/tmp/@__DEVICE__@" "@TAR@ -xvf @var_prefix@/tmp/@__DEVICE__@ -C @__DEST__@" "rm @var_prefix@/tmp/@__DEVICE__@"
+## EXPORT_IMPORT_DOWN_TEST   ""
+## 
+## RA-node:
+## --------
+## EXPORT_IMPORT_UP_DEVICE "/usr/local/OpenCA/var/tmp/openca.tar"
+## EXPORT_IMPORT_UP_START  ""
+## EXPORT_IMPORT_UP_STOP   ""
+## EXPORT_IMPORT_UP_EXPORT "@TAR@ -cvpf @__DEVICE__@ -C @__SRC__@ ."
+## EXPORT_IMPORT_UP_IMPORT "@TAR@ -xvf @__DEVICE__@ -C @__DEST__@"
+## EXPORT_IMPORT_UP_TEST   "@TAR@ -tvf @__DEVICE__@"
+##
+## you can use mountable devices like CD-RWs too
+
+## states when the export from the database should be performed
+EXPORT_IMPORT_MODULES
+
+LOG_DOWNLOAD_DIR "@var_prefix@/log/download"
+LOG_ENROLL_DIR "@var_prefix@/log/enroll"
+LOG_RECEIVE_DIR "@var_prefix@/log/receive"
+LOG_UPLOAD_DIR "@var_prefix@/log/upload"
+
+ENROLL_CA_CERTIFICATE_STATES @enroll_ca_certificate_states@
+ENROLL_CERTIFICATE_STATES    @enroll_certificate_states@
+ENROLL_CRL_STATES            @enroll_crl_states@
+ENROLL_CRR_STATES            @enroll_crr_states@
+ENROLL_CSR_STATES            @enroll_csr_states@
+ENROLL_MAIL_STATES           @enroll_mail_states@
+
+RECEIVE_CRR_STATES  @receive_crr_states@
+RECEIVE_CSR_STATES  @receive_csr_states@
+
+DOWNLOAD_CA_CERTIFICATE_STATES @download_ca_certificate_states@
+DOWNLOAD_CERTIFICATE_STATES    @download_certificate_states@
+DOWNLOAD_CRL_STATES            @download_crl_states@
+DOWNLOAD_CRR_STATES            @download_crr_states@
+DOWNLOAD_CSR_STATES            @download_csr_states@
+DOWNLOAD_MAIL_STATES           @download_mail_states@
+
+UPLOAD_CRR_STATES   @upload_crr_states@
+UPLOAD_CSR_STATES   @upload_csr_states@
+
+##
+## Role management Section
+## -----------------------
+
+RBAC_DIR          "@etc_prefix@/rbac"
+RBAC_MODULE       "RA 1"
+ROLES_DIR         "roles"
+RIGHTS_DIR        "rights"
+SCRIPT_CONFIG_DIR "scripts"
+OPENSSL_DIR       "@etc_prefix@/openssl/openssl"
+EXT_DIR           "@etc_prefix@/openssl/extfiles"
+
+##################################
+## secure PIN support for certs ##
+##################################
+MAIL_DIR                  "@var_prefix@/mail"
+CRIN_MAIL_DIR             "@var_prefix@/mail/crins"
+CRINS_MAIL_DIR            "@var_prefix@/mail/crins"
+DEFAULT_MAIL_DIR          "@var_prefix@/mail/default"
+SENT_MAIL_CRIN_COUNTER    "@var_prefix@/mail/crins/mailcounter"
+SENT_MAIL_DEFAULT_COUNTER "@var_prefix@/mail/default/mailcounter"
+
+# any true value except of NO
+SEND_MAIL_DURING_IMPORT "@send_mail_automatic@"
+

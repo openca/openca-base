@@ -1,0 +1,359 @@
+## OpenCA Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: genMenu
+##       Brief: generate a menu page
+## Description: generate a menu based on the webinterface and the
+##	        link chosen
+##  Parameters: iface,on
+
+use strict;
+
+sub cmdGenMenu {
+
+	my $iface 	= getRequired ('CgiServerName');
+	my $on 		= ($query->param('on') or "1");
+	my $root	= "interface_menus";
+
+	my ( $page, $file, $twig, $configfile );
+	my ( $id, $name, $space, $logo_left, $logo_right, $style );
+	my ( $on_template, $off_template, $menu_tabs );
+	my ( $item_template, $menu_items );
+	my ( $item_name, $item_link, $item_target );
+        my ( @xpath, @counter ) = ( (), () );
+	my ( $ht_prefix, $cgi_prefix, $row );
+
+	# Templates
+	# 2004-12-17 Martin Bartosch: does not seem to be used
+	# my $menu_template = qq{ <div class="menu">@menu@</div> };
+
+        ## get the appropriate menu
+        my $menus = $xml_cache->get_xpath_count(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => "${root}/interface");
+	my ($menu, $menu_class);
+        for (my $i=0; $i < $menus; $i++) {
+            next if ($xml_cache->get_xpath(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ "${root}/interface", "name" ],
+                        COUNTER  => [ $i, 0 ]) !~ /${iface}/);
+            $menu = $i;
+            last;
+        }
+
+        ## Now do everything...
+        $ht_prefix  = $xml_cache->get_xpath(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ "${root}/interface", "htdocs_prefix" ],
+                        COUNTER  => [ $menu, 0 ]);
+        $cgi_prefix = $xml_cache->get_xpath(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ "${root}/interface", "cgi_prefix" ],
+                        COUNTER  => [ $menu, 0 ]);
+        $logo_left  = $xml_cache->get_xpath(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ "${root}/interface", "logo_left" ],
+                        COUNTER  => [ $menu, 0 ]);
+	$logo_left  =~ s/&lt;/\</g;
+	$logo_left  =~ s/&gt;/\>/g;
+        $logo_right = $xml_cache->get_xpath(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ "${root}/interface", "logo_right" ],
+                        COUNTER  => [ $menu, 0 ]);
+	$logo_right  =~ s/&lt;/\</g;
+	$logo_right  =~ s/&gt;/\>/g;
+	@xpath      = ( "${root}/interface", "menu" );
+        @counter    = ( $menu, 0 );
+        my @id_path = $query->param ('id');
+        my @id_scan = ();
+
+	if( $#id_path < 0 ) {
+		push( @id_path, 1 );
+	}
+
+        my $table = "";
+	my $level = 0;
+        foreach my $h_id (@id_path) {
+            ($row, @counter [scalar @counter]) = buildMenuRow (
+                                            XPATH   => [ @xpath ],
+                                            COUNTER => [ @counter ],
+                                            HTDOCS  => $ht_prefix,
+                                            CGI     => $cgi_prefix,
+                                            ID      => $h_id,
+					    LEVEL   => $level,
+                                            ID_PATH => \@id_scan);
+            @xpath [scalar @xpath] = 'item';
+            push @id_scan, $h_id;
+	    $table .= $row;
+	    $level++;
+        }
+        ($row, @counter [scalar @counter]) = buildMenuRow (
+                                        XPATH   => [ @xpath ],
+                                        COUNTER => [ @counter ],
+                                        HTDOCS  => $ht_prefix,
+                                        CGI     => $cgi_prefix,
+                                        ID      => "",
+					LEVEL	=> $level,
+                                        ID_PATH => \@id_scan);
+	$table .= $row;
+
+	## Insert Right Values
+        $table = $query->subVar( $table, '__HTDOCS_PREFIX__', $ht_prefix);
+	$table = $query->subVar( $table, '@IMGDIR@', "$ht_prefix/images" );
+
+        $logo_left = $query->subVar($logo_left,'__HTDOCS_PREFIX__',$ht_prefix);
+        $logo_right= $query->subVar($logo_right,'__HTDOCS_PREFIX__',$ht_prefix);
+
+	$table .= recursivePath();
+
+        return libSendMenu ($table, $logo_left, $logo_right);
+}
+
+sub buildMenuRow {
+    my $keys = { @_ };
+
+    my $xpath      = $keys->{XPATH};
+    my $counter    = $keys->{COUNTER};
+    my $id         = $keys->{ID};
+    my $level      = $keys->{LEVEL};
+    my $id_path    = $keys->{ID_PATH};
+    my $ht_prefix  = $keys->{HTDOCS};
+    my $cgi_prefix = $keys->{CGI};
+
+    my $row = "";
+    my $row_class = "";
+    my $menu_entity = "";
+    my $item_name = "";
+    my $item_id = "";
+    my $item_link = "";
+    my $item_class = "";
+    my $item_target = "";
+
+    my $items = $xml_cache->get_xpath_count (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @{$xpath}, 'item' ],
+                    COUNTER  => [ @{$counter} ]);
+
+    for (my $i=0; $i < $items; $i++) {
+	$item_link = "";
+        my $item_name_c = $xml_cache->get_xpath (
+                             FILENAME => getRequired ('MenuConfiguration'),
+                             XPATH    => [ @{$xpath}, 'item', 'name' ],
+                             COUNTER  => [ @{$counter}, $i, 0 ]);
+	$item_name = gettext ( $item_name_c );
+        if ($xml_cache->get_xpath_count (
+                   FILENAME => getRequired ('MenuConfiguration'),
+                   XPATH    => [ @{$xpath}, 'item', 'id' ],
+                   COUNTER  => [ @{$counter}, $i ])
+	   ) {
+		foreach my $h (@{$id_path}) {
+                	$item_link .= ";id=$h";
+                	#$item_class .= "sub";
+            	}
+		$item_id = $xml_cache->get_xpath (
+                	FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ @{$xpath}, 'item', 'id' ],
+                        COUNTER  => [ @{$counter}, $i, 0 ]);
+		if( $item_id ) {
+            		$item_link .= ";id=".$item_id;
+		}
+
+		if( "$item_id" == "$id" ) {
+            		$item_class = "tab_on";
+		} else {
+			$item_class = "tab_off";
+		}
+            	$item_link = "cmd=genMenu".$item_link;
+		$item_target = "top";
+            	if ($id eq $xml_cache->get_xpath (
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ @{$xpath}, 'item', 'id' ],
+                        COUNTER  => [ @{$counter}, $i, 0 ])
+		   ) {
+                	$menu_entity = $i;
+            	}
+        } else {
+            $item_link = $xml_cache->get_xpath (
+            		FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ @{$xpath}, 'item', 'link' ],
+                        COUNTER  => [ @{$counter}, $i, 0 ]);
+            $item_target = $xml_cache->get_xpath (
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => [ @{$xpath}, 'item', 'target' ],
+                        COUNTER  => [ @{$counter}, $i, 0 ]);
+        }
+        if ($item_link !~ /^(\/|http:|https:|ldap:|ldaps:|mailto:)/) {
+            $item_link = "${cgi_prefix}${item_link}";
+        }
+
+	if( $level > 0 ) {
+		$item_class = '';
+		if($id) {
+			$item_class = '';
+		} elsif ( $level > 1 ) {
+			$item_class = 'sub';
+		}
+
+		if( $item_link =~ /id=/i and "$id" == "$item_id" ) {
+			$item_class .= 'submenu_item_on';
+            	} else {
+                	$item_class .= "submenu_item_off";
+            	}
+	}
+
+	$row .= qq{ 
+   		<a class="$item_class" href="$item_link" target="$item_target">
+     			$item_name
+   		</a>
+		};
+    }
+	if( $level < 1 ) {
+		$row_class = "menu_row";
+	} elsif ( $level == 1 ) {
+		$row_class = 'submenu_row';
+	} else {
+		if( $id ) {
+			$row_class = 'submenu_row';
+		} else {
+			$row_class = 'subsubmenu_row';
+		}
+	}
+
+	$row = qq{
+		<tr><td>
+			<div class="$row_class">
+			   $row
+			</div>
+		</td></tr>
+	};
+
+    return ($row, $menu_entity);
+}
+
+sub recursivePath {
+	my $keys = { @_ };
+	my $menu = 0;
+	my $subitems = 0;
+	my $ret = "";
+	my @xpath = ();
+	my $i = 0;
+	my $root = "interface_menus";
+	my $menus = 0;
+
+        ## get the appropriate menu
+        my $menus = $xml_cache->get_xpath_count(
+                        FILENAME => getRequired ('MenuConfiguration'),
+                        XPATH    => "${root}/interface");
+
+	# $ret .= "[MENU::DEBUG] MENUS => $menus<br>\n";
+
+        my ($menu, $menu_class);
+	my $iface = "ca";
+
+        for (my $i=0; $i < $menus; $i++) {
+	    my $m_name = "";
+            if (($m_name = $xml_cache->get_xpath(
+                        	FILENAME => getRequired ('MenuConfiguration'),
+                        	XPATH    => [ "${root}/interface", "name" ],
+               			COUNTER  => [ $i, 0 ])) !~ /${iface}/) {
+
+			# $ret .= "[MENU::DEBUG] NON MATCHING MENU => $m_name (${iface})<br>\n";
+			next;
+	    } else {
+			# $ret .= "[MENU::DEBUG] OK MATCHING MENU => $m_name ($i)<br>\n";
+	    }
+            $menu = $i;
+            last;
+        }
+
+	# $ret .= "[MENU::DEBUG] MENU => $menu<br>\n";
+
+	my @xpath      = ( "${root}/interface", "menu" );
+	my @counter    = ( $menu, 0 );
+
+	$ret .= recur( XPATH => [ @xpath ] , COUNTER => [ @counter ] );
+
+	return $ret;
+}
+
+sub recur {
+	my $keys = { @_ };
+	my $ret = "";
+
+	my @xpath = @{$keys->{XPATH}};
+	my @counter = @{$keys->{COUNTER}};
+
+	# $ret .= "[MENU::DEBUG] RECUR START => XPATH(" . scalar(@xpath) .")".
+	# 		"  COUNTER(". scalar(@counter) .")<br>\n";
+
+    	my $items = $xml_cache->get_xpath_count (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @xpath, 'item' ],
+                    COUNTER  => [ @counter ]);
+
+	# $ret .= "[MENU::DEBUG] ITEMS => $items<br>\n";
+
+	for( my $i = 0; $i < $items; $i++ ) {
+		my $item = "";
+		my $subname = "";
+		my @sub_xpath = ();
+		my @sub_counter = ();
+
+		$subname = $xml_cache->get_xpath (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @xpath, , 'item', 'name' ],
+                    COUNTER  => [ @counter, $i, 0 ]);
+
+		# $ret .= "[MENU::DEBUG::SUB NAME] => $subname<br>\n";
+
+		$subname = $xml_cache->get_xpath (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @xpath, 'item', 'target' ],
+                    COUNTER  => [ @counter, $i, 0 ]);
+
+		#$ret .= "[MENU::DEBUG::SUB TARGET] => $subname<br>\n";
+
+		$subname = $xml_cache->get_xpath (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @xpath, 'item', 'link' ],
+                    COUNTER  => [ @counter, $i, 0 ]);
+
+		#$ret .= "[MENU::DEBUG::SUB LINK] => $subname<br>\n";
+
+		if( ($item = $xml_cache->get_xpath_count (
+                    FILENAME => getRequired ('MenuConfiguration'),
+                    XPATH    => [ @xpath, 'item' ],
+                    COUNTER  => [ @counter ])) > 0 ) {
+			# Go deeper
+			# $ret .= "[MENU::DEBUG] ====== SHOULD Go Deeper ($item) ======== <br>\n";
+
+			@sub_xpath = ( @xpath, 'item' );
+			@sub_counter = ( @counter, $i, 0 );
+
+			for( my $k = 0; $k < $item; $k++ ) {
+				$subname = $xml_cache->get_xpath (
+					FILENAME => getRequired ('MenuConfiguration'),
+					XPATH    => [ @sub_xpath, 'item', 'name' ],
+					COUNTER  => [ $k, 0 ]);
+
+				# $ret .= "[MENU::DEBUG::SUB NAME] => $subname<br>\n";
+			}
+			
+			# $ret .= recur( 
+			#	XPATH => [ @sub_xpath ],
+			#	COUNTER => [ @sub_counter ]
+			#
+		} else {
+			# $ret .= "[MENU::DEBUG::NO SUB ITEMS ] ($item) <br>\n";
+		}
+
+	}
+
+	# $ret .= "[MENU::DEBUG] -=-=-=-=- EMERGING FROM RECUR -=-=-=-=-=-<br>\n";
+	return $ret;
+}
+
+1;
+
+__END__;

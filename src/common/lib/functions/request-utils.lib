@@ -1,0 +1,934 @@
+## OpenCA - Request Utils
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+
+use strict;
+
+our ( $query );
+
+##################################################################
+#                                                                #
+#  Safely get a field from a twig object - if the field does not #
+#  Exists, it will just return undef                             #
+#                                                                #
+##################################################################
+
+sub getField {
+	my $item = shift;
+	my $name = shift;
+	my $ret = undef;
+
+	if( (defined $item) and (defined $name) and ($name ne "") ) {
+		my $retChild = $item->first_child($name);
+		if( $retChild ) {
+			$ret = $retChild->field;
+		} else {
+			return undef;
+		}
+	} else {
+		return undef;
+	}
+
+	return $ret;
+}
+
+sub  getFieldAtts {
+	my $item = shift;
+	my $name = shift;
+	my $ret = undef;
+
+	if( (defined $item) and (defined $name) and ($name ne "") ) {
+		my $retChild = $item->first_child($name);
+		if( $retChild ) {
+			$ret = $retChild->atts;
+		} else {
+			return undef;
+		}
+	} else {
+		return undef;
+	}
+
+	return $ret;
+}
+
+
+sub getXMLItemAttrs {
+	my $item = shift;
+	my $ret = undef;
+
+	if( defined $item ) {
+		return $item->atts;
+	} else {
+		return undef;
+	}
+}
+
+
+####################################################################
+#                                                                  #
+#  Generate HTML input element from the TWIG element passed as the #
+#  first argument ( $item )                                        #
+#                                                                  #
+####################################################################
+
+sub getInput {
+        my $item = shift;
+        my $ret = undef;
+
+        my @fields = ( 'label', 'name', 'type', 'charset', 'minlen',
+                        'required', 'readonly', 'errlabel', 'readonly',
+                        'class', 'disabled', 'info' );
+
+        foreach my $att ( @fields ) {
+                $ret->{$att} = getField ( $item, $att );
+        }
+
+        return $ret;
+}
+
+sub getInputAtts {
+        my $item = shift;
+        my $ret = undef;
+
+        my @fields = ( 'label', 'name', 'type', 'charset', 'minlen',
+                        'required', 'readonly', 'errlabel', 'readonly',
+                        'class', 'disabled', 'info' );
+
+        foreach my $att ( @fields ) {
+                $ret->{$att} =  getFieldAtts ( $item, $att );
+        }
+
+        return $ret;
+}
+
+
+sub genInputXML {
+	my $item = shift;
+	my $data = shift;
+	my $class = undef;
+	my $optional = undef;
+	my $html_input = undef;
+        my $readonly = undef;
+        my $disabled = undef;
+	my %ret = undef;
+
+	my @valSet = ();
+	my @value = ();
+
+	if( not defined $item ) {
+		return "";
+	}
+
+        my $input = getInput( $item );
+        my $inputAtts = getInputAtts ( $item );
+
+        my $htdocs_prefix = getRequired( "HtdocsUrlPrefix" );
+
+	@valSet = ($item->get_xpath('value'));
+
+	if( $input->{type} =~ /select/i ) {
+		$input->{type} = "popup_menu";
+	} elsif ( $input->{type} =~ /passwd|password|pass/i ) {
+		$input->{type} = "password_field";
+	}
+
+	foreach my $r ( @valSet ) {
+		push ( @value, $r->field );
+	}
+
+	for( my $t=0; $t < @value; $t++ ) {
+		while( $value[$t] =~ /(\$[^\$\s]+)/g ) {
+			my $tmpVal = $1;
+			my $paramVal = undef;
+
+			if ( $tmpVal =~ /^\$CONFIG::/ ) {
+				my @valList = ();
+				my @newValue = ();
+
+				$tmpVal =~ s/\$CONFIG:://;
+
+			        foreach my $list_item(getRequiredList($tmpVal)){
+            				push (@valList, $list_item);
+        			}
+
+				$value[$t] =~ 
+					s/(\$CONFIG::$tmpVal)/$valList[0]/;
+
+				shift ( @valList );
+				@newValue = @value[0 .. $t];
+				push( @newValue, @valList );
+				push( @newValue, @value[$t+1 .. $#value] );
+
+				@value = @newValue;
+
+			} elsif ( $tmpVal =~ /^\$EXEC::/ ) {
+				my @valList = ();
+				my @newValue = ();
+
+				$tmpVal =~ s/\$EXEC:://;
+
+			        foreach my $list_item( eval $tmpVal ){
+            				push (@valList, $list_item);
+        			}
+
+				$value[$t] =~ 
+					s/(\$EXEC::$tmpVal[\)\(]*)/$valList[0]/;
+
+				shift ( @valList );
+				@newValue = @value[0 .. $t];
+				push( @newValue, @valList );
+				push( @newValue, @value[$t+1 .. $#value] );
+
+				@value = @newValue;
+
+			} elsif ( $tmpVal =~ /^\$DATA::/ ) {
+				$tmpVal =~ s/\$DATA:://;
+                                $value[$t] =~ s/(\$DATA::$tmpVal)/$data->{$tmpVal}/g;
+                        } else {
+                                my $newVal = undef;
+                                my $origVal = undef;
+
+                                $origVal = $tmpVal;
+                                foreach my $l ( $origVal =~ /\$([^\s\$]+)/g ) {
+                                        $newVal = $query->param("$l");
+                                        # print STDERR "l=>$l ; " .
+					#	"origVal => $origVal ; " . 
+					#		"newVal => $newVal\n";
+                                        # if( $newVal eq "" ) {
+                                        #         $newVal = (eval $$l);
+                                        # }
+
+                                        $value[$t] =~ s/(\$$l)/$newVal/;
+                                }
+                        } 
+
+			# } else {
+			# 	$tmpVal =~ s/^\$//;
+			# 	$paramVal = $query->param( "$tmpVal");
+			# 	$value[$t] =~ s/(\$$tmpVal)/$paramVal/g;
+			# }
+		}
+	}
+
+
+	if( $input->{required} =~ /YES/gi ) {
+		$optional = 0;
+		$class = "required";
+	} else {
+		$optional = 1;
+		$class = "optional";
+	}
+
+	$ret{LABEL} = gettext( $input->{label} );
+
+        if ( $input->{disabled} =~ /YES/i ) {
+                $disabled=1;
+        } elsif ( $input->{readonly} =~ /YES/i ) {
+                $readonly=1;
+        }
+
+	if( $input->{type} =~ /popup_menu/i ) {
+                my %labels = undef;
+
+                foreach my $val ( @value ) {
+                        $labels{$val} = gettext ( $val );
+                };
+
+                if( $disabled == 1) {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+                                -disabled => $disabled,
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+                                -labels   => \%labels,
+				-value    => [ @value ] );
+                } elsif ( $readonly == 1 ) {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+                                -readonly => $readonly,
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+                                -labels   => \%labels,
+				-value    => [ @value ] );
+                } else {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+                                -labels   => \%labels,
+				-value    => [ @value ] );
+                }
+	} else {
+                if( $disabled == 1) {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+                                -disabled => $disabled,
+				-value    => $value[0] );
+                } elsif ( $readonly == 1 ) {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+                                -readonly => $disabled,
+				-value    => $value[0] );
+                } else {
+		        $html_input = $query->newInput (
+				-regx     => uc($input->{charset}),
+				-intype   => $input->{type},
+				-class    => $class,
+				-name     => $input->{name},
+				-optional => $optional,
+				-check    => 'fill',
+				-minlen   => $input->{minlen},
+				-value    => $value[0] );
+                }
+	}
+
+	$ret{VALUE} = $html_input;
+
+        if( $input->{info} ) {
+                $ret{VALUE} .= " <a href=\"" .
+                                        $input->{info} . "\">" .
+                                "<img src=\"$htdocs_prefix/images/" .
+                                        $inputAtts->{info}->{img} . "\" " .
+                                        "style='vertical-align:bottom;' />".
+                                "</a>";
+        }
+
+	return ( %ret );
+
+}
+
+sub loadKeyStrengths {
+
+        our ( $query );
+
+	my @keySizeList = ();
+        my @supportedList = getRequiredList('SupportedKeyStrengths');
+
+        ## Now we shall get the LOA configuration
+        my $loaName = gettext( $query->param('loa'));
+
+        if ( $loaName eq "" ) {
+                ## If no loa value, we just return the list
+                ## Get the list of supported Labels for Algorithms
+                foreach my $r ( @supportedList ) {
+                        push (@keySizeList, gettext ( $r ));
+                }
+
+                return (@keySizeList);
+        }
+
+        # cmds_debug("loadLeyStrength()::loaName = $loaName\n");
+
+        ## load the LOA configuration file
+        my $loaTwig = loadConfigXML ('LOAConfiguration');
+
+        ## for each Loa...
+        foreach my $loa ( $loaTwig->get_xpath("loa")) {
+
+                my $name = gettext (getField( $loa, 'name'));
+
+                if ( $name !~ /^$loaName$/i ) {
+                        next;
+                };
+
+                foreach my $algor ( $loa->get_xpath("requires/strength")) {
+
+                        my $name = undef;
+                        my $bits = undef;
+
+                        my $algorName = getField ( $algor, 'name' );
+
+                        # cmds_debug("loadLeyStrength()::algorName $algorName");
+
+                        if ( $algorName eq "" ) {
+                                next;
+                        }
+
+                        if( grep ( /$algorName/i , @supportedList ) ) {
+                                #cmds_debug("loadLeyStrength()::adding " .
+                                #     "$algorName to the list of Strengthes\n");
+                                push ( @keySizeList, gettext ( $algorName ))
+                        }
+                }
+        }
+
+	return ( @keySizeList );
+}
+
+
+sub loadKeygenMode {
+
+        our ( $query );
+
+        my $loaparam = shift;
+
+        my $loaName = $query->param('loa') or $loaparam;
+
+	my @retList = ();
+
+        if( $loaName eq "" ) {
+                $loaName = $loaparam;
+        }
+
+        ## load the LOA configuration file
+        my $loaTwig = loadConfigXML ('LOAConfiguration');
+
+        ## for each Loa...
+        foreach my $loa ( $loaTwig->get_xpath("loa")) {
+
+                my $name = getField( $loa, 'name');
+
+                if ( ($name eq "" ) or ($name !~ /^$loaName$/i )) {
+                        next;
+                };
+
+                foreach my $mode ($loa->get_xpath("requires/keygen/mode")) {
+                        # print STDERR "loadKeygenMode()::adding " . 
+                        #                                 $mode->field . "\n";
+                        if( $mode->field ne "" ) {
+                                push (@retList, $mode->field );
+                        }
+                }
+        }
+
+        return ( @retList );
+}
+
+
+sub loadKeyTypes {
+
+        our ( $query );
+
+	my @keyTypeList = ();
+        my @retList = ();
+        my %hashList = undef;
+
+	my $type = getReqType();
+
+        my $loaAlgs = getLoaAlgorithms( $query->param('loa'));
+	
+	if ( $type =~ /BASIC/gi ) {
+		# We provide the possibility to choose
+		# only from rsa and dsa for now, in future
+		# we may enable ECDSA
+		@keyTypeList = ( 'RSA', 'DSA', 'ECDSA' );
+	} elsif ( $type =~ /IE|NSS|VISTA/gi ) {
+		@keyTypeList = ( 'RSA', 'DSA' );
+	} else {
+		@keyTypeList = ( 'RSA' );
+	}
+
+        foreach my $r ( keys %$loaAlgs ) {
+                foreach my $t ( keys %{ $loaAlgs->{$r}} ) {
+
+                        if ( $t =~ /ID-ECPUBLICKEY/i ) {
+                                $t = "ECDSA";
+                        };
+
+                        $hashList { $t } = 1;
+                }
+        }
+
+        foreach my $k ( @keyTypeList ) {
+                if ( $hashList { $k } eq "1" ) {
+                        push ( @retList, $k );
+                }
+        }
+
+	return ( @retList );
+}
+
+sub getLoaAlgorithms {
+
+        my $loaName = shift;
+
+	my $ret = undef;
+
+        # my @supportedList = getRequiredList('SupportedKeyStrengths');
+
+        ## load the LOA configuration file
+        my $loaTwig = loadConfigXML ('LOAConfiguration');
+
+        ## for each Loa...
+        foreach my $loa ( $loaTwig->get_xpath("loa")) {
+
+                my $name = gettext (getField( $loa, 'name'));
+
+                if ( ($loaName ne "" ) and ($name !~ /^$loaName$/i )) {
+                        next;
+                };
+
+                foreach my $algor ( $loa->get_xpath("requires/strength")) {
+
+                        my $name = undef;
+                        my $bits = undef;
+
+                        my $algorName = uc ( getField ( $algor, 'name' ));
+
+                        if ( $algorName eq "" ) {
+                                next;
+                        }
+
+                        #if( not grep ( /$algorName/i , @supportedList ) ) {
+                        #        next;
+                        #}
+
+                        foreach my $allowed ($algor->get_xpath("allowed")) {
+
+                                ( $name, $bits ) = ( $allowed->field =~
+                                                /([^\+\_]+)[\+\_]+(\d+)$/ );
+
+                                $ret->{uc($algorName)}->{uc($name)} = $bits;
+
+                                if( $name =~ /ecdsa/i ) {
+                                        $ret->{uc($algorName)}->{uc('id-ecPublicKey')} = $bits;
+                                };
+                        }
+                }
+        }
+
+	return ( $ret );
+}
+
+sub getKeyBitsize {
+
+        my $strength = shift;
+        my $algorithm = shift;
+        my $loaName = shift;
+
+        my $ret = undef;
+
+        my $algs = undef;
+
+        $algs = getLoaAlgorithms( $loaName );
+
+        return $algs->{uc($strength)}->{uc($algorithm)};
+}
+
+sub getReqType {
+
+	my $AGENT_NAME  = $query->param("AGENT_NAME");
+	my $AGENT_OS_NAME  = $query->param("AGENT_OS_NAME");
+	my $AGENT_OS_VERSION  = $query->param("AGENT_OS_VERSION");
+
+	my $reqType = undef;
+
+	if( $query->param('genkey') =~ /Server/ig ) {
+	    $reqType = "BASIC";
+	} elsif ( $AGENT_NAME =~ /Opera/i ) {
+            $reqType = "SPKAC";
+        } elsif ( $AGENT_NAME =~ /Netscape/i ) {
+            $reqType = "SPKAC";
+        } elsif ( $AGENT_NAME =~ /Safari/i ) {
+		if( $AGENT_OS_NAME =~ /Windows/i ) {
+			$reqType="BASIC";
+		} else {
+			$reqType="SPKAC";
+		}
+        } elsif ( $AGENT_NAME =~ /Mozilla/i ) {
+            $reqType = "SPKAC";
+	} elsif ( $AGENT_NAME =~ /Firefox/i ) {
+	    #
+	    # if( $AGENT_VERSION > 1 ) {
+	    #	$req_type = "NSS";
+	    #} else {
+		$reqType = "SPKAC";
+	    #}
+	} elsif ( $AGENT_NAME =~ /Konqueror/i ) {
+		$reqType = "SPKAC";
+        } elsif ( $AGENT_NAME =~ /MSIE/i ) {
+            $reqType = "IE";
+	    if( $AGENT_OS_NAME =~ /Windows NT/ ) {
+		if ( $AGENT_OS_VERSION >= 6 ) {
+			$reqType = "VISTA";
+		};
+	    }
+        } else {
+            $reqType = "BASIC";
+        }
+
+	return $reqType;
+}
+
+sub loadLoa {
+
+	my $loaOption = getRequired('USE_LOAS');
+
+	my ($loaTwig, $xmlLOA, %LOALevels, @LOANames, $loaHtml );
+	my ( $loaSelect, %LOAHash );
+
+	if ($loaOption =~ /yes/i) {
+       		$loaTwig = loadConfigXML ('LOAConfiguration');
+    		if (not $loaTwig) {
+               		generalError (gettext ("Cannot load LOA configration"));
+       		}
+	}
+
+       	for my $al ($loaTwig->get_xpath("loa")) {
+                push( @LOANames, getField($al, 'name' ));
+
+        	# $LOALevels{$xmlLOA}=gettext(($al->first_child('level'))->field);
+        	# $LOAHash{gettext(($al->first_child('level'))->field)}=$xmlLOA;
+        	# push (@LOANames, $xmlLOA);
+        	debug_cmds ("advanced_csr: LOANames: ".@LOANames);
+	}
+
+	return ( @LOANames );
+}
+
+sub getLoaLevel {
+
+        my $loaName = shift;
+
+	my $loaTwig = loadConfigXML ('LOAConfiguration');
+        my $reqLoaItem = undef;
+
+        my $ret = undef;
+
+        if ( $loaName eq "" ) {
+                return $ret;
+        }
+        
+	foreach my $al ( $loaTwig->get_xpath("loa")) {
+		my $level = getField( $al, 'level' );
+		my $name  = getField( $al, 'name' );
+
+		if( $name eq $loaName ) {
+                        $ret = $level;
+                        
+			last;
+		}
+	}
+
+        return $ret;
+
+}
+
+
+sub getLoaMinKeysize {
+
+        my $loa = shift;
+
+	my $loaTwig = loadConfigXML ('LOAConfiguration');
+	my @loas = $loaTwig->get_xpath("loa" );
+
+        my $reqLoaItem = undef;
+
+        my @ret = ();
+
+        if ( not $loa or $loa eq "" ) {
+                return @ret;
+        }
+        
+	foreach my $al ( $loaTwig->get_xpath("loa")) {
+		my $level = getField( $al, 'level' );
+
+		if( $level eq $loa ) {
+                        $reqLoaItem = $al;
+                        
+			last;
+		}
+
+	}
+
+        if( not $reqLoaItem ) {
+                # LOA not found
+                return @ret;
+        }
+
+        foreach my $alg ( $reqLoaItem->get_xpath("requires/strength") ) {
+
+                my $val = getField( $alg, "minkeysize");
+
+                if ( $val ne "" ) {
+                        push ( @ret, $val );
+                }
+        }
+
+        return @ret ;
+}
+
+sub getAgreement {
+
+	my $loa = shift;
+
+	my $ret = undef;
+	my $file = undef;
+	my $FD = undef;
+
+	if ( $loa eq "" ) {
+		return undef;
+	}
+
+	my $loaTwig = loadConfigXML ('LOAConfiguration');
+	my @loas = $loaTwig->get_xpath("openca/loa" );
+
+	foreach my $al ( $loaTwig->get_xpath("loa")) {
+		my $name = getField( $al, 'name' );
+
+		if( $name eq $loa ) {
+			$file = getField( $al, 'agreement');
+			last;
+		}
+	}
+
+	if( ($file ne "" ) and (open( FD, "$file" )) ) {
+		while( <FD> ) {
+			$ret .= $_;
+		}
+		close ( FD );
+	}
+
+	return $ret;
+}
+
+sub getReqTypeName {
+
+	my $type = shift;
+
+	my $req_type_name = undef;
+
+	if ( $type eq "" ) {
+		$type = getReqType();
+	};
+
+	if( $type =~ /BASIC/i ) {
+		$req_type_name = "Server Generated " . 
+					gettext ("Certificate Request" ) ;
+	} else {
+		my $aname = $query->param('AGENT_NAME');
+		my $aver = $query->param('AGENT_VERSION');
+		my $osver = $query->param('AGENT_OS_VERSION');
+		my $osname = $query->param('AGENT_OS_NAME');
+		my (  $myaver ) =~ /(\d+)/;
+
+		( $myaver ) = ( $aver =~ /(\d+)/ );
+
+		if( $type =~ /IE/i ) {
+			$req_type_name = "IE";
+			if( $aname =~ /IE/ ) {
+				$req_type_name .= " " . $myaver;
+			};
+		} elsif( $type =~ /NSS/i ) {
+			$req_type_name = "Firefox";
+		} elsif( $type =~ /SPKAC/i ) {
+			if( $aname =~ /(Firefox|Safari|Mozilla|Konqueror|Opera)/i ) {
+				$req_type_name = "$aname";
+				$req_type_name .= " " . $myaver;
+			} else {
+				$req_type_name = "Mozilla/Firefox";
+			}
+		}
+
+
+		if( $osname =~ /Windows NT/ ) {
+			if ( $osver >= 6 ) {
+				$osname = "Vista";
+			} else {
+				$osname = "Windows";
+			}
+		}
+
+		$req_type_name .= " " . gettext ("Certificate Request" ) .
+				  " (" . $osname . ")";
+	}
+
+	return $req_type_name;
+}
+
+sub checkRequirements {
+
+	my $req = shift;
+	my $loa = shift;
+	my $genMode = shift;
+
+	my $ret = undef;
+        my $reqLoaItem = undef;
+	my $requires = undef;
+	my $FD = undef;
+
+        my $supportedAlg = undef;
+        my $supportedKeygen = undef;
+        my $reqAlg = undef;
+
+	if ( (not $req) or ($loa eq "") ) {
+		return ("General Request Requirement Error!");
+	}
+
+	my $loaTwig = loadConfigXML ('LOAConfiguration');
+	my @loas = $loaTwig->get_xpath("openca/loa" );
+
+        foreach my $al ( $loaTwig->get_xpath("loa")) {
+		my $name = getField( $al, 'name' );
+
+	 	if( $name eq $loa ) {
+                        $reqLoaItem = $al;
+			last;
+		}
+	}
+
+        if( not $reqLoaItem ) {
+                return ( "Error in LOA Configuration" );
+        };
+
+        if( not $reqLoaItem->get_xpath("requires" )) {
+                # If no requires section, than everything is
+                # allowed...       
+                return undef;
+        }
+
+        my $algor = getLoaAlgorithms( $loa ) ;
+
+        my $supportedAlg = 0;
+        my $reqPubkeyAlg = $req->getParsed->{PUBKEY_ALGORITHM};
+        my $reqKeysize = $req->getParsed->{KEYSIZE};
+
+        foreach my $strength ( keys %$algor ) {
+                my $size = undef;
+
+                $size = $algor->{$strength}->{uc($reqPubkeyAlg)};
+
+                if( $size <= $reqKeysize ) {
+                        $supportedAlg = 1;
+                        last;
+                }
+        }
+
+        if ( $supportedAlg == 0 ) {
+                return ("The selected request algorithm " .  
+                        $req->getParsed->{PUBKEY_ALGORITHM} . 
+                        " (" . $reqKeysize . ") is not supported by ". 
+                        "the selected Level of Assurance ($loa)." );
+        }
+
+        $supportedKeygen = 1;
+        if( $genMode ne "" ) {
+                my @genModeList = loadKeygenMode();
+                my $GGGMode = undef;
+
+
+                ( $GGGMode ) = ( $genMode =~ /^([^\s]+)/i );
+
+                $supportedKeygen = 0;
+                if ( grep ( /$GGGMode/i , @genModeList)) {
+                        $supportedKeygen = 1;
+                }
+        }
+
+        if( $supportedKeygen == 0 ) {
+                return ( "The selected Key Generation Mode ($genMode) is not supported by the selected Level of Assurance ($loa).");
+        }
+
+	return "OK";
+}
+
+sub checkGenMode {
+
+        ## Check consistency between KeygenMode and selected LOA
+        my $genMode = shift;
+
+        if( $genMode ne "" ) {
+                my @genModeList = loadKeygenMode();
+                my $GGGMode = undef;
+
+                ( $GGGMode ) = ( $genMode =~ /^([^\s]+)/i );
+
+                if ( not grep ( /$GGGMode/i , @genModeList)) {
+			return i18nGettext ( "The selected Key " .
+				"Generation Mode __GENMODE__ is not " .
+				"supported by the selected Level of " . 
+				"Assurance __LOA__.",
+				"__GENMODE__", "<b>$genMode</b>",
+				"__LOA__", "<b>" . $query->param('loa') .
+                                                        "</b>") . " " .
+                                i18nGettext ( "Please return to the " .
+                                "previous page and select a different ".
+                                "Key Generation Mode or a different LOA.");
+                }
+        }
+
+        return "OK";
+}
+
+sub getXMLReqParamVals {
+        
+        ## We require the TWIG object to point to the request
+        ## configuration and the list of paths to get the params
+        ## name from
+
+        ## Parameters
+        ##
+        ## * TWIG  - TWIG object
+        ## * QUERY - CGI object
+        ## * PATHS - List of paths to get the name of the params from
+
+        my $keys = { @_ };
+
+        my $reqTwig = $keys->{TWIG};
+        my @paths  = @{ $keys->{PATHS} };
+        my $query = $keys->{QUERY};
+
+        my $ret = undef;
+
+        # print STDERR "getXMLReqParamValues()::Start\n";
+
+        if ( (not $reqTwig) or (not $query) ) {
+                return undef;
+        }
+
+        # print STDERR "getXMLReqParamValues()::Required params are ok\n";
+
+        foreach my $xPath ( @paths ) {
+
+                # print STDERR "getXMLReqParamValues()::Processing $xPath\n";
+
+		# Let's pass on the values of the fields from the user
+		# data form
+	        foreach my $item ($reqTwig->get_xpath("$xPath")) {
+			my $name = getField($item, 'name');
+
+                        ## Let's handle the special cases here
+			if ( $name =~ /strength/i ) {
+		                $ret->{"$name"} = $query->param("$name");
+
+				$ret->{"bits"} = 
+					getKeyBitsize( $query->param("$name"),
+						$query->param("keytype"),
+						$query->param("loa"));
+
+                                # print STDERR "getXMLReqParamValues()::strength found ($name) " . $ret->{"$name"} . " => " . $ret->{"bits"} . "\n";
+
+			} else {
+		                $ret->{"$name"} = $query->param("$name");
+                                # print STDERR "getXMLReqParamValues()::adding param $name => " . $ret->{"$name"} . "\n";
+                        }
+		}
+        }
+        return $ret;
+}
+
+1;
+

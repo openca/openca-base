@@ -1,0 +1,183 @@
+# file: Makefile.global-vars(.in)
+# contains all the configured settings
+#
+# © 2001-2013 by Massimiliano Pala and OpenCA Labs
+
+VERSION			= 1.5.2
+RC					= 1
+TODAY				= 20140728
+TRANSLATIONS	= de_DE el_GR en_GB es_ES fr_FR it_IT ja_JP pl_PL sl_SI ru_RU
+LOCALES			= C $(TRANSLATIONS)
+
+DIST_NAME		= darwin
+DIST_VERSION	= 
+
+DEST_DIR		= 
+BUILD_ROOT		= 
+
+PACKAGE_NAME	= openca
+PACKAGE_VERSION	= 1.5.2
+
+BUILD_OS		= darwin
+BUILD_ARCH		= darwin
+ARCH_TARGET		= Unknown
+BUILD_TARGET	= Unknown
+
+#-------- installation paths: --------
+
+ca_organization		= OpenCA Labs
+ca_locality		= 
+ca_state		= 
+ca_country		= 
+service_mail_account	= admin@pki.openca.org
+support_mail_address	= support@pki.openca.org
+
+prefix			= $(DEST_DIR)/usr/local
+exec_prefix		= /usr/local
+openca_tools_prefix	= 
+
+perl_modules_prefix	= $(DEST_DIR)/usr/local/lib/openca/perl_modules
+
+httpd_fs_prefix		= /opt/local/var/www
+
+batch_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/batch
+batch_htdocs_url_prefix	= /pki/batch
+batch_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/batch
+batch_cgi_url_prefix	= /cgi-bin/pki/batch
+
+ca_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/ca
+ca_htdocs_url_prefix	= /pki/ca
+ca_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/ca
+ca_cgi_url_prefix	= /cgi-bin/pki/ca
+
+node_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/node
+node_htdocs_url_prefix	= /pki/node
+node_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/node
+node_cgi_url_prefix	= /cgi-bin/pki/node
+ 
+ra_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/ra
+ra_htdocs_url_prefix	= /pki/ra
+ra_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/ra
+ra_cgi_url_prefix	= /cgi-bin/pki/ra
+ 
+ldap_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/ldap
+ldap_htdocs_url_prefix	= /pki/ldap
+ldap_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/ldap
+ldap_cgi_url_prefix	= /cgi-bin/pki/ldap
+ 
+pub_htdocs_fs_prefix	= $(DEST_DIR)/opt/local/var/www/html/pki/pub
+pub_htdocs_url_prefix	= /pki/pub
+pub_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/pub
+pub_cgi_url_prefix	= /cgi-bin/pki/pub
+
+scep_cgi_fs_prefix	= $(DEST_DIR)/opt/local/var/www/cgi-bin/pki/scep
+scep_cgi_url_prefix     = /cgi-bin/pki/scep
+
+# New PRQP support
+prqp_server_uri		= http://iMassi.local:830/
+ocsp_server_uri		= http://iMassi.local:2560/
+
+batch_prefix		= batch
+ca_prefix		= ca
+node_prefix		= node
+ra_prefix		= ra
+ldap_prefix		= ldap
+pub_prefix		= pub
+scep_prefix		= scep
+
+init_dir		= $(DEST_DIR)/usr/local/etc/init.d
+etc_prefix		= $(DEST_DIR)/usr/local/etc/openca
+lib_prefix		= $(DEST_DIR)/usr/local/lib/openca
+var_prefix		= $(DEST_DIR)/usr/local/var/openca
+
+db_type			= mysql
+
+DEST_BINDIR		= $(DEST_DIR)${exec_prefix}/bin
+DEST_DATADIR		= $(DEST_DIR)${prefix}/share
+DEST_INFODIR		= $(DEST_DIR)${prefix}/share/info
+DEST_LIBDIR		= $(DEST_DIR)${exec_prefix}/lib/openca
+DEST_MANDIR		= $(DEST_DIR)${prefix}/share/man
+DEST_SBINDIR		= $(DEST_DIR)${exec_prefix}/sbin
+
+doc_prefix		= $(DEST_DATADIR)/doc/openca
+
+#-------- for installation as writable by the httpd: --------
+
+httpd_user		= www
+httpd_group		= www
+
+#-------- for installation as not writable by the httpd: --------
+
+openca_user		= madwolf
+openca_group		= staff
+
+#-------- for distribution building: --------
+
+dist_user		= madwolf
+dist_group		= staff
+package_build		= no
+enable_mysql		= 
+enable_pg		= 
+
+#-------- build and utility programs: --------
+
+MY_HOME		= /Users/madwolf
+MAKE			= /usr/bin/make -s
+SHELL			= /bin/sh
+GZIP			= /usr/bin/gzip
+TAR			= /usr/bin/tar
+PWD			= /Users/madwolf/Devel/OpenCA/cvs/openca-base
+## sometimes "-D -c" must be added here
+INSTALL			= /usr/bin/install -c
+MKDIR			= /bin/mkdir
+CHMOD			= /bin/chmod
+CHOWN			= /usr/sbin/chown
+ECHO			= /bin/echo
+SED			= /usr/bin/sed
+CAT			= /bin/cat
+MV			= /bin/mv
+CP			= /bin/cp
+LN_S			= ln -s
+AWK			= awk
+CC			= gcc
+RM			= rm
+
+OPENCA_SV		= /Users/madwolf/bin/openca-sv
+OPENCA_SCEP		= openca-scep
+
+PERL			= /opt/local/bin/perl
+OPENSSL			= /opt/local/bin/openssl
+OPENSSL_PREFIX		= /opt/local
+
+POD2MAN			= /opt/local/bin/pod2man
+
+EXTERNAL_MODULES	= yes
+# OPTIONAL_C_MODULES	= @OPTIONAL_C_MODULES@
+PERL_MAKEFILE_OPTS	= DESTDIR="" PREFIX="/usr/local/lib/openca/perl_modules/perl5" LIB="/usr/local/lib/openca/perl_modules/perl5" INSTALLMAN1DIR="/usr/local/lib/openca/perl_modules/man/man1" INSTALLMAN3DIR="/usr/local/lib/openca/perl_modules/man/man3"
+INSTALL_BUILDER		= 
+
+## this is an implementation of GNU's "install -D"
+__install_dir::
+	@if test -z "$(DIR)"; then $(MAKE) default; \
+	else \
+	    if test ! -d $(DIR); then \
+		$(MAKE) __install_dir DIR=`dirname $(DIR)`; \
+		if test -n "$(MODE)"; then \
+			set -x; \
+			$(INSTALL) -d -o $(USER) -g $(GROUP) -m $(MODE) $(DIR); \
+		else \
+			set -x; \
+			$(INSTALL) -d -o $(USER) -g $(GROUP) $(DIR); \
+		fi; \
+	    fi; \
+	fi;
+
+## this is an implementation of relative linking
+## it is required to support symlink during installs
+## with DEST_DIR in use (package builds)
+__install_ln_s::
+	if test -z "$(TARGET)"; then $(MAKE) default; \
+	else \
+	    $(TOP)/relative_ln_s.sh $(TARGET) $(LINK); \
+	fi;
+

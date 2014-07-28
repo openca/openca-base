@@ -1,0 +1,58 @@
+#! @SHELL@
+
+openssl=@OPENSSL@
+
+echo ""
+echo "Enter the openssl command path  ($openssl): \c"
+read tmp
+
+if ! [ "$tmp" = "" ] ; then
+        openssl=$tmp
+fi
+
+echo "Enter the basedir for your CA [@ca_prefix@ ] : \c"
+read ca
+
+if [ "$ca" = "" ] ; then
+        ca=@ca_prefix@
+        echo
+fi
+
+echo "## Issued Certificates"
+echo "## ==================="
+echo ""
+
+echo "SERIAL    Description"
+cd ${ca}/outbound/certs;
+for i in *.pem ; do
+	ser=`echo $i | sed -e "s|.pem||"`
+	echo "  ${ser}       certificate"
+done
+cd -
+
+echo ""
+
+echo "Enter the Certificate Serial Number (full): \c"
+read nser
+
+if [ "$nser" = "" ] ; then
+	echo
+        echo "Exiting..."
+        echo
+fi
+
+key="$ca/private/$nser"_key.pem;
+cert="$ca/outbound/certs/$nser".pem;
+req="$ca/reqs/pending/$nser"_req.pem;
+p12="$ca/p12/browser_$nser".p12;
+
+echo "Generating PKCS#12 ($nser) ... "
+## $ssl/bin/openssl pkcs12 -export -in $cert -inkey $key -out $p12 -certfile $ca/cacert.pem
+## $ssl/bin/openssl pkcs12 -export -in $cert -inkey $key -out $p12 -certfile $ca/cacert.pem
+$openssl pkcs12 -export -in $cert -inkey $key -out $p12
+echo "Done."
+echo
+
+echo "Done ($p12)."
+echo
+

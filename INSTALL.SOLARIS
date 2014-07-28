@@ -1,0 +1,80 @@
+# Installation details for Solaris/OpenSolaris installation
+Unfortunately the version of PERL that is distributed together
+with OpenSolaris is too old to work with OpenCA. In order to
+fix the problem, you should:
+
+1. Download the pkg-get package from http://www.sunfreeware.com. At the
+   time when this README is written you can directly access it from
+   here:
+
+	http://www.sunfreeware.com/pkg-get.html
+
+2. Install the package - eg., BOLTpget.pkg by using the pkgadd tool as
+   usual:
+
+	pkgadd -d BOLTpget.pkg
+
+3. Upgrade perl by using pkg-get, easy:
+
+	pkg-get -u perl
+
+4. Now move the 'old' perl binary and link the new version in /usr/bin:
+
+	$ cd /usr/bin
+	$ mv perl perl.5.8.4
+	$ ln -s /usr/local/bin/perl perl
+
+5. In order to be able to use the DB, we need the Perl DBD drivers for
+   the database you are going to use. To do so, the easiest way is to
+   download the CPAN module, from:
+
+	http://www.cpan.org
+
+   download the CPAN module (latest version now is 1.92_66). Once you
+   have it installed you can install the DBD driver by simply:
+
+	$ cpan
+	cpan> install Bundle::DBD::mysql
+
+   NOTE: You can install and use other DBMS, here MySQL is used as an
+   example. We support also Pg (PostgresSQL), Oracle, DB2, etc..
+
+   NOTE: Make sure you have the db libs installed - eg., you can use
+   pkg-get -i mysql
+
+   If you are *VERY* lucky, this will work.. but it did not work for
+   me - therefore to install mysql properly you should:
+
+	a) Install a working version of MySQL. First download the .pkg
+	   for Solaris10 (32bit) from http://www.mysql.com.
+
+	   Now install the package by doing:
+
+		$ pkgadd -d mysql-5.0.67-solaris10-i386.pkg
+
+	   Ok.. half way..
+
+	b) download the DBD-mysql-4.008.tar.gz module from CPAN and unpack
+	   it:
+
+		$ tar xvfpz DBD-mysql-4.008.tar.gz
+
+	   Unfortunately the normal "perl Makefile.PL" will not work because
+	   it does not get the right options. This worked for my installation:
+
+		$ perl Makefile.PL --libs="-R/opt/mysql/mysql/lib \
+			-L/opt/mysql/mysql/lib -lmysqlclient -lz -lcrypt \
+			-lgen -lsocket -lnsl -lm" --cflags="-I/opt/mysql/mysql/include"
+
+	   Now.. breathe deeply.. and compile the module:
+
+		$ make && make install
+
+	   Hopefully you linked the right libs, to check it, you might use
+	   the ldd command:
+
+		$ ldd blib/arch/auto/DBD/mysql/mysql.so
+
+
+6. Install the openca-tools and then the openca-base packages.
+

@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>show_prepared_script</name>
+            <operation>access control configure</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

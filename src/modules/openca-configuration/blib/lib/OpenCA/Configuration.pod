@@ -1,0 +1,21 @@
+=head1 NAME
+
+OpenCA::Configuration - Perl extention to deal with config files.
+
+=head1 SYNOPSIS
+
+use OpenCA::Configuration;
+
+=head1 DESCRIPTION
+
+Sorry, no documentation available yet.
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+perl(1).
+
+=cut

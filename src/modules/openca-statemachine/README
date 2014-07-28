@@ -1,0 +1,74 @@
+=======================================================================
+           OpenCA::StateMachine - Version 1.0.0
+             (c) 2003-2004 The OpenCA Project
+=======================================================================
+
+COPYRIGHT
+=========
+
+   Copyright (c) 2003 Michael Bell. All rights reserved.
+   This program is released under the GNU LGPL Terms and therefore
+   you are encouraged to read them before using this software.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+INTRODUCTION
+============
+
+   This software is a Perl5 module that helps in managing config
+   files: it gives you functions capable of retieving files, stripping
+   comments and blank lines, parsing function, ecc...
+   
+REQUIREMENTS
+============
+
+   Any system running Perl5 ( nearly every know! ) there is no specific
+   platform code ( at least it should ).
+
+INSTALLATION
+============
+
+   After extracting the archive, simply type the following:
+
+      $ perl Makefile.PL
+
+   You will be prompted with a few questions, after initialization
+   the installation will proceed with creating needed directories and
+   copying module files (you probably need to become root first).
+
+EXAMPLES
+========
+
+   In the example directory there are some exaples, please take a look
+   at them for simple module usage or refer to documentation in the
+   docs directory.
+
+FEEDBACK
+========
+
+   This is a very early pre-release, anyway it works fine and it's
+   quite usefull yet, so here it comes. Many things should be added
+   in the near future, so stay tuned for future releases.
+
+TO DO
+=====
+
+   This TODO list is constantly updated, please refer to the last
+   version:
+
+      * Nothing at the moment.
+
+BUGS
+====
+
+--
+Author: Michael Bell
+email:  michael.bell@web.de
+web:    http://www.openca.org/

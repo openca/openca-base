@@ -1,0 +1,922 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 2002-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: scepPKIOperation
+##     Version: $Revision : 0.2 $
+##       Brief: manage SCEP certificates/crl operations
+## Description: supports handling of SCEP commands and PKI Operations
+##              for enrollment.
+##  Parameters: operation, message
+#
+# 2005-01-25 Martin Bartosch <m.bartosch@cynops.de>
+#   - new features: configurable policy allows to prevent SCEP operation
+#     from new enrollment and/or renewal
+#   - configurable default RA and certificate role for new enrollments
+#   - re-inserts requests with same RA and Role of old certificate if the
+#     same DN (configurable match) already exists
+#   - fixed problems with error handling, added logging
+#   - only valid certificates are now returned to the client
+#   - introduced additional scepCheckRequest method that enforces
+#     the configured policy
+#   - if desired keeps the SubjectAltName included in the incoming request
+# 2005-07-28 Martin Bartosch <m.bartosch@cynops.de>
+#   - added automatic approval (via signature with existing certificate)
+# 2005-08-05 Martin Bartosch <m.bartosch@cynops.de>
+#   - code cleanup
+# 2005-12-12 Martin Bartosch <m.bartosch@cynops.de>
+#   - added support for authenticated initial enrollment (signed by existing
+#     certificate)
+#   - bugfix: incorrect DN match for existing certificates
+#   - bugfix: IP SubjectAltName was not processed correctly
+#
+#
+#
+# Usage notes:
+# The following new configuration entries to 
+# etc/servers/scep.conf.template are required (example):
+#
+##################################
+# ScepAllowEnrollment     "NO"
+# ScepAllowRenewal        "YES"
+# ScepKeepSubjectAltName  "YES"
+#
+# ScepRenewalRDNMatch     "CN"
+#
+# # Defaults for initial enrollment
+# ScepDefaultRole         "MyCertificateRole"
+# ScepDefaultRA           "MyRA"
+#
+# ScepAutoApprove         "YES"
+##################################
+#
+# AllowEnrollment: if set to "NO" the SCEP server will not accept 
+#   requests for certificate DNs that don't exist yet.
+#   If set to "VALIDSIGNATURE" then the server will only accept SCEP
+#   requests that have been signed with a certificate issued by the
+#   same CA (newer SCEP drafts only).
+#
+# AllowRenewal: if set to "YES" the SCEP server will allow renewal
+#   requests for existing certificates.
+# KeepSubjectAltName: parse incoming request and keep supplied SubjectAltName
+# RenewalRDNMatch: list of RDNs that must match to be accepted as renewal
+#   request (work in progress, not perfect yet)
+# AutoApprove: if set to "YES" and the incoming SCEP request is signed with 
+#   the already existing end entity certificate (newer SCEP drafts only!)
+#   the request is automatically approved in the RA.
+#
+# The script will automatically determine the Role and RA of the
+# latest valid certificate found with the same DN and automatically modify
+# the incoming request to include this data.
+#
+# The script allows a maximum of two valid certificates, if more 
+# certificates are found to be valid, the request is rejected.
+#
+#
+
+
+use strict;
+use OpenCA::PKCS7;
+
+use File::Temp;
+
+use Data::Dumper;
+
+our ($plain_csr, $ReqRole, $ReqLoa, $ReqRA, $ReqObj);
+our ($errval, $errno, $query, $cryptoShell, $db, $tools); 
+our ($p7_file, $scep_cmd, $scep_tid, $scep_failinfo);
+our ($scep_pwd, $scep_cert, $scep_key, $reccert_file, $csr_file, $cert_file,
+     $scep_crl, $CACert, $ChainDir);
+
+our $SCEPSignature;
+our $SignerDN;
+
+our ($deep_debug, $ScepAllowEnrollment, $ScepAllowRenewal, $ScepDefaultRole,
+     $ScepRenewalRDNMatch, $ScepDefaultRA, $ScepKeepSubjectAltName, 
+     $ScepAutoApprove );
+
+# deep SCEP command debugging
+our $deep_debug = 1;
+
+our $FD;
+
+sub cmdScepPKIOperation {
+    ##// Let's get parameters
+    my $operation = $query->param('operation');
+    my $message = $query->param('message');
+    
+    ## setup local vars
+    $scep_cmd  = getRequired ("scepPath");
+    $scep_pwd  = getRequired ("scepRAPasswd");
+    $scep_cert = getRequired ("scepRACert");
+    $scep_key  = getRequired ("scepRAKey");
+    $scep_crl  = getRequired ("CRLDir") . "/cacrl.pem";
+    
+    $CACert    = getRequired ("CACertificate");
+    $ChainDir  = getRequired ("ChainDir");
+
+    
+    foreach (qw(ScepAllowEnrollment ScepAllowRenewal ScepDefaultRole 
+	      ScepDefaultRA ScepRenewalRDNMatch
+	      ScepKeepSubjectAltName ScepAutoApprove)) {
+	my $val = getRequired($_);
+	eval "\$$_ = \$val";
+    }
+
+    $p7_file      = getRequired ( 'tempdir' ) . "/scep_pkiOp_$$.p7";
+    $csr_file     = getRequired ( 'tempdir' ) . "/scep_pkiOp_$$.csr";
+    $cert_file    = getRequired ( 'tempdir' ) . "/scep_pkiOp_$$.crt";
+    $reccert_file = getRequired ( 'tempdir' ) . "/scep_client_$$.crt";
+    
+
+    ## insert newlines every 64 characters
+    ## to avoid crashs because of too long lines
+    my $h_message = $message;
+    $message  = "";
+    
+    # remove EOLs
+    $h_message =~ s/[\n\r]//gm;
+    while ($h_message)
+    {
+	$message .= substr ($h_message, 0, 64)."\n";
+	$h_message = substr ($h_message, 64, length ($h_message));
+    }
+    $message =~ s/[\n\r][\n\r]*/\n/g;
+    $message =~ s/\n$//;
+    
+    $tools->saveFile( FILENAME=>$p7_file, DATA=>$message );
+    
+    $errno  = 0;
+    $errval = "";
+    $scep_failinfo = "";
+    
+    ## We have to:
+    ##   1. parse the request
+    ##   2. check the requirements
+    ##   3. build the response
+    ##   4. send back the reply
+    
+    if ( not -e "$scep_cmd" ) {
+	$errno  = 723700;
+	$errval = gettext ("OpenCA SCEP Tool ($scep_cmd) not found!");
+
+	## FIXME: appropriate Error Reason?
+	$scep_failinfo = "badMessageCheck";
+	goto BAILOUT;
+    }
+
+    ## Send the response to the SCEP client
+    print "Content-type: application/x-pki-message\n\n";
+    
+    ##
+    ## common actions per scep-msg
+    ##
+    
+    ## get transid
+    # FIXME: error handling
+    $scep_tid = scepGetTID() or goto BAILOUT;
+    
+    ## get recipient cert
+    # FIXME: error handling
+    scepGetReqClientCert() or goto BAILOUT;
+
+    ## first we need the message type to know what to do
+
+    debug_cmds("cmdScepPKIOperation: execute1: $scep_cmd -in $p7_file -noout -print_msgtype");
+    open OUT, "-|", "$scep_cmd -in $p7_file -noout -print_msgtype 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+    
+    my $msgtype = join '', <OUT>;
+    close OUT;
+    debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+    debug_cmds("cmdScepPKIOperation: msgtype: $msgtype") if ($deep_debug);
+    
+    ## FIXME: is this correct perl!?
+    $_ = $msgtype;
+
+  SWITCH: {
+      if (/PKCSReq/i)
+      {
+	  ## get request
+	  last SWITCH if not scepGetRequest();
+	  
+	  ## check request
+          if (not scepCheckRequest())
+	  {
+	      $scep_failinfo = "badRequest";
+	      scepAnswerFailure();
+	      last SWITCH;
+	  }
+	  
+          ## store request
+          last SWITCH if not scepStoreRequest();
+	  
+          ## send pending answer
+	  scepAnswerPending();
+      }
+      
+      if (/GetCertInitial/i)
+      {
+	  
+          ## search the request for issued
+          my @reqs = $db->searchItems (DATATYPE => "ARCHIVED_REQUEST", SCEP_TID => $scep_tid);
+	  
+          my $response;
+          if (scalar @reqs)
+          {
+              ## SUCCESS
+	      
+              ## search the highest CSR
+              my $csr = undef;
+              foreach my $req (@reqs)
+              {
+                  $csr = $req if (not $csr or $csr->getSerial() < $req->getSerial())
+              }
+	      
+              ## load certificate via CSR_SERIAL
+              my @certs = $db->searchItems (DATATYPE => "VALID_CERTIFICATE", CSR_SERIAL => $csr->getSerial());
+              my $cert  = $certs[0];
+              $tools->saveFile (FILENAME => $cert_file,DATA=>$cert->getPEM());
+	      
+              ## FIXME: check if Cert has been revoked, than send fail-msg instead
+              ##        no openca-error!! just scep-failure-msg for client
+	      
+              ## build response
+              $ENV{pwd} = $scep_pwd;
+  	      debug_cmds("cmdScepPKIOperation: execute2: $scep_cmd -new -signcert $scep_cert -msgtype CertRep -status SUCCESS -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -issuedcert $cert_file -outform DER");
+	      open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status SUCCESS -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -issuedcert $cert_file -outform DER 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+              $response = join '', <OUT>;
+              close OUT;
+	      debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+	      
+              delete $ENV{pwd};
+	      debug_cmds("cmdScepPKIOperation: response: $response") if ($deep_debug);
+	      print $response;
+	      last SWITCH;
+          }
+	  
+	  ## search the request for deleted
+          my @reqs = $db->searchItems (DATATYPE => "DELETED_REQUEST", SCEP_TID => $scep_tid);
+	  if (scalar @reqs)
+	  {
+              # we found a deleted request - so send failur msg
+	      $scep_failinfo = "badRequest";
+              scepAnswerFailure();
+              last SWITCH;
+	      
+	  } else {
+	      
+	      scepAnswerPending();
+	      last SWITCH;
+          }
+	  
+      }
+      
+      if (/GetCert/i)
+      {
+	  ## Implemented by Radu Gajea, NBM (RIG)
+	  ## extract serial of searching certificate
+          $ENV{pwd} = $scep_pwd;
+	  open OUT, "-|", "$scep_cmd -print_serial -noout -keyfile $scep_key -passin env:pwd -in $p7_file";
+	  my $hex = join '', <OUT>;
+	  close OUT;
+
+	  my $key  = hex($hex); 
+	  
+	  ## search certificate in DataBase
+	  my $cert = $db->getItem(DATATYPE => "CERTIFICATE", KEY => $key);
+          my $response;
+	  if ($cert) {
+	      $tools->saveFile (FILENAME => $cert_file,
+				DATA => $cert->getPEM());
+              ## build response
+	      $ENV{pwd} = $scep_pwd;
+	      open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status SUCCESS -issuedcert $cert_file -keyfile $scep_key -passin env:pwd -in $p7_file -serial $key -reccert $reccert_file -outform DER";
+              $response = join '', <OUT>;
+	      close OUT;
+              delete $ENV{pwd};
+
+	      print $response;
+	      last SWITCH;
+          }
+      }
+      
+      if (/GetCRL/i)
+      {
+	  ## send crl message
+	  ## build response
+          $ENV{pwd} = $scep_pwd;
+	  debug_cmds("cmdScepPKIOperation: execute3: $scep_cmd -new -signcert $scep_cert -msgtype CertRep -status SUCCESS -crlfile $scep_crl -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER");
+	  open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status SUCCESS -crlfile $scep_crl -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+          my $response = join '', <OUT>;
+          close OUT;
+	  debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+          delete $ENV{pwd};
+	  print $response;
+	  debug_cmds("cmdScepPKIOperation: response: $response")  if ($deep_debug);
+	  
+          last SWITCH;
+      }
+      
+    }
+    
+    
+  BAILOUT:
+    if ($scep_failinfo)
+    {
+	## build error response
+	$ENV{pwd} = $scep_pwd;
+	debug_cmds("cmdScepPKIOperation: execute4: $scep_cmd -new -signcert $scep_cert -msgtype CertRep -status FAILURE -failinfo $scep_failinfo -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER");
+	open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status FAILURE -failinfo $scep_failinfo -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+	my $response = join '', <OUT>;
+	close OUT;
+	debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+	delete $ENV{pwd};
+	print $response;
+	debug_cmds("cmdScepPKIOperation: response: $response") if ($deep_debug);
+    }
+    
+    ## output error if necessary
+    if ($errno)
+    {
+	## do openca error stuff
+	generalError ($errval, $errno);
+    }
+    
+    ## cleanup tmp-files and passphrases
+    delete $ENV{pwd};
+    unlink $p7_file       if -e $p7_file;
+    unlink $csr_file      if -e $csr_file;
+    unlink $cert_file     if -e $cert_file;
+    unlink $reccert_file  if -e $reccert_file;
+    
+    ## return success for storage commit
+    return 1;
+}
+
+
+##
+## Auxiliary functions for SCEP message processing
+##
+
+sub scepGetTID {
+    debug_cmds("cmdScepPKIOperation: execute5: $scep_cmd -in $p7_file -noout -print_transid");
+    open OUT, "-|", "$scep_cmd -in $p7_file -noout -print_transid 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+
+    my $tid = join '', <OUT>;
+    close OUT;
+    debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+    debug_cmds("cmdScepPKIOperation: tid: $scep_tid")  if ($deep_debug);
+    $tid =~ s/.*=//;
+    $tid =~ s/[\n\r]//g;
+    if (not $tid)
+    {
+	$errno  = 723705;
+	$errval = gettext ("Cannot extract the transaction ID from the SCEP message!") . '<pre>' .
+			"$scep_cmd -in $p7_file -noout -print_transid 2>&1" . '</pre>';
+	## FIXME: appropriate Error Reason?
+	$scep_failinfo = "badMessageCheck";
+	return undef;
+    }
+    
+    return $tid;
+} ## end of scepGetTID
+
+sub scepGetReqClientCert {
+    $ENV{pwd} = $scep_pwd;
+    debug_cmds("cmdScepPKIOperation: execute_bt: $scep_cmd -in $p7_file -keyfile $scep_key -passin env:pwd -noout -print_scert > $reccert_file");
+    my $exec_cmd = "$scep_cmd -in $p7_file -keyfile $scep_key -passin env:pwd -noout -print_scert > $reccert_file";
+    my $ret_cmd = `$exec_cmd`;
+    open( FD, ">/var/tmp/scep-debug.txt");
+	print FD "CMD: $exec_cmd\n\n";
+	print FD "RET: $ret_cmd\n\n";
+	print FD "COD: $?\n\n";
+    close( FD );
+    $ret_cmd = `cp $p7_file /var/tmp/scep-p7.b64`;
+    debug_cmds("cmdScepPKIOperation: Backtick expansion returned error code $?");
+
+    delete $ENV{pwd};
+    if ($? != 0)
+    {
+	$errno  = 723709;
+	$errval = gettext ("There is a problem with the scep program.") .
+			" $ret_cmd ( $exec_cmd )";
+	$scep_failinfo = "badMessageCheck";
+	return undef;
+    }
+    
+    return 1;
+} ## end of scepGetReqClientCert
+
+sub scepGetRequest {
+
+    $ENV{pwd} = $scep_pwd;
+    debug_cmds("cmdScepPKIOperation: execute6: $scep_cmd -in $p7_file -keyfile $scep_key -passin env:pwd -noout -print_req");
+    open OUT, "-|", "$scep_cmd -in $p7_file -keyfile $scep_key -passin env:pwd -noout -print_req 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+    $plain_csr = join '', <OUT>;
+    close OUT;
+    my $rc = $?;
+    debug_cmds("cmdScepPKIOperation: Pipe returned error code $rc");
+    delete $ENV{pwd};
+    debug_cmds("cmdScepPKIOperation: csr: $plain_csr") if ($deep_debug);
+    if ((not $plain_csr) or ($rc != 0))
+    {
+	$errno  = 723701;
+	$errval = gettext ("Cannot extract the request from the SCEP message!");
+	$scep_failinfo = "badRequest";
+	return undef;
+    }
+    
+    return 1;
+} ## end of scepGetRequest
+
+
+# validate incoming request
+# global variable $plain_csr is expected to contain the client request
+sub scepCheckRequest {
+
+    my $sig;
+
+
+    # extract and verify signature if authenticated enrollment or 
+    # automatic renewal is allowed, in both cases the request must
+    # be signed by a valid certificate
+    if (($ScepAllowEnrollment =~ /validsignature/i) or
+        ($ScepAllowRenewal =~/yes/i)) {
+
+        # get SCEP request signer certificate
+        $sig = scepExtractSignature();
+
+        # in either case a valid signature is required to proceed
+        if (! $sig) {
+	    print STDERR "scep::scepCheckRequest()::invalid signature!\n";
+	    debug_cmds("cmdScepPKIOperation: invalid signature");
+	    return undef;
+        }
+        
+	$SignerDN = $sig->getSigner()->{"DN"};
+	debug_cmds("cmdScepPKIOperation: got SignerDN: $SignerDN");
+	print STDERR "scep::scepCheckRequest()::signerDN => $SignerDN!\n";
+    }
+
+    if (not $ReqObj = new OpenCA::REQ(SHELL   => $cryptoShell,
+				      GETTEXT => \&i18nGettext,
+				      DATA    => $plain_csr)) {
+	print STDERR "scep::scepCheckRequest()::Internal Request Error!\n";
+	$errno  = 723717;
+	$errval = gettext ("Internal Request Error");
+	print STDERR $errno.": ".$errval."\n";
+	$scep_failinfo = "badRequest";
+	return undef;
+    }
+    
+    my $DN = $ReqObj->getParsed()->{"DN"};
+    debug_cmds("cmdScepPKIOperation: scepCheckRequest() requester DN: $DN");
+    
+    print STDERR "scep::scepCheckRequest()::Requester DN ($DN)!\n";
+
+    # split DN into individual RDNs. This regex splits at the ','
+    # character if it is not escaped with a \ (negative look-behind)
+    my @reqrdn = split(/(?<!\\),\s*/, $DN);
+    
+    my $index = 0;
+    my @querydn;
+    my $querydn;
+    if ($ScepRenewalRDNMatch ne "") {
+	my @rdntomatch = split(/,\s*/, $ScepRenewalRDNMatch);
+	
+	# iterate through all RDNs that must match from our DN
+	foreach (@rdntomatch) {
+	    if ($reqrdn[$index] =~ /^$_=/) {
+		push(@querydn, $reqrdn[$index]);
+		$index++;
+	    }
+	    else
+	    {
+		push(@querydn, "%");
+	    }
+	}
+	$querydn = join(",", @querydn);
+    } 
+    else 
+    {
+	$querydn = join(",", @reqrdn);
+    }    
+    
+    print STDERR "scep::scepCheckRequest():: querydn ($querydn)!\n";
+
+    $querydn .= "%" unless ($querydn eq "");
+    debug_cmds("cmdScepPKIOperation: scepCheckRequest() DB search expression DN: $querydn");
+    
+    my @list = $db->searchItems(DATATYPE => "VALID_CERTIFICATE", 
+				DN => $querydn);
+    
+    debug_cmds("cmdScepPKIOperation: DB DN search returned:") if ($deep_debug);
+    debug_cmds("cmdScepPKIOperation: " . join("\n", Dumper @list)) if ($deep_debug);
+    
+    debug_cmds("cmdScepPKIOperation: explicitly removing non-exact CN matches");
+    @list = grep { $_->getParsed()->{DN_HASH}->{CN}[0] 
+		   eq $ReqObj->getParsed()->{DN_HASH}->{CN}[0] } @list;
+
+    if (not @list or $#list == -1) {
+	# matching certificate was not found (initial enrollment)
+	
+	if ($ScepAllowEnrollment =~ /(yes|validsignature)/i) {
+	    my $roleExtName = undef;
+	    my $loaExtName = undef;
+
+	    debug_cmds("cmdScepPKIOperation: scepCheckRequest: initial enrollment");
+	    $ReqRole = $ScepDefaultRole;
+	    $ReqRA = $ScepDefaultRA;
+	    
+	    # get requested role from request extensions
+	    my $ExtRef = $ReqObj->getParsed()->{"OPENSSL_EXTENSIONS"};
+
+	    if (exists $ExtRef->{"Certificate Template"}) {
+		$roleExtName = "Certificate Template";
+	    } elsif (exists $ExtRef->{"1.3.6.1.4.1.311.20.2"}) {
+		$roleExtName = "1.3.6.1.4.1.311.20.2";
+	    }
+
+	    if( $roleExtName ne undef ) {
+		my $requested_template = $ExtRef->{$roleExtName}->[0];
+		debug_cmds("cmdScepPKIOperation: found certificate template request for $requested_template");
+
+		# decode DER encoded BMPSTRING
+		# The string looks like this: "...T.L.S._.S.e.r.v.e.r"
+		# Decoding it is not necessary because we throw away anything
+		# not alphanumeric anyway in the following step
+		#$requested_template 
+		#   = pack "c*", (unpack "s*", substr($requested_template, 2));
+		# debug_cmds("cmdScepPKIOperation: decoded template: $requested_template");
+		
+		# flatten the role name, i. e. only retain alphanumeric chars
+		$requested_template =~ s/[\W_]//g;
+
+		print STDERR "scep::requested_template=$requested_template\n";
+
+		# try to match the role against the preconfigered ones
+		my @roles = loadRoles();
+
+		foreach my $role (@roles) {
+		    my $tmp = $role;
+		    # flatten the role name
+		    $tmp =~ s/[\W_]//g;
+		    if ($requested_template eq $tmp) {
+			$ReqRole = $role;
+			debug_cmds("cmdScepPKIOperation: identified requested role $ReqRole");
+			last;
+		    }
+		}
+
+		debug_cmds("cmdScepPKIOperation: will use role $ReqRole");
+	    }
+
+	    if (exists $ExtRef->{"Level of Assurance"}) {
+		$loaExtName = "Level of Assurance";
+	    } elsif (exists $ExtRef->{"1.3.6.1.4.1.18227.50.1"}) {
+		$loaExtName = "1.3.6.1.4.1.18227.50.1";
+	    }
+
+	    if( $loaExtName ne undef ) {
+		$ReqLoa = $ExtRef->{$loaExtName}->[0];
+		$ReqLoa =~ s/[\W_]//g;
+		debug_cmds("cmdScepPKIOperation: found certificate LOA request for $ReqLoa");
+	    }
+
+	    # if VALIDSIGNATURE was requested, the validity of the
+	    # signature was already verified at the start of this
+	    # function, so we can just allow enrollment here
+	    return 1;
+	}
+	else
+	{
+	    # reject it if initial enrollment is not allowed
+	    debug_cmds("cmdScepPKIOperation: scepCheckRequest: initial enrollment is not allowed");
+	    return undef;
+	}
+    }
+    else
+    {
+    	print STDERR "scep::scepCheckRequest():: Renewal Mode!\n";
+	if ($ScepAllowRenewal =~ /yes/i) {
+	    # at least one matching valid certificate already exists
+	    # identify it and extract the original cert date to be
+	    # inserted into the new request
+	    debug_cmds("cmdScepPKIOperation: scepCheckRequest: renewal allowed");
+	    
+	    $ReqRole = $ScepDefaultRole;
+	    $ReqRA = $ScepDefaultRA;
+	    
+	    # default: only pick first one as default
+	    my $originalCert = $list[0];
+	    
+	    # determine the matching certificate from the certificate
+	    # list
+	    if ($#list > 1) {
+		# more than two certificates were found, this is usually
+		# not allowed (two valid certs may be required for rollover)
+		debug_cmds("cmdScepPKIOperation: scepCheckRequest: more than two valid certificates matched this request, rejected for policy reasons");
+		return undef;
+	    }
+	    
+	    if ($#list > 0) {
+		# more than one single entry was found by the db search
+		debug_cmds("cmdScepPKIOperation: scepCheckRequest: multiple certificates matched this request, searching for latest notBefore date");
+		my $maxnotbefore = 0;
+		foreach my $entry (@list) {
+		    my $cn;
+		    my $notbefore = $cryptoShell->getNumericDate ($entry->getParsed()->{NOTBEFORE});
+		    if ($notbefore > $maxnotbefore) {
+			$maxnotbefore = $notbefore;
+			$originalCert = $entry;
+		    }
+		}
+		my $cn = $originalCert->getParsed()->{DN_HASH}->{CN}[0];
+		debug_cmds("cmdScepPKIOperation: scepCheckRequest: identified latest certificate CN $cn (notbefore: $maxnotbefore)");
+	    }
+	    
+	    if (defined $originalCert and $originalCert) {
+		$ReqRole = $originalCert->getParsed()->{HEADER}->{ROLE};
+		$ReqLoa = $originalCert->getParsed()->{HEADER}->{LOA};
+		my $originalCSRSerial = $originalCert->getParsed()->{HEADER}->{CSR_SERIAL};
+		debug_cmds("cmdScepPKIOperation: scepCheckRequest: using original role $ReqRole");
+		debug_cmds("cmdScepPKIOperation: scepCheckRequest: original CSR: $originalCSRSerial");
+		
+		my $req = $db->getItem(DATATYPE=>"REQUEST",
+				       KEY => $originalCSRSerial);
+		if (defined $req and $req) {
+		    $ReqRA = $req->getParsed()->{HEADER}->{RA};
+		    debug_cmds("cmdScepPKIOperation: scepCheckRequest: found original request, using original RA $ReqRA");
+		} else {
+		    # use default if CSR cannot be found
+		    $ReqRA = $ScepDefaultRA;
+		    debug_cmds("cmdScepPKIOperation: scepCheckRequest: original request was not found, using default RA $ReqRA");
+		}
+	    }
+	}
+	else
+	{
+	    # reject it if renewal is not allowed
+	    debug_cmds("cmdScepPKIOperation: scepCheckRequest: renewal is not allowed");
+	    return undef;
+	}
+    }
+    return 1;
+}
+
+
+# extract and verify signature from SCEP request.
+# returns cached instance if it was called before.
+# side effect: sets global variable $SCEPSignature
+# return: signature object or undef on error
+sub scepExtractSignature {
+
+    # return cached result
+    return $SCEPSignature if (defined $SCEPSignature);
+
+    local *HANDLE;
+    if (!open HANDLE, "< $p7_file") {
+	debug_cmds("cmdScepPKIOperation: Could not open pkcs7 file $p7_file");
+	return 0;
+    }
+    my $data = "-----BEGIN PKCS7-----\n";
+    $data .= do { local $/; <HANDLE> };
+    $data .= "\n" unless ($data =~ /\n$/);
+    $data .= "-----END PKCS7-----";
+    close HANDLE;
+
+    #debug_cmds("cmdScepPKIOperation: data: $data") if ($deep_debug);
+
+    # error 26 during PKCS7 verification means incorrect key usage 
+    # flags; to be expected here, as the already existing certificate 
+    # may have improper key usage bits.
+    # The SCEP drafts allows this, though.
+    my @ignoreerrors = ( 26 );
+
+    # if VALIDSIGNATURE is requested, no self-signed certificates should
+    # be accepted.
+    # otherwise allow initial inrollment via self-signed certs.
+    if (! ($ScepAllowEnrollment =~ /validsignature/i)) {
+	# 18: self-signed certificate
+	debug_cmds("cmdScepPKIOperation: allowing self-signed certificates in signature") if ($deep_debug);
+	push (@ignoreerrors, 18);
+    }
+
+    my $sig = new OpenCA::PKCS7( SHELL => $cryptoShell,
+				 GETTEXT   => \&i18nGettext,
+				 SIGNATURE => $data,
+				 OPAQUESIGNATURE => 1,
+				 IGNOREERRORS => \@ignoreerrors,
+				 CA_DIR    => $ChainDir,
+				 CA_CERT   => $CACert,
+	);
+
+    if (! $sig) {
+	debug_cmds("cmdScepPKIOperation: Could not instantiate OpenCA::PKCS7 object");
+	return undef;
+    }
+    debug_cmds("cmdScepPKIOperation: PKCS7 signature successfully verified");
+
+    if ($sig->status() != 0) {
+	debug_cmds("cmdScepPKIOperation: OpenCA::PKCS7::status() returned signature validation error: " . $sig->status());
+	return undef;
+    }
+
+    # cache information
+    $SCEPSignature = $sig;
+
+    return $sig;
+}
+
+
+
+# according to newer SCEP drafts it is possible to sign the PKCS#7
+# structure with the old, already existing certificate (instead of
+# using a self-signed certificate)
+# function returns true if the request was signed with an already existing
+# valid certificate issued by the same CA that has the same DN as
+# in the request
+sub scepAuthorizeRequest {
+
+    my $sig = scepExtractSignature();
+    if (! $sig) {
+	debug_cmds("cmdScepPKIOperation: invalid signature");
+	return 0;
+    }
+
+    my $signer = $sig->getSigner();
+    if (! $signer) {
+	debug_cmds("cmdScepPKIOperation: could not extract signer cert from signature");
+	return 0;
+    }
+
+    # check if the signer certificate is valid
+    my $signer_cert = $db->getItem( DATATYPE => 'VALID_CERTIFICATE',
+				    KEY => $sig->getSigner()->{SERIAL} );
+    if (! $signer_cert) {
+	debug_cmds("cmdScepPKIOperation: No valid signer certificate found. Request was not authorized.");
+	return 0;
+    }
+
+    my $requestdn = $ReqObj->getParsed()->{"DN"};
+    debug_cmds("cmdScepPKIOperation: Signature Signer DN: $SignerDN, Request DN: $requestdn");
+
+    # requester DN must be non-null and identical to existing certificate
+    if (($SignerDN eq "") or ($SignerDN ne $requestdn)) {
+	debug_cmds("cmdScepPKIOperation: Signature Signer DN ($SignerDN) and request DN ($requestdn) do not match. Request was not authorized.");
+	return 0;
+    }      
+    
+    debug_cmds("cmdScepPKIOperation: Request DN matched signer DN, implicit approval given");
+    return 1;
+}
+
+##
+## Functions for SCEP-Processing
+##
+
+sub scepStoreRequest {
+    ## never store a request twice
+    my @list = $db->searchItems (DATATYPE => "REQUEST", SCEP_TID => $scep_tid);
+
+    if (not @list or not scalar @list)
+    {
+	## build OpenCA request
+	my $tmp;
+	$tmp = "-----BEGIN HEADER-----\n";
+	$tmp .= "TYPE = PKCS#10\n";
+	my $last_req = libDBGetLastItem ("REQUEST");
+	my $req_elements = 0;
+	$req_elements    = $last_req->getSerial("REQUEST") if ($last_req);
+	$req_elements  >>= getRequired ("ModuleShift");
+	if ((not defined $req_elements) or ($req_elements < 0)) {
+	    $errno  = 723713;
+	    $errval = gettext ("The database fails during counting the already existing requests!");
+	    print STDERR $errno.": ".$errval."\n";
+	    $scep_failinfo = "badRequest";
+	    return undef;
+	} else {
+	    $req_elements++;
+	}
+	my $new_serial = ($req_elements << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+	$tmp .= "SERIAL = $new_serial\n";
+	$tmp .= "NOTBEFORE = " . $tools->getDate() . "\n";
+	$tmp .= "LOA = $ReqLoa\n" if ( getRequired('USE_LOAS') =~ m/yes/i);
+	$tmp .= "ROLE = $ReqRole\n";
+	$tmp .= "RA = $ReqRA\n";
+	$tmp .= "REQUEST_AUTH_USERID = $SignerDN\n" if (defined $SignerDN and ($SignerDN ne ""));
+	$tmp .= "SCEP_TID = ".$scep_tid."\n";
+
+	my $ExtRef = $ReqObj->getParsed()->{"OPENSSL_EXTENSIONS"};
+
+	if ($ScepKeepSubjectAltName =~ /yes/i and
+	    exists $ExtRef->{"X509v3 Subject Alternative Name"}) {
+
+	    my @SANs;
+	    if (ref($ExtRef->{"X509v3 Subject Alternative Name"}) eq "ARRAY") {
+		@SANs = @{$ExtRef->{"X509v3 Subject Alternative Name"}};
+	    } else {
+		@SANs = ( $ExtRef->{"X509v3 Subject Alternative Name"} );
+	    }
+	    map { s/IP Address/IP/g; } @SANs;
+
+	    debug_cmds("cmdScepPKIOperation: got SubjectAltNames " . join(", ", @SANs) . " from request");
+	    $tmp .= "SUBJECT_ALT_NAME = " . join(", ", @SANs) . "\n";
+	}
+	$tmp .= "-----END HEADER-----\n";
+	$tmp .= $plain_csr;
+
+	## create new object with modified data
+	my $req;
+	if( not $req = new OpenCA::REQ( SHELL   => $cryptoShell,
+					GETTEXT => \&i18nGettext,
+					DATA    => $tmp) )
+	{
+	    $errno  = 723717;
+	    $errval = gettext ("Internal Request Error");
+	    print STDERR $errno.": ".$errval."\n";
+	    $scep_failinfo = "badRequest";
+	    return undef;
+	}
+	## store request in database
+	if( not $db->storeItem(
+                DATATYPE=>"NEW_REQUEST",
+                OBJECT=>$req,
+                INFORM=>"PEM",
+                MODE=>"INSERT" )) {
+	    $errno  = 723721;
+	    $errval = gettext ("Error while storing REQ in database!");
+	    print STDERR $errno.": ".$errval."\n";
+	    $scep_failinfo = "badRequest";
+	    return undef;
+	}
+
+	# automatic approval can be given if the request was signed
+	# with an existing certificate with the same DN
+	if ($ScepAutoApprove =~ /yes/i && scepAuthorizeRequest()) {
+	    debug_cmds("cmdScepPKIOperation: SCEP request was signed with existing certificate, performing automatic approval");
+		if ( not $db->updateItem ( OBJECT => $req,
+					   DATATYPE => "APPROVED_REQUEST" )) {
+	    # if (not $db->updateStatus(
+	# 	    DATATYPE => "NEW_REQUEST",
+	# 	    OBJECT => $req,
+	# 	    NEWTYPE => "APPROVED_REQUEST",
+	# 	)) {
+		debug_cmds("cmdScepPKIOperation: Could not update request status to APPROVED");
+		$errno  = 723722;
+		$errval = gettext ("Could not update request status to APPROVED!");
+		print STDERR $errno.": ".$errval."\n";
+		$scep_failinfo = "badRequest";
+		return undef;
+	    }
+	}
+	
+
+    } ## end of creating new cert-req
+
+    return 1;
+} ## end of scepStoreRequest
+
+##
+## Functions for generating SCEP-Answers
+##
+
+sub scepAnswerPending {
+    $ENV{pwd} = $scep_pwd;
+    debug_cmds("cmdScepPKIOperation: execute7: $scep_cmd -new -signcert $scep_cert -msgtype CertRep -status PENDING -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER");
+    open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status PENDING -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+    my $response = join '', <OUT>;
+    close OUT;
+    debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+    delete $ENV{pwd};
+    debug_cmds("cmdScepPKIOperation: response: $response") if ($deep_debug);
+
+    print $response;
+
+    ## FIXME: do errorchecking, message created without errors?
+    ##        create openca-error
+
+    return 1;
+} ## end of scepAnswerPending
+
+sub scepAnswerFailure {
+    $ENV{pwd} = $scep_pwd;
+    ## set standard error if no is specified so far
+    $scep_failinfo = "badRequest" if not $scep_failinfo;
+    debug_cmds("cmdScepPKIOperation: execute8: $scep_cmd -new -signcert $scep_cert -msgtype CertRep -status FAILURE -failinfo $scep_failinfo -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER");
+    open OUT, "-|", "$scep_cmd -new -signcert $scep_cert -msgtype CertRep -status FAILURE -failinfo $scep_failinfo -keyfile $scep_key -passin env:pwd -in $p7_file -reccert $reccert_file -outform DER 2>&1" or debug_cmds("cmdScepPKIOperation: Open error");
+    my $response = join '', <OUT>;
+    close OUT;
+    debug_cmds("cmdScepPKIOperation: Pipe returned error code $?");
+    delete $ENV{pwd};
+
+    print $response;
+    debug_cmds("cmdScepPKIOperation: response: $response") if ($deep_debug);
+
+    ## FIXME: do errorchecking, message created without errors?
+    ##        create openca-error
+
+    return 1;
+} ## end of scepAnswerFailure
+
+1;

@@ -1,0 +1,138 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: startAutoCRL
+##       Brief: start Auto (On-Line) CRL Daemon
+##     Version: $Revision: 1.1 $
+## Description: this script starts the On-Line CRL Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdNewUser {
+
+        our ($query, $errno, $errval, $cryptoShell, $ca_token, $DEBUG);
+	our (%AUTOCONF);
+
+	my $db = undef;
+
+	$query->param ('cmd', 'statusAutoCRL' );
+        libExecuteCommand ();
+}
+
+sub getParamsNewUser {
+
+    our ($query, $DEBUG);
+
+    my $result = "";
+
+    if (not $_[0]) {
+
+	my %labels = undef;
+
+	my $params = startAutoCRL_loadParams();
+
+	my $crlPeriod = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'period',
+				-regx   => 'numeric',
+				-class  => 'small',
+				-default => $params->{'period'},
+				 );
+
+	%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours'),
+		    'Minutes'  => gettext ('Minutes'),
+		    'Seconds'  => gettext ('Seconds') );
+
+	my $crlPeriodType = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'period_type',
+				-regx    => '*',
+				-default => $params->{'period_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours','Minutes', 
+					      'Seconds' ],
+				-labels  => \%labels );
+
+	%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours') );
+
+	my $crlValidityType = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'validity_type',
+				-regx    => '*',
+				-default => $params->{'validity_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours' ],
+				-labels  => \%labels );
+
+	%labels = ('crl_ext'=> gettext('Default'), 'None' => gettext('None') );
+        my $crlExtensions = $query->newInput (
+                		-regx=>'LETTERS',
+                		-intype=>'popup_menu',
+                		-name=>'crl_ext',
+                		-default=> $params->{'crl_ext'},
+                		-values=>[ 'crl_ext', 'None'],
+                		-labels=>\%labels );
+
+	my $crlValidity = $query->newInput (
+				-regx=>'NUMERIC',
+				-intype=>'textfield',
+				-name=>'validity',
+				-class=>'small',
+				-default=>$params->{'validity'} );
+
+        $result = "<table class=\"getParams\">\n";
+        $result .= "<tr><td colspan=\"2\">\n";
+	$result .= "<center><div style='font-size: 120%;'><h3>" . 
+		       gettext("Auto CRL Issuing System")."</h3>" .
+		   "</div></center>";
+
+	$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+		    "The following information will be used by the " .
+		    "automatic CRL issuing system in order to issue CRLs " .
+		    "according to your needs. " .
+		    "Remeber that although the configuration options are ".
+		    "stored on your system, if the OpenCA server is " .
+		    "rebooted you will need to activate the system again."
+		    ) .
+		    "</div>";
+        $result .= "</td></tr>\n";
+
+        $result .= "<tr><td colspan=\"2\">\n";
+	$result .= "<center><h3>" . 
+			gettext("CRL Issuing Details") . "</h3>" .
+		   "</center>";
+        $result .= "</td></tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Issue CRL Every")."</td>\n".
+                   "    <td>".$crlPeriod . " " . $crlPeriodType ."</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("CRL Validity")."</td>\n".
+                   "    <td>". $crlValidity . " " . $crlValidityType."</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("CRL Extensions")."</td>\n".
+                   "    <td>" . $crlExtensions . "</td>\n".
+                   "  </tr>\n";
+
+        $result .= "</table>\n";
+
+    } else {
+	# We do have the parameters, let's save them!
+    };
+
+    return $result;
+
+};
+
+
+1;

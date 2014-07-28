@@ -1,0 +1,32 @@
+/*
+ * General CSS stylesheet for OpenCA
+ * by Massimiliano Pala and OpenCA Group
+ * All rights reserved
+ *
+*/
+
+@import "menu-openca.css";
+@import "main-openca.css";
+@import "dynmenu-openca.css";
+@import "openca-home-2.css";
+
+html {
+	margin: 0pt;
+}
+
+body {
+	margin: 0pt;
+	background: white;
+}
+
+a {
+	text-decoration: none;
+	/*color:           #ff9900; */
+}
+
+img {
+	text-decoration: none;
+	color:           #ffffff;
+	border-width:    0;
+}
+

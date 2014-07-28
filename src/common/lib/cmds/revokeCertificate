@@ -1,0 +1,30 @@
+
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: revokeCertificate
+##       Brief: Revoke a Certificate
+## Description: Revoke a Valid Certificate either from a rev request
+##              and from a certificate View
+##  Parameters: key, serial, dataType, passwd
+
+use strict;
+
+sub cmdRevokeCertificate {
+
+	my $cert = libRevokeCertificate(
+			KEY   => $query->param('key'),
+			CRL_REASON => $query->param('crl_reason') );
+
+	if (not $cert) {
+		generalError ($errval, $errno);
+	} else {
+		success( "143", 
+                 i18nGettext ("Certificate __CERT_SERIAL__ was successfully revoked.",
+                              "__CERT_SERIAL__", $cert->getSerial()));
+	}
+}
+
+1;
+

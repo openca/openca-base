@@ -1,0 +1,12 @@
+Changes
+Log.pm
+Log.pod
+Makefile.PL
+MANIFEST
+README
+Log/Message.pm
+Logger/Syslog.pm
+Logger/Syslog/Net.pm
+Logger/Syslog/Sys.pm
+Logger/Syslog/Unix.pm
+Logger/XML.pm

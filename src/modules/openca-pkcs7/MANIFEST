@@ -1,0 +1,13 @@
+Changes
+Makefile.PL
+MANIFEST
+test.pl
+PKCS7.pm
+LICENSE
+test/pkcs7_test.pl
+test/TEXT
+test/TEXT.sig
+test/cacert.pem
+test/chain/6b950e78.0
+test/chain/Makefile
+test/chain/cacert.crt

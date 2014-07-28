@@ -1,0 +1,11 @@
+#!/bin/bash
+
+FILE=$1
+
+if [ "$1" = "" ]; then
+	FILE='/usr/local/digid/ldap/ldif/callisto_total.ldif'
+fi
+
+/usr/local/digid/ldap/sbin/ldif2ldbm -i $FILE -f /usr/local/digid/ldap/conf/slapd.conf -s /usr/local/digid/ldap/sbin
+
+exit 0

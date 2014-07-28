@@ -1,0 +1,118 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: check_key_params.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: check key params before creating a new key
+## Description: 
+
+use strict;
+
+sub workflow_check_key_params
+{
+    ## general global stuff
+    our $state_machine;
+    our ($tools, $xml_cache, $cryptoShell, $bp_token);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "check_key_params";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## load key configuration
+
+    my ($key_length, $key_alg);
+
+    ## determine keylength
+    if (-f $home."/data/KEY_LENGTH") {
+        $key_length = $tools->getFile ($home."/data/KEY_LENGTH");
+    } else {
+        $key_length = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_key/default_key_length" ],
+           COUNTER  => [ 0 ]);
+    }
+
+    ## determine keyalgorithm
+    if (-f $home."/data/KEY_ALGORITHM") {
+        $key_alg = $tools->getFile ($home."/data/KEY_ALGORITHM");
+    } else {
+        $key_alg = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_key/default_key_algorithm" ],
+           COUNTER  => [ 0 ]);
+    }
+
+    ## get minimum key length
+    my $min_key_length = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_key/minimum_key_length" ],
+           COUNTER  => [ 0 ]);
+
+    ## check key length
+    if ($key_length < $min_key_length)
+    {
+        my $msg = i18nGettext ("The specified key length (__KEY_LENGTH__) is shorter than the minimim key length (__MINIMUM_KEY_LENGTH__).",
+                               "__KEY_LENGTH__", $key_length,
+                               "__MINIMUM_KEY_LENGTH__", $min_key_length);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+
+    ## check keyalgorithm
+    if (not $key_alg) {
+        my $msg = gettext ("There was no key algorithm specified.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+    if ($key_alg !~ /^(rsa|dsa)$/i) {
+        my $msg = i18nGettext ("The used keyalgorithm is not supported (use rsa or dsa and not __KEY_ALG__).",
+                               "__KEY_ALG__", $key_alg);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -160, $msg ];
+    }
+
+    $journal->{message} .= gettext ("Parameters for key generation are correct.");
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "checked_key_params" ],
+                                "UNSET"   => [ "checked_pin" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Parameters for key generation are correct.") ];
+}
+
+1;

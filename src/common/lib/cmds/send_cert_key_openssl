@@ -1,0 +1,52 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: send_cert_key_openssl
+##       Brief: send cert and keypair in PEM-format
+##     Version: $Revision: 1.3 $
+##// Description: this RA-script is used to give the user it's private key and cert
+##  Parameters: key, dataType, passwd
+
+use strict;
+
+sub cmdSend_cert_key_openssl {
+
+	libCheckPasswd ("PUBLIC");
+
+	##// Let's get parameters
+	my $key       = ( $query->param('key') || $query->param('serial') );
+	my $dataType  = ( $query->param('dataType') || "VALID_CERTIFICATE" );
+	my $passwd    = $query->param('passwd');
+
+	## Get the certificate from the DB
+	my $cert;
+	if ( $cert = $db->getItem(DATATYPE=>$dataType, KEY=>$key ) ) {
+
+		my $data = $cryptoShell->dataConvert (
+			DATA      => $cert->getKey(),
+			DATATYPE  => "KEY",
+			INFORM    => "PKCS8",
+			OUTFORM   => "PEM",
+			INPASSWD  => $passwd,
+			OUTPASSWD => $passwd);
+
+		if (not $data) {
+			generalError (gettext ("Cannot convert private key! It's likely that you mistyped the private key passphrase")."<br>\n".
+					$OpenCA::OpenSSL::errval, $OpenCA::OpenSSL::errno);
+		}
+
+		##// if we use the correct content-type and don't use 
+		## (shift + left mouse button) then netscape tries to import the cert
+		## without the key
+		## print "Content-type: application/x-X509-user-cert\n\n";
+		print "Content-type: text/plain\n\n";
+		print $cert->getPEM();
+		print $data;
+	} else {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+
+}
+
+1;

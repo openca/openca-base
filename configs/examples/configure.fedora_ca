@@ -1,0 +1,32 @@
+# host and port are senseless for IBM DB2 UDB 7.1
+
+PREFIX=/var/openca/ca
+WEB=${PREFIX}/httpd
+
+./configure \
+  --prefix=${PREFIX} \
+  --with-engine=no \
+  --with-httpd-user=apache \
+  --with-httpd-group=apache \
+  --with-openca-user=madwolf \
+  --with-openca-group=openca \
+  --with-httpd-fs-prefix=${WEB} \
+  --with-web-host=localhost \
+  --with-ca-organization="OpenCA" \
+  --with-ca-country=IT \
+  --with-ldap-port=389 \
+  --with-ldap-root="cn=Manager,o=OpenCA,c=IT" \
+  --with-ldap-root-pwd="openca" \
+  --enable-dbi \
+  --enable-rbac \
+  --enable-openscep \
+  --with-db-type=mysql \
+  --with-db-name=openca_ca \
+  --with-db-host=localhost \
+  --with-db-port=3306 \
+  --with-db-user=openca \
+  --with-db-passwd="openca" \
+  --with-service-mail-account="manager@openca.org" \
+  --with-language=en_EN \
+  --with-hierarchy-level=ca
+

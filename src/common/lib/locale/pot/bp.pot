@@ -1,0 +1,434 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: common/lib/bp/backup_key.sub:30 common/lib/bp/backup_key.sub:119
+#: common/lib/bp/backup_key.sub:159 common/lib/bp/check_csr_params.sub:30
+#: common/lib/bp/check_csr.sub:30 common/lib/bp/check_key_params.sub:30
+#: common/lib/bp/check_key.sub:30 common/lib/bp/check_pin.sub:30
+#: common/lib/bp/complete_csr.sub:30 common/lib/bp/complete_csr.sub:46
+#: common/lib/bp/complete_csr.sub:295 common/lib/bp/create_cert.sub:31
+#: common/lib/bp/create_csr.sub:30 common/lib/bp/create_key.sub:30
+#: common/lib/bp/create_pin.sub:30 common/lib/bp/enroll_pin.sub:30
+#: common/lib/bp/enroll_pkcs12.sub:30
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-17 18:40-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: common/lib/bp/backup_key.sub:39 common/lib/bp/check_key.sub:39
+#: common/lib/bp/check_pin.sub:39 common/lib/bp/create_csr.sub:39
+#: common/lib/bp/create_key.sub:39 common/lib/bp/create_pin.sub:39
+#: common/lib/bp/enroll_pkcs12.sub:39
+msgid "The crypto token of the batch system was not activated."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:49 common/lib/bp/check_key.sub:49
+#: common/lib/bp/complete_csr.sub:53 common/lib/bp/create_csr.sub:49
+#: common/lib/bp/create_key.sub:49 common/lib/bp/enroll_pkcs12.sub:49
+msgid "There is no usable PIN."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:59 common/lib/bp/check_key.sub:59
+#: common/lib/bp/create_csr.sub:59 common/lib/bp/create_key.sub:59
+#: common/lib/bp/enroll_pkcs12.sub:59
+msgid "There is no PIN file which could be used to create the new key."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:68 common/lib/bp/check_key.sub:68
+#: common/lib/bp/check_pin.sub:68 common/lib/bp/create_csr.sub:68
+#: common/lib/bp/create_key.sub:68 common/lib/bp/enroll_pkcs12.sub:68
+msgid "The PIN file cannot be decrypted."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:84
+msgid "The process requests a keybackup but this is generally forbidden."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:95
+msgid "The process denies the keybackup but this is generally enforced."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:114
+msgid "The operational mode of the keybackup cannot be determined."
+msgstr ""
+
+
+#: common/lib/bp/backup_key.sub:129
+msgid "The directory for the keybackup cannot be created."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:140
+msgid "Cannot load the key from the private key file."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:153
+msgid "The key was already backuped."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:162
+msgid "Cannot decrypt the private key."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:174
+msgid "Cannot encrypt and store the private key."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:180
+msgid "The key was backuped."
+msgstr ""
+
+#: common/lib/bp/backup_key.sub:195 common/lib/bp/check_csr_params.sub:206
+#: common/lib/bp/check_csr.sub:241 common/lib/bp/check_key_params.sub:102
+#: common/lib/bp/check_key.sub:91 common/lib/bp/check_pin.sub:97
+#: common/lib/bp/complete_csr.sub:364 common/lib/bp/create_cert.sub:116
+#: common/lib/bp/create_csr.sub:181 common/lib/bp/create_key.sub:123
+#: common/lib/bp/create_pin.sub:210 common/lib/bp/enroll_pin.sub:86
+#: common/lib/bp/enroll_pkcs12.sub:183
+msgid "Cannot set new state configuration (__ERRNO__)."
+msgstr ""
+#: common/lib/bp/backup_key.sub:202 common/lib/bp/check_csr_params.sub:213
+#: common/lib/bp/check_csr.sub:248 common/lib/bp/check_key_params.sub:109
+#: common/lib/bp/check_key.sub:98 common/lib/bp/check_pin.sub:104
+#: common/lib/bp/complete_csr.sub:371 common/lib/bp/create_cert.sub:123
+#: common/lib/bp/create_csr.sub:188 common/lib/bp/create_key.sub:130
+#: common/lib/bp/create_pin.sub:217 common/lib/bp/enroll_pin.sub:93
+#: common/lib/bp/enroll_pkcs12.sub:190
+msgid "State configuration was changed."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:50
+msgid "There is no PIN for the private key."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:60
+msgid "There is no private key."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:71
+msgid "There is no role specified for the workflow."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:83 common/lib/bp/check_csr.sub:111
+msgid "There are no roles specified for the batch system."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:109 common/lib/bp/check_csr.sub:137
+msgid "The requested role (__ROLE__) is not allowed for the batch system."
+msgstr ""
+#: common/lib/bp/check_csr_params.sub:133 common/lib/bp/check_csr.sub:153
+msgid "There are no subject suffixes specified for the batch system."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:170 common/lib/bp/complete_csr.sub:104
+msgid "Cannot open data directory."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:179 common/lib/bp/complete_csr.sub:113
+msgid "The directory listing of the data directory cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:187 common/lib/bp/complete_csr.sub:121
+msgid "The data directory contains no SUBJECT_ALT_NAME specifications."
+msgstr ""
+
+#: common/lib/bp/check_csr_params.sub:197
+#: common/lib/bp/check_csr_params.sub:219
+msgid "The parameters for the new request are accepted."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:47 common/lib/bp/complete_csr.sub:257
+#: common/lib/bp/create_cert.sub:60
+msgid "The file with the serials of the CSRs cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:55 common/lib/bp/complete_csr.sub:265
+#: common/lib/bp/create_cert.sub:68
+msgid "There are no known serials of any request for this workflow."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:65 common/lib/bp/complete_csr.sub:275
+msgid "NEW"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:66 common/lib/bp/complete_csr.sub:276
+#: common/lib/bp/create_csr.sub:139
+msgid "NEW_REQUEST"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:69 common/lib/bp/complete_csr.sub:279
+msgid "PENDING"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:70 common/lib/bp/complete_csr.sub:280
+#: common/lib/bp/complete_csr.sub:341
+msgid "PENDING_REQUEST"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:74 common/lib/bp/complete_csr.sub:284
+#: common/lib/bp/create_cert.sub:81
+msgid "The request for the newest serial cannot be loaded from the database."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:96
+msgid "There is no hashed PIN in the request."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:190
+msgid "There is no subject alternative name in the request."
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:204
+msgid "The key of the request is too short (__CSR_KEY__ < __MIN_KEY__)."
+msgstr ""
+#: common/lib/bp/check_csr.sub:206#: common/lib/bp/check_csr.sub:218 common/lib/bp/create_cert.sub:78
+#: common/lib/bp/create_cert.sub:93
+msgid "APPROVED_REQUEST"
+msgstr ""
+
+#: common/lib/bp/check_csr.sub:232 common/lib/bp/check_csr.sub:254
+msgid "Request checked successfully."
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:70#: common/lib/bp/check_key_params.sub:78
+msgid "There was no key algorithm specified."
+msgstr ""
+
+#: common/lib/bp/check_key_params.sub:91
+#: common/lib/bp/check_key_params.sub:115
+msgid "Parameters for key generation are correct."
+msgstr ""
+
+#: common/lib/bp/check_key.sub:80 common/lib/bp/check_key.sub:104
+msgid "New key checked."
+msgstr ""
+
+#: common/lib/bp/check_pin.sub:49
+msgid "There is no checkable PIN."
+msgstr ""
+
+#: common/lib/bp/check_pin.sub:59
+msgid "There is no PIN file which could be used to check the PIN."
+msgstr ""
+
+#: common/lib/bp/check_pin.sub:80
+msgid "The checked PIN is too short."
+msgstr ""
+
+#: common/lib/bp/check_pin.sub:86 common/lib/bp/check_pin.sub:110
+msgid "PIN checked and accepted."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:60
+msgid "The hashed PIN file cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:70
+msgid "There is no role defined."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:77
+msgid "The ROLE file cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:87
+msgid "There is no subject defined."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:94
+msgid "The SUBJECT file cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:133
+msgid "The subject alternative name file __FILE__ cannot be loaded."
+msgstr ""
+#: common/lib/bp/complete_csr.sub:157
+msgid "Wrong IP (__IP__) in subject alternative name file __FILE__."
+msgstr ""
+#: common/lib/bp/complete_csr.sub:171#: common/lib/bp/complete_csr.sub:183#: common/lib/bp/complete_csr.sub:192
+msgid "The subject alternative name cannot be determined."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:205
+msgid "Cannot load the Level of Assurance mode."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:216
+msgid "Cannot load the Level of Assurance."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:223 common/lib/bp/complete_csr.sub:225
+msgid "/data/EXPIRES"
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:228
+msgid "Cannot load expiration date."
+msgstr ""
+
+#: common/lib/bp/complete_csr.sub:235
+msgid "The value of notafter must have the format YYMMDDhhmmss."
+msgstr ""
+#: common/lib/bp/complete_csr.sub:302#: common/lib/bp/complete_csr.sub:306#: common/lib/bp/complete_csr.sub:307
+msgid "CERT_NOTAFTER = "
+msgstr ""
+#: common/lib/bp/complete_csr.sub:310#: common/lib/bp/complete_csr.sub:313#: common/lib/bp/complete_csr.sub:314#: common/lib/bp/complete_csr.sub:315#: common/lib/bp/complete_csr.sub:355 common/lib/bp/complete_csr.sub:377
+msgid "Request completed."
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:42
+msgid "The CA token is not usable."
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:95
+msgid "Cannot issue the certificate (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: common/lib/bp/create_cert.sub:107 common/lib/bp/create_cert.sub:129
+msgid "Certificate issued successfully."
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:77
+msgid "The subject of the request cannot be loaded."
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:92
+msgid "The request cannot be created (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:103 common/lib/bp/create_csr.sub:105
+msgid "REQUEST"
+msgstr ""
+
+
+#: common/lib/bp/create_csr.sub:129
+msgid "The minimal request cannot be created (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+
+#: common/lib/bp/create_csr.sub:163
+msgid "Cannot write the keydigest to file __FILE__."
+msgstr ""
+
+#: common/lib/bp/create_csr.sub:170 common/lib/bp/create_csr.sub:194
+msgid "New request created."
+msgstr ""
+
+
+#: common/lib/bp/create_key.sub:112 common/lib/bp/create_key.sub:136
+msgid "New key created."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:53
+msgid "The private directory __DIR__ for the workflow cannot be created."
+msgstr ""
+#: common/lib/bp/create_pin.sub:59
+msgid "Created private directory for workflow."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:71
+msgid "The public directory __DIR__ for the workflow cannot be created."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:77
+msgid "Created public directory for workflow."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:85
+msgid "There is already a PIN."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:99
+msgid "The old hashed PIN __FILE__ cannot be moved away."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:105
+msgid "Removed old hashed PIN."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:137
+msgid "You must configure the PIN length."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:144
+msgid "Cannot create PIN! OpenCA::OpenSSL returns errorcode __ERRNO__."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:159
+msgid "Cannot hash PIN! OpenCA::OpenSSL returns errorcode __ERRNO__."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:175
+msgid "Cannot write PIN to file __FILE__."
+msgstr ""
+#: common/lib/bp/create_pin.sub:178
+msgid "Error __ERRNO__: __ERRVAL__"
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:192
+msgid "Cannot write hashed PIN to file __FILE__."
+msgstr ""
+#: common/lib/bp/create_pin.sub:199
+msgid "PIN created, hashed and stored."
+msgstr ""
+
+#: common/lib/bp/create_pin.sub:223
+msgid "PIN created."
+msgstr ""
+
+#: common/lib/bp/enroll_pin.sub:39
+msgid "There is no PIN."
+msgstr ""
+
+
+#: common/lib/bp/enroll_pin.sub:57
+msgid "Cannot get filename for file with PIN references."
+msgstr ""
+#: common/lib/bp/enroll_pin.sub:67 common/lib/bp/enroll_pkcs12.sub:164
+msgid "Cannot open file __FILENAME__ for attaching new data."
+msgstr ""
+
+#: common/lib/bp/enroll_pin.sub:75
+msgid "Write reference to file with PINs waiting for export."
+msgstr ""
+
+#: common/lib/bp/enroll_pin.sub:99
+msgid "Enrolled PIN."
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:86
+msgid "VALID_CERTIFICATE"
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:92
+msgid "The certificate cannot be determined."
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:109
+msgid "Cannot get directory with PKCS#12 files."
+msgstr ""
+#: common/lib/bp/enroll_pkcs12.sub:126
+msgid "CERTIFICATE"
+msgstr ""
+
+
+
+#: common/lib/bp/enroll_pkcs12.sub:154
+msgid "Cannot get filename for file with PKCS#12 references."
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:172
+msgid "Write reference to file with PKCS#12 references waiting for export."
+msgstr ""
+
+#: common/lib/bp/enroll_pkcs12.sub:196
+msgid "Enrolled PKCS#12."
+msgstr ""

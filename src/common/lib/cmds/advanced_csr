@@ -1,0 +1,1310 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: advanced_csr
+##       Brief: basic CSR
+##     Version: $Revision: 1.23 $
+## Description: this script creates a CSR
+##  Parameters: 
+
+use strict;
+
+## holds the type of the request
+our $type;
+our $os;
+our $osver;
+our $req_type;
+ 
+sub cmdAdvanced_csr {
+
+our ($query, $config, $errval, $cryptoShell, $tools, $db);
+
+my $minPinLength = getRequired('minpinlength');
+my $OPERATION    = $query->param ('operation');
+my $STATUS       = $query->param ('status');
+our $req_type    = getReqType();
+our $type        = "ENHANCED";
+
+my $verifyEmailAddress = getRequired('verifyEmailAddress');
+
+## read the loa.xml file and get the values
+my $loaOption = getRequired('USE_LOAS');
+my ($loaTwig, $xmlLOA, %LOALevels, @LOANames, $loaHtml, $loaSelect, %LOAHash);
+if ($loaOption =~ /yes/i)
+{
+       	$loaTwig = loadConfigXML ('LOAConfiguration');
+    	if (not $loaTwig) {
+               	generalError (gettext ("Cannot load menu configration"));
+       	}
+       	for my $al ($loaTwig->get_xpath("loa"))
+       	{
+            #$DEBUG=1;
+            $xmlLOA = gettext( getField ($al, 'name'));
+            $LOALevels{$xmlLOA}=gettext( getField($al, 'level'));
+            $LOAHash{gettext(getField ($al, 'level'))}=$xmlLOA;
+            push (@LOANames, $xmlLOA);
+            debug_cmds ("advanced_csr: LOANames: ".@LOANames);
+      	}
+}
+
+
+my ( $reqTwig, $userEnable );
+
+$reqTwig = loadConfigXML ('BrowserRequestConfig');
+if (not $reqTwig) {
+	generalError (gettext ("Cannot load reqTwig configration"));
+};
+
+###################################################################
+#  Now we get the next form - Input for Certificate Details 
+#  :: user-client-filled-form
+##################################################################
+
+( $userEnable ) = ( $reqTwig->get_xpath("request/user/enable"));
+
+## if the user data form is enabled, display it
+if( $userEnable->field =~ /YES/i ) {
+
+    my $info_list = undef;
+    my $xtmp = undef;
+    my @user_list = undef;
+    my $pos = 0;
+    my $html_input = undef;
+    my $optional = undef;
+    my $cmd_panel = undef;
+    my $hidden_list = undef;
+    my $style = undef;
+    my $class = undef;
+
+
+    if ( (( $STATUS == "") or ( $STATUS == "user-client-filled-form")) and
+		(not checkUserData_csr( $OPERATION )) ) {
+
+	foreach my $mySec ( $reqTwig->get_xpath("request/user/*" )) {
+
+		my $name = getField( $mySec, 'name' );
+
+		next if ( $name eq "" );
+
+		if( defined $info_list->{BODY} ) {
+                	$pos = scalar @{$info_list->{BODY}};
+		}
+
+        	$info_list->{BODY}->[$pos++]->[0] = "<br /> " . 
+				gettext ( $name ) .  "<br /><br />";
+
+        	foreach my $item ( $mySec->get_xpath("input") ) {
+
+			my %input =  genInputXML ( $item );
+
+                	$pos = scalar @{$info_list->{BODY}};
+                	$info_list->{BODY}->[$pos]->[0] = gettext($input{LABEL});
+                	$info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+		}
+        }
+
+        $hidden_list->{"operation"} = "client-filled-form";
+        $hidden_list->{"CSR_TYPE"}  = $type;
+        $hidden_list->{"cmd"}       = "advanced_csr";
+        $hidden_list->{"status"}    = "user-client-filled-form";
+
+	$cmd_panel->[0] = '<input type="button" value="'.
+				gettext("Back") . "\" " . 
+				" onClick='history.back();'>";
+
+	$cmd_panel->[0] .= '&nbsp; <input type=submit value="'.
+						gettext ("Continue").'">';
+
+	return libSendReply (
+		"NAME"        => getReqTypeName() . " - User Details",
+		"EXPLANATION" => gettext ("Please enter your personal data in the following form.")."\n".  $errval,
+                "INFO_LIST"   => $info_list,
+                "HIDDEN_LIST" => $hidden_list,
+                "CMD_PANEL"   => $cmd_panel );
+
+	}
+}
+
+###################################################################
+#  Now we get the next form - Input for Certificate Details 
+#  :: certificate-client-filled-form
+##################################################################
+
+if( $query->param("status") eq "user-client-filled-form" ) {
+	$OPERATION = undef;
+	$STATUS = undef;
+	$query->delete('status');
+}
+
+if ( (($STATUS eq "") or (( $STATUS eq "certificate-client-filled-form"))) and
+		( not checkCertData_csr ($OPERATION) )) {
+
+	my $info_list = undef;
+	my $xtmp = undef;
+	my @user_list = undef;
+	my $pos = 0;
+	my $html_input = undef;
+	my $optional = undef;
+	my $cmd_panel = undef;
+	my $hidden_list = undef;
+	my $style = undef;
+	my $class = undef;
+	my %input = undef;
+	my $xpath = undef;
+	my $base_xpath = "request/certificate";
+
+	$xpath = "$base_xpath/name";
+	( $xtmp ) = ( $reqTwig->get_xpath( $xpath ));
+	if( $xtmp ) {
+        	$info_list->{BODY}->[$pos++]->[0] = gettext ($xtmp->field) . 
+				"<br /><br />";
+	};
+
+	$xpath = "$base_xpath/dn/input";
+        foreach my $item ($reqTwig->get_xpath( $xpath )) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	$xpath = "$base_xpath/subjectAltNames";
+	( $xtmp ) = ( $reqTwig->get_xpath($xpath) );
+	if( $xtmp ) {
+        	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+				"<br /> " . gettext ($xtmp->field) . 
+				"<br /><br />";
+	};
+
+	$xpath = "$base_xpath/subjectAltNames/input";
+        foreach my $item ( $reqTwig->get_xpath($xpath) ) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	$xpath = "$base_xpath/details/name";
+	( $xtmp ) = ( $reqTwig->get_xpath($xpath) );
+	if( $xtmp ) {
+        	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+				"<br /> " . gettext ($xtmp->field) . 
+				"<br /><br />";
+	};
+
+	$xpath = "$base_xpath/details/input";
+        foreach my $item ( $reqTwig->get_xpath($xpath) ) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	$xpath = "$base_xpath/extras/name";
+	( $xtmp ) = ( $reqTwig->get_xpath($xpath) );
+	if( $xtmp ) {
+        	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+				"<br /> " . gettext ($xtmp->field) . 
+				"<br /><br />";
+	}
+
+	$xpath = "$base_xpath/extras/input";
+        foreach my $item ( $reqTwig->get_xpath($xpath) ) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	# Let's pass on the values of the fields from the user
+	# data form
+	$hidden_list = getXMLReqParamVals ( 
+				QUERY => $query,
+				TWIG => $reqTwig,
+				PATHS => [ "request/user/*/input" ] );
+
+        $hidden_list->{"operation"} = "client-filled-form";
+        $hidden_list->{"cmd"}       = "advanced_csr";
+        $hidden_list->{"status"}    = "certificate-client-filled-form";
+
+
+	$cmd_panel->[0] = '<input type="button" value="'.
+				gettext("Back") . "\" " . 
+				" onClick='history.back();'>";
+
+	$cmd_panel->[0] .= '&nbsp; <input type=submit value="'.
+						gettext ("Continue").'">';
+
+	return libSendReply (
+		"NAME"        => getReqTypeName() . " - Certificate Data",
+		"EXPLANATION" => gettext ("Please enter the certificate data.")."\n".  $errval,
+                "INFO_LIST"   => $info_list,
+                "HIDDEN_LIST" => $hidden_list,
+                "CMD_PANEL"   => $cmd_panel );
+
+}
+
+###################################################################
+#  Now we get the next form - Input for Key Details 
+#  :: key-client-filled-form
+##################################################################
+
+
+if( $query->param("status") eq "certificate-client-filled-form" ) {
+	$OPERATION = undef;
+	$STATUS = undef;
+	$query->delete('status');
+}
+
+if ( (($STATUS eq "") or (( $STATUS eq "key-client-filled-form"))) and
+		( not checkKeyData_csr ($OPERATION) )) {
+
+	my $info_list = undef;
+	my $xtmp = undef;
+	my @user_list = undef;
+	my $pos = 0;
+	my $html_input = undef;
+	my $optional = undef;
+	my $cmd_panel = undef;
+	my $hidden_list = undef;
+	my $style = undef;
+	my $class = undef;
+	my %input = undef;
+	my $base_xpath = "request/keygen";
+	my $xpath = undef;
+
+	$xpath = "$base_xpath/key/name";
+	( $xtmp ) = ( $reqTwig->get_xpath( $xpath ));
+        $info_list->{BODY}->[$pos++]->[0] = gettext ($xtmp->field) . 
+				"<br /><br />";
+
+	## Check consistency between the LOA and KeygenMode
+	my $genMode = $query->param('genkey');
+	my $message = checkGenMode ( $genMode );
+
+	if( $message ne "OK" ) {
+		generalError( $message );
+	}
+
+	$xpath = "$base_xpath/key/input";
+        foreach my $item ($reqTwig->get_xpath( $xpath )) {
+
+		my %input =  genInputXML ( $item );
+		my $iName = getField( $item, 'name' );
+
+		if( $iName =~ /(bits|strength)/i and $req_type eq "SPKAC" ) {
+			next;
+		}
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+
+	$xpath = "$base_xpath/pin/name";
+	( $xtmp ) = ( $reqTwig->get_xpath($xpath) );
+
+	if ($xtmp ) {
+        	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+				"<br /> " . gettext ($xtmp->field) . 
+				"<br /><br />";
+	}
+
+	$xpath = "$base_xpath/pin/input";
+        foreach my $item ( $reqTwig->get_xpath($xpath) ) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	$xpath = "$base_xpath/details/name";
+	( $xtmp ) = ( $reqTwig->get_xpath($xpath) );
+	if( $xtmp ) {
+        	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+				"<br /> " . gettext ($xtmp->field) . 
+				"<br /><br />";
+	}
+
+	$xpath = "$base_xpath/details/input";
+        foreach my $item ( $reqTwig->get_xpath($xpath) ) {
+
+		my %input =  genInputXML ( $item );
+
+                $pos = scalar @{$info_list->{BODY}};
+                $info_list->{BODY}->[$pos]->[0] = gettext( $input{LABEL} );
+                $info_list->{BODY}->[$pos]->[1] = $input{VALUE};
+        }
+
+	# Let's pass on the values of the fields from the user
+	# data form
+	$hidden_list = getXMLReqParamVals ( 
+				QUERY => $query,
+				TWIG => $reqTwig,
+				PATHS => [ "request/user/*/input",
+					   "request/certificate/*/input" ] );
+
+        $hidden_list->{"operation"} = "client-filled-form";
+        $hidden_list->{"cmd"}       = "advanced_csr";
+        $hidden_list->{"status"}    = "key-client-filled-form";
+
+	# Let's pass on the values of the fields from the user
+	# data form
+        # foreach my $item ($reqTwig->get_xpath("request/user/*/input")) {
+	# 	my $name = getField ($item, 'name');
+	# 	$hidden_list->{"$name"} = $query->param("$name");
+	# }
+
+        # foreach my $item ($reqTwig->get_xpath("request/certificate/*/input")) {
+	# 	my $name = getField ($item, 'name');
+	# 	$hidden_list->{"$name"} = $query->param("$name");
+	# }
+
+	$cmd_panel->[0] = '<input type="button" value="'.
+				gettext("Back") . "\" " . 
+				" onClick='history.back();'>";
+
+	$cmd_panel->[0] .= '&nbsp; <input type=submit value="'.
+						gettext ("Continue").'">';
+
+	return libSendReply (
+		"NAME"        => getReqTypeName() . " - Key Details",
+		"EXPLANATION" => gettext ("Please enter the certificate data.")."\n".  $errval,
+                "INFO_LIST"   => $info_list,
+                "HIDDEN_LIST" => $hidden_list,
+                "CMD_PANEL"   => $cmd_panel );
+
+}
+
+###################################################################
+#  Now we get the next form - USER LICENSE AGREEMENT
+#  :: agreement-client-filled-form
+##################################################################
+
+
+if( $query->param("status") eq "key-client-filled-form" ) {
+	$OPERATION = undef;
+	$STATUS = undef;
+	$query->delete('status');
+}
+
+
+if ( $STATUS eq "" ) {
+
+	my $info_list = undef;
+	my $xtmp = undef;
+	my @user_list = undef;
+	my $pos = 0;
+	my $html_input = undef;
+	my $optional = undef;
+	my $cmd_panel = undef;
+	my $hidden_list = undef;
+	my $style = undef;
+	my $class = undef;
+	my %input = undef;
+	my $base_xpath = "request/agreement";
+	my $xpath = undef;
+	my $html = undef;
+	my $FD = undef;
+
+	$xpath = "$base_xpath";
+	( $xtmp ) = ( getField( $reqTwig->get_xpath($xpath), 'enabled'));
+
+	if( defined $xtmp and $xtmp =~ /YES/ ) {
+
+		$xpath = "$base_xpath/name";
+		( $xtmp ) = ( $reqTwig->get_xpath( $xpath ));
+        	$info_list->{BODY}->[$pos++]->[0] = gettext ($xtmp->field) . 
+				"<br /><br />";
+
+		$html = getAgreement ( $query->param('loa') );
+
+		$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = 
+			'<div class="agreement">' . $html . "</div>";
+
+		# Let's pass on the values of the fields from the user
+		# data form
+		$hidden_list = getXMLReqParamVals ( 
+				QUERY => $query,
+				TWIG => $reqTwig,
+				PATHS => [ "request/user/*/input",
+					   "request/certificate/*/input",
+					   "request/keygen/*/input" ] );
+
+		# Now we add all the hidden fields
+        	$hidden_list->{"operation"} = "client-filled-form";
+        	$hidden_list->{"cmd"}       = "advanced_csr";
+        	$hidden_list->{"status"}    = "agreement-client-filled-form";
+
+	        $cmd_panel->[0] = '<input type="button" value="'.
+				gettext("Back") . "\" " . 
+				" onClick='history.back();'>";
+
+	        $cmd_panel->[0] .= '&nbsp; <input type=submit value="'.
+						gettext ("Continue").'">';
+
+		return libSendReply (
+			"NAME"        => "User Agreement",
+			"EXPLANATION" => gettext ("Please review the User Agreement.")."\n".  $errval,
+	                "INFO_LIST"   => $info_list,
+	                "HIDDEN_LIST" => $hidden_list,
+	                "CMD_PANEL"   => $cmd_panel );
+
+        }
+}
+
+###################################################################
+#  Now we get the next form - Input for Key Details 
+#  :: key-client-filled-form
+##################################################################
+
+
+if( $query->param("status") eq "agreement-client-filled-form" ) {
+	$OPERATION = undef;
+	$STATUS = undef;
+	$query->delete('status');
+}
+
+if ( (($STATUS eq "") or (( $STATUS eq "final-client-filled-form"))) and
+		( not checkFinalData_csr ($OPERATION) )) {
+
+	my $info_list = undef;
+	my $xtmp = undef;
+	my @user_list = undef;
+	my $pos = 0;
+	my $html_input = undef;
+	my $optional = undef;
+	my $cmd_panel = undef;
+	my $hidden_list = undef;
+	my $style = undef;
+	my $class = undef;
+	my %input = undef;
+	my $base_xpath = "request/*";
+	my $xpath = undef;
+	my $ie_cert = undef;
+	my $vista_cert = undef;
+	my $nss_cert = undef;
+
+	$info_list->{BODY}->[$pos++]->[0] = 
+		gettext("Certificate Request Summary") . "<br /><br />";
+
+	foreach my $section ( $reqTwig->get_xpath( "$base_xpath" )) {
+		my $enabled = getField( $section, 'enabled' );
+		my $name = getField( $section, 'name' );
+		my @inList = ();
+
+		if( $enabled =~ /NO/i or 
+			( not $section->get_xpath("input") and not 
+					$section->get_xpath("*/input")) ) {
+			next;
+		}
+
+		@inList = $section->get_xpath("input");
+
+		if( scalar @inList > 0 ) {
+			$info_list->{BODY}->[$pos++]->[0] = "<br/>$name";
+			@inList = $section->get_xpath("input");
+
+			foreach my $myInput ( @inList ) {
+				$pos = scalar @{$info_list->{BODY}};
+				$info_list->{BODY}->[$pos]->[0] =
+					gettext( getField( $myInput,'label'));
+				$info_list->{BODY}->[$pos]->[1] =
+					$query->param(getField($myInput,'name'));
+			}
+		} else {
+			foreach my $subSec ( $section->get_xpath("*")) {
+				my $name = getField ( $subSec, 'name');
+				my $pos = scalar @{$info_list->{BODY}};
+
+				@inList = $subSec->get_xpath("input");
+
+				if( scalar @inList < 1 ) {
+					next;
+				}
+
+				if( $name =~ /PIN/ ) {
+					next;
+				}
+
+				$info_list->{BODY}->[$pos]->[0] = "<br /> " .
+								$name;
+
+				foreach my $myInput ( @inList ) {
+					my $pos = scalar @{$info_list->{BODY}};
+					my $iName = getField( $myInput, "name");
+
+					if ( $query->param("$iName") eq "" and 
+						$iName !~ /strength/i ) {
+						next;
+					}
+
+					$info_list->{BODY}->[$pos]->[0] =
+					  	gettext( getField( $myInput,
+								'label'));
+					if( $iName =~ /strength/i ) {
+
+						if( $req_type eq "SPKAC" ) {
+            					    $info_list->{BODY}->[$pos]->[1] = 
+							'<KEYGEN NAME="newkey" CHALLENGE="NO_CHALLENGE">';
+						} else {
+						    my $bitnum = undef;
+
+						    $bitnum = $query->param(getField(
+							$myInput, 'name' ));
+
+					   	    $info_list->{BODY}->[$pos]->[1] =
+							gettext ( $bitnum ) . " (" .
+							$query->param('bits') . " bits)";
+						}
+
+						if ( $req_type =~ /IE|VISTA/i ) {
+						     $pos = scalar @{$info_list->{BODY}};
+
+						     $info_list->{BODY}->[$pos]->[0] =
+            						gettext ("Cryptographic device");
+
+						     $info_list->{BODY}->[$pos]->[1] =
+                                			"<select name=\"csp\" size=1 id=\"csp\">\n".
+                                			"</select>\n";
+						}
+					} else {
+					   	    $info_list->{BODY}->[$pos]->[1] =
+							$query->param( $iName );
+					}
+				}
+
+			}
+		}
+
+
+	}
+
+	$hidden_list = getXMLReqParamVals ( 
+			QUERY => $query,
+			TWIG  => $reqTwig,
+			PATHS => [ "request/user/*/input",
+				   "request/certificate/*/input",
+				   "request/keygen/*/input" ] );
+	
+        $hidden_list->{"operation"} = "client-filled-form";
+        $hidden_list->{"cmd"}       = "advanced_csr";
+        $hidden_list->{"status"}    = "finished-client-filled-form";
+
+        $hidden_list->{"request"}    = "";
+        $hidden_list->{"CSR_TYPE"}    = "$req_type";
+
+	if( $req_type =~ /IE/ ) {
+		$ie_cert = 1;
+	} elsif ( $req_type =~ /VISTA/ ) {
+		$vista_cert = 1;
+	} elsif ( $req_type =~ /NSS/ ) {
+		$nss_cert = 1;
+	} elsif ( $req_type =~ /SPKAC/ ) {
+		# What shall we set here ?
+	}
+
+	my $dn = "";
+	foreach my $item ($reqTwig->get_xpath("request/certificate/dn/input")) {
+		my $name = getField( $item, "name" );
+		my $val = $query->param( "$name" );
+
+		if( $dn ne "" ) {
+			$dn .= ", ";
+		}
+
+		$name =~ s/^\s+//g;
+
+		$val =~ s/\\/\\\\/g;
+        	$val =~ s/,/\\,/g;
+        	$val =~ s/=/\\=/g;
+        	$val =~ s/\+/\\+/g;
+
+		if ( $name =~ /cn|ou|o|l|c|sn|uid/i ) {
+			$name = uc ($name);
+		}
+
+		$dn .= uc($name) . "=$val";
+	}
+	$dn =~ s/^\s+//g;
+
+	if( $req_type =~ /IE|VISTA/ ) {
+        	## microsoft uses E for emailaddress
+        	$dn =~ s/,\s*emailAddress\s*=/,E=/i;
+        	$dn =~ s/^\s*emailAddress\s*=/E=/i;
+	} else {
+        	$dn =~ s/,\s*emailAddress\s*=/,emailAddress=/i;
+        	$dn =~ s/^\s*emailAddress\s*=/emailAddress=/i;
+	}
+
+	# Now let's add the base dn from the config file
+	foreach my $basedn ( $reqTwig->get_xpath("request/certificate/basedn/rdn") ) {
+		my $name = getField( $basedn, 'name' );
+		my $val  = getField( $basedn, 'value');
+
+		if( $val eq "" or $name eq "" ) {
+			next;
+		}
+
+		if( length( $dn ) ne "" ) {
+			$dn .= ", ";
+		}
+		$dn .= "$name=$val";
+	}
+		
+	$hidden_list->{"dn"} = $dn;
+
+	$cmd_panel->[0] = '<input type="button" value="'.
+				gettext("Back") . "\" " . 
+				" onClick='history.back();'> &nbsp; ";
+        if ($ie_cert) {
+            # $hidden_list->{"dn"} = $ms_dn;
+            $cmd_panel->[0] .= '<input type=button name=cont value="'.gettext("Generate Request").'" OnClick="genReq()">';
+        } elsif ( $vista_cert ) {
+            # $hidden_list->{"dn"} = $vista_dn;
+            $cmd_panel->[0] .= '<input type=button name=cont value="'.gettext("Generate Request").'" OnClick="vistaCSR()">';
+        } elsif ( $nss_cert ) {
+            # $hidden_list->{"dn"} = $nss_dn;
+            $cmd_panel->[0] .= '<input type=button name=cont value="'.gettext("Generate Request").'" OnClick="nssCSR()">';
+	} else {
+            # $hidden_list->{"dn"} = $dn;
+            $cmd_panel->[0] .= '<input type=submit value="'.gettext ("Generate Request").'">';
+        } 
+
+	return libSendReply (
+		"NAME"        => getReqTypeName() . " - Final Step",
+                "EXPLANATION" => gettext ("Following are listed data received. Please check carefully information here reported with the ones in your possession."),
+                "INFO_LIST"   => $info_list,
+                "HIDDEN_LIST" => $hidden_list,
+		"IE_REQUEST_CERT" => $ie_cert,
+		"VISTA_REQUEST_CERT" => $vista_cert,
+		"NSS_REQUEST_CERT" => $nss_cert,
+                "CMD_PANEL"   => $cmd_panel );
+}
+
+###################################################################
+#  Now we get the next form - Confirmation and Key Generation
+#  :: confirm-client-filled-form
+###################################################################
+
+
+if ( ($STATUS eq "" ) or ( $query->param('status') eq "finished-client-filled-form") ) {
+
+        my $dn = $query->param('dn');
+        my $keytype = $query->param('keytype');
+
+        ## load the static data
+        my $RA          = $query->param('ra');
+        my $ROLE        = $query->param('role');
+
+	## get the LOA value if was turned on
+	my $LOA = $query->param('loa');
+
+        ## Status of FORM, possible values (in this order):
+        ##	'client-filled-form' or 'client-confirmed-form'
+        my $PASSWD	= $query->param('passwd1');
+
+        my $key = "";
+        my $req = undef;;
+	my $spkac = $query->param('spkac');
+	my $alg = $query->param('alg');
+
+        my $bits = $query->param('bits');
+
+        ## add the key
+        ## Delete ^M
+        if( $req_type =~ /SPKAC/ ) {
+        	my $NEWKEY = $query->param('newkey');
+        	$NEWKEY =~ s/\015|\n//g;
+        	generalError (gettext ("The keygeneration of the browser failed. SPKAC is empty."))
+                    if (not $NEWKEY);
+        	$spkac .= "SPKAC = $NEWKEY\n";
+
+                if( not $req = new OpenCA::REQ (SHELL  => $cryptoShell,
+                                                GETTEXT=> \&i18nGettext,
+                                                DATA   => $spkac,
+                                                INFORM => "SPKAC" )) {
+                    generalError( gettext("Error while creating REQ object.").
+                                  " ".$OpenCA::REQ::errval, $OpenCA::REQ::errno );
+                }
+
+        } elsif ( $req_type =~ /IE|NSS|VISTA/ ) {
+                my $request = "";
+
+                $request .= "-----BEGIN CERTIFICATE REQUEST-----\n";
+                $request .= $query->param('request');
+                $request .= "-----END CERTIFICATE REQUEST-----\n";
+
+                if( not $req = new OpenCA::REQ( SHELL  => $cryptoShell, 
+                                                GETTEXT=> \&i18nGettext,
+                                                DATA   => "$request",
+                                                INFORM => "PEM" )) {
+                    generalError( gettext ("Error while creating REQ object.").
+                                  " ".$OpenCA::REQ::errval, $OpenCA::REQ::errno );
+                };
+
+	} else { 
+		## this is server mode
+                ## generate keypair
+                my $TempDir = getRequired( 'tempdir' );
+
+                ## Get the parameters
+                my $keyFile	= "$TempDir/key_${$}.pem";
+
+                ## create the key
+                if( not $cryptoShell->genKey(
+                                             BITS      => $bits,
+                                             OUTFILE   => $keyFile,
+                                             TYPE      => $keytype,
+                                             ALGORITHM => $alg,
+                                             PASSWD    => $PASSWD ) ) {
+                    generalError (gettext ("Cannot create keypair!").
+                                  "<br/>($keyFile)<br/>[".
+					$cryptoShell->errval . " - " .
+						$cryptoShell->errno . "]",
+                                  		$cryptoShell->errno);
+                }
+
+                ## change to pkcs#8
+                $key = $cryptoShell->dataConvert (
+                                                  DATATYPE  => "KEY",
+                                                  INFORM    => "PEM",
+                                                  OUTFORM   => "PKCS8",
+                                                  INPASSWD  => $PASSWD,
+                                                  OUTPASSWD => $PASSWD,
+                                                  INFILE    => $keyFile );
+                if ( not $key ) {
+                    generalError ( gettext ("Cannot convert key to PKCS#8!"));
+                }
+
+                ## generate PKCS#10 request
+                $req = new OpenCA::REQ (
+                                SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                KEYFILE => $keyFile,
+				# EXTENSIONS => 
+				# 	getRequired ( 'UserCertExtensions' ),
+                                SUBJECT => $dn,
+                                PASSWD  => $PASSWD,
+                                FORMAT  => "PEM");
+                if (not $req) {
+                    generalError ( i18nGettext ("Cannot create request! <br>\n(__ERRVAL__)",
+                                                "__ERRVAL__",
+                                                $OpenCA::REQ::errval),
+                                   $OpenCA::REQ::errno);
+                }
+                unlink ($keyFile);
+        }
+
+	my $checkVal = checkRequirements( $req, $LOA, $query->param('genkey') );
+
+	if( $checkVal ne "OK" ) {
+		# ERROR: The request does not match the requirements
+		# for the used LOA
+		if( $DEBUG ) {
+			generalError( "$checkVal" . "<br/>REQ=$req<br/>" .
+				"<pre>" . $req->getParsed->{DN} . "\n" .  
+					$req->getParsed->{BODY} );
+		} else {
+			generalError( "$checkVal" );
+		}
+	};
+
+        ## compose request
+        my $tmp = "-----BEGIN HEADER-----\n";
+	if( $req_type =~ /SPKAC|IE|NSS/ ) {
+		$tmp .= "TYPE = $req_type\n";
+	} elsif ( $req_type =~ /VISTA/ ) {
+		$tmp .= "TYPE = IE\n";
+	} else {
+		$tmp .= "TYPE = PKCS#10\n";
+	}
+
+	## TYPE = HEADER - removed
+	
+	## Save Client Type Used
+	$tmp .= "NOTBEFORE = " . gmtime() ."\n";
+	$tmp .= "AGENT_NAME = " . $query->param("AGENT_NAME") ."\n";
+	$tmp .= "AGENT_VERSION = " . $query->param("AGENT_VERSION") ."\n";
+	$tmp .= "AGENT_OS_NAME = " . $query->param("AGENT_OS_NAME") ."\n";
+	$tmp .= "AGENT_OS_VERSION = " . $query->param("AGENT_OS_VERSION") ."\n";
+
+        ## build serial
+        if ( (getRequired ('CgiServerType') =~ /(RA|CA)/i) and 
+						$query->param ('key') ) {
+        	$tmp .= "SERIAL = ".$query->param ('key')."\n";
+        } else {
+		my $last_req = libDBGetLastItem ("REQUEST");
+		my $req_elements = 0;
+
+		$req_elements    = $last_req->getSerial("REQUEST") 
+							if ($last_req);
+		$req_elements  >>= getRequired ("ModuleShift");
+
+		if ((not defined $req_elements) or ($req_elements < 0)) {
+                	generalError ( gettext ("Database fails during " .
+				"counting the already existing requests!"),669);
+		} else {
+			$req_elements++;
+		}
+
+		my $new_serial = ($req_elements << 
+			getRequired ("ModuleShift")) | getRequired ("ModuleID");
+		$tmp .= "SERIAL = ".$new_serial."\n";
+        }
+
+        my $PASSWD = $query->param('passwd1');
+        if ($PASSWD) {
+		my $pin_digest = $cryptoShell->getDigest (
+				DATA      => $PASSWD,
+				ALGORITHM => "sha1");
+
+		if (not $pin_digest) {
+			generalError ( gettext ("OpenSSL fails during the calculation of the hash from the passphrase!"), 670);
+            	}
+		$tmp .= "PIN = $pin_digest\n";
+	}
+
+        $tmp .= "RA = " . $query->param('ra') . "\n";
+        $tmp .= "ROLE = $ROLE\n";
+
+	## add the LOA value to  the header 
+	$tmp.= "LOA = " . $LOALevels{$LOA} . "\n" ;
+       
+        $tmp .= "SUBJECT = $dn\n";
+        $tmp .= "KEY_ALGORITHM = ".$keytype."\n";
+        $tmp .= "KEY_BITS = ".$req->getParsed->{KEYSIZE}."\n";
+
+	my @subjectalt_attr = 
+	      $reqTwig->get_xpath("request/certificate/subjectAltNames/input");
+	my @san = ();
+
+	foreach my $item ( @subjectalt_attr ) {
+		my $name = getField( $item, 'name' );
+		my $valType = getField( $item, 'valueType' );
+		my $prefix = getField( $item, 'prefix' );
+		my $suffix = getField( $item, 'suffix' );
+
+		my $val = $query->param("$name");
+
+		if( $valType eq "" ) {
+			$valType = "email";
+		}
+
+		if( length ( $val ) ) {
+			push ( @san, "$valType:" . $prefix . $val . $suffix );
+		}
+	}
+
+	if (scalar @san > 0) {
+	 	$tmp .= "SUBJECT_ALT_NAME = ".join(",",@san)."\n";
+	}
+
+        ## load additional header attributes
+	my @subjectalt_attr = 
+		$reqTwig->get_xpath("request/certificate/subjectAltNames" );
+	my @san = ();
+
+	foreach my $item ( $reqTwig->get_xpath("request/user/*/input" ) ) {
+		my $name = getField( $item, 'name' );
+		my $prefix = getField( $item, 'prefix' );
+		my $suffix = getField( $item, 'suffix' );
+		my $val = $query->param("$name");
+
+		if( length ( $val ) ) {
+			$tmp .= "$name=" . $prefix . $val . $suffix . "\n";
+		}
+	}
+
+        $tmp .= "-----END HEADER-----\n";
+        $tmp .= $req->getBody();
+        $tmp .= "\n" . $key if ($key);
+
+        my $new_req;
+        if( not $new_req = new OpenCA::REQ( SHELL   => $cryptoShell,
+                                            GETTEXT => \&i18nGettext,
+                                            DATA    => $tmp) ) {
+            generalError( i18nGettext ("Internal Request Error (__ERRVAL__)",
+                                       "__ERRVAL__",
+                                       $OpenCA::REQ::errval),
+                          $OpenCA::REQ::errno );
+        }
+
+	my $status = "NEW";
+	my ( $statusTwig ) = ( $reqTwig->get_xpath("requestStatus" ) );
+
+	if( not $statusTwig ) {
+		$status = "NEW";
+	} else {
+		$status = $statusTwig->field;
+	}
+
+	if( $status !~ /NEW|APPROVED|PENDING/gi ) {
+		$status = "NEW";
+	}
+
+	my $reqKey;
+
+	if( $verifyEmailAddress =~ /Y/i ) {
+		$status = "TEMP$status";
+	}
+	$new_req->setStatus( "$status" );
+
+	if(!($reqKey = $db->storeItem( 
+			DATATYPE => $status . '_REQUEST',
+			OBJECT   => $new_req,
+			INFORM   => 'PEM',
+			MODE     => "INSERT" ))) {
+            generalError( gettext ("Error while storing REQ in database!").
+                          " ".$db->errval(). "$tmp", $db->errno() );
+	};
+
+	## Send out the Email verification Email
+	if( $verifyEmailAddress =~ /Y/i ) {
+		libSendEmailVerifyMessage( $reqKey );
+	};
+
+	## remove temporary files
+	$tools->deleteFiles (DIR => getRequired('TempDir'), 
+			FILTER => "key_${$}.pem");
+
+	my ($info_list, $cmd_panel) = (undef, undef);
+        $cmd_panel->[0] = '<input TYPE="Button" Name="Print" Value="'.
+			gettext ("Print").'" onClick="window.print();">';
+
+        my $explanation = i18nGettext (
+"Thank you for requesting your certificate from our organization, your request with the serial __CSR_SERIAL__ it's been successfully archived and it is now waiting for approval by any of our Registration Authorities (if you are unsure about the receiving of your request by this server, you can check the list of new requests). You need, however, read the email we sent you and confirm your email address before the process can progress.\n\nTo complete the certification process you have to go to one of our Registration Authority office with one of the following documents:\n\no ID&nbsp;card or passport.\no Documnetation asserting your role and authorization for requesting a certificate for your organization.\n\nIf you still have doubts about the issuing process, just use the links provided in the Information section to learn how to complete all the needed steps.",
+            "__CSR_SERIAL__", $new_req->getSerial());
+
+        # substitute variables
+        $info_list->{BODY} = [];
+        foreach my $attr (sort keys %{$new_req->getParsed()->{HEADER}}) {
+            my $id = scalar @{$info_list->{BODY}};
+            $info_list->{BODY}->[$id]->[0] = $attr;
+            $info_list->{BODY}->[$id]->[1] = $new_req->getParsed()->{HEADER}->{$attr};
+        }
+
+        return libSendReply (
+			"NAME"        => gettext ("Certificate Request Confirm"),
+			"EXPLANATION" => $explanation,
+			"CMD_PANEL"   => $cmd_panel,
+			"INFO_LIST"   => $info_list );
+}
+
+die gettext ("ERROR: Status Unkown!");
+
+}
+
+## Check Cert Data
+
+sub checkCertData_csr {
+    our ($query, $errval);
+
+    my $status = $_[0];
+    my $mistake = "";
+    my $minPinLength = 5;
+
+    ## second level check
+    if ($status) {
+	my $required = undef;
+	my $reqTwig = undef;
+
+	$reqTwig = loadConfigXML ('BrowserRequestConfig');
+	if (not $reqTwig) {
+		generalError (gettext ("Cannot load reqTwig configration"));
+	};
+
+
+        ## scan every entry DN
+        foreach my $item ($reqTwig->get_xpath("request/certificate/dn/input")) {
+		my $label = getField( $item, 'label');
+		my $required = getField( $item, 'required');
+		my $charset = getField( $item, 'charset');
+		my $name = getField( $item, 'name');
+		my $minlen = getField( $item, 'minlen');
+		my $in_type = getField( $item, 'type');
+		my $errLabel = getField( $item, 'errlabel');
+
+		if( ($required !~ /YES/gi) and
+			(not $query->param( getField( $item,'name')))){
+
+			next;
+		}
+
+		debug_cmds ("advanced_csr: $in_type - $charset\n");
+
+		my $failure = $query->newInputCheck({ 
+                                -regx   => $charset,
+                                -intype => 'textfield',
+                                -name   => $name,
+                                -check  => 'fill',
+                                -minlen => $minlen });
+
+		if ($failure) {
+			$mistake = "$mistake\n". 
+				"&sdot; <span style=\"color: red;\">" .
+				"$label - $failure" .
+				"</span>";
+		}
+        }
+
+        ## scan every subjectAltName entries 
+        foreach my $item ($reqTwig->get_xpath("request/certificate/subjectAltNames/input")) {
+		my $label = getField( $item, 'label');
+		my $required = getField( $item, 'required');
+		my $charset = getField( $item, 'charset');
+		my $name = getField( $item, 'name');
+		my $minlen = getField( $item, 'minlen');
+		my $in_type = getField( $item, 'type');
+
+		if( ($required !~ /YES/gi) and
+			(not $query->param( getField( $item, 'name')))){
+
+			next;
+		}
+
+		debug_cmds ("advanced_csr: $in_type - $charset\n");
+
+		my $failure = $query->newInputCheck({ 
+                                -regx   => $charset,
+                                -intype => 'textfield',
+                                -name   => $name,
+                                -check  => 'fill',
+                                -minlen => $minlen });
+
+		if ($failure) {
+			$mistake = "$mistake\n". 
+				"&sdot; <span style=\"color: red;\">" .
+				"$label - $failure" .
+				"</span>";
+		}
+        }
+
+        #quick hack, to get a nicer output...
+        $mistake =~ s/^[\s]*//;
+        $mistake =~ s/[\s\n\r]*$//;
+        $mistake =~ s/<br>//gi;
+        $mistake =~ s/ok//gi;
+        $mistake =~ s/\s*\(\s*\)\s*//g;
+
+        if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i) {
+            configError (gettext ("This command can only be used with " .
+			"forms which are using POST as METHOD!"));
+        }
+
+    } else {
+        return undef;
+    }
+
+    if ($mistake) {
+        print STDERR "advanced_csr: MISTAKE: --$mistake--\n";
+        $errval = "<br/>" . 
+		gettext ("Please fix the following errors before proceeding").
+			":<br/>" . $mistake;
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+sub checkUserData_csr {
+    our ($query, $errval);
+
+    my $status = $_[0];
+    my $mistake = "";
+    my $minPinLength = 5;
+
+    ## second level check
+    if ($status) {
+	my $required = undef;
+	my $reqTwig = undef;
+
+	$reqTwig = loadConfigXML ('BrowserRequestConfig');
+	if (not $reqTwig) {
+		generalError (gettext ("Cannot load reqTwig configration"));
+	};
+
+
+        ## load the normal DN and build the html-elements
+        my @elements = ( $reqTwig->get_xpath("request/user/*/input") );
+
+        ## scan every entry DN
+        foreach my $item ($reqTwig->get_xpath("request/user/*/input")) {
+		my $label = getField( $item, 'label');
+		my $required = getField( $item, 'required');
+		my $charset = getField( $item, 'charset');
+		my $name = getField( $item, 'name');
+		my $minlen = getField( $item, 'minlen');
+		my $in_type = getField( $item, 'type');
+
+		if( ($required !~ /YES/gi) and
+			 ( not $query->param(getField( $item, 'name')))) {
+
+			next;
+		}
+
+		debug_cmds ("advanced_csr: $in_type - $charset\n");
+
+		my $failure = $query->newInputCheck({ 
+                                -regx   => $charset,
+                                -intype => 'textfield',
+                                -name   => $name,
+                                -check  => 'fill',
+                                -minlen => $minlen });
+
+		if ($failure) {
+			$mistake = "$mistake\n". 
+				"&sdot; <span style=\"color: red;\">" .
+				"$label - $failure" .
+				"</span>";
+		}
+        }
+
+        #quick hack, to get a nicer output...
+        $mistake =~ s/^[\s]*//;
+        $mistake =~ s/[\s\n\r]*$//;
+        $mistake =~ s/<br>//gi;
+        $mistake =~ s/ok//gi;
+        $mistake =~ s/\s*\(\s*\)\s*//g;
+
+        if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i) {
+            configError (gettext ("This command can only be used with " .
+			"forms which are using POST as METHOD!"));
+        }
+
+    } else {
+        return undef;
+    }
+
+    if ($mistake) {
+        print STDERR "advanced_csr: MISTAKE: --$mistake--\n";
+        $errval = "<br/>" .
+		gettext ("Please fix the following errors before proceeding") .
+			":<br/>" . $mistake;
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+sub checkKeyData_csr {
+    our ($query, $errval);
+
+    my $status = $_[0];
+    my $mistake = "";
+    my $minPinLength = 5;
+
+    ## second level check
+    if ($status) {
+	my $required = undef;
+	my $reqTwig = undef;
+
+	$reqTwig = loadConfigXML ('BrowserRequestConfig');
+	if (not $reqTwig) {
+		generalError (gettext ("Cannot load reqTwig configration"));
+	};
+
+
+        ## scan every entry DN
+        foreach my $item ($reqTwig->get_xpath("request/keygen/*/input")) {
+		my $label = getField( $item, 'label');
+		my $required = getField( $item, 'required');
+		my $charset = getField( $item, 'charset');
+		my $name = getField( $item, 'name');
+		my $minlen = getField( $item, 'minlen');
+		my $in_type = getField( $item, 'type');
+		my $errlabel = getField($item,'errlabel');
+
+		if( ($required !~ /YES/gi) and
+			 ( not $query->param(getField ( $item, 'name')))) {
+
+			next;
+		}
+
+		debug_cmds ("advanced_csr: $in_type - $charset\n");
+
+		my $failure = $query->newInputCheck({ 
+                                -regx   => $charset,
+                                -intype => 'textfield',
+                                -name   => $name,
+                                -check  => 'fill',
+                                -minlen => $minlen });
+
+		if ($failure) {
+			if( not $errlabel ) {
+				$errlabel = $label;
+			};
+			$mistake = "$mistake\n". 
+				"&sdot; <span style=\"color: red;\">" .
+				"$label - $failure" .
+				"</span>";
+		}
+        }
+
+	my $pwdVal = "";
+        foreach my $item ($reqTwig->get_xpath("request/keygen/pin/input")) {
+		my $name = getField( $item, 'name');
+
+		if( $pwdVal eq "" ) {
+			$pwdVal = $query->param("$name");
+			next;
+		} else {
+			if ( $pwdVal ne $query->param("$name")) {
+				$mistake = "$mistake\n" . 
+				    "&sdot; <span style=\"color: red;\">" .
+				    "PIN - The provided PINs are different!" .
+				    "</span>";
+				last;
+			}
+		}
+	}
+
+        #quick hack, to get a nicer output...
+        $mistake =~ s/^[\s]*//;
+        $mistake =~ s/[\s\n\r]*$//;
+        $mistake =~ s/<br>//gi;
+        $mistake =~ s/ok//gi;
+        $mistake =~ s/\s*\(\s*\)\s*//g;
+
+        if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i) {
+            configError (gettext ("This command can only be used with " .
+			"forms which are using POST as METHOD!"));
+        }
+
+    } else {
+        return undef;
+    }
+
+    if ($mistake) {
+        print STDERR "advanced_csr: MISTAKE: --$mistake--\n";
+        $errval = "<br/>" .
+		gettext ("Please fix the following errors before proceeding") .
+			":<br/>" . $mistake;
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+sub checkFinalData_csr {
+    our ($query, $errval);
+
+    my $status = $_[0];
+    my $mistake = "";
+    my $minPinLength = 5;
+
+    return undef;
+}
+
+1;

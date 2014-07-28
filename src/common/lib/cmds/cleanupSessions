@@ -1,0 +1,28 @@
+## OpenCA - CA Command
+## (c) 1998-2003 The OpenCA Project
+##
+##   File Name: cleanupSessions
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: cleanup sessions
+## Description: remove all expired sessions from session directory
+
+use strict;
+
+sub cmdCleanupSessions {
+
+	our $access_control;
+
+	print startLogPage ( gettext("Removing expired Sessions ...") );
+
+        print addLogSection ( gettext("Expired and removed session ..."));
+
+        print addLogLine ($access_control->cleanupSessions);
+
+        print closeLogSection();
+
+	closePage ();
+
+}
+
+1;
+

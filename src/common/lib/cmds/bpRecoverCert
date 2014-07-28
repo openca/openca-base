@@ -1,0 +1,158 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpRecoverCert
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: recover Keypairs for users
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpRecoverCert {
+
+    our ($cryptoShell, $crypto_layer, $xml_cache, $query, $tools, $db);
+
+    ## get necessary private key access
+
+    my $keybackup_token = $crypto_layer->getToken ('KEYBACKUP');
+    if (not ($keybackup_token->keyOnline || $keybackup_token->login))
+    {
+        my $msg = gettext ("Initializing batchprocessor token ... ").
+                           "<FONT color=#ff0000>".gettext ("FAILED")."</FONT><br>\n".
+                           i18nGettext ("Token's errormessage: __ERRVAL__", "__ERRVAL__", $keybackup_token->errval);
+        generalError ($msg, $keybackup_token->errno);
+    }
+
+    my $info_list = undef;
+
+    ## datadirectory for the batchprocessor
+
+    my $batchdir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+    my $user     = $query->param ('USER');
+    my $process  = $query->param ('PROCESS');
+    my $cert_serial = $query->param ('key');
+    my $format      = $query->param ('format');
+    my $tempDir    = getRequired ("TempDir");
+    my $cacert     = getRequired ('CACertificate');
+    $batchdir .= "/".join ("/", split (/ */, $user))."/workflows/".$process;
+
+    ## load the pin
+    my $pin = $keybackup_token->decrypt (
+                  INFILE     => $batchdir."/private/purePIN",
+                                      );
+    if (not $pin) {
+        generalError (
+            i18nGettext (
+                "Cannot load the PIN because the decryption of the PIN failed."));
+    }
+
+    ## load certificate
+    my $cert = $db->getItem (DATATYPE=>'CERTIFICATE', KEY=>$cert_serial);
+    if (not $cert) {
+        generalError (
+            i18nGettext (
+                "Cannot recover key because the loading of the certificate __CERT_SERIAL__ failed.",
+                "__CERT_SERIAL__", $cert_serial));
+    }
+
+    ## load the digest of the key
+    my $filename = $batchdir."/keybackup/csr_".$cert->getParsed()->{HEADER}->{CSR_SERIAL}.".keydigest";
+    my $digest = $tools->getFile ($filename);
+    if (not $digest) {
+        generalError (
+        i18nGettext (
+            "Cannot recover key because the loading of the digest of the private key failed (__FILE__).",
+            "__FILE__", $filename));
+    }
+
+    ## decrypt the key
+    my $filename = $batchdir."/keybackup/".$digest.".enc_key";
+    my $key = $keybackup_token->decrypt (
+                  INFILE     => $filename
+                                        );
+    if (not $key) {
+        generalError (
+            i18nGettext (
+                "Cannot recover key because the decryption of the private key failed."));
+    }
+
+    if ($format =~ /PKCS12/i) {
+
+        ## BUG-WARNING: OpenSSL cannot handle keys from stdin
+        $tools->saveFile ( FILENAME => "$tempDir/${$}_key.pem", DATA => $key);
+
+        my $p12_data = $cryptoShell->dataConvert (
+                            DATA      => $cert->getPEM(),
+                            DATATYPE  => "CERTIFICATE",
+                            KEYFILE   => $tempDir."/${$}_key.pem",
+                            INFORM    => "PEM",
+                            OUTFORM   => "PKCS12",
+                            PASSWD    => "",
+                            P12PASSWD => $pin,
+                            CACERT    => $cacert);
+
+        if (not unlink ("$tempDir/${$}_key.pem")) {
+            generalError ("<b><FONT COLOR=#ff0000>".
+                i18nGettext (
+                    "WARNING: Private key is in clear text on disk - __FILE__!",
+                    "__FILE__", "$tempDir/${$}_key.pem").
+                "</FONT></b>");
+        } elsif (not $p12_data) {
+            generalError (gettext ("Cannot convert PEM-certificate and PKCS#8-key to PKCS#12-formatted file!"));
+        } else {
+            print "Content-type: application/x-pkcs12\n\n";
+            print $p12_data;
+        }
+    } elsif ($format =~ /(PKCS8|OpenSSL)/i) {
+
+        if ($format =~ /PKCS8/i) {
+            $format = "PKCS8";
+        } else {
+            $format = "PEM";
+        }
+
+        my $data = $cryptoShell->dataConvert (
+                                    DATA      => $key,
+                                    DATATYPE  => "KEY",
+                                    INFORM    => "PEM",
+                                    OUTFORM   => $format,
+                                    INPASSWD  => "",
+                                    OUTPASSWD => $pin);
+
+        if (not $data) {
+            generalError (gettext ("Cannot convert private key!")."<br>\n".
+                        $OpenCA::OpenSSL::errval, $OpenCA::OpenSSL::errno);
+        }
+
+        ##// if we use the correct content-type and don't use 
+        ## (shift + left mouse button) then netscape tries to import the cert
+        ## without the key
+        ## print "Content-type: application/x-X509-user-cert\n\n";
+        print "Content-type: text/plain\n\n";
+        print $cert->getPEM();
+        print $data;
+    } else {
+        ## undefined format
+        generalError (i18nGettext ("Cannot convert because the outputformat is unknown (format: __FORMAT__)!",
+                                   "__FORMAT__", $format));
+    }
+
+}
+
+sub getParamsBpRecoverCert
+{
+    if (not $_[0]) ## 0 or empty
+    {
+        return gettext ("Please take in mind that we use the old generated PIN to encrypt the data or no passphrase is used. Are you sure you want to continue?");
+    } elsif ($_[0] == 1) {
+        return gettext ("If you continue, you will need the passphrase of the keybackup's private key. Are you sure you want to continue?");
+    }
+    return "";
+}
+
+1;

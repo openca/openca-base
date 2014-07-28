@@ -1,0 +1,49 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: deletePasswd
+##       Brief: delete a passphrase 
+##     Version: $Revision: 1.1.1.1 $
+## Description: delete a passphrase for a special use
+##  Parameters: 
+
+use strict;
+
+sub cmdDeletePasswd {
+
+	our ($db, $query);
+
+	## Status of FORM, possible values (in this order):
+	my $KEY         = $query->param('key');
+	my $NAME        = $query->param('name');
+
+	## load cert
+	my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $KEY);
+	if ( not $cert ) {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+
+        ## set the passwd in the header
+	if ( not $cert->setHeaderAttribute ('PASSWD_'.$NAME => "") ) {
+		generalError (gettext ("Error while removing the passphrase from the cert-object"));
+	}
+	if ( not $cert->setHeaderAttribute ('SHA1_PASSWD_'.$NAME => "") ) {
+		generalError (gettext ("Error while removing the hashed passphrase from the cert-object"));
+	}
+
+	## store cert with key
+	if (not $db->storeItem ( DATATYPE => "CERTIFICATE", OBJECT => $cert, MODE => "UPDATE" )) {
+
+		## the command one line before can only be done correct by OpenCA::DBI but not by OpenCA::DB
+		if (not $db->storeItem ( DATATYPE => "VALID_CERTIFICATE", OBJECT => $cert, MODE => "UPDATE" )) {
+			generalError (gettext ("Cannot store changed certificate in the database!").
+			              "<br>".$db->errval(), $db->errno());
+		}
+	}
+
+	## Send Success Page
+	success (gettext ("Passphrase was successfully deleted."));
+}
+
+1;

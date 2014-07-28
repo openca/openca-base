@@ -1,0 +1,50 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapUpdateCA
+##       Brief: Add all certificates to LDAP server
+## Description: Add all issued certificates to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapUpdateCA {
+
+	my $dn = getRequired ('LDAP_CA_DN');
+
+	## ca-certificates
+	print startLogPage (gettext ("Exporting valid ca-certificates to LDAP ..."));
+
+	print addLogSection (gettext ("Checking for a special DN where to store CA-certificates ..."));
+	if ($dn) {
+		print addPreLogLine (i18nGettext ("Special DN is __DN__.", "__DN__", $dn));
+	} else {
+		print addPreLogLine (gettext("There is no special DN specified."));
+	}
+	print closeLogSection ();
+
+	print addLogSection (gettext("Adding valid CA-certificates to the LDAP server ..."));
+	my @items = $db->searchItems ( DATATYPE => "VALID_CA_CERTIFICATE" );
+	for my $h (@items) {
+		if ($dn) {
+			$h->{parsedItem}->{DN} = $dn;
+		}
+		my $result = eximObjectToLDAP ( AUTHORITY_CERTIFICATE => $h );
+		if ($result and $result->{STATUS}) {
+			print addPreLogLine ( i18nGettext("Certificate __CERT_SERIAL__ OK.", "__CERT_SERIAL__", $h->getSerial()));
+		} else {
+			print addPreLogLine ("<FONT COLOR=#ff0000>".
+                    i18nGettext ("Certificate __CERT_SERIAL__ FAILED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $h->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+					"</FONT>");
+		}
+	}
+	closeLogSection ();
+
+	closePage ();
+}
+
+1;

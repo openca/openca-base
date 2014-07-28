@@ -1,0 +1,23 @@
+## Uses the default OpenCA::DB module
+
+use OpenCA::DB;
+if( not defined (my $ret = $dbconfig->loadCfg( "$DBCONFIG" )) ) {
+	configError( i18nGettext ("Error while Loading Configuration (__FILE__)!", "__FILE__", $DBCONFIG));
+}
+
+$dbDir     = getRequired( 'dbDir', $dbconfig);
+
+$db = new OpenCA::DB( SHELL   => $cryptoShell,
+                      GETTEXT => \&i18nGettext,
+                      DB_DIR  => "$dbDir" );
+if ( not $db ) {
+	configError( i18nGettext ("Cannot initialize OpenCA::DB class! (__DIR__)", "__DIR__", $dbDir).
+		"<br>\n".
+		i18nGettext ("Errorcode: __ERRNO__", "__ERRNO__", $OpenCA::DB::errno)."<br>\n".
+		i18nGettext ("Errormessage: __ERRVAL__", "__ERRVAL__", $OpenCA::DB::errval) );
+}
+
+$versions->{DB}	= OpenCA::DB->VERSION;
+
+1;
+

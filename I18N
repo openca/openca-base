@@ -1,0 +1,55 @@
+This document describes the steps for a new language:
+
+Translate the string which are embedded into perl:
+--------------------------------------------------
+
+1. create a new directory src/common/lib/locale/xy_XY
+2. copy src/common/lib/locale/openca.pot to src/common/lib/locale/xy_XY/openca.po
+3. translate the openca.po
+4. compile the openca.po with msgfmt (msgfmt openca.po -o openca.mo)
+
+Notice: strings like __FILE__ must be present in the translations too
+        because they are dynamically replaced by OpenCA - yes, they
+        are placeholders for variables :)
+
+Translate the javascript-code:
+------------------------------
+
+1. create a new directory src/common/lib/javascript/xy_XY/
+2. copy all files from src/common/lib/javascript/C/ to xy_XY
+3. translate the files
+
+Translate the mails:
+--------------------
+
+1. create a new directory src/common/lib/mails/xy_XY/
+2. copy all files from src/common/lib/mails/C/ to xy_XY
+3. translate the files
+
+Activate your language:
+-----------------------
+
+1. Add the new language code to the variable TRANSLATIONS in
+   Makefile.global-vars.in.
+2. Add your language to the file src/common/etc/menu.xml.template.
+3. Add the new language code to the variable TRANSLATIONS in
+   src/common/lib/locale/pot/Makefile.
+4. Add the language to %supportedLanguages in
+   src/common/lib/functions/initServer.
+5. Add the encoding to %encodings in src/common/lib/functions/initServer.
+
+Any comments and translations are welcome.
+
+Michael Bell <michael.bell@web.de>
+2004-Apr-19
+
+translators:
+ de_DE Michael Bell            <michael.bell@web.de>
+ en_GB actually nobody         <michael.bell@web.de>
+ es_ES Julio Sanchez Fernandez <j.sanchezf@terra.es>
+ fr_FR Nicolas Pouvesle        <npouvesle@webindustrie.fr>
+ it_IT Simone Rossi            <simone.rossi@hp.com>
+ ja_JP Takahiro Tsuji          <openca@poplar.complex.eng.hokudai.ac.jp>
+ pl_PL Franciszek Lewenda      <F.Lewenda@nask.pl>
+ sl_SI Janez Pirc              <openca@si-ca.org>
+ ru_RU Peter Grigorievo        <pgrig@cryptocom.ru>

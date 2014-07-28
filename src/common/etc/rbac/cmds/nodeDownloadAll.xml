@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>nodeDownloadAll</name>
+            <operation>node download all</operation>
+            <owner_method>any</owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

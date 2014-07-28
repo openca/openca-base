@@ -1,0 +1,76 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapUpdateCerts
+##       Brief: Add all certificates to LDAP server
+## Description: Add all issued certificates to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapUpdateCerts {
+
+our ($db, $ldap);
+
+print startLogPage (gettext ("Updating certificates on the LDAP server"));
+
+## certificates
+print addLogSection (gettext ("Exporting valid certificates to LDAP ..."));
+my @items = $db->searchItems ( DATATYPE => "VALID_CERTIFICATE" );
+for my $h (@items) {
+  my $result = eximObjectToLDAP ( CERTIFICATE => $h );
+  if ($result and $result->{STATUS}) {
+    print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ OK", "__CERT_SERIAL__", $h->getSerial()));
+  } else {
+    print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Certificate __CERT_SERIAL__ FAILED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $h->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                         "</FONT>");
+  }
+}
+print closeLogSection ();
+
+## remove revoked certificates
+print addLogSection (gettext("Removing revoked certificates from LDAP ..."));
+my @items = $db->searchItems ( DATATYPE => "REVOKED_CERTIFICATE" );
+for my $h (@items) {
+  my $result = $ldap->delete_attribute ( CERTIFICATE => $h, NOPRINT => 1 );
+  if ($result and $result->{STATUS}) {
+    print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ removed", "__CERT_SERIAL__", $h->getSerial()));
+  } else {
+    print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Certificate __CERT_SERIAL__ NOT REMOVED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $h->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                         "</FONT>");
+  }
+}
+print closeLogSection ();
+
+## remove suspended certificates
+print addLogSection (gettext("Removing suspended certificates from LDAP ..."));
+my @items = $db->searchItems ( DATATYPE => "SUSPENDED_CERTIFICATE" );
+for my $h (@items) {
+  my $result = $ldap->delete_attribute ( CERTIFICATE => $h, NOPRINT => 1 );
+  if ($result and $result->{STATUS}) {
+    print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ removed", "__CERT_SERIAL__", $h->getSerial()));
+  } else {
+    print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Certificate __CERT_SERIAL__ NOT REMOVED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $h->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                         "</FONT>");
+  }
+}
+print closeLogSection ();
+
+print closePage ();
+
+}
+
+1;

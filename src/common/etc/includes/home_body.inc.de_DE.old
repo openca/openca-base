@@ -1,0 +1,61 @@
+<div class="home_content">
+  <p class="title" @TITLE_STYLE@ >
+	<!-- 
+     <span style="font-size: 0.8em;">
+       Willkommen bei
+     </span><br />
+	-->
+     @ORGANIZATION@ PKI
+  </p>
+  <div style="padding: 10px; text-align: justify; margin-bottom: 15px;">
+  <p>
+	<h3>Willkommen bei @ORGANIZATION@!</h3>
+	@ORGANIZATION@ ist eine Organisation bestehend aus ehrenamtlichen
+	Mitarbeitern, welche Open-Source Software zur Verwaltung digitaler
+	Identit&auml;ten zur Verf&uuml;gung stellt. Diese @ORGANIZATION@ stellt
+	weitere sicherheitsrelevante Projekte bereit:
+	<a href="http://www.openca.org/projects/libpki">LibPKI</a>,
+	<a href="http://www.openca.org/projects/prqpd">PRQP server</a>,
+	<a href="http://www.openca.org/projects/ocspd">OCSP server</a>, und
+	<a href="http://www.openca.org/projects/openca">OpenCA PKI</a>.
+	Unsere
+	<a href="http://en.wikipedia.org/wiki/Certificate_authority">
+	Zertifikats Autorit&auml;t</a> stellt Dienste zur Verf&uuml;gung, um
+	digitale Zertifikate zur erstellen, bzw. zu verwalten.
+	<a href="http://en.wikipedia.org/wiki/Digital_Certificate">
+	digitales Zertifikat</a>.
+	<br /><br />
+	<h3>Was sind digitale Zertifikate ?</h3>
+	Ihre Zertifikate sind digitale Identit&auml;ten, welche Ihrer Identit&auml;t
+	entsprechen (z.B. F&uuml;hrerschein, Personalausweis, Sch&uuml;lerausweis),
+	aber in einem digitalen Format, was den Vorteil hat, dass man Sie
+	haupts&auml;chlich auf Computern und/oder Internet verwendet.
+	Digitale Zertifikate k&ouml;nnen sowohl f&uuml;r Personen, als auch f&uuml;r
+	Computer ausgestellt werden. Es gibt unz&auml;hlige Einsatzm&auml;glichkeiten,
+	einige davon sind:
+<ul>
+<li><b>Sichere Email</b> - zum digitalen signieren und vershl&uuml;sseln von Email</li>
+<li><b>Dokumenten Signatur</b> - z.B. f&uuml;r PDF und Office Dokumente</li>
+<li><b>Sicherer Netzzugang</b> - bietet eine h&ouml;here Sicherheit als
+Benutzername/Passwort (z.B. f&uuml;r W-LAN Zugang)</li>
+<li><b>Server Authentifizierung (https)</b> - um die Kommunikation zw.
+Anwender (hier Kunde) und einem Web-Server zu sch&uuml;tzen (z.B. bei der
+Nutzung von Online-Banking oder Einkaufen im Internet)</li>
+</ul>
+  </p>
+  <p>
+  <h3>Wie kann ich ein solches Zertifikat bekommen ?</h3>
+  Der Erhalt eines solchen Zertifikates ist so einfach, wie
+  1.. 2.. 3! zu sagen.
+  Folgen Sie einfach den Anweisungen und verwenden Sie dann Ihr
+  digitales Zertifikat, um Ihre Daten und Ihre Kommunikation im 
+  Internet zu sch&uuml;tzen. 
+  </p>
+  </div>
+
+  @CONTROL_PANEL@
+
+</div> 
+
+@NOTICES_PANEL@
+

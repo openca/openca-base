@@ -1,0 +1,105 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: show_rights
+##       Brief: show the rights
+## Description: show all access rigths
+##  Parameters: module, operation, operator, owner
+
+use strict;
+
+our ($value, %a, %b);
+
+sub cmdShow_rights {
+
+## load the parameters
+my $module_filter    = $query->param ('module');
+my $role_filter      = $query->param ('role');
+my $operation_filter = $query->param ('operation');
+my $owner_filter     = $query->param ('owner');
+
+## load the configuration
+my @acl = loadACL;
+
+## prepare filter
+$module_filter    = ".*" if (not $module_filter);
+$role_filter      = ".*" if (not $role_filter);
+$operation_filter = ".*" if (not $operation_filter);
+$owner_filter     = ".*" if (not $owner_filter);
+
+## create table
+my $item_list = undef;
+$item_list->{HEAD}->[0] = gettext ("Module");
+$item_list->{HEAD}->[1] = gettext ("Operator");
+$item_list->{HEAD}->[2] = gettext ("Operation");
+$item_list->{HEAD}->[3] = gettext ("Owner");
+$item_list->{HEAD}->[4] = gettext ("Delete");
+
+@acl = sort cmp_rights @acl;
+
+## build 
+my $pos = 0;
+for $value (@acl) {
+  my $module    = $value->{module};
+  my $role      = $value->{role};
+  my $operation = $value->{operation};
+  my $owner     = $value->{owner};
+
+  next if ($module    !~ /^${module_filter}$/);
+  next if ($role      !~ /^${role_filter}$/);
+  next if ($operation !~ /^${operation_filter}$/);
+  next if ($owner     !~ /^${owner_filter}$/);
+
+  ## build link
+  my $link = "module=$module&".
+             "role=$role&".
+             "operation=$operation&".
+             "owner=$owner";
+
+  ## fix link
+  $link =~ s/ /%20/g;
+  $link = "<a href=\"$self?cmd=show_prepared_right&next_cmd=delete&".
+          $link."\">".gettext("Delete right")."</a>";
+
+  ## fix operator
+  $role = gettext("&lt;new user&gt;" )if (not $role);
+  ## fix owner
+  $owner = gettext("&lt;CA itself or any role&gt;") if (not $owner);
+  ## build row
+  $item_list->{BODY}->[$pos]->[0] = $module;
+  $item_list->{BODY}->[$pos]->[1] = $role;
+  $item_list->{BODY}->[$pos]->[2] = $operation;
+  $item_list->{BODY}->[$pos]->[3] = $owner;
+  $item_list->{BODY}->[$pos]->[4] = $link;
+  $pos++;
+}
+my $link = "<a href=\"$self?cmd=add_right\">".gettext ("Add new right")."</a>";
+$item_list->{BODY}->[$pos]->[0] = "";
+$item_list->{BODY}->[$pos]->[1] = "";
+$item_list->{BODY}->[$pos]->[2] = "";
+$item_list->{BODY}->[$pos]->[3] = "";
+$item_list->{BODY}->[$pos]->[4] = $link;
+
+return libSendReply (
+                     "NAME"      => gettext ("Show Rights"),
+                     "ITEM_LIST" => $item_list,
+                     "TIMESTAMP" => 1
+                    );
+}
+
+sub cmp_rights {
+
+	return  1 if ( $a{module} gt $b{module} );
+	return -1 if ( $a{module} lt $b{module} );
+	return  1 if ( $a{role} gt $b{role} );
+	return -1 if ( $a{role} lt $b{role} );
+	return  1 if ( $a{operation} gt $b{operation} );
+	return -1 if ( $a{operation} lt $b{operation} );
+	return  1 if ( $a{owner} gt $b{owner} );
+	return -1 if ( $a{owner} lt $b{owner} );
+	return  0; ## this should never happen (duplicate rights?)
+
+}
+
+1;

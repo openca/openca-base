@@ -1,0 +1,28 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2003
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: setLanguage
+##       Brief: set a passphrase 
+##     Version: $Revision: 1.2 $
+## Description: set language
+##  Parameters: 
+
+use strict;
+
+sub cmdSetLanguage {
+
+    $session->setParam ('PREFERENCES_LANGUAGE', $query->param ('lang'));
+    if ($query->param ('charset'))
+    {
+        $session->setParam ('PREFERENCES_CHARSET', $query->param ('charset'));
+    } else {
+        $session->setParam ('PREFERENCES_CHARSET', "UTF-8");
+    }
+    setLanguage ($query->param ('lang'),
+                 $session->getParam('PREFERENCES_CHARSET'));
+    return libExecuteCommand ('getStaticPage');
+
+}
+
+1;

@@ -1,0 +1,32 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) 2002-2004 The OpenCA Project
+##
+##   File Name: bpUnsetState
+##       Brief: view user of batch processor
+## Description: 
+##  Parameters: USER, PROCESS, state
+
+use strict;
+
+sub cmdBpUnsetState {
+
+    our $query;
+
+    my $user    = $query->param( 'USER' );
+    my $process = $query->param( 'PROCESS' );
+    my $state   = $query->param( 'state' );
+
+    my $state_machine = libGetStateMachine ();
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $process,
+                                "UNSET"   => [ $state ]))
+    {
+        generalError ($state_machine->errval, $state_machine->errno);
+    }
+    libExecuteCommand ("bpViewProcess");
+}
+
+1;
+

@@ -1,0 +1,39 @@
+# host and port are senseless for IBM DB2 UDB 7.1
+
+./configure \
+  --with-engine=no \
+  --with-httpd-user=wwwrun \
+  --with-httpd-group=nogroup \
+  --with-openca-user=michael \
+  --with-openca-group=users \
+  --with-httpd-fs-prefix=/home/michael/OpenCA/Test/test1 \
+  --with-cgi-url-prefix=/perl \
+  --with-web-host=bellus.rz.hu-berlin.de \
+  --with-ca-organization="Humboldt-Universitaet zu Berlin" \
+  --with-ca-country=DE \
+  --with-ca-locality=Berlin \
+  --with-ldap-port=389 \
+  --with-ldap-root="cn=Manager,o=Humboldt-Universitaet zu Berlin,c=DE" \
+  --with-ldap-root-pwd="openca" \
+  --with-module-prefix=/home/michael/OpenCA/Test/test1/modules \
+  --with-openssl-prefix=/usr/local/ssl \
+  --disable-db \
+  --enable-dbi \
+  --enable-rbac \
+  --enable-ocspd \
+  --enable-openscep \
+  --with-db-type=mysql \
+  --with-db-name=openca \
+  --with-db-host=localhost \
+  --with-db-port=3306 \
+  --with-db-user=openca \
+  --with-db-passwd="openca" \
+  --prefix=/home/michael/OpenCA/Test/test1 \
+  --with-service-mail-account="pki@bellus.rz.hu-berlin.de" \
+  --with-language=de_DE \
+  --with-hierarchy-level=ca
+
+##  --with-openssl-engine=LunaCA3 \
+##  --with-hsm-utility=/usr/luna/bin/ca3util \
+##  --with-hsm-slot=1 \
+##  --with-hsm-appid=10:11 \

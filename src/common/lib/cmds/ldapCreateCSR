@@ -1,0 +1,438 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2004
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: ldapCreateCSR
+##       Brief: create a CSR from LDAP data
+##     Version: $Revision: 1.3 $
+## Description: authenticate a user against a LDAP node and then use the
+##              data in the LDAP node to create a CSR
+##  Parameters: user and passwd
+
+use strict;
+
+sub cmdLdapCreateCSR
+{
+    our ($query, $ldap, $tools, $cryptoShell, $db);
+
+    my ($subject, $subject_alt_name, %add_attr, $role) = ("", "", (), "");
+    my $csr;
+    undef %add_attr;
+
+    ## check that this request is supported
+
+    generalError (gettext ("This request type is not supported by this PKI."))
+        if (getRequired ("LDAP_BASED_CSR_GENERATION") !~ /(ON|YES)/i);
+
+    ## parameter checks
+
+    generalError (gettext ("The key generation mode must be specified."))
+        if (not $query->param ('method'));
+
+    ## build distinguished name
+
+    my $dn = getRequired ("LDAP_CSR_BIND_DN_PREFIX");
+    $dn   .= $query->param('ldap_user');
+    $dn   .= getRequired ("LDAP_CSR_BIND_DN_SUFFIX");
+
+    ## setup LDAP stuff
+    ##     connect to LDAP
+    ##     bind to LDAP
+
+    debug_cmds ("ldapCreateCSR: bind dn: $dn");
+    generalError (gettext ("Cannot connect to LDAP server."))
+        if (not $ldap->connect());
+    generalError (i18nGettext ("Login as __LOGIN__ to the LDAP server failed. __ERRVAL__",
+                               "__LOGIN__", $query->param ('ldap_user'),
+                               "__ERRVAL__", $ldap->errval),
+                  $ldap->errno)
+        if (not $ldap->bind (DN => $dn, PASSWD => $query->param('ldap_passwd')));
+    debug_cmds ("ldapCreateCSR: LDAP connection established and user binded");
+
+    ## load subject configuration
+
+    my @elements = getRequiredList ("DN_TYPE_LDAP_ELEMENTS");
+    for (my $i=1; $i <= scalar @elements; $i++) {
+        my @values = $ldap->get_attribute (
+                         DN        => $dn,
+                         ATTRIBUTE => $elements [$i-1]);
+        generalError ($ldap->errno, $ldap->errval)
+            if (not defined @values and $ldap->errno);
+        foreach my $value (@values)
+        {
+            ## RFC2253: / must not be escaped
+            ## $dn_element =~ s/\//\\\//g;
+            $value =~ s/\\/\\\\/g;
+            $value =~ s/,/\\,/g;
+            $value =~ s/=/\\=/g;
+            $subject .= ", " if ($subject);
+            $subject .= $elements [$i-1]."=".$value;
+        }
+    }
+
+    my @base = getRequiredList ("DN_TYPE_LDAP_BASE");
+    for (my $i=1; $i <= scalar @base; $i++) {
+        if (getRequired ("DN_TYPE_LDAP_BASE_".$i) ne "") {
+            $subject .= ", " if ($subject);
+            $subject .= $base [$i-1]."=".getRequired ("DN_TYPE_LDAP_BASE_".$i);
+        }
+    }
+    debug_cmds ("ldapCreateCSR: subject: $subject");
+
+    ## load subject alternative name configuration
+
+    my @subjectalt_attr = getRequiredList ("DN_TYPE_LDAP_SUBJECTALTNAMES");  
+    my @san = ();
+    for (my $i=1; $i <= scalar @subjectalt_attr; $i++) {
+        my @values = $ldap->get_attribute (
+                         DN        => $dn,
+                         ATTRIBUTE => $subjectalt_attr[$i-1]);
+        generalError ($ldap->errno, $ldap->errval)
+            if (not defined @values and $ldap->errno);
+        foreach my $value (@values)
+        {
+            push (@san, $subjectalt_attr[$i-1].":".$value);
+        }
+    }
+    if (scalar @san > 0) {
+        $subject_alt_name = join (",", @san);
+    }
+    debug_cmds ("ldapCreateCSR: subject_alt_name: $subject_alt_name");
+
+    ## load additional attributes
+
+    my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+    foreach my $attr (@additionalAttributes)
+    {
+        debug_cmds ("ldapCreateCSR: additional attribute: $attr");
+        my @values = $ldap->get_attribute (
+                         DN        => $dn,
+                         ATTRIBUTE => $attr);
+        generalError ($ldap->errno, $ldap->errval)
+            if (not defined @values and $ldap->errno);
+        if (scalar @values)
+        {
+            foreach my $value (@values)
+            {
+                if (exists $add_attr{$attr}) {
+                    $add_attr{$attr}[scalar {$add_attr{$attr}}] = $value;
+                } else {
+                    $add_attr{$attr}[0] = $value;
+                }
+            }
+        }
+    }
+    debug_cmds ("ldapCreateCSR: additional attributes complete");
+
+    ## load role configuration
+
+    my @roles = $ldap->get_attribute (
+                         DN        => $dn,
+                         ATTRIBUTE => "role");
+    generalError ($ldap->errno, $ldap->errval)
+        if (not defined @roles and $ldap->errno);
+    $role = $roles[0] if (scalar @roles);
+
+    ## build CSR header
+
+    my $csr_header = "";
+
+    $csr_header = "-----BEGIN HEADER-----\n";
+    if ($query->param ('method') eq 'spkac') {
+        $csr_header .= "TYPE = SPKAC\n";
+    } elsif ($query->param ('method') eq 'ie') {
+        $csr_header .= "TYPE = IE\n";
+    } else {
+        $csr_header .= "TYPE = PKCS#10\n";
+    }
+
+    my $last_req = libDBGetLastItem ("REQUEST");
+    my $req_elements = 0;
+    $req_elements    = $last_req->getSerial("REQUEST") if ($last_req);
+    $req_elements  >>= getRequired ("ModuleShift");
+    generalError ( gettext ("Database fails during counting the already existing requests!"), 669)
+        if ((not defined $req_elements) or ($req_elements < 0));
+    $req_elements++;
+    my $new_serial = ($req_elements << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+    $csr_header .= "SERIAL = ".$new_serial."\n";
+
+    $csr_header .= "NOTBEFORE = " . $tools->getDate() . "\n";
+    generalError (gettext ("The first and the second PIN does not match."))
+        if ($query->param('PIN_1') ne $query->param('PIN_2'));
+    my $pin = $query->param('PIN_1');
+    if ($pin) {
+        my $pin_digest = $cryptoShell->getDigest (
+                              DATA      => $pin,
+                              ALGORITHM => "sha1");
+        generalError ( gettext ("OpenSSL fails during the calculation of the hash from the passphrase!"), 670)
+            if (not $pin_digest);
+        $csr_header .= "PIN = $pin_digest\n";
+    }
+    $csr_header .= "ROLE = $role\n";
+
+    $csr_header .= "SUBJECT = $dn\n";
+    $csr_header .= "KEY_ALGORITHM = rsa\n";
+    $csr_header .= "KEY_BITS = ".$query->param('bits')."\n";
+
+    $csr_header .= "SUBJECT_ALT_NAME = ".$subject_alt_name."\n";
+
+    foreach my $attr (keys %add_attr)
+    {
+        debug_cmds ("ldapCreateCSR: additional attribute: $attr");
+        $csr_header .= "ADDITIONAL_ATTRIBUTE_".uc ($attr)." = ".
+                       join (", ", @{$add_attr{$attr}})."\n";
+    }
+
+    $csr_header .= "-----END HEADER-----\n";
+
+    debug_cmds ("ldapCreateCSR: header\n$csr_header\n");
+
+    ## attach the request body
+
+    my $csr_body = "";
+
+    if ($query->param ('method') eq 'spkac') {
+        my $NEWKEY = $query->param('newkey');
+        $NEWKEY =~ s/\015|\n//g;
+        generalError (gettext ("The keygeneration of the browser failed. SPKAC is empty."))
+            if (not $NEWKEY);
+        $csr_body = "CN = Nobody\n".
+                    "O = irrelevant\n".
+                    "SPKAC = $NEWKEY\n";
+    } elsif ($query->param ('method') eq 'ie') {
+        $csr_body = "-----BEGIN CERTIFICATE REQUEST-----\n".
+                    $query->param('request').
+                    "-----END CERTIFICATE REQUEST-----";
+    } else {
+        generalError (gettext ("The passphrases for the new private key does not match."))
+            if ($query->param ('passwd_1') ne $query->param ('passwd_2'));
+
+        ## generate PKCS#8 key
+        my $TempDir = getRequired( 'tempdir' );
+        my $keyFile = "$TempDir/key_${$}.pem";
+        if( not $cryptoShell->genKey(
+                    BITS      => $query->param('bits'),
+                    OUTFILE   => $keyFile,
+                    PASSWD    => $query->param ('passwd_1') ) ) {
+            generalError (i18nGettext ("Cannot create keypair. __ERRVAL__",
+                                       "__ERRVAL__", $cryptoShell->errval),
+                          $cryptoShell->errno);
+        }
+        my $key = $cryptoShell->dataConvert (
+                   DATATYPE  => "KEY",
+                   INFORM    => "PEM",
+                   OUTFORM   => "PKCS8",
+                   INPASSWD  => $query->param('passwd_1'),
+                   OUTPASSWD => $query->param('passwd_1'),
+                   INFILE    => $keyFile );
+        if ( not $key ) {
+            generalError ( gettext ("Cannot convert key to PKCS#8!"));
+        }
+
+        ## generate PKCS#10 request
+        my $req = new OpenCA::REQ (
+                                SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                KEYFILE => $keyFile,
+                                SUBJECT => $subject,
+                                PASSWD  => $query->param('passwd_1'),
+                                FORMAT  => "PEM");
+        if (not $req) {
+            generalError ( i18nGettext ("Cannot create request!\n(__ERRVAL__)",
+                                        "__ERRVAL__", $OpenCA::REQ::errval),
+                           $OpenCA::REQ::errno);
+        }
+        unlink ($keyFile);
+
+        $csr_body = $req->getBody();
+        $csr_body .= $key if ($key);
+    }
+
+    debug_cmds ("ldapCreateCSR: body\n$csr_body\n");
+
+    ## setup the request
+
+    if( not $csr = new OpenCA::REQ( SHELL   => $cryptoShell,
+                                    GETTEXT => \&i18nGettext,
+                                    DATA    => $csr_header.$csr_body) ) {
+        generalError( i18nGettext ("Internal Request Error (__ERRVAL__)",
+                                   "__ERRVAL__", $OpenCA::REQ::errval),
+                      $OpenCA::REQ::errno );
+    }
+    debug_cmds ("ldapCreateCSR: new CSR can be instantiated");
+
+    ## store the request
+
+    if( not $db->storeItem( 
+                           DATATYPE => 'NEW_REQUEST',
+                           OBJECT   => $csr,
+                           INFORM   => 'PEM',
+                           MODE     => "INSERT" )) {
+        generalError( gettext ("Error while storing REQ in database!").
+                      " ".$db->errval(), $db->errno() );
+    }
+    debug_cmds ("ldapCreateCSR: new CSR stored in database");
+
+    ## display a message with the request data
+
+    my ($info_list, $cmd_panel) = (undef, undef);
+    $cmd_panel->[0] = '<input TYPE="Button" Name="Print" Value="'.gettext ("Print").'" onClick="window.print();">';
+
+    my $explanation = i18nGettext (
+"Thank you for requesting your certificate from our organization, your request with the serial __CSR_SERIAL__ it's been successfully archived and it is now waiting for approval by any of our Registration Authorities (if you are unsure about the receiving of your request by this server, you can check the list of new requests).\n You need, however, read the email we sent you and confirm your email address before the process can progress.\n\n To complete the certification process you have to go to one of our Registration Authority office with one of the following documents:\n\no ID&nbsp;card or passport.\no Documnetation asserting your role and authorization for requesting a certificate for your organization.\n\nIf you still have doubts about the issuing process, just use the links provided in the Information section to learn how to complete all the needed steps.",
+            "__CSR_SERIAL__", $csr->getSerial());
+
+    # substitute variables
+    $info_list->{BODY} = [];
+    foreach my $attr (sort keys %{$csr->getParsed()->{HEADER}})
+    {
+        my $id = scalar @{$info_list->{BODY}};
+        $info_list->{BODY}->[$id]->[0] = $attr;
+        $info_list->{BODY}->[$id]->[1] = $csr->getParsed()->{HEADER}->{$attr};
+    }
+
+    return libSendReply (
+                         "NAME"        => gettext ("Certificate Request Confirm"),
+                         "EXPLANATION" => $explanation,
+                         "CMD_PANEL"   => $cmd_panel,
+                         "INFO_LIST"   => $info_list
+                        );
+}
+
+sub getParamsLdapCreateCSR
+{
+    our $query;
+
+    ## check that this request is supported
+
+    generalError ("This request type is not supported by this PKI.")
+        if (getRequired ("LDAP_BASED_CSR_GENERATION") !~ /(ON|YES)/i);
+
+    ## LDAP user
+    ## LDAP passphrase
+    ## Browser area:
+    ##     Netscape/Mozilla --> button for new key
+    ##     MSIE             --> button for new key
+    ##     serverside       --> PIN field and button for new key
+
+    my $result = "";
+    if (not $_[0]) ## step 0 or empty
+    {
+        ## key generation mode
+
+        my $message = gettext ("Please choose a method for the keygeneration.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>Method of keygeneration</td>\n".
+                   "    <td>\n".
+                   "      <select  name=\"method\">\n".
+                   "        <option value=\"spkac\">".
+                      gettext ("Mozilla, Netscape or Opera").
+                      "</option>\n".
+                   "        <option value=\"ie\">".
+                      gettext ("Microsoft Internet Explorer").
+                      "</option>\n".
+                   "        <option value=\"serverside\">".
+                      gettext ("Serverside key generation").
+                      "</option>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $result .= "</table>\n";
+
+    } elsif ($_[0] == 1) {
+
+        ## LDAP user
+        ## LDAP passphrase
+        ## PIN
+
+        my $message = gettext ("Please enter your user, password and PIN. If you use serverside key generation then you must enter a passphrase for the new key too.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("User")."</td>\n".
+                   '    <td><input type="text" name="ldap_user" size="30" value="'.
+                             $query->param('ldap_user').'"></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Passphrase")."</td>\n".
+                   '    <td><input type="password" name="ldap_passwd" size="30" value="'.
+                             $query->param('ldap_passwd').'"></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Authentication PIN")."</td>\n".
+                   '    <td><input type="password" name="PIN_1"></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Authentication PIN again")."</td>\n".
+                   '    <td><input type="password" name="PIN_2"></td>'.
+                   "\n  </tr>\n";
+
+        my $html_bits = $query->newInput (
+                            -regx=>'NUMERIC',
+                            -intype=>'popup_menu',
+                            -name=>'bits',
+                            -values=>
+                            [getRequiredList('Basic_CSR_Keysizes')]);
+
+        if ($query->param ('method') eq 'spkac')
+        {
+            $result .= "  <tr>\n".
+                       "    <th colspan=2>".gettext ("Mozilla/Netscape/Opera")."</th>\n".
+                       "\n  </tr>\n";
+            $result .= "  <tr>\n".
+                       "    <td>".gettext ("Keysize")."</td>\n".
+                       '    <td><KEYGEN NAME="newkey" CHALLENGE="NO_CHALLENGE"></td>'.
+                       "\n  </tr>\n";
+        }
+        elsif ($query->param ('method') eq 'ie')
+        {
+            $result .= "  <tr>\n".
+                       "    <th colspan=2>".gettext ("Microsoft Internet Explorer")."</th>\n".
+                       "\n  </tr>\n";
+            $result .= "  <tr>\n".
+                       "    <td>".gettext ("Keysize")."</td>\n".
+                       '    <td>'.$html_bits.'</td>'.
+                       "\n  </tr>\n".
+                       "  <tr>\n".
+                       "    <td>".gettext ("Cryptographic device")."</td>\n".
+                       "    <td>\n".
+                       "      <select name=\"csp\" size=1 id=\"csp\">\n".
+                       "        <option value=\"\" selected>".gettext ("Default")."</option>\n".
+                       "      </select>\n".
+                       "    </td>\n".
+                       "  </tr>\n";
+        }
+        else
+        {
+            $result .= "  <tr>\n".
+                       "    <th colspan=2>".gettext ("Serverside Key and request generation")."</th>\n".
+                       "\n  </tr>\n";
+
+            $result .= "  <tr>\n".
+                       "    <td>".gettext ("Keysize")."</td>\n".
+                       '    <td>'.$html_bits.'</td>'.
+                       "\n  </tr>\n";
+            $result .= "  <tr>\n".
+                       "    <td>".gettext ("Passphrase for new private key")."</td>\n".
+                       '    <td><input type="password" name="passwd_1"></td>'.
+                       "\n  </tr>\n";
+            $result .= "  <tr>\n".
+                       "    <td>".gettext ("Passphrase for new private key again")."</td>\n".
+                       '    <td><input type="password" name="passwd_2"></td>'.
+                       "\n  </tr>\n";
+        }
+        $result .= "</table>\n";
+        $result .= "<input type=\"hidden\" name=\"method\" value=\"".
+                   $query->param ('method')."\"/>\n";
+    }
+
+    return $result;
+}
+
+1;

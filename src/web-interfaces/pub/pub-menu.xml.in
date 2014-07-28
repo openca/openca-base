@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openca base="@pub_htdocs_url_prefix@">
+  <menu name="PKI Info" img="images/info-key.png">
+    <item name="Home" img="" lnk="?cmd=getStaticPage;name=homePage" />
+    <item />
+    <item name="Get CA Certificate" img="" lnk="?cmd=getStaticPage;name=download_cacert" />
+    <item name="Get Current CRL" img="" lnk="?cmd=getStaticPage;name=download_crl" />
+    <item name="Get CA Policy" img="" lnk="@pub_htdocs_url_prefix@/?" />
+    <item />
+    <submenu name="Go To..." img="">
+      <item name="OpenCA Labs" img="" lnk="http://www.openca.org/?" />
+      <item name="OpenCA PKI Project" img="" lnk="http://www.openca.org/projects/openca?" />
+    </submenu>
+    <item />
+    <item name="About OpenCA..." img="" lnk="?cmd=serverInfo" />
+  </menu>
+  <menu name="My Certificates" img="">
+    <item name="Request a Certificate" img="" lnk="?cmd=getStaticPage;name=selectCSRtype" />
+    <item name="Install My Certificate" img="" lnk="?cmd=getParams;GET_PARAMS_CMD=getcert" />
+    <item />
+    <item name="Revoke My Certificate" img="" lnk="?cmd=revoke_req" />
+    <item name="Test My Certificate" img="" lnk="?cmd=test_cert" />
+    <item />
+    <item name="Get Current CRL" img="" lnk="?cmd=getStaticPage;name=download_crl" />
+  </menu>
+    <menu name="Information" img="">
+<!--      <submenu name="Issued Certificates" img=""> -->
+        <item name="Valid Certificates" img="" lnk="?cmd=lists;action=certslist" />
+        <item name="Expired Certificates" img="" lnk="?cmd=lists;action=certsExpiredList" />
+        <item />
+        <item name="Suspended Certificates" img="" lnk="?cmd=lists;action=suspendedlist"/>
+        <item name="Revoked Certificates" img="" lnk="?cmd=lists;action=revokedlist" />
+        <item />
+        <item name="Pending Certificate Requests" img="" lnk="?cmd=lists;action=newReqs" />
+        <item name="Pending Revocation Requests" img="" lnk="?cmd=lists;action=newCRRs" />
+        <item />
+      <item name="Current CRL" img="" lnk="?cmd=crlList;dataType=VALID_CRL" />
+      <item name="Expired CRLs" img="" lnk="?cmd=crlList;dataType=EXPIRED_CRL" />
+    <item />
+      <item name="Search Certificates" img="" lnk="?cmd=getStaticPage;name=search_cert" />
+  </menu>
+  <menu name="Help" img="">
+    <item name="OpenCA PKI Guide" img="" lnk="http://www.openca.org/projects/openca/docs.shtml?" />
+    <item name="OpenCA PKI Home" img="" lnk="http://www.openca.org/projects/openca?" />
+    <item />
+    <item name="About OpenCA..." img="" lnk="?cmd=serverInfo" />
+  </menu>
+  <menu name="Languages" img="" >
+    <item name="English" img=""
+		lnk="?cmd=setLanguage;lang=en_GB;charset=UTF-8" />
+    <item name="Spanish" img=""
+		lnk="?cmd=setLanguage;lang=es_ES;charset=UTF-8" />
+    <item name="Italian" img=""
+		lnk="?cmd=setLanguage;lang=it_IT;charset=UTF-8" />
+    <item name="French" img=""
+		lnk="?cmd=setLanguage;lang=fr_FR;charset=UTF-8" />
+    <item name="Japanese" img=""
+		lnk="?cmd=setLanguage;lang=ja_JP;charset=UTF-8" />
+    <item name="Greek" img=""
+		lnk="?cmd=setLanguage;lang=el_GR;charset=UTF-8" />
+    <item name="Polish" img=""
+		lnk="?cmd=setLanguage;lang=pl_PL;charset=UTF-8" />
+    <item name="Slovene" img=""
+		lnk="?cmd=setLanguage;lang=sl_SI;charset=UTF-8" />
+    <item name="Russian" img=""
+		lnk="?cmd=setLanguage;lang=ru_RU;charset=UTF-8" />
+    <item name="German" img=""
+		lnk="?cmd=setLanguage;lang=de_DE;charset=UTF-8" />
+  </menu>
+  <item name="Home" img="images/home.png"
+  		lnk="?cmd=getStaticPage;name=homePage" />
+</openca>

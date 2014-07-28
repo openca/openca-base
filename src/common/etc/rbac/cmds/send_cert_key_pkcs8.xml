@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>send_cert_key_pkcs8</name>
+            <operation>certficate send with key</operation>
+            <owner_method>CERTIFICATE_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

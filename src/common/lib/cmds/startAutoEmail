@@ -1,0 +1,949 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: startAutoEmail
+##       Brief: start Auto (On-Line) Email Daemon
+##     Version: $Revision: 1.13 $
+## Description: this script starts the On-Line Email Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStartAutoEmail 
+{
+	my $client 	= shift;
+	my $pidfile = undef;
+	my $ret 		= undef;
+
+	## Parameters used by the issuing certificate process
+	our ($DEBUG, %AUTOCONF);
+
+	## Uncomment this to get detailed DEBUG information
+	## $DEBUG = 1;
+
+	# print SDTDERR "cmdStartAutoCA()->Started in BATCH mode. ($batch)\n" if ($batch);
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoemail.pid";
+	$ret = start_process(	PIDFILE => $pidfile, 
+												FUNCTION => \&AutoEmailDaemon,
+												HUP_FUNCTION => \&closeAutoEmail,
+												GET_CA_TOKEN => 0,
+												CLIENT_SOCK => $client );
+
+	## If an error is detected, report it!
+	if ($ret < 0)
+	{
+		generalError( "ERROR, can not spawn new processes!\n" ) 
+	}
+	else
+	{
+		print STDERR "On-Line Email::Auto Email Issuing Daemon Started (pid $ret).\n";
+	}
+
+	1;
+}
+
+sub closeAutoEmail
+{
+	my $reason = shift;
+	my $statusfile = undef;
+
+	our (%AUTOCONF, $emailDB);
+
+	$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoemail_status.txt";
+	close_process(STATUSFILE => $statusfile, DB => $emailDB);
+
+	## Print out some info
+	print STDERR "closeAutoCA()::Terminating Auto Certificate Issuing Daemon process.";
+
+	## Exit the process
+	## exit (1); ## This exit() cmd seems to prevent the startup script to complete successfully if daemons are enabled
+	1;
+}
+
+sub AutoEmailDaemon
+{
+	my $func_params = { @_ };
+	my $locDB = undef;
+	my $pid = undef;
+	my $status = undef;
+	my $pidfile = undef;
+	my $params = undef;
+	my $WARNSLEEP = undef;
+
+	## Parameters used by the issuing certificate process
+	our ($emailDB, $query, $errno, $errval, $cryptoShell, $DEBUG);
+	our (%AUTOCONF);
+
+	# Load the Parameters
+	$params = startAutoEmail_loadParams();
+
+	if( $params->{'period_type'} =~ /seconds/i )
+	{
+		$params->{'SLEEP'} = $params->{'period'};
+	} 
+	elsif ($params->{'period_type'} =~ /minutes/i)
+	{
+		$params->{'SLEEP'} = $params->{'period'} * 60;
+	}
+	elsif ( $params->{'period_type'} =~ /hours/i )
+	{
+		$params->{'SLEEP'} = $params->{'period'} * 3600;
+	}
+	elsif ( $params->{'period_type'} =~/days/i )
+	{
+		$params->{'SLEEP'} = 3600 * 24;
+	}
+	else
+	{
+			$params->{'SLEEP'} = 30;
+	};
+
+	if($DEBUG)
+	{
+			print STDERR "On-Line Email:: Sleep period is " . 
+					$params->{'SLEEP'} .  "\n";
+	}
+
+	## Execute the Warning the first time
+	$WARNSLEEP = 9999999999;
+
+	## Create a new DB handler for this process
+	if (not($locDB = newConnectDB()))
+	{
+		print STDERR "On-Line Email::Error, no DB connection!\n";
+		exit(1);
+	}
+	else
+	{
+		print STDERR "On-Line Email::DB connection Ok.\n" if ($DEBUG);
+	}
+
+	$params->{DB} = $locDB;
+	$params->{WARNSLEEP} = $WARNSLEEP;
+
+	if ($params->{debug})
+	{
+		print STDERR "[$$] On-Line CA::Enabling Extended Logging (DEBUG).\n";
+		$DEBUG = 1;
+	}
+
+	## Main process loop
+	while( 1 )
+	{
+		# Only way I have found to get rid of perl modules memory leaks is to fork
+		my $subpid = fork();
+		if (not defined $subpid) {
+			print STDERR "Can not fork. Resources not available\n";
+		} elsif ($subpid == 0) {
+			# Child
+			my $retVal = 0;
+
+			if ($DEBUG)
+			{
+				print STDERR "On-Line EMAIL::Cycle Start!\n";
+				print STDERR "On-Line EMAIL::DB=>$locDB\n";
+			};
+
+			if( not $locDB->connect())
+			{
+				print STDERR "On-Line Email::DB CONNECT ERROR::" . 
+					$locDB->{errno} . " - " .
+					$locDB->{errval} . "\n";
+			}
+			else
+			{
+				print STDERR "On-Line Email::DB CONNECT Ok\n" if ($DEBUG);
+			}
+
+			## Call the process
+			$retVal = autoEmailProcess($params);
+
+			print STDERR "On-Line Email::autoEmailProcess completed\n" if ($DEBUG);
+
+			## Commit changes to DB
+			## $locDB->commit();
+
+			if(not defined $locDB->disconnect())
+			{
+				print STDERR "On-Line EMAIL::DB DISCONNECT ERR::".
+										 $locDB->{errno} . " - " .
+										 $locDB->{errval} . "\n";
+			}
+			else
+			{
+				print STDERR "On-Line EMAIL::DB DISCONNECT Ok\n" if ($DEBUG);
+			}
+
+			exit(0);
+		} else {
+			# Parent
+			waitpid($subpid,0);
+		}
+
+		$WARNSLEEP += $params->{SLEEP};
+
+		if($DEBUG)
+		{
+			$WARNSLEEP = 9999999999;
+		}
+
+		$params->{WARNSLEEP} = $WARNSLEEP;
+
+		print STDERR "On-Line Email::going to sleep for " . $params->{SLEEP} . 
+								 " secs. (WARNSLEEP => $WARNSLEEP)\n" if ($DEBUG);
+
+		sleep( $params->{SLEEP} );
+	}
+}
+
+sub autoEmailProcess 
+{
+	## Get the parameters
+  my $params	 = shift;
+
+  our ($DEBUG, $errno, $errval);
+
+	if (not $params)
+	{
+		print STDERR "On-Line Email::ERROR, missing params for autoEmailProcess($params).\n";
+		return 1;
+	};
+
+	my $WARNSLEEP = $params->{WARNSLEEP};
+	my $locDB = $params->{DB};
+
+	if ((not $WARNSLEEP) or (not $locDB))
+	{
+		print STDERR "On-Line Email::ERROR, missing WARNSLEEP ($WARNSLEEP) or locDB ($locDB) for autoEmailProcess().\n";
+		return 1;
+	};
+
+	## Send Default Emails
+	print STDERR "On-Line Email::Sending Prepared Mails (Default).\n" if ($DEBUG);
+  if (sendPreparedMails ("default", $locDB) ne 1)
+	{
+		print STDERR "On-Line Email::Error while sending default emails!\n";
+		return 1;
+  };
+  print STDERR "On-Line Email::Default Emails Sent (Ok).\n" if ($DEBUG);
+
+	## Send CRINs E-Mails
+  print STDERR "On-Line Email::Sending Prepared Mails (Crin).\n" if ($DEBUG);
+  if (sendPreparedMails ("crin", $locDB) ne 1)
+	{
+		print STDERR "On-Line Email::ERROR::Can not send crin emails!\n";
+		return 1;
+  };
+  print STDERR "On-Line Email::CRIN Emails Sent (OK).\n" if ($DEBUG);
+
+  ## Check if it is time to warn also users (once a day is enough!)
+  if ($WARNSLEEP < 86400 and $DEBUG)
+	{
+		print STDERR "On-Line Email::skipping warn expiring Mails (too early $WARNSLEEP < 86400 )\n";
+		return 1;
+	};
+
+  ## Reset the sleeping time (for Expiring Email Warn only!)
+  $WARNSLEEP = 0;
+		
+	## Send Expiring Emails
+  if ( $params->{'warn_expiring'} eq "1" )
+	{
+		print STDERR "On-Line Email::Sending Expiring Certs Mails\n" if ($DEBUG);
+
+		if (autoEmailWarnExpiring($params) ne "1")
+		{
+			print STDERR "On-Line Email::ERROR::Can not send Expiration Emails!\n";
+			return 1;
+		}
+		else
+		{
+	    print STDERR "On-Line Email::Expiration Emails Sent (OK).\n" if ($DEBUG);
+		}
+  }
+	else
+	{
+		print STDERR "On-Line Email:: warn_expiring is not set ( " . 
+					$params->{'warn_expiring'} . ")\n" if ($DEBUG);
+	}
+
+	print STDERR "On-Line Email::Cycle Completed.\n" if ($DEBUG);
+
+	return 1;
+}
+
+sub getParamsStartAutoEmail 
+{
+	our ($query, $DEBUG, %AUTOCONF);
+
+	my $result = "";
+
+	my $pidfile = $AUTOCONF{"var_prefix"} . "/tmp/openca_autoemail.pid";
+	my $status = libGetPidProcessStatus ( $pidfile );
+
+	if( $status gt 0 )
+	{
+		return undef;
+	};
+
+	if (not $_[0]) 
+	{
+		my %labels = undef;
+
+		my $defaults = undef;
+		my $params = undef;
+
+		$params = startAutoEmail_loadParams( $defaults );
+
+		my $html_startup = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'startup',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-disabled=>'1',
+					-checked=>$params->{'startup'} );
+
+		my $html_debug = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'debug',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-checked=>$params->{'debug'} );
+
+		my $period = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'period',
+				-regx   => 'numeric',
+				-class  => 'small',
+				-default => $params->{'period'});
+
+		%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours'),
+		    'Minutes'  => gettext ('Minutes'),
+		    'Seconds'  => gettext ('Seconds') );
+
+		my $periodType = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'period_type',
+				-regx    => '*',
+				-default => $params->{'period_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours','Minutes', 
+					      'Seconds' ],
+				-labels  => \%labels );
+
+
+		my $warnExpiring = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'checkbox',
+					-name=>'warn_expiring',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-checked=>$params->{'warn_expiring'} );
+
+		%labels = ( 'Days'  => gettext ('Days'),
+		    'Hours' => gettext ('Hours') );
+
+		my $expire_1 = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'expire_1',
+				-regx   => 'numeric',
+				-class  => 'small',
+				-default => $params->{'expire_1'});
+
+		my $expire_1_type = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'expire_1_type',
+				-regx    => '*',
+				-default => $params->{'expire_1_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours' ],
+				-labels  => \%labels );
+
+		my $expire_2 = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'expire_2',
+				-regx   => 'numeric',
+				-class  => 'small',
+				-default => $params->{'expire_2'});
+
+		my $expire_2_type = $query->newInput (
+				-intype  => 'popup_menu',
+				-name    => 'expire_2_type',
+				-regx    => '*',
+				-default => $params->{'expire_2_type'},
+				-class  => 'small',
+				-style   => 'min-width: 13em; width: 13em;',
+				-values  => [ 'Days','Hours' ],
+				-labels  => \%labels );
+
+		my $html_role = $query->newInput (
+                                -regx=>'*',
+                                -intype=>'scrolling_list',
+                                -name=>'role',
+                                -size=>5,
+                                -multiple=>'true',
+                                -default=> $params->{'role'},
+                                -values=>[gettext('Any'), loadRoles()]);
+
+		my $html_loa = $query->newInput (
+                                -regx=>'*',
+                                -intype=>'scrolling_list',
+                                -name=>'loa',
+                                -size=>5,
+                                -multiple=>'true',
+                                -default=> $params->{'loa'},
+                                -values=>[gettext('Any'), loadLoa()]);
+
+		my $lifespan = $query->newInput (
+				-intype => 'textfield',
+				-name   => 'lifespan',
+				-class  => 'small',
+				-regx   => 'numeric',
+				-default => $params->{'lifespan'});
+
+    $result = "<table class=\"getParams\">\n";
+    $result .= "<tr><td colspan=\"2\">\n";
+		$result .= "<center><div style='font-size: 120%;'><h3>" . 
+		       gettext("Automatic E-Mail System")."</h3>" .
+		   "</div></center>" .
+		   "</td></tr>\n";
+
+		$result .=  "<tr><td colspan='2'>" .
+		    "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+                    "The OpenCA automatic E-Mail subsystem is capable to " .
+		    "send notification emails both upon new certificate " .
+		    "issuing or when a certificate is about to expire. " .
+		    "While you can set the time to wait before polling " .
+		    "the system outbox message, the check for expiration " .
+		    "emails is executed once a day only (and when you start ".
+		    "the email subsystem)."
+		    ) .
+		    "</div>";
+    $result .= "</td></tr>\n";
+
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Automatically at Startup")."</td>\n".
+                   "    <td>".$html_startup."</td>\n".
+                   "  </tr>\n";
+
+    $result .= "<tr><td colspan=\"2\">\n";
+		$result .= "<center>" . 
+			"<h3>" . gettext("Email Daemon Config") . "</h3>" .
+		   "</div></center>".
+		   "</td></tr>\n";
+
+		$result .=  "<tr><td colspan='2'>\n" .
+		    "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+                    "The system will poll the system's outbox periodically " .
+		    "to check if new emails are queued to be sent to users. " .
+		    "The process is very lightweight and can be executed " .
+		    "often in order to provide users with fast notification " .
+		    "upon new certificate issuing. If this is not a priority " .
+		    "for your PKI, you can set the period between subsequent ".
+		    "polling to several hours or even days. The suggested " .
+		    "approach is to execute it every several minutes to " .
+		    "provide a better service for the users."
+		    ) .
+		    "</div>";
+    $result .= "</td></tr>\n";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Check New Email Every") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $period $periodType" . "<br /><br />" .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+		$result .= "<tr><td colspan=\"2\">\n" .
+		   "       <center><h3>" . gettext("Expiring Certificates Warning") .
+		   "			  </h3>" .
+		   "       </center>\n" .
+		   "</td></tr>\n";
+
+		$result .=  "<tr><td colspan='2'>\n" .
+		    "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext (
+                    "It is possible to enable OpenCA to automatically " .
+		    "warn users (via E-mail) when their certificates are " .
+		    "about to expire. " .
+		    "You can enable the system to send up to two " .
+		    "notifications. To disable one notification simply set " .
+		    "the value (days or hours is not important) to 0."
+		    ) .
+		    "</div>";
+    $result .= "</td></tr>\n";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Warn for Expiring Certs") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $warnExpiring" .
+		   "    </td>\n" .
+		   "  </tr>\n";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Only if Role is") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $html_role" .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Only if LOA is") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $html_loa" . "<br /><br />" .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+	# $result .=  "<tr><td colspan='2'>\n" .
+	# 	    "   </td><tr>";
+		    # "<hr style='color: #aaaaaa; width: 90%; align: left;'/>" .
+		    # "</td></tr>";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . i18nGettext ("Only if Certificate Validity Period __BR__ is Greater than", "__BR__" , "<br />" ) .
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $lifespan   " . gettext ("Days") .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+	# $result .=  "<tr><td>\n" .
+	# 	    "   </td><td>" .
+	# 	    "<hr style='color: #aaaaaa; width: 90%; align: left;'/>" .
+	# 	    "</td></tr>";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Send E-Mail if Expiring within") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $expire_1 $expire_1_type" .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+    $result .= "  <tr>\n".
+                   "    <td class='desclabel'>\n" . 
+		   "       " . gettext ("Send E-Mail if Expiring within") . 
+		   "    </td>\n".
+                   "    <td style='white-space: nowrap;'>\n" . 
+		   "       $expire_2 $expire_2_type" .
+		   "    </td>\n".
+                   "  </tr>\n";
+
+		## DEBUG Checkbox
+		$result .= "<tr><td colspan=\"2\">";
+		$result .= "<br /><center><h3>".
+			gettext("Debugging Information") . "</h3>" .
+		   "</div></center></td></tr>";
+		$result .= "<tr><td colspan=\"2\">";
+		$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext ( "You can enable extra logging by enabling the DEBUG " .
+		    "logging here. Keep in mind that enabling this option is only " .
+		    "for testing or debugging issues with the system as it produces lots of information. " .
+		    "Disable this option in production systems.") .
+		    "</div><br />";
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Extended Logging (DEBUG)")."</td>\n".
+                   "    <td>".$html_debug."</td>\n".
+                   "  </tr>\n";
+
+    $result .= "</table>\n";
+
+	}
+	else
+	{
+		# We do have the parameters, let's save them!
+		startAutoEmail_saveParams ();
+	};
+
+	return $result;
+}
+
+
+sub startAutoEmail_saveParams
+{
+	my $ret = undef;
+
+	our ($query, %AUTOCONF);
+
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autoemail.cnf";
+	$ret = libSaveCgiParams($conf);
+	return ($ret);
+}
+
+sub startAutoEmail_loadParams
+{
+	our ( $query, %AUTOCONF );
+
+	my $ret = undef
+	my $savedQuery = undef;
+	my $defaults = undef;
+
+	$defaults->{'period'} = '10';
+	$defaults->{'period_type'} = gettext('Minutes');
+	$defaults->{'warn_expiring'} = '1';
+	$defaults->{'expire_1'} = '15';
+	$defaults->{'expire_1_type'} = gettext('Days');
+	$defaults->{'expire_2'} = '2';
+	$defaults->{'expire_2_type'} = gettext('Days');
+
+	$defaults->{'role'} = [ 'Any' ];
+	$defaults->{'loa'} = [ 'Any' ];
+	$defaults->{'lifespan'} = '90';
+
+	$defaults->{'debug'} = '0';
+	$defaults->{'startup'} = '0';
+
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autoemail.cnf";
+	return libLoadCgiParams ( $conf, $defaults );
+}
+
+sub autoEmailStatus
+{
+	my $key = shift;
+	my $status = shift;
+	my %DB = undef;
+	my $dbfile = undef;
+	my $ret = undef;
+
+	our (%AUTOCONF);
+	
+	## check the parameter
+	return undef if(not $key);
+
+	$dbfile = $AUTOCONF{"var_prefix"}. "/db/openca_autoemail_status.db";
+
+	if (not(dbmopen(%DB, "$dbfile", 0600)))
+	{
+		print STDERR "On-Line Email::ERROR::can not open DB file for writing ($dbfile)\n";
+		return undef;
+	}
+
+	if ($status eq "")
+	{
+		$ret=$DB{$key};
+	}
+	else
+	{
+		$ret = $DB{$key};
+		$DB{$key}="$status";
+	}
+	dbmclose( %DB );
+
+	return $ret;
+}
+
+sub autoEmailWarnExpiring
+{
+	our ($DEBUG, $query, $tools, $cryptoShell, $LANGUAGE);
+
+	my $params = shift;
+	my $locDB  = shift;
+
+	my $service_email = getRequired ('SERVICE_MAIL_ACCOUNT');
+
+	my $filename      = $query->subVar(getRequired ('WARN_EXPIRING_MSG'), 
+																				"__LANGUAGE__", $LANGUAGE);
+
+	my $limit_1 = undef;
+	my $limit_2 = undef;
+
+	my $myTime = gmtime();
+	my $now = $cryptoShell->getNumericDate ( $myTime );
+
+	my $msg_template  = $tools->getFile ($filename);
+
+	my $locDB = $params->{DB};
+
+	if (not $msg_template)
+	{
+   	print STDERR i18nGettext ("Cannot load the message template __FILE__.",
+                              "__FILE__", $filename);
+		return undef;
+	}
+
+	my ($yyyy,$mm,$dd,$HH,$MM,$SS) =
+              ( $now =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+
+	$now = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+
+	if ( $params->{'expire_1_type'} =~ /Days/i )
+	{
+		$limit_1 = $now + $params->{'expire_1'} * 86400;
+	}
+	elsif ($params->{'expire_1_type'} =~ /Hours/i)
+	{
+		$limit_1 = $myTime + $params->{'expire_1'} * 3600;
+	}
+	else
+	{
+		## Period type not understood, we default to 10 days for
+		## expire_1
+		$limit_1 = $now + 10 * 86400;
+	}
+
+	if ( $params->{'expire_2_type'} =~ /Days/i)
+	{
+		$limit_2 = $now + $params->{'expire_2'} * 86400;
+	}
+	elsif ($params->{'expire_2_type'} =~ /Hours/i)
+	{
+		$limit_2 = $now + $params->{'expire_2'} * 3600;
+	}
+	else
+	{
+		## Period type not understood, we default to 2 days for
+		## expire_1
+		$limit_2 = $now + 2 * 86400;
+	}
+
+	use Time::Local;
+	use MIME::Base64;
+	use MIME::Lite;
+
+	my $loas = libGetLoaLevels ();
+	my $emailCycle = 3;
+
+	foreach my $limit (reverse sort { $a <=> $b } ($limit_2, $limit_1))
+	{
+		my $searchParams = undef;
+		my $gmLimit = undef;
+		my $numLimit = undef;
+
+		$emailCycle--;
+
+		$numLimit = $limit;
+
+		$gmLimit = gmtime($limit);
+		$numLimit = $cryptoShell->getNumericDate($gmLimit);
+
+		$searchParams->{DATATYPE} = 'VALID_CERTIFICATE';
+		$searchParams->{EXPIRES_BEFORE} = $numLimit;
+
+		if ($limit <= 0)
+		{
+			## This email is not to be sent!
+			next;
+		}
+
+		print STDERR "On-Line Email::[$emailCycle] autoEmailWarnExpiring()::DEBUG:: " .
+						"Limit => $numLimit\n" if ($DEBUG);
+
+		if (($params->{'loa'} ne "") and ($params->{'loa'} !~ /Any/i))
+		{
+			my @tmpList = ();
+			my @tmpListLoa = ();
+
+ 			print STDERR "On-Line Email::autoEmailWarnExpiring()::DEBUG::LOA\n" if ($DEBUG);
+
+			if (ref($params->{'loa'}) =~ /ARRAY/)
+			{
+				@tmpList = @{ $params->{'loa'} };
+			}
+			else
+			{
+				@tmpList = ( $params->{'loa'} );
+			};
+
+			foreach my $tmpVal (@tmpList)
+			{
+				push (@tmpListLoa, $loas->{$tmpVal} );
+   			print STDERR "autoEmailWarnExpiring()::DEBUG::LOA => ". $loas->{$tmpVal} . "\n" if ($DEBUG);
+			}
+			$searchParams->{LOA} = [ @tmpListLoa ];
+		}
+
+		if (($params->{'role'} ne "") and ($params->{'role'} !~ /Any/i))
+		{
+			$searchParams->{ROLE} = $params->{'role'} ;
+		}
+
+		print STDERR "On-Line Email::autoEmailWarnExpiring()::Limit is set to $limit ($now)\n" if ($DEBUG);
+
+		my @certList = $locDB->searchItems ( %{ $searchParams } );
+		foreach my $cert (@certList)
+		{
+			my $key = undef;
+			my $email = undef;
+
+      next if (not $cert);
+
+			if (($params->{'lifespan'} ne "") and ($params->{'lifespan'} > 0))
+			{
+				my $notAfterNum = $cryptoShell->getNumericDate($cert->getParsed()->{NOTAFTER});
+				my $notBeforeNum = $cryptoShell->getNumericDate($cert->getParsed()->{NOTBEFORE});
+
+				my $notAfterTime = undef;
+				my $notBeforeTime = undef;
+
+				my ($yyyy,$mm,$dd,$HH,$MM,$SS) = ();
+				($yyyy,$mm,$dd,$HH,$MM,$SS) = ( $notAfterNum =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/);
+				$notAfterTime = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+				($yyyy,$mm,$dd,$HH,$MM,$SS) = ( $notBeforeNum =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+
+				$notBeforeTime = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+
+				## Now let's check that the Certificate Validity 
+				## Period is greater that the value given from the
+				## User Interface
+
+				my $validityTime =  ( $notAfterTime - $notBeforeTime ) / 86400;
+
+				if ($validityTime < $params->{'lifespan'})
+				{
+					## The Lifespan of the certificate is less
+					## then the one set as minimum from the
+					## web interface
+
+					if ($DEBUG)
+					{
+						print STDERR "On-Line Email::autoEmailWarnExpiring()::Skipping as Cert's lifespan is ".
+							"$validityTime ( MUST be greater than " . $params->{'lifespan'} . " ) \n";
+					}
+					next;
+				}
+				else
+				{
+					print STDERR "On-Line Email::autoEmailWarnExpiring()::Cert's lifespan is " .
+							"$validityTime ( OK for configured Min = " . $params->{'lifespan'} . " ) \n";
+				}
+			}
+
+			$key  = $cert->getSerial();
+
+			if ($DEBUG)
+			{
+				print STDERR i18nGettext ("Seen certificate with key __SERIAL__",
+    	                       			"__SERIAL__", $key) . "\n";
+			}
+
+			my $certValidity = "";
+
+			$email   = $cert->getParsed()->{EMAILADDRESS};
+			unless ($email) 
+			{
+				my $csr_serial = $cert->getParsed()->{HEADER}->{CSR_SERIAL};
+				my $csr = $locDB->getItem( DATATYPE=>'ARCHIVED_REQUEST', KEY=>$csr_serial);
+
+				$email = $csr->getParsed()->{HEADER}->{ADDITIONAL_ATTRIBUTE_EMAIL};
+				$email ||= $service_email;
+			}
+
+			my $currStatus = autoEmailStatus($key);
+
+			if (($currStatus ne "" ) and ($currStatus >= $emailCycle))
+			{
+				print STDERR "autoEmailWarnExpiring()::Skipping $key [$currStatus]\n" if ($DEBUG);
+				next;
+			}
+
+			if ($DEBUG)
+			{
+				if ($emailCycle > $currStatus)
+				{
+					if ($emailCycle eq "2")
+					{
+						print STDERR "[$emailCycle] autoEmailWarnExpiring()::Email to " .
+							"send 2nd Warning for $key ($email)\n";
+					}
+					else
+					{
+						print STDERR "[$emailCycle] autoEmailWarnExpiring()::Email to " .
+							"send 1st Warning for $key ($email)\n";
+					}
+	  	  }
+			}
+
+			if ( $DEBUG )
+			{
+	  		print STDERR "[$emailCycle] autoEmailWarnExpiring()::Setting".
+					" Status for $key to >> $emailCycle <<\n";
+			}
+
+			autoEmailStatus( $key, $emailCycle );
+
+			my $cn      = $cert->getParsed()->{DN_HASH}->{CN}[0];
+			my $subject = $cert->getParsed()->{DN};
+			my $expires = $cert->getParsed()->{NOTAFTER};
+
+			my $expire_date = $cryptoShell->getNumericDate($expires);
+			my ($yyyy,$mm,$dd,$HH,$MM,$SS) =
+            		( $expire_date =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+
+			my $expiry_ts = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+			my $text = $msg_template;
+
+			$text = $query->subVar ($text, '__CERT_SERIAL__',   $key);
+			$text = $query->subVar ($text, '__CERT_SUBJECT__',  $subject);
+			$text = $query->subVar ($text, '__CERT_EMAIL__',    $email);
+			$text = $query->subVar ($text, '__CERT_NOTAFTER__', $expires);
+			$text = $query->subVar ($text, '__CERT_CN__',       $cn);
+
+			my $encoding = 'UTF-8';
+
+			my $from = gettext ("PKI Certificate Manager");
+			my $enc_from = MIME::Base64::encode($from,"");
+			$from = "=?" . $encoding . "?B?" . $enc_from . "?=" . " <".$service_email.">";
+
+			my $enc_to = MIME::Base64::encode($cn,"");
+			my $to = "=?" . $encoding . "?B?" . $enc_to . "?=" . " <$email>";
+
+			my $subject = i18nGettext ("Automatic Certificate __SERIAL__ expiration warning" .
+								" message", "__SERIAL__", $key);
+
+			$subject .= " [" . $emailCycle . "]";
+			my $enc_subject = MIME::Base64::encode($subject,"");
+			$subject = "=?" . $encoding . "?B?" . $enc_subject . "?=";
+
+			my $msg = MIME::Lite->new(
+                          From    => $from,
+                          To      => $to,
+                          Subject => $subject,
+                          Type    =>'TEXT',
+                          Encoding =>'8bit',
+                          Data    =>$text);
+
+			$msg->attr("content-type.charset" => $encoding);
+
+			if ($msg->send)
+			{
+				if ($DEBUG)
+				{
+					print STDERR i18nGettext ("__SERIAL__ - message sent to __EMAIL__",
+                                     "__SERIAL__", $key,
+                                     "__EMAIL__",  $email);
+				}
+			}
+			else
+			{
+				print STDERR i18nGettext ("__SERIAL__ - cannot send message to __EMAIL__",
+  	       "__SERIAL__", $key,
+  	       "__EMAIL__",  $email);
+			}
+		}
+	}
+
+	return 1;
+}
+
+1;

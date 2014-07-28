@@ -1,0 +1,34 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: stopDaemon
+##       Brief: stop tokens
+## Description: stop the daemons fo crypto tokens if they run in daemon mode
+##  Parameters: 
+
+use strict;
+
+sub cmdStopDaemon {
+
+    print startLogPage( gettext("Stop the daemons for the crypto tokens") );
+
+    print addLogSection ( gettext("Stopping daemons ...") );
+
+    if (not $crypto_layer->stopDaemons ()) {
+        print addLogLine ( "<font color=#ff0000>".
+                           gettext ("FAILED").
+                           "</font>");
+        print addPreLogLine ( i18nGettext ("Error: __ERRNO__", "__ERRNO__", $crypto_layer->errno));
+        print addPreLogLine ( i18nGettext ("Message: __ERRVAL__", "__ERRVAL__", $crypto_layer->errval));
+    } else {
+        print addLogLine (gettext("OK"));
+    }
+
+    print closeLogSection;
+    print closePage;
+
+}
+
+1;
+

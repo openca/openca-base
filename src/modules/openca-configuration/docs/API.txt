@@ -1,0 +1,135 @@
+## Module  : OpenCA::Configuration
+## Subject : API Definition
+## 
+## Copiright (c) 1999 by Massimiliano Pala
+##               All Rights Reserved
+## 
+## Current Version : 1.01b
+## 
+## This is a brief list of all function available in the package. Please
+## note that this document may change (with the release of newer versions)
+## so keep it up to date.
+
+NAME
+
+	new - Get a reference to the class module.
+
+
+USAGE
+
+	$config = new OpenCA::Configuration( $CfgFileName );
+
+
+DESCRIPTION
+
+	The function returns a reference to the class to be used to access
+	to all the module subroutines. When building the class you can
+	pass an argument to automatically load a configuration file.
+
+
+SEE ALSO
+
+	loadCfg()
+
+
+
+
+NAME
+
+	loadCfg - load and Parse a configuration file.
+
+
+USAGE
+
+	$ret = $config->loadCfg( $fileName );
+
+
+DESCRIPTION
+
+	The function try to load the configuration file ( passed as an arg
+	to the function itself ) and parse for later parameter quick access.
+	When the function ends succesfully it gives back 0 as result, other-
+	wise it will return -1.
+
+
+SEE ALSO
+
+	none
+
+
+NAME
+
+	getParam - Get the first parameter with name passed as argument.
+
+
+USAGE
+
+	$ret = $config->getParam( $parName );
+
+
+DESCRIPTION
+
+	The function returns the given parameter ( an hash ) from the internal
+	config lines DB. The structure of the returned hash is very simple and
+	can be accessed with no complexity ( see the examples dir ).
+
+	The %ret can be reported as if follows:
+
+		%ret = {
+			NAME=>$name,
+			LINE_NUMBER=>$lineNum,
+			VALUES=>[ @values ] };
+
+	The KEYS should be self explanatory. Use standard method to access to
+	the returned parameter.
+
+
+SEE ALSO
+
+	getNextParam()
+
+
+
+NAME
+
+	getNextParam - Get the next named parameter in configuration.
+
+USAGE
+
+	$ret = getNextParam( %parameter );
+
+
+DESCRIPTION
+
+
+	The function returns next parameter found after the one passed as
+	the argument from the internal config lines DB. The structure of
+	the returned hash is very simple and can be accessed with no complexity
+	( see the examples dir ). For the format of the returned hash refer to
+	the getParam() method.
+
+
+SEE ALSO
+
+	getParam()
+
+
+NAME
+
+	getVersion - Get Module Version number.
+
+USAGE
+
+	$VER = $config->getVersion()
+
+
+DESCRIPTION
+
+	This function returns the current module version.
+
+
+SEE ALSO
+
+	None.
+
+

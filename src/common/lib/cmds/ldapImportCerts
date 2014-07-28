@@ -1,0 +1,59 @@
+## OpenCA - command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: ldapImportCerts
+##       Brief: importCertificates onto LDAP server
+## Description: Add issued certificates to LDAP server
+##  Parameters: 
+
+use strict;
+
+sub cmdLdapImportCerts {
+
+my ( $ldap, $result, @certsList, $cert, $parsed, $dn, $mesg, $tmp);
+my ( @ouList, @dnList, $subDn );
+
+
+## Get Required Parameters
+my $basedn 	= getRequired( "basedn" );
+my $certDir   = getRequired( 'CertDir' );
+my $lastFile    = "${certDir}/lastImport.txt";
+
+my ( $org )	= ( $basedn =~ /o\s*=\s*([^\,]+)/i );
+
+## Load list of last imported certificates
+@certsList = split /\n/, $tools->getFile( "$lastFile" );
+
+## Start Logging Page
+print startLogPage ( gettext ("LDAP Certificates Importing") );
+
+print addLogSection (gettext("Adding Certificates:"));
+print addLogLine ("");
+
+foreach ( @certsList ) {
+	if( not $cert = $db->getItem( DATATYPE=>"VALID_CERTIFICATE",KEY=>$_ )) {
+		print addPreLogLine ( "[ ".i18nGettext ("Cannot find certificate __CERT_SERIAL__.", "__CERT_SERIAL__", $_)." ]" );
+		next;
+	}
+
+	my $result = eximObjectToLDAP ( CERTIFICATE => $cert );
+	my $ret;
+	if ( not $result or not $result->{STATUS} ) {
+		$ret = "\n<FONT COLOR=#FF0000>".
+               i18nGettext ("Cannot write __DN__ to LDAP.", "__DN__", $cert->getParsed()->{DN})."</FONT>";
+	} else {
+		$ret = "\n".i18nGettext ("Added __DN__.", "__DN__", $cert->getParsed()->{DN});
+	}
+
+	print addPreLogLine ( $ret );
+}
+print closeLogSection ();
+
+closePage();
+
+return 1;
+}
+
+1;
+

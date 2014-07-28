@@ -1,0 +1,21 @@
+=head1 NAME
+
+OpenCA::Log - Perl module to manage the logging of OpenCA .
+
+=head1 SYNOPSIS
+
+use OpenCA::Log;
+
+=head1 DESCRIPTION
+
+Sorry, no documentation available yet. The module is not complete until now.
+
+=head1 AUTHOR
+
+Michael Bell <michael.bell@web.de>
+
+=head1 SEE ALSO
+
+perl(1).
+
+=cut

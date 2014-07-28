@@ -1,0 +1,62 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpListProcess
+##       Brief: Build Directory Listing
+## Description: Build Directory Listing given ID
+##  Parameters: ID
+
+use strict;
+
+sub cmdBpListProcess {
+
+our ($query, $xml_cache, $self);
+
+my $ID = $query->param( 'ID' );
+
+my ( $dateColTitle, $rows, @cols, @list );
+
+## Get required parameters ( return only the value string )
+my $batchdir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+
+if (defined $ID) {
+    $ID = join ("/", split (/ */, $ID));
+}
+$batchdir .= "/".$ID."/workflows";
+
+opendir DIR, $batchdir;
+my @list = readdir DIR;
+closedir DIR;
+
+my $item_list = undef;
+$item_list->{HEAD}->[0] = i18nGettext ("Process(es) of User __USER__",
+                                   "__USER__", $query->param('ID'));
+$item_list->{BODY} = ();
+
+## Process all Directories
+foreach my $dirs ( @list ) {
+
+    next if ($dirs =~ /^(\.|\.\.)$/);
+    next if ($dirs =~ /^ID$/);
+    next if (! -d $batchdir."/".$dirs);
+
+    my $col = "<a href=\"$self?cmd=bpViewProcess&USER=".$query->param('ID').
+                                         "&PROCESS=".$dirs.
+         "\">".$dirs."</a>";
+    $item_list->{BODY}->[scalar @{$item_list->{BODY}}]->[0] = $col;
+}
+
+return libSendReply (
+                     "TIMESTAMP"   => 1,
+                     "NAME"        => gettext ("List Processes of a User"),
+                     "EXPLANATION" => i18nGettext ("User: __USER__", "__USER__", $query->param('ID')),
+                     "ITEM_LIST"   => $item_list
+                    );
+}
+
+1;
+

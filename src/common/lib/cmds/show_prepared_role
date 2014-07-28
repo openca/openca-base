@@ -1,0 +1,39 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: show_prepared_role
+##       Brief: show_prepared_role
+## Description: show a new role before it is finally created
+##  Parameters: role
+
+use strict;
+
+sub cmdShow_prepared_role {
+
+	checkNew_role ();
+
+        my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+        $hidden_list->{"role"} = $query->param ('role');
+ 
+	if ( $query->param ('next_cmd') =~ /^delete$/i ) {
+		$hidden_list->{"cmd"} = "delete_role";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext ("DELETE this Role")."\">\n";
+	} else {
+		$hidden_list->{"cmd"} = "new_role";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext("Create this Role")."\">\n";
+	}
+
+        return libSendReply (
+                             "NAME"        => gettext ("Show Prepared Module"),
+                             "EXPLANATION" => i18nGettext ("The prepared role is __ROLE__.",
+                                                           "__ROLE__", $query->param ('role')),
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel,
+                             "TIMESTAMP"   => 1
+                            );
+}
+
+1;
+

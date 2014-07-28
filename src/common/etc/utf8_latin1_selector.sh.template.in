@@ -1,0 +1,101 @@
+#!@SHELL@ 
+
+# (C) 2005 by Julia Dubenskaya (julia@cryptocom.ru)
+# and Sergei Vyshenski (svysh@cryptocom.ru)
+# for OpenCA project.
+# For licensing refer to www.openca.org, www.openca.info
+
+## This script performs full re-configuration of 
+## openca brach 0.9.2 for support of UTF8 or LATIN1
+## fields in requests and certs. 
+## It works according to the option cert_chars in 
+## a file config.xml with allowed values UTF8, LATIN1.
+## Undefined value and absent option cert_chars 
+## default to LATIN1 case. 
+## This script should be called from 
+## configure_etc.sh script.
+
+## Restart OpenCA afterwards.
+
+exec_prefix=@exec_prefix@
+set -e
+
+info () {
+  echo "==================="
+  echo "Option 'cert_chars' is not set in or is absent from config.xml. Good."
+  echo "Default value LATIN1 is implied and will affect fields of requests and certs." 
+  echo "If you want UTF8 fields, set option 'cert_chars' to value UTF8 in config.xml "
+  echo "and re-run script configure_etc.sh."
+  echo "==================="
+}
+
+configure_openssl () {
+
+for DIRECTORY in @etc_prefix@/openssl
+do
+  if test -d $DIRECTORY; then
+      echo =================================================================
+      echo fixing directory: $DIRECTORY
+      echo =================================================================
+
+      cd $DIRECTORY
+      CONF_FILES=`find . -name "*.c*nf" -print`
+      for OPENSSL_FILE in $CONF_FILES
+      do
+          echo -------------begin file-----------------
+          echo processing file: $OPENSSL_FILE
+          case "$CERT_CHARS" in
+            'UTF8')  
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default name_opt RFC2253,-esc_msb
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default utf8 yes
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default string_mask utf8only
+               @bindir@/openssl-setopt $OPENSSL_FILE req utf8 yes
+               @bindir@/openssl-setopt $OPENSSL_FILE req string_mask utf8only
+             ;;
+             'LATIN1')
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default name_opt ca_default
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default utf8 no
+               @bindir@/openssl-setopt $OPENSSL_FILE CA_default string_mask nombstr
+               @bindir@/openssl-setopt $OPENSSL_FILE req utf8 no
+               @bindir@/openssl-setopt $OPENSSL_FILE req string_mask nombstr
+             ;;
+           esac
+          echo --------------end file------------------
+      done
+  fi
+done
+}
+
+CERT_CHARS="@cert_chars@"
+echo You requested cert_chars as: $CERT_CHARS
+
+  case "$CERT_CHARS" in
+    [Uu][Tt][Ff]*)
+        # OPENSSL=`@OPENSSL@ version | sed 's/^.* 0\\.9\\.\\(.\\).*$/\\1/'`
+        OPENSSL=`@OPENSSL@ version | sed 's/^.* \\([0-9]\\.[0-9]\\.[0-9]\\).*$/\\1/' | sed s/\\\.//g`
+        if test ! $OPENSSL -ge 98; then 
+         VER=`@OPENSSL@ version`
+         echo "OpenSSL 0.9.8+ is needed to support option 'cert_chars' set to UTF8 in config.xml."
+         echo "But you configured OpenCA to use @OPENSSL@, which has version: $VER ."
+         exit 1
+        fi
+        CERT_CHARS='UTF8' 
+      ;;
+    [Ll][Aa][Tt][Ii][Nn]*)
+        CERT_CHARS='LATIN1' 
+      ;;
+    ""|[@][Cc][Ee][Rr][Tt]_[Cc][Hh][Aa][Rr][Ss][@]) 
+                                       # empty value of cert_chars
+                                       # or missing option cert_chars in file config.xml
+        CERT_CHARS='LATIN1' 
+        info
+      ;;
+    *)
+        echo "ERROR: Incorrect value of option 'cert_chars' in config.xml. Please use UTF8, LATIN1 or empty value instead."
+        exit 1
+      ;;
+  esac
+  echo "CERT_CHARS = $CERT_CHARS"
+  configure_openssl
+
+exit 0;

@@ -1,0 +1,29 @@
+## OpenCA - Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: updateOCSPindexDB
+##       Brief: update OCSP's OpenSSL's index database
+## Description: update OCSP's OpenSSL's index database from the certificates
+##              and ca-certificates which are stored in the database
+##  Parameters: -
+
+use strict;
+
+sub cmdUpdateOCSPindexDB {
+
+	print startLogPage (gettext("Try to update OCSP's OpenSSL's index database"));
+
+	## I must not care about the CA-Certificates because they are never revoked
+	## or if they have to be revoked then I must start again with my CA
+
+	if (not updateOCSPdata ( DB => getRequired ('OCSPindex') )) {
+		print addLogSection ( "<FONT COLOR=#FF0000>".gettext("Update failed.")."</FONT>" );
+	} else {
+		print addLogSection ( gettext("Update succeeded.") );
+	}
+	print closeLogSection ();
+
+	print closePage ();
+}
+
+1;

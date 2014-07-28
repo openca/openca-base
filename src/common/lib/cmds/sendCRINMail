@@ -1,0 +1,64 @@
+## OpenCA - command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: sendCRINMail
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: sends CRIN-Mails from CA
+## Description: send the CRIN-mails which were created during issueCertificate on the CA
+
+use strict;
+
+sub cmdSendCRINMail {
+
+	print startLogPage ( gettext ("Sending CRIN-Mail(s) ...") );
+
+	my $key = $query->param ('key');
+	if ( defined $key and ($key or ($key eq "0")) ) {
+		print addLogSection ( i18nGettext ("Try to send CRIN-mail __KEY__ ...", "__KEY__", $key) );
+		if (sendPreparedMail ($key, "crin")) {
+			print addLogLine (gettext("OK."));
+		} elsif ($errno == 1001) {
+			print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED.")."</FONT>");
+			print addPreLogLine ("<FONT COLOR=#FF0000>".gettext("Cannot open message for reading.")."</FONT>");
+		} elsif ($errno == 1002) {
+			print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED.")."</FONT>");
+			print addPreLogLine ("<FONT COLOR=#FF0000>".gettext("Cannot read message.")."</FONT>");
+		} elsif ($errno == 1003) {
+			print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED.")."</FONT>");
+			print addPreLogLine ("<FONT COLOR=#FF0000>".gettext("Error during sending the message.")."</FONT>");
+		} else {
+			print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED.")."</FONT>");
+			print addPreLogLine ("<FONT COLOR=#FF0000>".gettext("Unkown error.")."</FONT>");
+		}
+	} else {
+		sendPreparedMails ("default");
+		sendPreparedMails ("crin");
+	}
+
+	closePage ();
+}
+
+sub getParamsSendCRINMail
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("Please enter the number of a mail to send a special mail or enter nothing to send all new mails.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td><INPUT TYPE=TEXT NAME=\"key\"></td>\n".
+                   "  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+1;
+

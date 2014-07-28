@@ -1,0 +1,12 @@
+Changes
+Configuration.pm
+Configuration.pod
+README
+MANIFEST
+LICENSE
+Makefile.PL
+test.pl
+docs/API.txt
+docs/History
+examples/ReadCfg.pl
+examples/RegAuth.conf

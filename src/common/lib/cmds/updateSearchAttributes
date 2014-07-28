@@ -1,0 +1,59 @@
+## OpenCA - Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: updateSearchAttributes
+##       Brief: update database columns
+##     Version: $Revision: 1.1.1.1 $
+## Description: update database columns if a databasemodule was updated
+##  Parameters: 
+
+use strict;
+
+sub cmdUpdateSearchAttributes {
+
+    our ($errval, $errno, $db);
+
+    print startLogPage(gettext("Updating the searchable attributes of a database"));
+
+    ## array with all objecttypes
+    my @objects = ("CA_CERTIFICATE", "CERTIFICATE", "CRL", "CRR", "REQUEST");
+
+    ## update all objects
+    foreach my $objecttype (@objects)
+    {
+        print addLogSection (i18nGettext ("Updating all __OBJECTTYPE__s ...", "__OBJECTTYPE__", $objecttype));
+
+        my $object = libDBGetFirstItem ($objecttype);
+        if (not $object) {
+            print addPreLogLine (gettext ("No objects found."));
+            print closeLogSection();
+            next;
+        }
+        do {
+            if (not $db->storeItem (DATATYPE => $objecttype, OBJECT => $object, MODE=> "UPDATE"))
+            {
+                print addPreLogLine (i18nGettext ("Cannot update the searchable attributes for __OBJECTTYPE__ __SERIAL__! ".
+                                    "The database returns errorcode __ERRNO__. __ERRVAL__",
+                                    "__OBJECTTYPE__", $objecttype,
+                                    "__SERIAL__", $object->getSerial($objecttype),
+                                    "__ERRNO__", $db->errno(),
+                                    "__ERRVAL__", $db->errval()
+                                   ));
+            } else {
+                print addPreLogLine ($object->getSerial($objecttype));
+            }
+
+            ## load next item
+            $object = $db->getNextItem (DATATYPE => $objecttype, KEY => $object->getSerial($objecttype));
+        } while ($object);
+
+        print closeLogSection();
+    }
+
+    print closePage();
+    return 1;
+}
+
+1;
+

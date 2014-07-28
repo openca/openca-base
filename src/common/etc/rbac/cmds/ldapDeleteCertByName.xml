@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>ldapDeleteCertByName</name>
+            <operation>certificate delete from ldap</operation>
+            <owner_method>CERTIFICATE_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

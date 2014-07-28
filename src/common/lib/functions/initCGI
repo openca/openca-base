@@ -1,0 +1,198 @@
+
+## OpenCA client library
+##
+## Written by Michael Bell for the OpenCA project 2003
+## (c) Copyright 2003-2004 The OpenCA Project
+
+## this library is only used to serialize the CGI stuff,
+## send it to the OpenCA server and print the received answer
+
+use strict;
+use Socket;
+
+use utf8;
+
+## Added new parameters
+use CGI qw/-no_undef_params -private_tempfiles :standard/;
+
+# Preloaded methods go here.
+our %AUTOCONF;
+my $cgi = new CGI;
+
+our ($config, $SOCK);
+
+## remove dangerous variables from the query
+## usually they are from OpenCA::TRIStateCGI
+$cgi->delete ('HTTP_REQUEST_METHOD');
+$cgi->delete ('HTTP_USER_AGENT');
+$cgi->delete ('HTTP_CGI_SCRIPT');
+$cgi->delete ('HTTP_ACCEPT_LANGUAGE');
+$cgi->delete ('HTTP_ACCEPT_CHARSET');
+$cgi->delete ('HTTP_ACCEPT_ENCODING');
+$cgi->delete ('CGISESSID');
+$cgi->delete ('OPENCA_AC_CHANNEL_SERVER_SOFTWARE');
+$cgi->delete ('OPENCA_AC_CHANNEL_HTTPS_MODE');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_CIPHER');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE');
+$cgi->delete ('OPENCA_AC_CHANNEL_REMOTE_ADDRESS');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_SERVER_S_DN');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_CLIENT_S_DN');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_PROTOCOL');
+$cgi->delete ('OPENCA_AC_CHANNEL_SSL_CLIENT_VERIFY');
+
+#print "content-type: text/html\n\n";
+## store uploaded files in the variables
+#print "checking all params<br>\n";
+my @names = $cgi->param();
+foreach my $name (@names)
+{
+    #print "checked: $name<br>\n";
+    next if ($name !~ /upload/i);
+    my $file = "";
+    my $fh = $cgi->upload ($name);
+    #print "no valid filehandle<br>\n" if (not $fh);
+    #print "filehandle undefined<br>\n" if (not defined $fh);
+    #print "FH: $fh<br>\n";
+    while (<$fh>)
+    {
+        $file .= $_;
+    }
+    $cgi->delete ($name);
+    $cgi->param ("-name" => $name, "-value" => $file);
+    #print "KEY: $name<br>\n";
+    #print "VALUE: $file<br>\n";
+}
+
+## parse the user agent string
+my $user_agent = $cgi->user_agent();
+
+my $agent_name = undef;
+my $agent_version = undef;
+my $agent_os_name = undef;
+my $agent_os_version = undef;
+
+( $agent_name, $agent_version ) = 
+	( $user_agent =~ /(Firefox|MSIE|Konqueror|Opera|Netscape|Safari)[\s\/]*([\d\.\d]*)/gi );
+
+( $agent_os_name, $agent_os_version ) = 
+	( $user_agent =~ /(Linux|Unix|BSD|Windows NT|Windows |KHTML|OSX)\s*([^\s\;\)]*)\;*/gi );
+
+# if( $agent_os_name eq "" ) {
+# 	# Unrecognized!
+# 	$agent_os_name = "Unknown";
+# }
+
+# if( $agent_name eq "" ) {
+# 	# Unrecognized! -> Unsupported ?!?
+# 	$agent_name = "Unknown";
+# }
+
+## save session infos
+$cgi->param ("-name"  => "HTTP_REQUEST_METHOD",
+             "-value" => $cgi->request_method());
+$cgi->param ("-name"  => "HTTP_USER_AGENT",
+             "-value" => $cgi->user_agent());
+$cgi->param ("-name"  => "AGENT_NAME",
+             "-value" => $agent_name);
+$cgi->param ("-name"  => "AGENT_VERSION",
+             "-value" => $agent_version);
+$cgi->param ("-name"  => "AGENT_OS_NAME",
+             "-value" => $agent_os_name);
+$cgi->param ("-name"  => "AGENT_OS_VERSION",
+             "-value" => $agent_os_version);
+$cgi->param ("-name"  => "REMOTE_ADDR",
+             "-value" => $ENV{REMOTE_ADDR});
+$cgi->param ("-name"  => "REMOTE_PORT",
+             "-value" => $ENV{REMOTE_PORT});
+$cgi->param ("-name"  => "HTTP_CGI_SCRIPT",
+             "-value" => $cgi->url("-relative" => 1));
+$cgi->param ("-name"  => "HTTP_FULL_CGI_SCRIPT",
+             "-value" => $cgi->url("-relative"=>1,"-query"=>1));
+$cgi->param ("-name"  => "HTTP_ACCEPT_LANGUAGE",
+             "-value" => $cgi->http('HTTP_ACCEPT_LANGUAGE'));
+$cgi->param ("-name"  => "HTTP_ACCEPT_CHARSET",
+             "-value" => $cgi->http('HTTP_ACCEPT_CHARSET'));
+$cgi->param ("-name"  => "HTTP_ACCEPT_ENCODING",
+             "-value" => $cgi->http('HTTP_ACCEPT_ENCODING'));
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SERVER_SOFTWARE",
+             "-value" => $ENV{SERVER_SOFTWARE});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_HTTPS_MODE",
+             "-value" => $ENV{HTTPS});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_CIPHER",
+             "-value" => $ENV{SSL_CIPHER});
+
+if ( $ENV{HTTPS_SECRETKEYSIZE} ne "" ) {
+	$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE",
+             "-value" => $ENV{HTTPS_SECRETKEYSIZE});
+} else {
+	$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE",
+             "-value" => $ENV{SSL_CIPHER_USEKEYSIZE});
+}
+
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_REMOTE_ADDRESS",
+             "-value" => $ENV{REMOTE_ADDR});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_SERVER_S_DN",
+             "-value" => $ENV{SSL_SERVER_S_DN});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_CLIENT_S_DN",
+             "-value" => $ENV{SSL_CLIENT_S_DN});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_PROTOCOL",
+             "-value" => $ENV{SSL_PROTOCOL});
+$cgi->param ("-name"  => "OPENCA_AC_CHANNEL_SSL_CLIENT_VERIFY",
+             "-value" => $ENV{SSL_CLIENT_VERIFY});
+$cgi->param ("-name"  => "OPENCA_AC_INTERFACE",
+	     "-value" => $config->getParam('CgiServerType')->{VALUES}->[0]);
+
+## serialize CGI stuff
+my $load = "";
+foreach my $param ($cgi->param)
+{
+	my ($esc_param) = $cgi->escape($param);
+	my ($value);
+	foreach $value ($cgi->param($param))
+	{
+		$load .= "$esc_param=" . $cgi->escape("$value") . "\n";
+	}
+}
+foreach (keys %{$cgi->{'.fieldnames'}})
+{
+    $load .= ".cgifields=" . $cgi->escape("$_") . "\n";
+}
+$load .= "=\n";  # end of record
+$load = "CGISESSID=".$cgi->cookie ("CGISESSID")."\n".$load;
+$load = $AUTOCONF{"config_prefix"}."\n".$load;
+$load = length($load)."\n".$load;
+
+#print $load;
+
+## connect to server
+
+my $socket_name = $AUTOCONF {"var_prefix"}."/tmp/openca_socket";
+socket(SOCK, PF_UNIX, SOCK_STREAM, 0) || sendError ("Cannot create new client socket ($socket_name).");
+connect(SOCK, sockaddr_un($socket_name)) || sendError ("Server is not online or does not accept requests ($socket_name - ".sockaddr_un($socket_name)."). $?");
+
+## send CGI stuff
+send (SOCK, $load, 0);
+shutdown (SOCK, 1);
+
+## receive the answer(s)
+my $line;
+while (read(SOCK, $line, 1024) > 0)
+{
+	print STDOUT $line;
+
+	## Ends the connection if the </html> is received
+	if ($line =~ /\/html\>/gi) 
+	{
+		last;
+	}
+}
+
+sub sendError
+{
+ print "content-type: text/html\n\n";
+ print STDOUT "<html><body><h1>OpenCA Error: ".$_[0]."</h1></body></html>\n";
+ print STDERR "OpenCA: ".$_[0]."\n";
+ exit 1;
+}
+
+1;

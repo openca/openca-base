@@ -1,0 +1,67 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: send_cert_key_pkcs12
+##       Brief: send cert and keypair in PKCS#12-format
+##     Version: $Revision: 1.5 $
+##// Description: this RA-script is used to give the user it's private key and cert
+##  Parameters: key, dataType,passwd
+
+use strict;
+
+sub cmdSend_cert_key_pkcs12 {
+
+	libCheckPasswd ("PUBLIC");
+
+	my $tempDir = getRequired ('TempDir');
+
+	##// Let's get parameters
+	my $key       = ( $query->param('key') || $query->param('serial') );
+	my $dataType  = ( $query->param('dataType') || "VALID_CERTIFICATE" );
+	my $passwd    = $query->param('passwd');
+	my $cacert    = getRequired ('CACertificate');
+
+	## Get the certificate from the DB
+	my $cert;
+	if ( $cert = $db->getItem(DATATYPE=>$dataType, KEY=>$key ) ) {
+		## BUG-WARNING: OpenSSL cannot handle keys from stdin
+		$tools->saveFile ( FILENAME => $tempDir."/${$}_key.pem", 
+			DATA => $cert->getKey());
+
+		print STDERR ">>>>> PRIVKEY => " . $cert->getKey() . "\n\n";
+
+		my $p12_data = $cryptoShell->dataConvert (
+			DATA      => $cert->getPEM(),
+			DATATYPE  => "CERTIFICATE",
+			KEYFILE   => $tempDir."/${$}_key.pem",
+			INFORM    => "PEM",
+			OUTFORM   => "PKCS12",
+			PASSWD    => $passwd,
+			P12PASSWD => $passwd,
+			CACERT    => $cacert);
+		$tools->deleteFiles ( DIR => $tempDir, FILTER => "${$}_key.pem");
+		if (not $p12_data) {
+			generalError (gettext ("Cannot convert PEM-certificate and PKCS#8-key to PKCS#12-formatted file! It's likely that you mistyped the private key passphrase"));
+		} else {
+			my $fname = $key;
+
+                	if ( $cert->getParsed()->{DN_HASH} and
+                                        $cert->getParsed()->{DN_HASH}->{CN} ) {
+                        	$fname .= "_" .
+					$cert->getParsed()->{DN_HASH}->{CN}[0];
+                	}
+                	$fname .= "_certificate.p12";
+                	$fname =~ s/[\/\\\s\(\)]+/_/gi;
+
+			print "Content-type: application/x-pkcs12\n";
+			print "Content-Disposition: attachment; " .
+							"filename=$fname\n\n";
+			print "$p12_data";
+		}
+	} else {
+		generalError (gettext("Cannot load certificate from database!"));
+	}
+}
+
+1;

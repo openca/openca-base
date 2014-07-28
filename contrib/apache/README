@@ -1,0 +1,47 @@
+Apache Example Config Notes:
+============================
+
+The servers should be divided like this:
+
+	o CA ( actually the democa server) onto the Netwoking-less
+	  machine (the most security critical machine);
+
+	o RAServer (raserver) and Secure (secure) servers onto the
+	  Network-Connected machine;
+
+There are some different example files in this directory. Let's examine
+in more detail.
+
+The apache startup files (actually tested on a RH6 distribution of Linux)
+are two: CA that shuld be installed on the CA machine, RAServer that should
+be installed on the RAServer machine.
+
+The provided apache configuration files are three:
+
+	o httpd.conf.example : contains a general configuration to
+	  have all the OpenCA software on the same machine. You should
+	  use this ONLY to test the software (if you want to test all
+	  on the same computer). It uses the VirtualNameServer directive
+	  to be able to start more servers on the same apache binary.
+
+	o ca.conf.example : this configuration file have definition for
+	  the Certification Authority machine apache. This server does
+	  not need to be secure (it should be disconnected from the net)
+	  and have very simple configuration.
+
+	o raserver.conf : here are kept the RAServer and Secure apache
+	  definition. It uses the VirtualNameServer directive to be
+	  able to setup more than one server on the same IP. The two
+	  servers, however, are run at different ports ( RAServer is
+	  used only by RA Operators while Secure server is public ) :
+	  443 for Secure server and 4443 for the RAServer one.
+
+Please try to use the two different ( ca/raserver ) files in place of the
+httpd one and obviously report bugs/better configurations.
+
+==========================================================================
+   Title: README                         Refer to: www.openca.org
+  Author: Massimiliano Pala                e-mail: madwolf@openca.org
+ Version: 0.2                        OpenCA Apache Installation Infos
+==========================================================================
+

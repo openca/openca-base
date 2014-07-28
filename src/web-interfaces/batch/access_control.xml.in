@@ -1,0 +1,65 @@
+<openca>
+    <access_control>
+        <channel>
+            <type>mod_ssl</type>
+            <protocol>.*</protocol>
+            <source>.*</source>
+            <asymmetric_cipher>.*</asymmetric_cipher>
+            <asymmetric_keylength>0</asymmetric_keylength>
+            <symmetric_cipher>.*</symmetric_cipher>
+            <symmetric_keylength>0</symmetric_keylength>
+        </channel>
+        <login>
+            <type>passwd</type>
+            <!--
+                x509-base login:
+
+                <type>x509</type>
+                <chain>@var_prefix@/crypto/chain</chain>
+
+                passwd login:
+
+                <type>passwd</type>
+                <database>internal</database>
+                <passwd>
+                    <user>
+                        <name>admin</name>
+                        <algorithm>sha1</algorithm>
+                        <digest>3Hbp8MAAbo+RngxRXGbbujmC94U</digest>
+                        <role>CA Operator</role>
+                    </user>
+                    <user>...</user>
+                    ...
+                </passwd>
+
+                no authentication:
+
+                <type>none</type>
+            -->
+            <database>internal</database>
+            <passwd>
+                <!--
+                    the initial user admin has the passphrase root
+                    you can use the script openca-digest to create the passphrases
+                    if you want to add another user simply create a second user structure
+                    <user>...</user>
+                -->
+                <user>
+                    <name>@default_web_username@</name>
+                    <algorithm>sha1</algorithm>
+                    <digest>@default_web_password@</digest>
+                    <role>CA Operator</role>
+                </user>
+            </passwd>
+        </login>
+        <acl_config>
+            <acl>yes</acl>
+            <list>@etc_prefix@/rbac/acl.xml</list>
+            <command_dir>@etc_prefix@/rbac/cmds</command_dir>
+            <module_id>@batch_module_id@</module_id>
+            <map_role>yes</map_role>
+            <map_operation>yes</map_operation>
+        </acl_config>
+    </access_control>
+    <token_config_file>@etc_prefix@/token.xml</token_config_file>
+</openca>

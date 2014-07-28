@@ -1,0 +1,21 @@
+<openca>
+    <access_control>
+       <roles>
+            <role>User</role>
+            <role>VPN User</role>
+            <role>IGTF SLCS</role>
+            <role>IGTF MICS</role>
+            <role>OCSP Server</role>
+            <role>PRQP Server</role>
+            <role>Web Server</role>
+            <role>Mail Server</role>
+            <role>VPN Server</role>
+            <role>Domain Controller</role>
+            <role>Cross CA</role>
+            <role>Sub-CA</role>
+            <role>CA Operator</role>
+            <role>RA Operator</role>
+            <role>Self Signed CA</role>
+       </roles>
+    </access_control>
+</openca>

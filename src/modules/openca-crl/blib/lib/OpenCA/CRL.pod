@@ -1,0 +1,134 @@
+=head1 NAME
+
+OpenCA::CRL - CRL Management module.
+
+=head1 SYNOPSIS
+
+use OpenCA::CRL;
+
+=head1 DESCRIPTION
+
+This module contains functions to access CRLs infos. It, as the
+OpenCA::X509 module, requires some parameters such as a reference
+to an OpenCA::OpenSSL instance. This module provides a CRL->PERL
+Hashes parsing, no specific crypto functions are performed.
+
+=head1 FUNCTIONS
+
+=head2 sub new () - Create a new instance of the Class.
+
+	Creating a new instance of the module you can provide a
+	valid crl. As a result the crl will be parsed and stored
+	in local variable(s) for later usage. You can generate a
+	new instance of the class either by giving an already
+	issued CRL (see OpenCA::OpenSSL for documentation) or
+	even generate a new CRL if you provide the CACERT and
+	CAKEY. The function will return a self reference. Accepted
+	parameters are:
+
+		SHELL   - An OpenCA::OpenSSL initialized
+			  instance;
+		CRL	- A valid CRL(*);
+		INFILE	- A CRL file(*);
+		FORMAT  - Format of the provided CRL. Supported
+			  are PEM|DER(*);
+		CAKEY	- CA private key file(*);
+		CACERT	- CA certificate file(*);
+		DAYS	- Days the CRL will be valid(*);
+		EXTS	- Extentions section (see openssl.cnf
+			  documentation)(*);
+
+	(*) - Optional Parameters;
+
+	EXAMPLE:
+
+	   my $self->{crl} = new OpenCA::CRL( SHELL=>$openssl, CRL=>$pemCRL );
+
+	NOTE: When you generate a new CRL, you have to provide
+	      BOTH CAKEY and CACERT parameters.
+
+=head2 sub initCRL () - Initialize internal CRL parameters.
+
+	Initialize the module with a provided CRL. You can not
+	generate a new CRL with this function, if you wish to
+	do so you'll have to get a new instance of the class
+	(see the new() function). Accepted parameters are:
+
+		CRL     - Provided CRL(*);
+		INFILE  - A CRL file (one of CRL/INFILE params
+			  is required)(*);
+		FORMAT	- Provided CRL format (PEM|DER)(*);
+
+	(*) - Optional Parameters;
+
+	EXAMPLE:
+
+		if( not $self->{crl}->initCRL(CRL=>$derCRL, FORMAT=>DER)) {
+                     print "Error!";
+                }
+
+=head2 sub getParsed () - Retrieve parsed CRL list
+
+	This function returns an HASH structure with the main CRL
+	data and a list of HASH with SERIAL and DATE of revoked
+	certificates. Returned value is:
+
+		my $ret = { VERSION=>$version,
+                  	    ALGORITHM=>$alg,
+                  	    ISSUER=>$issuer,
+                  	    LAST_UPDATE=>$last,
+                  	    NEXT_UPDATE=>$next,
+                  	    LIST=>[ @list ] };
+
+	Each element of the LIST has the following format:
+	
+		my $element = { SERIAL=>$certSerial,
+				DATE=>$revDate };
+
+
+	EXAMPLE:
+
+		print "VERSION: " . $self->{crl}->getParsed()->{VERSION};
+
+                foreach $rev ( @{ $self->{crl}->getParsed()->{LIST} } ) {
+                    print "SERIAL: " . $rev->{SERIAL} . "\n";
+                    print "DATE: " . $rev->{DATE} . "\n";
+                }
+
+=head2 sub getPEM () - Get the CRL in a PEM format.
+
+	This function accept no arguments and returns the CRL in
+	PEM format.
+
+	EXAMPLE:
+
+		$pem = $crl->getPEM();
+
+=head2 sub getDER () - Get the CRL in a DER format.
+
+	This function accept no arguments and returns the CRL in
+	DER format.
+
+	EXAMPLE:
+
+		$der = $crl->getDER();
+
+=head2 sub getTXT () - Get the CRL in a TXT format.
+
+	This function accept no arguments and returns the CRL in
+	TXT format.
+
+	EXAMPLE:
+
+		print $crl->getTXT();
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+OpenCA::X509, OpenCA::Tools, OpenCA::OpenSSL, OpenCA::REQ,
+OpenCA::TRIStateCGI, OpenCA::Configuration
+
+=cut

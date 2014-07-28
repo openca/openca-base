@@ -1,0 +1,32 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: logRecovery
+##       Brief: recover a crashed log system
+## Description: recovery a crashed log system from it's own messages
+##  Parameters: key
+
+use strict;
+
+sub cmdLogRecovery {
+
+    our $log;
+
+    print startLogPage( gettext("Recovery of index databases for logging") );
+
+    print addLogSection ( gettext("Running recovery ...") );
+    if (not $log->recovery (\&addPreLogLine))
+    {
+        print addErrorLog (gettext ("Recovery of index databases failed."),
+                           $log->errno);
+        my $output = $log->errval();
+        $output =~ s/</&lt;/g;
+        print addPreLogLine ($output);
+    }
+    print addLogLine (gettext("Recovery finished."));
+    print closeLogSection();
+    closePage();
+}
+
+1;

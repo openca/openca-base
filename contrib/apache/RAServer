@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Startup script for the Apache Web Server
+#
+# chkconfig: 345 85 15
+# description: Apache is a World Wide Web server.  It is used to serve \
+#	       HTML files and CGI.
+# processname: httpd.raserver
+# pidfile: /var/run/raserver.pid
+# config: /usr/local/apache/conf/raserver.conf
+
+sdir="/usr/local/apache";
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+apache="$sdir/bin/httpd";
+conf="$sdir/conf/raserver.conf";
+
+# Take a look in your apache config and set it as it is set there.
+pidfile="/var/run/raserver.pid";
+
+# See how we were called.
+case "$1" in
+  start)
+	echo "Starting RA Server httpd: \c"
+	$apache -f $conf -D SSL
+	echo "Done."
+	touch /var/lock/subsys/httpd.raserver
+	;;
+  stop)
+	echo "Shutting down RA Server http: \c"
+	pid=`cat $pidfile`;
+	kill $pid
+	echo "Done."
+	rm -f /var/lock/subsys/httpd.raserver
+	;;
+  status)
+	echo "RAServer Current Status: \c"
+	if ! [ -e $pidfile ] ; then
+		echo "Stopped."
+		exit 0
+	fi
+	pid=`cat $pidfile`;
+	stat=`ps auxw | grep "$pid"`;
+	if [ $stat -gt 1 ] ; then
+		echo "Running."
+	else
+		echo "Stopped."
+	fi
+	;;
+  restart)
+	$0 stop
+	sleep 2
+	$0 start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|status}"
+	exit 1
+esac
+
+exit 0

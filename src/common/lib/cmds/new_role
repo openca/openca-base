@@ -1,0 +1,110 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: new_role
+##       Brief: create a new role
+## Description: create a new role finally and then call show_roles
+##  Parameters: role
+
+use strict;
+
+sub cmdNew_role {
+
+    ## get the new rolename
+    my $role = $query->param ('role');
+
+    ## load directories
+    my $ext_dir     = getRequired ('EXT_DIR');
+    my $openssl_dir = getRequired ('OpenSSL_DIR');
+
+    my $h_role       = $role;
+       $h_role       =~ s/ /_/g;
+    my $ext_file     = $ext_dir."/".$h_role.".ext";
+    my $openssl_file = $openssl_dir."/".$h_role.".conf";
+
+    checkNew_role();
+
+    ## load sample filenames
+    my $ext_sample  = getRequired ('OPENSSL_SAMPLE_EXT');
+    my $conf_sample = getRequired ('OPENSSL_SAMPLE_CONF');
+
+    ## copy the samples of the opensslfiles to their positions
+    my $error = 0;
+    my $error_text = "";
+    my $ret = `cp $ext_sample $ext_file`;
+    if ( $? ) {
+        $error_text .= i18nGettext ("Cannot copy __SAMPLE_FILE__ to __FILE__. Please create the file __FILE__ manually and have a look on the ownership and access rights of the file.",
+                                    "__SAMPLE_FILE__", $ext_sample,
+                                    "__FILE__", $ext_file);
+        $error = 1;
+    }
+    my $ret = `cp $conf_sample $openssl_file`;
+    if ( $? ) {
+        $error_text .= i18nGettext ("Cannot copy __SAMPLE_FILE__ to __FILE__. Please create the file __FILE__ manually and have a look on the ownership and access rights of the file.",
+                                    "__SAMPLE_FILE__", $conf_sample,
+                                    "__FILE__", $openssl_file);
+        $error = 1;
+    }
+
+    if ($error) {
+        configError ( gettext ("The role cannot created successfully because you have to fix a problem with the OpenSSL configuration manually.").
+                      "<br>\n".
+                      $error_text );
+        return undef;
+    }
+
+    ## made the role visible
+    my $twig = loadConfigXML ('RoleConfiguration');
+    $role = XML::Twig::Elt->new( 'role', $role);
+    $role->paste (($twig->get_xpath ('access_control/roles'))[0]);
+
+    ## write the configuration
+    writeConfigXML ($twig, 'RoleConfiguration');
+
+    libExecuteCommand ("show_roles");
+
+}
+
+sub checkNew_role {
+
+    ## get the new rolename
+    my $role = $query->param ('role');
+
+    ## load directories
+    my $ext_dir     = getRequired ('EXT_DIR');
+    my $openssl_dir = getRequired ('OpenSSL_DIR');
+
+    my $h_role       = $role;
+       $h_role       =~ s/ /_/g;
+    my $ext_file     = $ext_dir."/".$h_role.".ext";
+    my $openssl_file = $openssl_dir."/".$h_role.".conf";
+
+    ## check for the directories
+    if ( not -e $ext_dir )
+    {
+        configError( i18nGettext ("The directory for the extension files does not exist (__DIR__)!",
+                                  "__DIR__", $ext_dir) );
+    } 
+    if ( not -e $openssl_dir )
+    {
+        configError( i18nGettext ("The directory for the openssl files does not exist (__DIR__)!",
+                                  "__DIR__", $openssl_dir) );
+    } 
+
+    ## check for an existent role
+    if ( ( -e $ext_file ) or
+         ( -e $openssl_file )
+       ) {
+    }
+    my $twig = loadConfigXML ('RoleConfiguration');
+    foreach my $role (($twig->get_xpath ('access_control/roles/role')))
+    {
+        configError( i18nGettext ("The role __ROLE__ exists already!", "__ROLE__", $role) )
+            if ($role->field eq $role)
+    }
+
+    return 1;
+}
+
+1;

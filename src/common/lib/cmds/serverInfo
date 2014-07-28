@@ -1,0 +1,42 @@
+## OpenCA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: serverInfo
+##       Brief: Returns Used Modules Versions
+## Description: Build a page returning OpenCA modules versions
+##  Parameters: 
+
+use strict;
+
+sub cmdServerInfo {
+
+    our ($PRG, $VER, $versions, $CHARSET);
+
+    my @modules = ( "OpenSSL", "Tools", "DB", "Configuration", "TRIStateCGI",
+                    "REQ", "X509", "CRL", "PKCS7", "HTML" );
+
+    my $name = i18nGettext ("Server Information for __PROGRAM__ Version __VERSION__",
+                            "__PROGRAM__", $PRG,
+                            "__VERSION__", $VER);
+
+    my $item_list = undef;
+    $item_list->{CLASS} = "lists";
+    $item_list->{HEAD}->[0] = gettext ("Module");
+    $item_list->{HEAD}->[1] = gettext ("Version");
+
+    my $counter = 0;
+    foreach my $i (@modules) {
+        $item_list->{BODY}->[$counter]->[0] = $i;
+        $item_list->{BODY}->[$counter]->[1] = $versions->{$i};
+        $counter = scalar @{$item_list->{BODY}};
+    }
+
+    return libSendReply (
+                     "NAME"        => $name,
+                     "ITEM_LIST"   => $item_list,
+                     "TIMESTAMP"   => 1
+                    );
+}
+
+1;

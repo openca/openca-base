@@ -1,0 +1,43 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeDownloadCRL
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports CRL
+## Description: imports from a removable media
+
+use strict;
+
+sub cmdNodeDownloadCRL {
+
+	print startLogPage ( gettext("Importing all CRLs from a higher level of the hierarchy ...") );
+
+	my $tmp = createDirectory ();
+	if (not eximIODownload ( $tmp )) {
+		print addPreLogSection ("<FONT COLOR=#FF0000>".
+			gettext ("Cannot extract archive from import device!").
+			"</FONT>");
+		print closeLogSection ();
+		print closeLogPage ();
+		return undef;
+	}
+	if (withLDAPsupport() and withLDAPautomatic()) {
+		eximDownloadCRLs          ( TMP => $tmp, LDAP => "1" );
+	} else {
+		eximDownloadCRLs          ( TMP => $tmp, LDAP => "0" );
+	}
+	eximDownloadCommit ( $tmp );
+	removeDirectory    ( $tmp );
+
+	closePage ();
+
+	return 1;
+}
+
+sub getParamsNodeDownloadCRL
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

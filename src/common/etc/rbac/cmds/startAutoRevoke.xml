@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>startAutoRevoke</name>
+            <operation>start OnLine Revokation</operation>
+            <owner_method>CGI</owner_method>
+            <owner_argument>role</owner_argument>
+        </command>
+    </command_config>
+</openca>

@@ -1,0 +1,32 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeEnrollCert
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: exports certificates
+## Description: exports to a removable media
+
+use strict;
+
+sub cmdNodeEnrollCert {
+
+	print startLogPage ( gettext("Exporting all certificates to a lower level of the hierarchy ...") );
+
+	my $tmp = createStructure ();
+	eximEnrollCerts  ( $tmp );
+	eximEnrollMails  ( $tmp );
+	eximEnrollCommit ( $tmp );
+	eximIOEnroll     ( $tmp );
+	removeDirectory  ( $tmp );
+
+	closePage ();
+
+}
+
+sub getParamsNodeEnrollCert
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

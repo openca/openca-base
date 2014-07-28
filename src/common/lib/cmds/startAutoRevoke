@@ -1,0 +1,722 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: startAutoRevoke
+##       Brief: start Auto (On-Line) Revokation Daemon
+##     Version: $Revision: 1.6 $
+## Description: this script starts the On-Line Revokation Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStartAutoRevoke
+{
+	my $clientSock = shift;
+	my $pidfile = undef;
+	my $ret = undef;
+
+	## Parameters used by the issuing certificate process
+	our ($DEBUG, %AUTOCONF);
+
+	## Uncomment this to get detailed DEBUG information
+	## $DEBUG = 1;
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autorevoke.pid";
+	$ret = start_process(	PIDFILE => $pidfile, 
+												FUNCTION => \&AutoRevokeDaemon,
+												HUP_FUNCTION => \&closeAutoRevoke,
+												GET_CA_TOKEN => 1,
+												CLIENT_SOCK => $clientSock );
+
+	## Next cmd => statusAutoRevoke
+	
+	if ($ret < 0)
+	{
+		## If an error is detected, display it!
+		generalError("ERROR, can not spawn new processes!\n" );
+	}
+	else
+	{
+		print STDERR "cmdStartAutoRevoke()->Auto Certificate Revoking Daemon Started Successfully (pid $ret).\n";
+	}
+
+	## exit (1); ## This exit() cmd seems to prevent the startup script to complete successfully if daemons are enabled
+	1;
+}
+
+sub closeAutoRevoke
+{
+	my $reason = shift;
+	my $statusfile = undef;
+
+	our (%AUTOCONF, $revDB);
+
+	$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autorevoke_status.txt";
+	close_process(STATUSFILE => $statusfile, DB => $revDB);
+
+	## Print out some info
+	print STDERR "closeAutoCA()::Terminating Auto Revokation Daemon process.";
+
+	## Exit the process
+	exit(1);
+}
+
+sub AutoRevokeDaemon
+{
+	my $func_params = { @_ };
+	my $ca_token = undef;
+	my $crypto_shell = undef;
+	my $locDB = undef;
+	my $params = undef;
+	my $loas = undef;
+	my $sleepSecs = 30;
+
+	## Get the CA Token
+	$ca_token = $func_params->{CA_TOKEN};
+	if ((not defined ($func_params->{CA_TOKEN})) or ($ca_token eq ""))
+	{
+		print STDERR "On-Line Revokation::Error::No CA Token passed!";
+		exit (1);
+	}
+
+	my $sleepSecs = 30;
+
+	print STDERR "[$$] On-Line Revokation::Loading LOAConfiguration..." if ($DEBUG);
+	$loas = libGetLoaLevels();
+	print STDERR " Ok ($loas)\n" if ($DEBUG);
+
+	# Load the parameters
+	$params = startAutoRevoke_loadParams();
+
+	if (not ($locDB = newConnectDB()))
+	{
+		print STDERR "On-Line Revokation::ERROR::Can not connect to DB! Exiting AutoRevoke Process!\n";
+		exit(1);
+	}
+	else
+	{
+		print STDERR "On-Line Revokation::Start()->DB connection Ok.\n" if ( $DEBUG );
+	}
+	$params->{DB} = $locDB;
+
+	if ((defined $params->{SLEEP}) and ($params->{SLEEP} > 0))
+	{
+		$sleepSecs = $params->{SLEEP};
+	}
+	else
+	{
+		$sleepSecs = 30;
+	}
+
+	## Get the Level Of Assurance
+	$loas = libGetLoaLevels();
+
+	if ($params->{debug})
+	{
+		print STDERR "On-Line Revokation::Enabling Extended Logging (DEBUG).\n";
+		$DEBUG = 1;
+	}
+
+	while (1) 
+	{
+		# Only way I have found to get rid of perl modules memory leaks is to fork
+		my $subpid = fork();
+		if (not defined $subpid) {
+			print STDERR "Can not fork. Resources not available\n";
+		} elsif ($subpid == 0) {
+			# Child
+
+			my $retVal = 0;
+
+			if ($DEBUG)
+			{
+			   print STDERR "On-Line Revokation::Cycle Start!\n";
+			   print STDERR "On-Line Revokation::DB=>$locDB\n";
+			   print STDERR "On-Line Revokation::CRYPTO=>$ca_token\n";
+			};
+
+			if (not $locDB->connect())
+			{
+				print STDERR "On-Line Revokation::ERROR::DB CONNECT Failed with " . 
+					$locDB->{errno} . " - " .
+					$locDB->{errval} . "\n";
+
+				## Connection to the DB was not successful - we sleep and re-try later!
+				print STDERR "On-Line Revokation::ERROR::Sleeping for $sleepSecs secs.\n";
+				sleep($sleepSecs);
+				print STDERR "On-Line Revokation::ERROR::Retrying...\n";
+				next;
+			}
+			elsif ($DEBUG)
+			{
+				print STDERR "On-Line Revokation::DB CONNECT Ok\n";
+			}
+
+			## Set the token parameter
+			$params->{CA_TOKEN} = $ca_token;
+			$params->{DB} = $locDB;
+			$params->{LOALIST} = $loas;
+
+			## Execute the autoRevokeProcess
+			$retVal = autoRevokeProcess(%{$params});
+			print STDERR "On-Line Revokation::autoRevokeProcess return code => $retVal\n" if ($DEBUG);
+
+			if ($retVal > 0)
+			{
+				## Commit changes to the DB
+				$locDB->commit();
+			}
+
+			if (not $locDB->disconnect())
+			{
+				print STDERR "On-Line Revokation::DB DISCONNECT ERR::". 
+					$locDB->{errno} . " - " .
+					$locDB->{errval} . "\n";
+			}
+			elsif ($DEBUG)
+			{
+				print STDERR "On-Line Revokation::DB DISCONNECT Ok\n";
+			} 
+
+			exit(0);
+		} else {
+			# Parent
+			waitpid($subpid,0);
+		}
+
+		## Sleep
+		print STDERR "On-Line Revokation::Sleeping for $sleepSecs secs.\n" if ($DEBUG);
+		sleep($sleepSecs);
+	}
+}
+
+sub autoRevokeProcess
+{
+	## Get the parameters
+  my $params	 = { @_ };
+
+  my ($request, $operator_cert, $operator_serial, $signature,
+      $role_sig, $targetCert, $ca_token);
+
+  our ($revDB, $query, $errno, $errval, $ca_token, $DEBUG);
+
+  if (not $params)
+	{
+		print STDERR "On-Line Revokation::autoRevokeProcess()::Unrecoverable Error! Exiting!\n";
+		return(-1);
+  }
+
+	## Gets the CA token
+	$ca_token = $params->{CA_TOKEN};
+
+  if ($DEBUG)
+	{
+    print STDERR "On-Line Revokation::autoRevokeProcess() started\n";
+    print STDERR "On-Line Revokation::Params::CA_TOKEN=> $ca_token\n";
+  };
+
+  # my $chainDir = getRequired('ChainDir');
+  # my $tempDir = getRequired ('TempDir');
+
+  print STDERR "On-Line Revokation::autoRevokeProcess()::Start Request Listing.\n" if ($DEBUG);
+
+  ## there can never be a request 0
+  my $key = 0;
+	my $certKey = 0;
+  my $dataType = "APPROVED_CRR";
+  my $maxItems = 100;
+
+  my $revDB = $params->{DB};
+  my @list = $revDB->searchItems(DATATYPE => $dataType,
+																ITEMS    => $maxItems );
+
+	## Get the passed LOA list
+	my $loas = $params->{LOALIST};
+
+  print STDERR "On-Line Revokation::autoRevokeProcess()::Retrieved $#list requests\n" if ($DEBUG);
+  while ($request = pop(@list))
+	{
+		$key = $request->getSerial();
+		if ((not $key) or ($key < 0)) 
+		{
+    	print STDERR "On-Line Revokation::autoRevokeProcess()::Request has wrong serial ($key)!\n" if ($DEBUG);
+
+			## Wrong Serial, Skipping
+			next;
+		}
+
+		## Get the Certificate Serial
+		$certKey = $request->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+    print STDERR "On-Line Revokation::autoRevokeProcess()::Request $key for cert $certKey (".
+				$request->getParsed()->{REASON} . "\n" if ($DEBUG);
+
+		## Checks the RA - we can restrict to a particular set of RAs
+		if ( (not ValueIsInArray("Any", $params->{ra})) and
+			(not ValueIsInArray( $request->getParsed()->{HEADER}->{RA},$params->{ra})))
+		{
+			if( $DEBUG )
+			{
+		    print STDERR "On-Line Revokation::autoRevokeProcess()::" .
+						i18nGettext ( "CSR __CSR_SERIAL__ ignored because the".
+													" requested RA is __RA__.\n",
+													"__CSR_SERIAL__", $request->getSerial(),
+													"__RA__", $request->getParsed()->{HEADER}->{RA});
+			};
+			next;
+		}
+		else
+		{
+			if ($DEBUG)
+			{
+		  	print STDERR "RA::ANY = " . $params->{ra} . "\n";
+		  	print STDERR "RA::Matching (" .
+				$request->getParsed()->{HEADER}->{RA} . ")\n";
+			}
+		}
+
+		## is there a signature?
+		$signature = libGetSignatureObject (OBJECT => $request);
+		if ($DEBUG)
+		{
+    	print STDERR "On-Line Revokation::autoRevokeProcess()::got " . 
+				"signature ($signature)\n";
+		}
+
+		## Checks if the signature was required
+		if (ValueIsInArray("1", $params->{reqsig}))
+		{
+			if (not $signature)
+			{
+				if ($DEBUG)
+				{
+					print STDERR "On-Line Revokation::autoRevokeProcess()::" .
+						i18nGettext ( "CSR __RSR_SERIAL__ ignored because the".
+													" signature is required.\n",
+													"__CSR_SERIAL__", $request->getSerial());
+				}
+
+				## Skip the request because it is not signed!
+				next;
+			}
+
+			## Let's check the signature
+			$operator_cert = libGetSignerCertificateDB(SIGNATURE => $signature);
+			if (not $operator_cert)
+			{
+				if( $DEBUG )
+				{
+					print STDERR i18nGettext ("CRR __CSR_SERIAL__ ignored because the " .
+							"signer's certificate is not loadable.\n",
+							"__CSR_SERIAL__", $request->getSerial()) ;
+				}
+				next;
+			}
+
+			## check role of signer
+			if ((not ValueIsInArray("Any",$params->{ra})) and 
+				(not ValueIsInArray($operator_cert->getParsed()->{HEADER}->{ROLE}, $params->{ra})))
+			{
+				if ( $DEBUG )
+				{
+					print STDERR i18nGettext ("CRR __CSR_SERIAL__ ignored because the ".
+						"signer's role is __ROLE__.\n",
+						"__CSR_SERIAL__", $request->getSerial(),
+						"__ROLE__", $operator_cert->getParsed()->{HEADER}->{ROLE});
+				};
+				next;
+			}
+		}
+		elsif ($DEBUG)
+		{
+			print STDERR "On-Line Revokation:: No Signature required on Request.\n";
+		}
+
+		## Get the Target Cert
+		my $targetCert =  $revDB->getItem (DATATYPE => "CERTIFICATE",  KEY => $certKey);
+		if (not defined($targetCert))
+		{
+			print STDERR "On-Line Revokation::autoRevokeProcess()::Error->Target certificate not in DB ($certKey)!";
+			next;
+		}
+
+		## check the target's certificate profile/role
+		if ((not ValueIsInArray("Any",$params->{role})) and 
+				(not ValueIsInArray($targetCert->getParsed()->{HEADER}->{ROLE}, $params->{role})))
+		{
+			if ($DEBUG)
+			{
+				print STDERR i18nGettext ("CRR __CSR_SERIAL__ ignored because the ".
+					"target certificate's role is __ROLE__.\n",
+					"__CSR_SERIAL__", $request->getSerial(),
+					"__ROLE__", $targetCert->getParsed()->{HEADER}->{ROLE});
+			};
+			next;
+		}
+
+		## Check the request LOA
+		my $loaName = undef;
+		if ((defined $targetCert->getParsed()->{HEADER}->{LOA}) and 
+			($targetCert->getParsed()->{HEADER}->{LOA} ne ""))
+		{
+			$loaName = $loas->{$targetCert->getParsed()->{HEADER}->{LOA}};
+		}
+
+		## check the target's certificate profile/role
+		if ((not ValueIsInArray("Any", $params->{loa})) and
+			(not ValueIsInArray($loaName, $params->{loa})))
+		{
+			if ( $DEBUG )
+			{
+				print STDERR i18nGettext ("CRR __CSR_SERIAL__ for cert __CERT_SERIAL__ ignored because the ".
+					"target certificate's LOA is __LOA__.\n",
+					"__CSR_SERIAL__", $request->getSerial(),
+					"__CERT_SERIAL__", $targetCert->getParsed()->{SERIAL},
+					"__LOA__", $loaName);
+			};
+			next;
+		}
+
+		## Revoke the Certificate
+		print STDERR "On-Line Revokation::autoRevokeProcess()::Revoking certificate [$certKey]\n" if ($DEBUG);
+
+		## Here... revoke the certificate!
+		my $targetCert = libRevokeCertificate( CA_TOKEN => $ca_token,
+																					 DB => $revDB, 
+																					 KEY => $key,
+																					 CRL_REASON => $request->getParsed()->{REASON});
+		
+		if (not $targetCert)
+		{
+			## Handle the error case
+			our ($errno, $errval);
+
+			## There's been an error: what shall we do ?
+			print STDERR "On-Line Revokation::autoRevokeProcess()::ERROR::Can not revoke cert -> " .
+				"$errno" . "::" . "$errval\n";
+		}
+		else
+		{
+			if($DEBUG)
+			{
+				print STDERR "On-Line Revokation::autoRevokeProcess()::" .
+					"Certificate [" . $targetCert->getParsed()->{SERIAL} . "] Revoked Correctly\n";
+			};
+
+			if (not $revDB->commit())
+			{
+				print STDERR "On-Line Revokation::autoRevokeProcess()::DBI " .
+					"commit error (" . $revDB->{errno} . " - " . $revDB->{errval} . ")!\n";
+			}
+			else
+			{
+				print STDERR "On-Line Revokation::autoRevokeProcess()::DBI " .
+					"commit Ok\n" if ($DEBUG);
+			}
+		}
+	}
+
+	if ($DEBUG)
+	{
+		print STDERR "On-Line Revokation::autoRevokeProcess()::" .
+			"finished cycling through reqs.\n"
+   }
+
+   # Here we finished scanning the current list of requests and we
+   # just return OK
+
+   return(1);
+}
+
+sub getParamsStartAutoRevoke
+{
+	our ($query, $DEBUG, $self);
+	my $result = undef;
+
+	my $pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autorevoke.pid";
+	my $status = libGetPidProcessStatus ( $pidfile );
+
+	if ($status gt 0)
+	{
+		return undef;
+	};
+
+	if (not $_[0])
+	{
+			my %labels = undef;
+
+			my $params = startAutoRevoke_loadParams();
+
+			my $html_startup = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'startup',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-disabled=>'1',
+					-checked=>$params->{'startup'} );
+
+			my $html_debug = $query->newInput (
+					-regx=>'NUMBERS',
+					-intype=>'checkbox',
+					-name=>'debug',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-checked=>$params->{'debug'} );
+
+        ## set values
+			my $html_operator = $query->newInput (
+				-intype => 'scrolling_list',
+				-name => 'operator',
+				-regx=>'*',
+				-default=> $params->{'operator'},
+				-size=>5,
+				-multiple=>'true',
+				-values=>[ gettext('Any'), loadRoles()],
+				-attributes => undef );
+
+			my $html_reqsig = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'checkbox',
+					-name=>'reqsig',
+					-value=> '1',
+					-class=>'checkbox',
+					-label=> '',
+					-checked=>$params->{'reqsig'} );
+
+			my $html_role = $query->newInput (
+					-regx=>'*',
+					-intype=>'scrolling_list',
+					-name=>'role',
+					-size=>5,
+					-multiple=>'true',
+					-default=> $params->{'role'},
+					-values=>[gettext('Any'), loadRoles()]);
+
+			my $html_loa = $query->newInput (
+					-regx=>'*',
+					-intype=>'scrolling_list',
+					-name=>'loa',
+					-size=>5,
+					-multiple=>'true',
+					-default=> $params->{'loa'},
+					-values=>[gettext('Any'), loadLoa()]);
+
+			my $html_ra = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'scrolling_list',
+					-name=>'ra',
+					-size=>5,
+					-multiple=>'true',
+					-default=>$params->{'ra'},
+					-values=>[gettext('Any'), 
+						getRequiredList("RegistrationAuthority")]);
+
+			## %labels = ( 'Any' => gettext('Any'),
+		  ##  "224" => "224 (ecdsa)", "256" => "256 (ecdsa)",
+		  ##  "521" => "521 (ecdsa)", "1024" => "1024 (rsa/dsa)",
+		  ##  "2048" => "2048 (rsa/dsa)", "4096" => "4096 (rsa/dsa)",
+		  ##  "8192" => "8192 (rsa/dsa)" );
+
+			##my $html_keysize = $query->newInput (
+			##		-regx=>'LETTERS',
+			##		-intype=>'scrolling_list',
+			##		-name=>'keysize',
+			##		-size=>3,
+			##		-multiple=>'true',
+			##		-default=> $params->{'keysize'},
+			##		-labels=>\%labels,
+			##		-values=>['Any', 
+			##			"224", "256", "521", "1024",
+			##			"2048", "4096", "8192" ]);
+
+			##my $html_algor = $query->newInput (
+			##		-regx=>'LETTERS',
+			##		-intype=>'scrolling_list',
+			##		-name=>'algor',
+			##		-size=>3,
+			##		-multiple=>'true',
+			##		-default=> $params->{'algor'},
+			##		-values=>[gettext('Any'), 
+			##			'rsa', 'dsa', 'ecdsa' ]);
+
+			$result = "<table class=\"getParams\">\n";
+			$result .= "<tbody>\n";
+			$result .= "<tr><td colspan=\"2\">\n";
+			$result .= "<center><div style='font-size: 120%;'><h3>" . 
+					gettext("Auto Certificate Revoking System")."</h3>" .
+					"</div></center>";
+
+			$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+					gettext ("You can filter requests based on which Registration " .
+		    "Authority has approved the request. The following " .
+		    "information will be used by the Auto CA system to " .
+		    "process only the requests that match all of the " .
+		    "requirements you set here." .
+		    "Remeber that although the configuration options are ".
+		    "stored on your system, if the OpenCA server is " .
+		    "rebooted you will need to activate the system again."
+		    ) .
+		    "</div>";
+			$result .= "</td></tr>\n";
+
+			$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Automatically at Startup")."</td>\n".
+                   "    <td>".$html_startup."</td>\n".
+                   "  </tr>\n";
+
+
+			$result .= "<tr><td colspan=\"2\">\n";
+			$result .= "<center><h3>" . 
+					gettext("Request Signature Requirements")."</h3></div>" .
+		   		"</center>";
+			$result .= "</td></tr>\n";
+
+			$result .= "<tr><td colspan=\"2\">";
+			$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+					gettext("Please provide the information about the required ".
+		    "approval process (e.g., if the request has to be " .
+		    "signed, by which Registration Authority and by which " .
+		    "RA Operator's role). " .
+		    "Keep in mind that requests from the Authenticated " .
+		    "request form, as all the new requests, are not signed, ".
+		    "therefore you need to disable the Process (Signed) " .
+		    "Requests Only check button." ) . "</div><br />"; 
+			$result .= "</td></tr>\n";
+
+			$result .= "  <tr>\n".
+				"    <td class='desclabel'>".gettext ("Registration Authoritie(s)")."</td>\n".
+				"    <td>".$html_ra."</td>\n".
+				"  </tr>\n";
+
+			$result .= "  <tr>\n".
+				"    <td class='desclabel'>".gettext ("Operator's role(s)")."</td>\n".
+				"    <td>".$html_operator."</td>\n".
+				"  </tr>\n";
+
+			$result .= "  <tr>\n".
+				"    <td class='desclabel'>".gettext ("Processed (Signed) Requests Only")."</td>\n".
+				"    <td>" . $html_reqsig . "</td>\n".
+				"  </tr>\n";
+
+			$result .= "<tr><td colspan=\"2\">";
+			$result .= "<br /><center><h3>".
+						gettext ("Target Certificates' Details") . "</h3>" .
+		   			"</div></center></td></tr>";
+
+			$result .= "<tr><td colspan=\"2\">";
+			$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    i18nGettext (
+                    "The following information regard the technical details " .
+		    "of the certificates targeted by the revocation request. Keep in mind " .
+		    "that all of the requirements must be met, therefore " .
+		    "__A_HREF__" .
+		    "please review the Level of Assurance (LOA) configuration ".
+		    "__A_HREF_CLOSE__" .
+		    "of your system." .
+		    "To further restrict the requirements from the LOA you " .
+		    "can select to automatically process revocation requests only for ".
+		    "a subset of the supported Roles (Profiles) and LOAs by selecting them " .
+		    "from the menus." , 
+			"__A_HREF__", "<a href=\"$self?cmd=viewLoas\" >",
+			"__A_HREF_CLOSE__", "</a>"
+		    ) .
+		    "</div><br />";
+			$result .= "</td></tr>";
+
+			$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Target Certificate Role(s)")."</td>\n".
+                   "    <td>".$html_role."</td>\n".
+                   "  </tr>\n";
+
+			$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Target Certificate LOA(s)")."</td>\n".
+                   "    <td>".$html_loa."</td>\n".
+                   "</tr>\n";
+
+			## $result .= "<tr><td colspan=\"2\">";
+			## $result .= "<br /><center><h3>".
+			## 			gettext("Accepted Algorithms and Key Sizes") . "</h3>" .
+		  ##  			"</div></center></td></tr>";
+
+			## $result .= "<tr><td colspan=\"2\">";
+			## $result .=  "<div class=\"description\" style='margin: 10px;'>" .
+			## 			gettext("You can further restrict the accepted algorithms and " .
+		  ##   "key sizes here. Keep in mind that keysizes bigger or " .
+		  ##   "equal to 1024 bits are for RSA and DSA algorithms, " .
+		  ##   "while keysizes ranging from 112 to 521 bits are for " .
+		  ##   "ECDSA (Elliptic Curves) only.") .  "</div><br />";
+			## $result .= "  <tr>\n".
+      ##              "    <td class='desclabel'>".gettext ("Accepted Algorithms(s)")."</td>\n".
+      ##              "    <td>".$html_algor."</td>\n".
+      ##              "  </tr>\n";
+
+			## $result .= "  <tr>\n".
+      ##              "    <td class='desclabel'>".gettext ("Accepted Key Size(s)")."</td>\n".
+      ##              "    <td>".$html_keysize."</td>\n".
+      ##              "  </tr>\n";
+
+		## DEBUG Checkbox
+		$result .= "<tr><td colspan=\"2\">";
+		$result .= "<br /><center><h3>".
+			gettext("Debugging Information") . "</h3>" .
+		   "</div></center></td></tr>";
+		$result .= "<tr><td colspan=\"2\">";
+		$result .=  "<div class=\"description\" style='margin: 10px;'>" .
+		    gettext ( "You can enable extra logging by enabling the DEBUG " .
+		    "logging here. Keep in mind that enabling this option is only " .
+		    "for testing or debugging issues with the system as it produces lots of information. " .
+		    "Disable this option in production systems.") .
+		    "</div><br />";
+		$result .= "  <tr>\n".
+                   "    <td class='desclabel'>".gettext ("Activate Extended Logging (DEBUG)")."</td>\n".
+                   "    <td>".$html_debug."</td>\n".
+                   "  </tr>\n";
+
+		$result .= "</tbody>\n</table>\n";
+	}
+	else
+	{
+		startAutoRevoke_saveParams();
+	};
+
+	return $result;
+};
+
+sub startAutoRevoke_saveParams 
+{
+	our ( $query, %AUTOCONF );
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autorevoke.cnf";
+
+	return libSaveCgiParams($conf);
+}
+
+sub startAutoRevoke_loadParams
+{
+	my $ret = undef
+	my $savedQuery = undef;
+	my $defaults = undef;
+
+	# $defaults->{'operator'} = [ gettext('Any') ];
+	# $defaults->{'ra'} = [ gettext('Any') ];
+	# $defaults->{'reqsig'} = '1';
+	# $defaults->{'role'} = [ gettext('Any') ];
+	# $defaults->{'loa'} = [ gettext('Any') ];
+	# $defaults->{'debug'} = [ '0' ];
+	# $defaults->{'startup'} = [ '0' ];
+
+	$defaults->{'operator'} = [ gettext('Any') ];
+	$defaults->{'ra'} =  [ gettext('Any') ];
+	$defaults->{'reqsig'} = '1';
+	$defaults->{'role'} = [ gettext('Any') ];
+	$defaults->{'loa'} = [ gettext('Any') ];
+	$defaults->{'debug'} = '0';
+	$defaults->{'startup'} = '0';
+
+	our ( $query, %AUTOCONF );
+	my $conf = $AUTOCONF{"var_prefix"}."/db/openca_autorevoke.cnf";
+	return libLoadCgiParams($conf, $defaults);
+}
+
+1;

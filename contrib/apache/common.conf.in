@@ -1,0 +1,17 @@
+ScriptAlias @node_cgi_url_prefix@ @node_cgi_fs_prefix@
+
+Alias @node_htdocs_url_prefix@ @node_htdocs_fs_prefix@
+
+<Directory @cgi_fs_prefix@>
+    AllowOverride None
+    Options ExecCGI
+    Order allow,deny
+    Allow from all
+</Directory>
+
+<Directory @htdocs_fs_prefix@>
+    AllowOverride None
+    Options +Indexes
+    Order allow,deny
+    Allow from all
+</Directory>

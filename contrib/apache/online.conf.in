@@ -1,0 +1,9 @@
+ScriptAlias @ra_cgi_url_prefix@ @ra_cgi_fs_prefix@
+ScriptAlias @pub_cgi_url_prefix@ @pub_cgi_fs_prefix@
+ScriptAlias @ldap_cgi_url_prefix@ @ldap_cgi_fs_prefix@
+ScriptAlias @scep_cgi_url_prefix@ @scep_cgi_fs_prefix@
+
+Alias @ra_htdocs_url_prefix@ @ra_htdocs_fs_prefix@
+Alias @pub_htdocs_url_prefix@ @pub_htdocs_fs_prefix@
+Alias @ldap_htdocs_url_prefix@ @ldap_htdocs_fs_prefix@
+

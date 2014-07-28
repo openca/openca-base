@@ -1,0 +1,88 @@
+=head1 NAME
+
+OpenCA::PKCS7 - Perl extension for basic handling PKCS#7 Signatures.
+
+=head1 SYNOPSIS
+
+use OpenCA::PKCS7;
+
+=head1 DESCRIPTION
+
+This module contains all functions needed for handling PKCS#7
+signatures. It requires some parameters to be passed such as
+a reference to a OpenCA::OpenSSL instance. 
+ 
+This module provides an interface to PKCS#7 structures, no specific
+crypto functions are performed (see the OpenCA::OpenSSL module
+for this).
+
+=head1 FUNCTIONS
+
+=head2 sub new () - Create a new instance of the Class.
+
+	This function creates an instance of the module. If you
+	provide a certificate it will be parsed and stored in
+	local variable(s) for later usage. The function will return
+	a blessed reference.
+
+	Accepted parameters are:
+
+		SHELL       - Reference to an initialized
+			      OpenCA::OpenSSL instance;
+		INFILE      - Signature File;
+		SIGNATURE   - Signature Data;
+		DATAFILE    - Data File(*);
+		CA_CERT     - CA Certificate File to check chain
+                              Depth ( >0 )(*);
+		CA_DIR	    - CA Certificates directory to check
+			      chain Depth ( >0 );
+
+	(*) - Optional parameter.
+
+	EXAMPLE:
+
+	      $sig = new OpenCA::PKCS#7(  SHELL=>$crypto,
+					  INFILE=>"TEXT.sig",
+					  DATA=>"TEXT",
+					  CACERT=>"/OpenCA/cacert.pem");
+
+=head2 sub errno () - Get last command errno value.
+
+        This functions returns last operation's errno value. Non
+        zero value means there has been an error.
+
+        EXAMPLE:
+
+                print $sig->errno;
+
+=head2 sub errval () - Get last command errval value.
+
+        This functions returns last operation's errval value. This
+        value usually has a brief error description.
+
+        EXAMPLE:
+
+                print $sig->errval;
+
+=head2 sub status () - Get signature status.
+
+        This functions returns signature validity status. Non
+	zero values usually means an error occurred.
+
+        EXAMPLE:
+
+                print "ERROR" if ( $sig->status );
+
+=head2 sub getSigner () - Get basic Signer Infos.
+
+=head2 sub verifyChain () - Get and Verify basic signer Infos (CAcert needed).
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+OpenCA::OpenSSL, OpenCA::CRL, OpenCA::REQ, OpenCA::X509
+
+=cut

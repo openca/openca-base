@@ -1,0 +1,257 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: check_csr.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: check a complete csr
+## Description: 
+
+use strict;
+
+sub workflow_check_csr
+{
+    ## general global stuff
+    our $state_machine;
+    our ($db, $tools, $xml_cache, $cryptoShell);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "check_csr";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ###############################################
+    ## load the request object from the database ##
+    ###############################################
+
+    ## 1. load all known request serials
+    ## 2. try to load the last request
+
+    ## load all known request serials
+
+    my $serial_file = $tools->getFile ($home."/public/csrList");
+    if (not $serial_file)
+    {
+        my $msg = gettext ("The file with the serials of the CSRs cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -110, $msg ];
+    }
+    my @serials = split /\n+/, $serial_file;
+    if (not scalar @serials)
+    {
+        my $msg = gettext ("There are no known serials of any request for this workflow.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -115, $msg ];
+    }
+
+    ## try to load the last request
+
+    my $csr = undef;
+    @serials = reverse sort @serials;
+    my $status = "NEW";
+    $csr = $db->getItem (DATATYPE => "NEW_REQUEST", KEY => $serials[0]);
+    if (not $csr)
+    {
+        $status = "PENDING";
+        $csr = $db->getItem (DATATYPE => "PENDING_REQUEST", KEY => $serials[0]);
+    }
+    if (not $csr)
+    {
+        my $msg = gettext ("The request for the newest serial cannot be loaded from the database.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+    my $parsed_csr  = $csr->getParsed();
+
+    ###########################################
+    ##      check all necessary params       ##
+    ###########################################
+
+    ## parameters are:
+    ##   * PIN (must be present)
+    ##   * ROLE (must be allowed)
+    ##   * suffix of SUBJECT
+    ##   * SUBJECT_ALT_NAME (must only be present)
+    ##   * KEY_LENGTH
+
+    ## PIN
+
+    if (not $parsed_csr->{HEADER}->{PIN})
+    {
+        my $msg = gettext ("There is no hashed PIN in the request.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+
+    ## ROLE
+
+    my $roles =  undef;
+    my $role_ok = 0;
+    my $count = $xml_cache->get_xpath_count (
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_csr/allowed_roles/role" ]);
+    if (not $count)
+    {
+        my $msg = gettext ("There are no roles specified for the batch system.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -133, $msg ];
+    }
+    if ($count !~ /^[1-9][0-9]*$/)
+    {
+        ## there is only one role
+        ## --> this is the value and not the number
+        $count = 1;
+    }
+    for (my $k=0; $k<$count; $k++)
+    {
+        my $help = $xml_cache->get_xpath (
+                        FILENAME => getRequired ('StateMachineConfiguration'),
+                        XPATH    => [ "statemachine/functions/create_csr/allowed_roles/role" ],
+                        COUNTER  => [ $k ]);
+        $roles->{$help} = 1;
+    }
+    foreach my $role (keys %{$roles})
+    {
+        $role_ok = 1
+          if ($role eq $parsed_csr->{HEADER}->{ROLE});
+    }
+    if (not $role_ok)
+    {
+        my $msg = i18nGettext ("The requested role (__ROLE__) is not allowed for the batch system.",
+                           "__ROLE__", $parsed_csr->{HEADER}->{ROLE});
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+
+    ## subject
+
+    my $suffixes =  undef;
+    my $subject_suffix_ok = 0;
+    my $count = $xml_cache->get_xpath_count (
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_csr/allowed_subjects/suffix" ]);
+    if (not defined $count)
+    {
+        my $msg = gettext ("There are no subject suffixes specified for the batch system.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -145, $msg ];
+    }
+    if ($count !~ /^[1-9][0-9]*$/)
+    {
+        ## there is only one role
+        ## --> this is the value and not the number
+        $count = 1;
+    }
+    for (my $k=0; $k<$count; $k++)
+    {
+        my $help = $xml_cache->get_xpath (
+                        FILENAME => getRequired ('StateMachineConfiguration'),
+                        XPATH    => [ "statemachine/functions/create_csr/allowed_subjects/suffix" ],
+                        COUNTER  => [ $k ]);
+        $suffixes->{$help} = 1;
+    }
+    foreach my $suffix (keys %{$suffixes})
+    {
+        $subject_suffix_ok = 1
+          if ($parsed_csr->{HEADER}->{SUBJECT} =~ /^.*${suffix}$/);
+    }
+    if (not $subject_suffix_ok)
+    {
+        my $msg = i18nGettext ("The suffix of the subject (__SUBJECT__) is not allowed for the batch system.",
+                           "__SUBJECT__", $parsed_csr->{HEADER}->{SUBJECT});
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+
+    ## subject alternative name
+
+    if (not $parsed_csr->{HEADER}->{SUBJECT_ALT_NAME})
+    {
+        my $msg = gettext ("There is no subject alternative name in the request.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -160, $msg ];
+    }
+
+    ## key length
+
+    my $min_key_length = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_csr/minimum_key_length" ],
+           COUNTER  => [ 0 ]);
+    if ($min_key_length > $parsed_csr->{KEYSIZE})
+    {
+        my $msg = i18nGettext ("The key of the request is too short (__CSR_KEY__ < __MIN_KEY__).",
+                               "__CSR_KEY__", $parsed_csr->{KEYSIZE},
+                               "__MIN_KEY__", $min_key_length);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -170, $msg ];
+    }
+
+    ########################################
+    ## update the request in the database ##
+    ########################################
+
+    if (not $db->updateStatus (DATATYPE => $status."_REQUEST",
+                               OBJECT   => $csr,
+                               NEWTYPE  => "APPROVED_REQUEST"))
+    {
+        my $msg = i18nGettext ("Cannot update the status of the request in the database (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $db->errno,
+                               "__ERRVAL__", $db->errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -180, $msg ];
+    }
+
+    ##################
+    ## change state ##
+    ##################
+
+    $journal->{message} .= gettext ("Request checked successfully.");
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "checked_csr" ],
+                                "UNSET"   => [ "complete_csr" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -210, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Request checked successfully.") ];
+}
+
+1;

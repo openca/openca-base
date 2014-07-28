@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>ldapAddCertByName</name>
+            <operation>certificate to ldap with changed dn</operation>
+            <owner_method>CERTIFICATE_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

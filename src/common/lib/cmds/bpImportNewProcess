@@ -1,0 +1,200 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpImportNewProcess
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: import new processes of the PKI
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpImportNewProcess {
+
+our ($xml_cache, $tools);
+
+print startLogPage (gettext ("Import New Process Batch Processor"));
+
+print addLogSection (gettext ("Importing data ..."));
+my $tmpdir = createDirectory ();
+if (not eximIOImport (DIR => $tmpdir)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot extract archive from import device!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+print addLogLine (gettext ("completed."));
+print closeLogSection ();
+
+print addLogSection (gettext ("Running batch processor ..."));
+
+## datadirectory for the batchprocessor
+my $batch_dir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+my $batch_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/import_new_process_file" ],
+           COUNTER  => [ 0 ]);
+my $user_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_list_file" ],
+           COUNTER  => [ 0 ]);
+my $user_state_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_state_file" ],
+           COUNTER  => [ 0 ]);
+
+## open file
+if (not open (FD, $tmpdir."/".$batch_file)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot open file with data for batch processor!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+
+## file format is as follows:
+##
+## file    ::= ( serial . "\n" . process . "\n"."\n"+)*
+## serial  ::= this is a user name or ID
+## process ::= this is a process name
+##
+
+## loop
+my $line = undef;
+while (not eof FD) {
+
+	my %hash = ();
+
+	## ignore blank lines
+	do {
+		$line = <FD>;
+		next if (not $line and eof FD);
+	} while ($line =~ /^\s*\r?\n*$/);
+
+	## write lines until next blank line into an hash
+	my $ID = $line;
+	$ID =~ s/^\s*//;
+	$ID =~ s/\s*$//;
+        $ID =~ s/\s/_/g;
+        $ID =~ s/\n//;
+        $line = <FD>;
+        my $process = $line;
+	$process =~ s/^\s*//;
+	$process =~ s/\s*$//;
+        $process =~ s/\s/_/g;
+        $process =~ s/\n//;
+
+	## check parameter
+	if (not $ID) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no ID!").
+				"</FONT>");
+		next;
+	}
+	## check parameter
+	if (not $process) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no process!").
+				"</FONT>");
+		next;
+	}
+
+	## build the directory path for the ID
+	my $id_dir = $batch_dir;
+	my $h_id   = $ID;
+	while ($h_id !~ /^$/) {
+		$id_dir .= "/".substr $h_id, 0, 1;
+		$h_id =~ s/^.//;
+	}
+
+	## check that the directory exist
+	if (-d $id_dir) {
+		## checking that this directory is only part of a tree
+		if (not -f $id_dir."/ID") {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+				    i18nGettext (
+                      "Directory __DIR__ exists but it is not the directory of a user. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                      "__DIR__", $id_dir,
+                      "__ID__", $ID).
+				    "</FONT>");
+			next;
+		}
+	} else {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+				  "Directory __DIR__ does not exist. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                  "__DIR__", $id_dir,
+                  "__ID__", $ID).
+				"</FONT>");
+		next;
+	}
+
+	## create the new process
+	## check that the directory not exist
+	if (-d "$id_dir/workflows/$process") {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+                      "Process __PROCESS__ of ID __ID__ already exists. Ignoring dataset.",
+                      "__PROCESS__", $process,
+                      "__ID__", $ID).
+					"</FONT>");
+		next;
+	} else {
+		## create the directory
+		my $ret = `mkdir -p $id_dir/workflows/$process/data`;
+		if ( $? ) {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+					i18nGettext (
+                      "Cannot create directory __DIR__. Ignoring dataset of ID __ID__.",
+                      "__DIR__", "$id_dir/workflows/$process",
+                      "__ID__", $ID).
+					"</FONT>");
+			next;
+		}
+                ## create the basic state file
+                open USER_FD, "> $id_dir/workflows/$process/$user_state_file";
+		print USER_FD "\n";
+                close USER_FD;
+
+		## add process to user list file
+		open USER_FD, ">> $user_file";
+		print USER_FD "\n$ID $process";
+		close USER_FD;
+	}
+
+	## write out message
+	print addPreLogLine ("<FONT COLOR=#00FF00>".
+			i18nGettext ("Process __PROCESS__ of ID __ID__ successfully imported.",
+			             "__PROCESS__", $process,
+			             "__ID__", $tools->getFile ($id_dir."/ID")).
+			"</FONT>");
+
+	$ID = "";
+        $process = "";
+}
+
+close FD;
+
+print addPreLogLine ("");
+print addLogLine (gettext ("Batch processor finished"));
+print closeLogSection ();
+
+removeDirectory ($tmpdir);
+
+closePage();
+
+}
+
+sub getParamsBpImportNewProcess
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

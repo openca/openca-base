@@ -1,0 +1,36 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeEnrollAll
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: Exports All
+## Description: Exports on a removable media all
+
+use strict;
+
+sub cmdNodeEnrollAll {
+
+    print startLogPage (gettext ("Exporting all available items to a lower level of the hierarchy ..."));
+
+    my $tmp = createStructure ();
+    eximEnrollCerts         ( $tmp );
+    eximEnrollCAs           ( $tmp );
+    eximEnrollCRLs          ( $tmp );
+    eximEnrollMails         ( $tmp );
+    eximEnrollConfiguration ( $tmp );
+    eximEnrollCommit        ( $tmp );
+    eximIOEnroll            ( $tmp );
+    removeDirectory         ( $tmp );
+
+    closePage ();
+
+}
+
+sub getParamsNodeEnrollAll
+{
+    return eximMediaConfirm (@_);
+}
+
+1;
+

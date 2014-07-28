@@ -1,0 +1,68 @@
+#!@PERL@
+
+## OpenCA Server Engine Startup Script
+## (c) 1999-2003 by Massimiliano Pala and OpenCA Group
+## (c) 2001-2004 The OpenCA Project
+## All Rights Reserved
+
+@perl_use_lib@
+
+package OpenCA::Server;
+
+use strict;
+use vars qw(@ISA);
+no warnings;
+
+use OpenCA::Configuration;
+
+our (%AUTOCONF, $config, $common_libs);
+
+%AUTOCONF = ();
+$AUTOCONF {"lib_prefix"}     = "@lib_prefix@";
+$AUTOCONF {"etc_prefix"}     = "@etc_prefix@";
+$AUTOCONF {"var_prefix"}     = "@var_prefix@";
+$AUTOCONF {"config_prefix"}  = "node";
+$AUTOCONF {"VERSION"}        = "@VERSION@";
+$AUTOCONF {"PROGRAM"}        = "OpenCA Server";
+$AUTOCONF {"httpd_user"}     = "@httpd_user@";
+$AUTOCONF {"httpd_group"}    = "@httpd_group@";
+
+## if common.conf is missing then we link common.conf
+## to a random configuration file of an OpenCA interface
+
+my $CONFIG = $AUTOCONF {"etc_prefix"}.'/servers/'.$AUTOCONF {"config_prefix"}.'.conf';
+if (not -e $CONFIG)
+{
+    my $pwd = `pwd`;
+    chdir $AUTOCONF {"etc_prefix"}."/servers";
+    # opendir DIR, ".";
+    # my @list = grep /\.conf$/, readdir DIR;
+    # closedir DIR;
+    # symlink $list[0], $CONFIG;
+    symlink $AUTOCONF {"etc_prefix"} . "/common.conf", $CONFIG;
+}
+
+## load library with CGI init
+
+$config = new OpenCA::Configuration;
+if( not defined (my $ret = $config->loadCfg( "$CONFIG" )) ) {
+        print STDERR "Error while loading configuration ($CONFIG)!";
+        print "Content-type: text/html\n\n";
+        print "Error while loading configuration ($CONFIG)!";
+        exit 100;
+}
+
+$common_libs  = $config->getParam('CgiLibPath')->{VALUES}->[0];
+if( not defined $common_libs or not $common_libs ) {
+        print STDERR "Error while loading path to the libraries ($CONFIG)!";
+        print "Content-type: text/html\n\n";
+        print "Error while loading path to the libraries ($CONFIG)!";
+        exit 100;
+}
+
+# Close the STDOUT - needed to have a clean startup
+close (STDOUT);
+
+require "$common_libs/initServer";
+
+exit 0;

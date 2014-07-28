@@ -1,0 +1,146 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpExportPIN
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: export PINs for new users
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpExportPIN {
+
+    our ($crypto_layer, $xml_cache, $tools);
+
+    my $bp_token = $crypto_layer->getToken ('BP');
+    if (not ($bp_token->keyOnline || $bp_token->login))
+    {
+        my $msg = gettext ("Initializing batchprocessor token ... ").
+                  "<FONT color=#ff0000>".gettext ("FAILED")."</FONT><br>\n".
+                  i18nGettext ("Token's errormessage: __ERRVAL__", "__ERRVAL__", $bp_token->errval);
+        generalError ($msg, $bp_token->errno);
+    }
+
+    print startLogPage (gettext ("Export PIN Batch Processor"));
+
+    ## get users and processes which need a pin export
+
+    my $filename = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/enrollment/pin/waiting" ],
+           COUNTER  => [ 0 ]);
+    if (not $filename)
+    {
+        my $msg = gettext ("Cannot get filename for file with PIN references.");
+        print addLogSection ($msg);
+        print closeLogSection ();
+        print closeLogPage ();
+        return undef;
+    }
+    my $file = $tools->getFile ($filename);
+    if (not $file)
+    {
+        my $msg = gettext ("Cannot load file with PIN references.");
+        print addLogSection ($msg);
+        print closeLogSection ();
+        print closeLogPage ();
+        return undef;
+    }
+
+    ## build two dimensional array with user and process
+
+    my @file_list = split /\n/, $file;
+    my @list = ();
+    while (scalar @file_list) {
+        my $process = "";
+        do {
+            $process = pop @file_list;
+        } while (not $process and scalar @file_list);
+        my $user = "";
+        do {
+            $user = pop @file_list;
+        } while (not $user and scalar @file_list);
+        next if (not $process or not $user);
+        $list[scalar @list] = [ $user, $process ];
+    }
+
+    ## add pins to two dimensional array
+
+    ## load encrypted pin
+    ## decrypt pin
+    ## store pin
+
+    print addLogSection (gettext ("Decrypting PINs ..."));
+    my $state_machine = libGetStateMachine ();
+    for (my $i=0; $i < scalar @list; $i++)
+    {
+        ## get path
+        my $path = $state_machine->get_workflow_path ($list[$i]->[0], $list[$i]->[1]);
+
+        ## decrypt pin
+        my $pin = $bp_token->decrypt ( INFILE => $path."/private/purePIN");
+
+        ## store pin
+        $list[$i]->[2] = $pin;
+
+        print addPreLogLine (i18nGettext ("decrypted PIN for process __PROCESS__ of user __USER__",
+                                          "__PROCESS__", $list[$i]->[1],
+                                          "__USER__", $list[$i]->[0]));
+    }
+    print closeLogSection ();
+
+    ## build a file from the two dimensional array
+
+    $file = "";
+    foreach my $item (@list)
+    {
+        $file .= "\n".
+                 $item->[0]."\n".
+                 $item->[1]."\n".
+                 $item->[2]."\n";
+    }
+
+    ## backup old export file
+
+    $filename = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/enrollment/pin/list" ],
+           COUNTER  => [ 0 ]);
+    if (not $filename)
+    {
+        my $msg = gettext ("Cannot get filename for file with PINs.");
+        print addLogSection ($msg);
+        print closeLogSection ();
+        print closeLogPage ();
+        return undef;
+    }
+
+    if (-f $filename)
+    {
+        if (not rename ($filename, $filename.".".
+                        strftime ("%Y-%m-%d-%H-%M-%S", gmtime(time))))
+        {
+            my $msg = i18nGettext ("The old file with the PINs __FILE__ cannot be moved away.",
+                                   "__FILE__", $filename);
+            print addLogSection ($msg);
+            print closeLogSection ();
+            print closeLogPage ();
+            return undef;
+        }
+    }
+
+    ## export pins to file
+
+    print addLogSection (gettext ("Writing files with PINs ..."));
+
+    $tools->saveFile (FILENAME => $filename, DATA => $file);
+
+    print addLogLine (gettext("OK"));
+    print closeLogSection ();
+
+    closePage();
+}
+
+1;

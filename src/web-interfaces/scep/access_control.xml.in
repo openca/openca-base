@@ -1,0 +1,29 @@
+<openca>
+    <access_control>
+        <channel>
+            <!-- access control disabled for scep -->
+            <type>mod_ssl</type>
+            <protocol>http</protocol>
+            <!-- PLEASE: filter the source IP because it is really simple -->
+            <!--         to spam a scep interface                         -->
+            <source>.*</source>
+            <asymmetric_cipher>.*</asymmetric_cipher>
+            <asymmetric_keylength>0</asymmetric_keylength>
+            <symmetric_cipher>.*</symmetric_cipher>
+            <symmetric_keylength>0</symmetric_keylength>
+        </channel>
+        <login>
+            <!-- SCEP is complete own protocol -->
+            <type>none</type>
+        </login>
+        <acl_config>
+            <acl>yes</acl>
+            <list>@etc_prefix@/rbac/acl.xml</list>
+            <command_dir>@etc_prefix@/rbac/cmds</command_dir>
+            <module_id>@scep_module_id@</module_id>
+            <map_role>no</map_role>
+            <map_operation>yes</map_operation>
+        </acl_config>
+    </access_control>
+    <token_config_file>@etc_prefix@/token.xml</token_config_file>
+</openca>

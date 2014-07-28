@@ -1,0 +1,37 @@
+#!/bin/bash
+
+## using gnu
+export CONFIG_SHELL=/bin/bash
+export INSTALL=/tmp/openca-0.9/install-sh
+export MAKE=/usr/local/bin/make
+export PERL=/usr/local/bin/perl
+export CC=gcc
+
+## ocspd doesn't work on Solaris - problem with /usr/include/resolv.h
+## don't set --disable-ocspd this ENABLES the OCSPD !!!
+
+./configure \
+  --with-engine=no \
+  --with-httpd-user=nobody \
+  --with-httpd-group=nogroup \
+  --with-httpd-fs-prefix=/usr/local/apache2 \
+  --with-web-host=ra.hu-berlin.de \
+  --with-ca-organization="Humboldt-Universitaet zu Berlin" \
+  --with-ca-country=DE \
+  --with-ca-locality=Berlin \
+  --with-ldap-port=389 \
+  --with-ldap-root="cn=Manager,o=Humboldt-Universitaet zu Berlin,c=DE" \
+  --with-ldap-root-pwd="openca" \
+  --with-module-prefix=/usr/local/RZDCA/modules \
+  --with-db-type=mysql \
+  --with-db-name=openca \
+  --with-db-host=localhost \
+  --with-db-port=3306 \
+  --with-db-user=openca \
+  --with-db-passwd="openca" \
+  --prefix=/usr/local/RZDCA \
+  --with-service-mail-account="hu-ca@rz.hu-berlin.de" \
+  --with-openssl-prefix=/usr/local/ssl-0.9.7 \
+  --with-hierarchy-level=pub
+
+## Michael Bell 2002-Dec-27

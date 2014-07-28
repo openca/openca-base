@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>genSKey</name>
+            <operation>initialization of ca-key</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

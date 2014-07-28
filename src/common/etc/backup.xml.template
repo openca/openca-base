@@ -1,0 +1,53 @@
+<openca>
+    <backup>
+        <directory>@var_prefix@/tmp/backup</directory>
+        <filesystem>
+            <source>@etc_prefix@</source>
+            <source>@lib_prefix@</source>
+            <source>@var_prefix@</source>
+
+            <source>@ca_htdocs_fs_prefix@</source>
+            <source>@ldap_htdocs_fs_prefix@</source>
+            <source>@node_htdocs_fs_prefix@</source>
+            <source>@pub_htdocs_fs_prefix@</source>
+            <source>@ra_htdocs_fs_prefix@</source>
+
+            <source>@ca_cgi_fs_prefix@</source>
+            <source>@ldap_cgi_fs_prefix@</source>
+            <source>@node_cgi_fs_prefix@</source>
+            <source>@pub_cgi_fs_prefix@</source>
+            <source>@ra_cgi_fs_prefix@</source>
+            <source>@scep_cgi_fs_prefix@</source>
+
+            <!-- here you must add the binary directories -->
+            <!-- openca-sv, ocspd, scep                   -->
+            <!-- perlmodules                              -->
+        </filesystem>
+        <batch>
+            <command>tar -cf @var_prefix@/tmp/backup.tar @var_prefix@/tmp/backup</command>
+            <command>tar -tf @var_prefix@/tmp/backup.tar > /dev/null </command>
+            <command>cp @var_prefix@/tmp/backup.tar /tmp/backup.tar</command>
+            <command>ls -lisa @var_prefix@/tmp/backup.tar</command>
+        </batch>
+        <batch>
+            <command>mkisofs -allow-lowercase -allow-multidot -d -D -f -l -iso-level 3 -L -max-iso9660-filenames -relaxed-filenames -U -o @var_prefix@/tmp/backup.img @var_prefix@/tmp/backup</command>
+            <!--  fix fstab first
+                <command>touch @var_prefix@/tmp/cdrom</command>
+                <command>rm -rf @var_prefix@/tmp/cdrom</command>
+                <command>mkdir @var_prefix@/tmp/cdrom</command>
+                <command>mount -t iso9660 @var_prefix@/tmp/backup.img @var_prefix@/tmp/cdrom</command>
+                <command>ls -lisa @var_prefix@/tmp/cdrom</command>
+                <command>umount @var_prefix@/tmp/cdrom</command>
+             -->
+            <command>cdrecord -v speed=12 dev=0,0,0 blank=fast</command>
+            <command>cdrecord -v speed=12 dev=0,0,0 -dummy -data @var_prefix@/tmp/backup.img</command>
+            <command>cdrecord -v speed=12 dev=0,0,0 -data @var_prefix@/tmp/backup.img</command>
+            <!--  fix fstab first
+                <command>mount -t iso9660 /dev/cdrom @var_prefix@/tmp/cdrom</command>
+                <command>ls -lisa @var_prefix@/tmp/cdrom</command>
+                <command>umount @var_prefix@/tmp/cdrom</command>
+             -->
+            <command>eject /dev/cdrom</command>
+        </batch>
+    </backup>
+</openca>

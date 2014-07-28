@@ -1,0 +1,331 @@
+<!-- OpenCA Request Configuration File -->
+<openca>
+  <requestStatus>NEW</requestStatus>
+  <request>
+    <!-- User Data Section -->
+    <user>
+       <enable>YES</enable>
+       <basic>
+         <name>Basic Information</name>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_FIRSTNAME</name>
+            <label>First Name</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>2</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_LASTNAME</name>
+            <label>Last Name</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>2</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_BIRTHDATE</name>
+            <label>Birth Date (dd/mm/yyyy)</label>
+            <type>textfield</type>
+            <charset>DATE</charset>
+            <value></value>
+            <minlen>6</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_UID</name>
+            <label>User Identifier (if any)</label>
+            <type>textfield</type>
+            <charset>UTF8_MIXED</charset>
+            <value></value>
+            <minlen>0</minlen>
+            <required>NO</required>
+         </input>
+       </basic>
+       <contacts>
+         <name>Contact Details</name>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_EMAIL</name>
+            <label>E-Mail Address</label>
+            <type>textfield</type>
+            <charset>EMAIL</charset>
+            <value></value>
+            <minlen>3</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_DEPARTMENT</name>
+            <label>Department</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>0</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_TEL</name>
+            <label>Phone Number</label>
+            <type>textfield</type>
+            <charset>TEL</charset>
+            <value></value>
+            <minlen>7</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_ADDRESS</name>
+            <label>Address (N. and Street)</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>3</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_CITY</name>
+            <label>City</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>0</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_STATE</name>
+            <label>State (or Province)</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>0</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_ZIP</name>
+            <label>Zip Code</label>
+            <type>textfield</type>
+            <charset>NUMERIC</charset>
+            <value></value>
+            <minlen>5</minlen>
+            <required>NO</required>
+         </input>
+         <input>
+            <name>ADDITIONAL_ATTRIBUTE_COUNTRY</name>
+            <label>Country</label>
+            <type>textfield</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>3</minlen>
+            <required>NO</required>
+         </input>
+       </contacts>
+     </user>
+     <!-- Certificate Data Section -->
+     <certificate>
+       <enable>YES</enable>
+       <name>Certificate Details</name>
+       <!-- If present, basedn will be added to the DN generated
+            by using the data provided in the input fields -->
+       <basedn>
+          <!-- Each RDN has two properties, name (eg., O, OU, SN, etc.. )
+               and the value -->
+          <rdn>
+             <name>O</name>
+             <value>@ca_organization@</value>
+          </rdn>
+          <rdn>
+             <name>C</name>
+             <value>@ca_country@</value>
+          </rdn>
+       </basedn>
+       <dn>
+         <name>Distinguished Name</name>
+         <!-- WARNING: uid is not supported on IE, do not enable this if you
+	      want to maintain compatibility with IE browsers -->
+         <!--
+         <input>
+            <name>uid</name>
+            <label>User ID (if any)</label>
+            <type>textfield</type>
+            <charset>UTF8_MIXED</charset>
+            <value>$ADDITIONAL_ATTRIBUTE_UID</value>
+	    <minlen>0</minlen>
+	    <required>NO</required>
+         </input>
+         -->
+         <input>
+           <name>cn</name>
+           <label>Subject Name</label>
+           <type>textfield</type>
+           <charset>UTF8_LETTERS</charset>
+           <value>$ADDITIONAL_ATTRIBUTE_FIRSTNAME $ADDITIONAL_ATTRIBUTE_LASTNAME</value>
+           <minlen>3</minlen>
+           <required>YES</required>
+         </input>
+         <input>
+            <name>ou</name>
+            <label>Certificate Request Group</label>
+            <type>select</type>
+            <charset>UTF8_MIXED</charset>
+            <value>Users</value>
+            <value>Employees</value>
+            <value>Partners</value>
+            <value>Applications</value>
+            <minlen>5</minlen>
+            <required>YES</required>
+         </input>
+       </dn>
+       <subjectAltNames>
+         <name>Advanced Features</name>
+         <input>
+           <name>EMAIL_ATTRIBUTE_0</name>
+           <label>E-Mail</label>
+           <type>textfield</type>
+           <charset>EMAIL</charset>
+           <value>$ADDITIONAL_ATTRIBUTE_EMAIL</value>
+           <minlen>3</minlen>
+           <required>NO</required>
+	   <!-- Value Type specifies the type of value that is present
+                in this field. The possible value types are the ones
+                supported by OpenSSL. Most commonly used are:
+                - email
+		- otherName
+		- IP
+		- DNS
+		- DirName
+		- RID
+		- URI
+           -->
+           <valueType>email</valueType>
+         </input>
+         <!-- You can add many different input here such an IP address
+              or a DNS name for the subject alt name field -->
+         <input>
+           <name>OTHER_NAME_1</name>
+           <label>User ID (if any)</label>
+           <type>textfield</type>
+           <charset>UTF8_MIXED</charset>
+           <value>$ADDITIONAL_ATTRIBUTE_UID</value>
+           <minlen>0</minlen>
+           <required>NO</required>
+	   <valueType>otherName</valueType>
+           <!-- This OID is for the M$ Global User Identifier (GUID) -->
+           <prefix>1.3.6.1.4.1.311.25.1;UTF8:</prefix>
+         </input>
+	 <!--
+         <input>
+           <name>OTHER_NAME_1</name>
+           <label>IP Address (for servers only)</label>
+           <type>textfield</type>
+           <charset>IPV4_ADDRESS</charset>
+           <value>0.0.0.0</value>
+           <minlen>7</minlen>
+           <required>NO</required>
+	   <valueType>IP</valueType>
+         </input>
+         -->
+       </subjectAltNames>
+       <details>
+         <name>Additional Details</name>
+         <input>
+            <name>role</name>
+            <label>Certificate Template</label>
+            <type>select</type>
+            <charset>UTF8_LETTERS</charset>
+            <value>$EXEC::loadRoles()</value>
+            <minlen>2</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>ra</name>
+            <label>Selected Registration Authority</label>
+            <type>select</type>
+            <charset>UTF8_LETTERS</charset>
+            <value>$CONFIG::RegistrationAuthority</value>
+            <minlen>5</minlen>
+            <required>YES</required>
+         </input>
+       </details>
+       <extras>
+         <name>User Policy Agreement</name>
+         <input>
+            <name>loa</name>
+            <label>Level of Assurance</label>
+	    <info img="bulb.png">?cmd=viewLoas</info>
+            <type>select</type>
+            <charset>UTF8_LETTERS</charset>
+            <value>$EXEC::loadLoa()</value>
+            <minlen>1</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>genkey</name>
+            <label>Key Generation Mode</label>
+            <type>select</type>
+            <charset>LATIN1_LETTERS</charset>
+            <value>Browser (Your Computer)</value>
+            <value>Server (Our Server)</value>
+	    <!-- <value>$EXEC::loadKeygenMode()</value> -->
+            <minlen>3</minlen>
+            <required>YES</required>
+         </input>
+       </extras>
+     </certificate>
+     <!-- Key Generation Details -->
+     <keygen>
+        <key>
+         <name>Key Generation Details</name>
+         <input>
+            <name>keytype</name>
+            <label>Signature Scheme</label>
+            <type>select</type>
+            <charset>LATIN1_LETTERS</charset>
+            <value>$EXEC::loadKeyTypes()</value>
+            <minlen>3</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>strength</name>
+            <label>Key Strength</label>
+            <type>select</type>
+            <charset>UTF8_LETTERS</charset>
+	    <value>$EXEC::loadKeyStrengths()</value>
+            <minlen>0</minlen>
+            <required>NO</required>
+         </input>
+       </key>
+       <pin>
+         <name>Request Verification PIN</name>
+         <input>
+            <name>passwd1</name>
+            <label>PIN (Min. 5 chars) &lt;br /&gt;
+                   [needed to verify the certificate request]</label>
+            <errlabel>PIN</errlabel>
+            <type>password</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>5</minlen>
+            <required>YES</required>
+         </input>
+         <input>
+            <name>passwd2</name>
+            <label>PIN (Min. 5 chars) &lt;br /&gt;
+                   [enter it again for verification]</label>
+            <errlabel>PIN (verify)</errlabel>
+            <type>password</type>
+            <charset>UTF8_LETTERS</charset>
+            <value></value>
+            <minlen>5</minlen>
+            <required>YES</required>
+         </input>
+       </pin>
+     </keygen>
+     <!-- Agreement Section : if enabled, the content of the file
+          pointed by the agreement tag in loa.xml file is displayed
+          to the user -->
+     <agreement>
+       <name>User Certificate Agreement</name>
+       <enabled>YES</enabled>
+     </agreement>
+   </request>
+</openca>

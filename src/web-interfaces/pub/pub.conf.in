@@ -1,0 +1,203 @@
+## Secure Server Configuration File
+## (c) 1999-2009 by Massimiliano Pala and the OpenCA Group
+##
+## Please Refer to the Documentation for a full detailed
+## description of params. Read the README file in this dir
+## for more infos on programs accessing this file.
+
+## ===================== [ General Section ] =========================
+
+DEFAULT_LANGUAGE	"@default_language@"
+DEFAULT_CHARSET 	"@default_charset@"
+SUPPORT_EMAIL   	"@support_mail_address@"
+
+DBmodule			"@dbmodule@"
+
+CgiLibPath			"@lib_prefix@/functions"
+CgiServerType		"public"
+CgiServerName		"@pub_prefix@"
+
+HtdocsUrlPrefix		"@pub_htdocs_url_prefix@"
+EtcPrefix			"@etc_prefix@"
+TopLogo				"@pub_htdocs_url_prefix@/images/top_logo.png"
+Organization		"@ca_organization@"
+
+## This is used to generate secure tokens for email verification
+## purposes
+webSecret			"@default_web_secret@"
+
+## Allows for automatic Email verification
+verifyEmailAddress  "Y"
+
+## Body of the default email for email address verification
+verifyemailfile 		"@lib_prefix@/mails/__LANGUAGE__/verifyMail.msg"
+
+SERVICE_MAIL_ACCOUNT	"@service_mail_account@"
+mailcommand 			"@sendmail@"
+
+## The Login feature is not supported by the interface yet, anyhow
+## this config keyword will enable the login fields to appear in the
+## top part of the UI. Enable it to see how the login fields will
+## appear in the next versions of OpenCA. To enable it, set it to
+## "Y" or "1".
+EnableLogin			"N"
+
+## The Page body is included to generate the HomePage for the server
+## to support internationalization, we look for the file with the
+## suffix for the supported language (eg., if the filename is
+## home_body.in - we look for home_body.in.en_GB if the language is
+## set to english, for home_body.in.it_IT if italian is selected, etc.)
+HOME_PAGE_BODY_INCLUDE		"@etc_prefix@/includes/home_body.inc"
+HOME_PAGE_DISPLAY_TITLE		"Y"
+HOME_PAGE_DISPLAY_EASY_PANEL	"Y"
+HOME_PAGE_DISPLAY_NOTICES_PANEL	"Y"
+
+SessionDir      @var_prefix@/session/cookie
+SessionLifetime 1200
+
+ModuleID		@pub_module_id@
+ModuleShift		@module_shift@
+AccessControlConfiguration "@etc_prefix@/access_control/@pub_prefix@.xml"
+SoftwareConfiguration      "@etc_prefix@/config.xml"
+RoleConfiguration          "@etc_prefix@/rbac/roles.xml"
+ModuleConfiguration        "@etc_prefix@/rbac/modules.xml"
+TokenConfiguration         "@etc_prefix@/token.xml"
+LogConfiguration           "@etc_prefix@/log.xml"
+MenuConfiguration          "@etc_prefix@/menu.xml"
+LOAConfiguration           "@etc_prefix@/loa.xml"
+
+## Datasources configuration file (used to retrieve the available data
+## sources for OpenCA - especially for authentication purposes for the
+## authenticated request form)
+DataSourcesConfig	   "@etc_prefix@/datasources.xml"
+
+CertsDir 		"@var_prefix@/crypto/certs"
+CACertificate		"@var_prefix@/crypto/cacerts/cacert.pem"
+ChainDir		"@var_prefix@/crypto/chain"
+
+## Paths
+openssl 	"@OPENSSL@"
+sslconfig 	"@etc_prefix@/openssl/openssl.cnf"
+scepPath	"@prefix@/bin/openca-scep"
+tempdir 	"@var_prefix@/tmp"
+
+BP_DIR		"@var_prefix@/batch"
+
+## Max Number of returned Items for Lists
+MaxReturnedItems 25
+
+## ================== [ End General Section ] ========================
+
+## ==================== [ Requests Section ] =========================
+
+## The Supported Requests option will let you choose which requests
+## are supported on your system
+
+SupportedRequests "BrowserRequest" "AuthenticatedRequest" "ServerRequest"
+
+## From the above list (SupportedRequests) the getStaticPage will look
+## for the nameConfig, nameCommand, nameTitle, nameDescription to build
+## the request certificate page ('name' is one of the list, for example
+## if you have "BrowserRequest" as one of the options in SupportedRequests
+## you should also provide the BrowserRequestConfig, ... options)
+
+## These are the options for the default AuthenticatedBrowser request
+
+AuthenticatedRequestConfig "@etc_prefix@/auth_browser_req.xml"
+AuthenticatedRequestCommand "authenticated_csr"
+AuthenticatedRequestTitle "Authenticated Browser Certificate Request"
+AuthenticatedRequestDescription "Request form with automatic browser detection"
+
+## These are the options for the default Browser request
+
+BrowserRequestConfig "@etc_prefix@/browser_req.xml"
+BrowserRequestCommand "advanced_csr"
+BrowserRequestTitle "Browser Certificate Request"
+BrowserRequestDescription "Request form with automatic browser detection"
+
+## These are the options for the default Server request
+
+ServerRequestConfig "@etc_prefix@/server_req.xml"
+ServerRequestCommand "pkcs10_req"
+ServerRequestTitle "Server Certificate Request"
+ServerRequestDescription "PKCS#10 PEM formatted Request Upload Form"
+
+## This setting is used for the option presented to the user for the
+## Key strength. It is important to understand that these are used together
+## with the Level of Assurance (LOA) configuration - please take your time
+## to correctly configure the LOAs for your system (PREFIX/etc/loa.xml).
+
+SupportedKeyStrengths	   "Weak" "Base" "Strong" "Advanced" "Strongest"
+
+## Default Registration Authorities List
+
+RegistrationAuthority "Trustcenter itself" "Help Desk 1" "Help Desk 2"
+
+## Minimum Length for the PIN used by the user to authenticate the
+## request (in case of Server-Side key generation, this is also the
+## Password that will be used to encrypt the private key - and also
+## used to retrieve it)
+
+MinPinLength		   5
+
+## ================== [ End Requests Section ] =========================
+
+
+
+
+## ====================== [ LOA Support ] ============================
+
+## Loa Support is deeply embedded in OpenCA now, so it is HIGHLY
+## recommended to keep this setting on YES - some parts of the system
+## will not behave correctly if you set it to NO.
+
+USE_LOAS                "YES"
+## ================== [ End of LOA support ] =========================
+
+## ==================== [ lists Section ] ======================
+
+CmdRefs_viewCert	"INSTALL_CERT" "SENDCERT" "SEND_CERT_KEY"
+CmdRefs_revoke_req	"REQUIRE_AUTH"
+REQUIRE_PASSWD_PUBLIC	"NO"
+
+## ================= [ End lists Section ] =====================
+
+## ================== [ sendcert Section ] ======================
+## ================= [ End sendcert Section ] ===================
+
+## ================== [ testcert Section ] ======================
+VerifyCACert 	"@var_prefix@/crypto/cacerts/cacert.pem"
+## ================= [ End testcert Section ] ===================
+
+## ================== [ getcrl Section ] ======================
+crlfile 	"@var_prefix@/crypto/crls/cacrl.crl"
+## ================= [ End getcrl Section ] ===================
+
+## ================== [ Role Section ] ======================
+RBAC_DIR  "@etc_prefix@/rbac"
+ROLES_DIR "roles"
+## ================= [ End Role Section ] ===================
+
+## ================== [ Images Section ] ======================
+SigErrorImage	"@pub_htdocs_url_prefix@/images/sigError.png"
+ValidSigImage	"@pub_htdocs_url_prefix@/images/validSig.png"
+## ================= [ End Images Section ] ===================
+
+## These options are still used by the server request - this has
+## to be changed as we will move to the XML config file also for
+## the server request
+
+DN_TYPE_PKCS10_REQUIRED_ELEMENTS "CN" "OU" "O" "C"
+DN_TYPE_PKCS10_BASE     "O" "C"
+
+## YES, EXIST, NO
+DN_TYPE_PKCS10_ENFORCE_BASE "EXIST"
+
+# DN_TYPE_PKCS10_BASE_1 "@ca_organization@"
+# DN_TYPE_PKCS10_BASE_2 "@ca_country@"
+
+ADDITIONAL_REQUEST_ATTRIBUTES   "requestercn" "email" "department" "telephone" "SUBJECT_ALT_NAME_DNS.1" "SUBJECT_ALT_NAME_DNS.2" "SUBJECT_ALT_NAME_IP.1" "SUBJECT_ALT_NAME_IP.2"
+ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE     "Name (first and Last name)" "Email" "Department"  "Telephone" "DNS (Subject Alt Name)" "DNS (Subject Alt Name)" "IP (Subject Alt Name)" "IP (Subject Alt Name)"
+ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE "LATIN1_LETTERS" "EMAIL" "LATIN1_LETTERS" "LATIN1_LETTERS" "DNS" "DNS" "IP" "IP"
+
+

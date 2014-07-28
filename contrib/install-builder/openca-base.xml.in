@@ -1,0 +1,397 @@
+<project>
+    <shortName>openca</shortName>
+    <fullName>OpenCA PKI v@VERSION@</fullName>
+    <version>@VERSION@</version>
+    <!-- <installerFilename>openca-base-@VERSION@-${platform_name}-${linux_distribution}-@DIST_VERSION@.${platform_exec_suffix}</installerFilename> -->
+    <installerFilename>openca-base-@VERSION@-${platform_name}-@DIST_NAME@-@DIST_VERSION@.@arch_target@.${platform_exec_suffix}</installerFilename>
+    <licenseFile>../../LICENSE</licenseFile>
+    <leftImage>images/openca_installer.png</leftImage>
+    <splashImage>images/openca_splash.png</splashImage>
+    <allowComponentSelection>0</allowComponentSelection>
+    <enableRollback>1</enableRollback>
+    <requireInstallationByRootUser>1</requireInstallationByRootUser>
+    <saveRelativePaths>1</saveRelativePaths>
+    <registerWithPackageDatabase>1</registerWithPackageDatabase>
+    <vendor>OpenCA</vendor>
+    <summary>Open Source Certification Authority Software</summary>
+    <release>1</release>
+    <description>Open Source Certification Authority Software</description>
+    <uninstallerDirectory>${installdir}/share/openca</uninstallerDirectory>
+    <!--
+<initializationActionList>
+        <showInfo>
+            <text>This example installer will show you how and where to use some of the actionLists available on InstallBuilder.
+
+This message is itself being shown inside an actionList to be executed before the installer begins - initializationActionList. This action list is the first one being executed by the installer.</text>
+        </showInfo>
+    </initializationActionList>
+    -->
+
+    <preInstallationActionList>
+    </preInstallationActionList>
+
+<!--
+    <readyToInstallActionList>
+        <showWarning>
+            <text>This warning is being called in the action list when the installer is about to start the installation itself - readyToInstallActionList.</text>
+        </showWarning>
+    </readyToInstallActionList>
+-->
+
+    <componentList>
+	<include file="openca/common.xml" />
+	<!-- <include file="openca/openssl.xml" /> -->
+	<include file="openca/node.xml" />
+	<include file="openca/batch.xml" />
+	<include file="openca/scep.xml" />
+	<include file="openca/ldap.xml" />
+	<include file="openca/ca.xml" />
+	<include file="openca/ra.xml" />
+	<include file="openca/pub.xml" />
+    </componentList>
+    <parameterList>
+        <choiceParameter>
+            <name>preferred_comp</name>
+            <title>Please choose the PKI components to Install</title>
+            <description>Select the different PKI components you wish to install on this computer. The Off-Line components option will install the needed components to manage the Certification Authority only. The On-Line components option will install the needed components to run a Registration Authority and the Public Interface only. If you want to run all the components on this machine, choose the 'All' option.</description>
+            <explanation></explanation>
+            <value></value>
+            <default></default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <displayType>radiobuttons</displayType>
+            <insertAfter>installdir</insertAfter>
+            <width>30</width>
+            <optionList>
+                <option>
+                    <description>Installs all the PKI components</description>
+                    <image></image>
+                    <text>All</text>
+                    <value>all</value>
+                </option>
+                <option>
+                    <description>Includes CA, Node, and Batch Interfaces</description>
+                    <image></image>
+                    <text>Off-Line Components</text>
+                    <value>offline</value>
+                </option>
+                <option>
+                    <description>Includes all the components need for on-line PKI frontend</description>
+                    <image></image>
+                    <text>On-Line Components</text>
+                    <value>online</value>
+                </option>
+		<!--
+                <option>
+                    <description>Let me choose</description>
+                    <image></image>
+                    <text>Advanced</text>
+                    <value>advanced</value>
+                </option>
+		-->
+            </optionList>
+            <postShowPageActionList>
+                <setInstallerVariable name="component(common).selected" value="1">
+                    <persist>0</persist>
+                </setInstallerVariable>
+                <actionGroup>
+                    <actionList>
+                        <setInstallerVariable name="component(scep).selected" value="0">
+                            <persist>0</persist>
+                        </setInstallerVariable>
+                    </actionList>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${preferred_comp}</value1>
+                            <value2>all</value2>
+                        </compareValues>
+                    </ruleList>
+                </actionGroup>
+                <componentSelection>
+                    <deselect>ra, ldap, scep, pub</deselect>
+                    <select>common, ca, node, batch</select>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${preferred_comp}</value1>
+                            <value2>offline</value2>
+                        </compareValues>
+                    </ruleList>
+                </componentSelection>
+                <componentSelection>
+                    <deselect>ca, batch</deselect>
+                    <select>common, node, ra, pub, ldap, scep</select>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${preferred_comp}</value1>
+                            <value2>online</value2>
+                        </compareValues>
+                    </ruleList>
+                </componentSelection>
+            </postShowPageActionList>
+        </choiceParameter>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Installer.Parameter.installdir.description</description>
+            <explanation>Installer.Parameter.installdir.explanation</explanation>
+            <value>@prefix@</value>
+            <default>@prefix@</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <ask>no</ask>
+            <cliOptionName>prefix</cliOptionName>
+            <mustBeWritable>yes</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+        </directoryParameter>
+
+	<stringParameter>
+	    <ask>1</ask>
+	    <name>organization</name>
+	    <default>OpenCA Labs</default>
+	    <description>Organization Name</description>
+	    <explanation>Please provide the name that identifies your organization. This parameter will set several variables in the configuration files (PREFIX/etc/openca/config.xml). An example can be 'OpenCA Labs' or 'University of Modena'. What is the name of your Organization ?</explanation>
+	</stringParameter>
+
+	<labelParameter>
+	   <name>invalidorg</name>
+	   <title>Notice</title>
+	   <description>You have not provided a valid Organization Name. If this was a mistake, please hit "Back" and provide a valid Name.
+	   </description>
+	   <ruleEvaluationLogic>or</ruleEvaluationLogic>
+	   <ruleList>
+               <compareValues>
+                   <logic>equals</logic>
+                   <value1>${organization}</value1>
+                   <value2>OpenCA Labs</value2>
+               </compareValues>
+               <compareValues>
+                   <logic>equals</logic>
+                   <value1>${organization}</value1>
+                   <value2></value2>
+                </compareValues>
+	    </ruleList>
+	</labelParameter>
+
+	<passwordParameter>
+	    <ask>yes</ask>
+	    <name>defaultwebpassword</name>
+	    <description>Password</description>
+	    <descriptionRetype>Retype Password</descriptionRetype>
+	    <explanation>All the administrative interfaces of OpenCA require the user to be authenticated. The default username is 'admin'. Please provide the password for the default user.</explanation>
+	    <default />
+	    <value />
+	</passwordParameter>
+
+	<booleanParameter>
+	   <name>support</name>
+	   <ask>yes</ask>
+	   <default>1</default>
+	   <title>OpenCA Support</title>
+	   <explanation>The OpenCA Project is built around a community of many users and developers who contributed with their time, code and knowledge to the project. The OpenCA Users mailing list is the best place where to ask for help or suggestions abut your installation of OpenCA.
+
+Do you want to subscribe to the OpenCA-Users mailing list now ? 
+</explanation>
+	   <value>1</value>
+	</booleanParameter>
+
+	<stringParameter>
+		<name>email</name>
+		<default></default>
+		<value>me@mydomain.com</value>
+		<ask>1</ask>
+		<description>E-Mail Address</description>
+		<explanation>Please provide the email address you want
+to use for subscribing the OpenCA Users mailing list</explanation>
+		<ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${support}</value1>
+                            <value2>1</value2>
+                        </compareValues>
+		</ruleList>
+	</stringParameter>
+
+	<labelParameter>
+	   <name>invalidemail</name>
+	   <title>Notice</title>
+	   <description>You have not provided a valid email address. If you want to really subscribe to the users Mailing List, please hit "Back" and provide a valid email.
+	   </description>
+	   <ruleEvaluationLogic>or</ruleEvaluationLogic>
+	   <ruleList>
+               <compareValues>
+                   <logic>equals</logic>
+                   <value1>${email}</value1>
+                   <value2>me@mydomain.com</value2>
+               </compareValues>
+               <compareValues>
+                   <logic>equals</logic>
+                   <value1>${email}</value1>
+                   <value2></value2>
+                </compareValues>
+	    </ruleList>
+	</labelParameter>
+
+<!--
+	<booleanParameter>
+	   <name>startservice</name>
+	   <ask>yes</ask>
+	   <default>1</default>
+	   <title>Start OpenCA Server</title>
+	   <explanation>Shall the installer start the OpenCA server at the end of the installation ?</explanation>
+	   <value>1</value>
+	</booleanParameter>
+	-->
+
+        <infoParameter>
+            <name>final_info</name>
+            <title>Next Installation Steps - OpenCA PKI @VERSION@</title>
+            <insertAfter>installation</insertAfter>
+            <value>The OpenCA PKI package comes with default configuration options already set, however it probably requires additional configuration to work properly on your system. 
+
+The OpenCA package is installed in:
+
+   ${installdir}
+
+and the web-pages are installed in:
+
+   @httpd_fs_prefix@
+
+Before starting the OpenCA PKI, please check the configuration files in:
+
+   ${installdir}/etc/openca/
+
+and in particular, edit the following:
+
+   ${installdir}/etc/openca/config.xml
+
+Moreover, we encourage you to subscribe to the OpenCA Users mailing list to receive support from us or other users about the usage of the OpenCA PKI pacakge.
+
+Refer to the OpenCA website for more information.
+</value>
+        </infoParameter>
+
+    </parameterList>
+
+    <postInstallationActionList>
+
+	<substitute>
+	  <files>${installdir}/etc/openca/config.xml</files>
+	  <substitutionList>
+	    <substitution>
+	      <pattern>@ca_organization@</pattern>
+	      <value>${organization}</value>
+	    </substitution>
+          </substitutionList>
+        </substitute>
+
+	<runProgram>
+	    <program>${installdir}/bin/openca-setpasswd</program>
+	    <programArguments>-target ${installdir}/etc/openca/config.xml ${defaultwebpassword}</programArguments>
+	</runProgram>
+
+	<!--
+        <showWarning>
+	   <text>The istaller will now execute the configure_etc.sh script which will set the chosen options in all OpenCA's configurations. If you need to change them, please edit the config.xml file and re-start OpenCA.
+
+The execution of this script may require few seconds.</text>
+        </showWarning>
+	-->
+
+	<addUnixService>
+	    <name>openca</name>
+	    <description>OpenCA Services</description>
+	    <program>${installdir}/etc/init.d/openca</program>
+	</addUnixService>
+
+        <actionGroup>
+            <actionList>
+		<runProgram>
+		    <program>${installdir}/etc/openca/configure_etc.sh</program>
+		    <programArguments></programArguments>
+		</runProgram>
+            </actionList>
+            <ruleList>
+               <compareValues>
+                 <logic>equals</logic>
+                 <value1>${startservice}</value1>
+                 <value2>1</value2>
+               </compareValues>
+            </ruleList>
+        </actionGroup>
+
+        <actionGroup>
+            <actionList>
+		<runProgram>
+		    <program>/etc/init.d/openca</program>
+		    <programArguments>start</programArguments>
+		</runProgram>
+            </actionList>
+            <ruleList>
+               <compareValues>
+                 <logic>equals</logic>
+                 <value1>${startservice}</value1>
+                 <value2>1</value2>
+               </compareValues>
+            </ruleList>
+        </actionGroup>
+
+	<httpPost>
+	    <url>http://www.openca.org/alby/subscribe</url>
+	   <filename>/var/tmp/openca-subscribe.html</filename>
+	   <queryParameterList>
+		<queryParameter name="prj" value="openca" />
+		<queryParameter name="email" value="${email}" />
+		<queryParameter name="ver" value="@VERSION@" />
+		<queryParameter name="os" value="@DIST_NAME@" />
+		<queryParameter name="osver" value="@DIST_VER@" />
+		<queryParameter name="org" value="${organization}" />
+		<queryParameter name="act" value="OP039432012211SSPP" />
+		<queryParameter name="hostname" value="${machine_hostname}" />
+		<queryParameter name="fqdn" value="${machine_fqdn}" />
+		<queryParameter name="ipaddr" value="${machine_ipaddr}" />
+		<!--
+		<queryParameter name="pw" value="" />
+	        <queryParameter name="pw-conf" value="" />
+	        <queryParameter name="digest" value="0" />
+	        <queryParameter name="email-button" value="Subscribe" />
+		-->
+	   </queryParameterList>
+	   <ruleEvaluationLogic>and</ruleEvaluationLogic>
+	   <ruleList>
+               <compareValues>
+                   <logic>does_not_equal</logic>
+                   <value1>${email}</value1>
+                   <value2>me@email.com</value2>
+               </compareValues>
+               <compareValues>
+                   <logic>does_not_equal</logic>
+                   <value1>${email}</value1>
+                   <value2></value2>
+                </compareValues>
+	    </ruleList>
+	</httpPost>
+
+	<!--
+        <launchBrowser>
+            <progressText>Congratulations!</progressText>
+            <url>http://www.openca.org/cgi-bin/install?prj=openca;ver=@VERSION@</url>
+        </launchBrowser>
+	-->
+
+    </postInstallationActionList>
+
+    <finalPageActionList>
+        <launchBrowser>
+            <progressText>Open OpenCA Website</progressText>
+            <url>http://www.openca.org/alby/install?prj=openca;ver=@VERSION@</url>
+        </launchBrowser>
+    </finalPageActionList>
+
+    <platformOptionsList>
+        <platformOptions>
+            <platform>linux</platform>
+        </platformOptions>
+    </platformOptionsList>
+</project>
+

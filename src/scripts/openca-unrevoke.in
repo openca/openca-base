@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+
+## OpenCA - Recovery Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: unrevoke a Certificate
+##       Brief: Revoke a Certificate
+##  Parameters: serial
+
+use OpenCA::OpenSSL;
+use OpenCA::X509;
+use OpenCA::Tools;
+use OpenCA::CRL;
+use OpenCA::@dbmodule@;
+
+## Configurazione
+my $dbDir     = "@ca@/dB";
+my $OPENSSL = ( "@OPENSSL@" or $ENV{'OPENSSL'} );
+
+## Get the parameters
+my $key	     = $ARGV[0];
+my $dataType = "REVOKED_CERTIFICATE";
+
+if( not $key ) {
+	print "\nUSAGE: openca-unrevoke <serial>\n\n";
+	exit 0;
+}
+
+my $cryptoShell = new OpenCA::OpenSSL( SHELL=>"@OPENSSL@" );
+
+if ( not $cryptoShell ) {
+        print "Cannot initialize Crypto Shell (@OPENSSL@)!\n\n";
+        exit 1;
+}
+
+$db = new OpenCA::DB( SHELL=>$cryptoShell, DB_DIR=>"$dbDir" );
+if ( not $db ) {
+        print "Cannot initialize OpenCA::DB class! ($dbDir)\n\n";
+        exit 1;
+}
+
+
+print "Unrevoking $key ... ";
+
+## Get the Certificate from the Certs dB
+my $cert = $db->getItem( DATATYPE=>"REVOKED_CERTIFICATE", KEY=>"$key" );
+if( not $cert ) {
+ 	print "Certificate $serial Not found in DB!\n";
+	exit -1;
+}
+
+if( not $db->updateStatus( OBJECT=>$cert, DATATYPE=>"REVOKED_CERTIFICATE",
+					NEWTYPE=>"VALID_CERTIFICATE" )) {
+	print "Error moving certificate $key to Revoked dB\n";
+	exit -2;
+}
+
+print "Ok.\n";
+
+1;
+

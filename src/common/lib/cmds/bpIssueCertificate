@@ -1,0 +1,172 @@
+## OpenCA - CA Command
+## (c) 1998-2004 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: bpIssueCertificate
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: Issue certificates if the requests are signed
+## Description: Issue certificates if the requests are signed by an
+##              operator with a special operator
+##  Parameters: key, dataType, role, operator
+
+use strict;
+
+sub cmdBpIssueCertificate {
+
+    our ($db, $query, $errno, $errval, $cryptoShell);
+
+    ## get the parameters
+    ## Get the parameters
+    my $operator = $query->param('operator');
+    my $role     = $query->param('role');
+    my $chainDir = getRequired('ChainDir');
+
+    my ($request, $operator_cert, $operator_serial, $signature, $role_sig, $cert);
+
+    configError ("The operator role must be specified") if (not $operator);
+    configError ("The requested role must be specified") if (not $role);
+    generalError ($errval, $errno) if (not crypto_get_ca_token ());
+
+    print startLogPage (gettext ("Issue Certificate Batch Processor"));
+
+    print addLogSection (gettext ("Operator's role ... "));
+    print addLogLine    ($operator);
+    print closeLogSection ();
+
+    print addLogSection (gettext ("Requested role ... "));
+    print addLogLine    ($role);
+    print closeLogSection ();
+
+    print addLogSection (gettext ("Running batch processor ..."));
+
+    my $tempDir = getRequired ('TempDir');
+
+    ## loop
+    ## there can never be a request 0
+    my $key = 0;
+    while ($request = $db->getNextItem(DATATYPE => "APPROVED_REQUEST", KEY => $key)) {
+
+	$key = $request->getSerial();
+
+	## check the requsted role
+	if ($request->getParsed()->{HEADER}->{ROLE} !~ /^$role$/) {
+		print addPreLogLine (
+                i18nGettext (
+                  "CSR __CSR_SERIAL__ ignored because the requested role is __ROLE__.",
+                  "__CSR_SERIAL__", $request->getSerial(),
+				  "__ROLE__", $request->getParsed()->{HEADER}->{ROLE}));
+		next;
+	}
+
+	## is there a signature?
+	$signature = libGetSignatureObject (OBJECT => $request);
+	if (not $signature) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+                  "CSR __CSR_SERIAL__ ignored because there is no signature.",
+                  "__CSR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+	}
+
+	## check the signature
+	if (not libCheckSignature (OBJECT => $request, SIGNATURE => $signature)) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+                  "CSR __CSR_SERIAL__ ignored because the verification of the signature fails. Error: __ERRNO__.",
+                  "__ERRNO__", $errno,
+                  "__CSR_SERIAL__", $request->getSerial()).
+				"<br>\n$errval".
+				"</FONT>");
+		next;
+	}
+
+	##// load the signer's cert
+	$operator_cert = libGetSignerCertificateDB (SIGNATURE => $signature);
+	if (not $operator_cert) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+				  "CSR __CSR_SERIAL__ ignored because the signer's certificate is not loadable.",
+                  "__CSR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+		next;
+	}
+
+	## check role of signer
+	if ($operator_cert->getParsed()->{HEADER}->{ROLE} !~ /^$operator$/) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+				  "CSR __CSR_SERIAL__ ignored because the signer's role is __ROLE__.",
+                  "__CSR_SERIAL__", $request->getSerial(),
+				  "__ROLE__", $operator_cert->getParsed()->{HEADER}->{ROLE}).
+				"</FONT>");
+		next;
+	}
+
+	## issue certificate
+	$cert = libIssueCertificate (KEY      => $request->getSerial(),
+					DATATYPE => "APPROVED_REQUEST");
+	if (not $cert) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+                i18nGettext ("CSR __CSR_SERIAL__ failed.", "__CSR_SERIAL__", $request->getSerial()).
+				"<br>\n".
+                i18nGettext ("Errorcode: __ERRNO__.", "__ERRNO__", $errno).
+				"<br>\n".
+                i18nGettext ("Errormessage: __ERRVAL__.", "__ERRVAL__", $errval).
+				"</FONT>");
+	} else {
+		print addPreLogLine ("<FONT COLOR=#00FF00>".
+                i18nGettext (
+				  "Certificate __CERT_SERIAL__ issued from request __CSR_SERIAL__.",
+                  "__CERT_SERIAL__", $cert->getSerial(),
+				  "__CSR_SERIAL__", $request->getSerial()).
+				"</FONT>");
+	}
+
+    }
+
+    print addLogLine (gettext ("Batch processor finished"));
+    print closeLogSection ();
+
+    print closePage();
+
+}
+
+sub getParamsBpIssueCertificate
+{
+    our ($query);
+    my $result = undef;
+
+    if (not $_[0])
+    {
+        ## set values
+	my $html_operator = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'popup_menu',
+					-name=>'operator',
+					-values=>[loadRoles()]);
+	my $html_role = $query->newInput (
+					-regx=>'LETTERS',
+					-intype=>'popup_menu',
+					-name=>'role',
+					-values=>[loadRoles()]);
+
+        $result = "<table>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Operator's role")."</td>\n".
+                   "    <td>".$html_operator."</td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Requested role")."</td>\n".
+                   "    <td>".$html_role."</td>\n".
+                   "  <tr>\n";
+
+        $result .= "</table>\n";
+    }
+
+    return $result;
+}
+
+1;

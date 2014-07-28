@@ -1,0 +1,66 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: add_script
+##       Brief: add a new script
+## Description: shows a html-form where you can enter the data
+##              of the new script
+##  Parameters: none
+
+use strict;
+
+sub cmdAdd_script {
+
+our $tools;
+
+## the data which is stored in the configurationfile of a script
+my $operation;
+
+## Get required parameters ( return only the value string )
+my $rbac     = getRequired ( 'RBAC_DIR' );
+my $operations = getRequired ( 'OPERATIONS_DIR');
+
+## build select statement
+my @values = loadOperations();
+$operation = "<select name=operation>\n";
+for my $h (@values) {
+  $operation .= "<option value=\"".$h."\">".$h."\n";
+}
+$operation .= "</select>\n";
+
+my $page;
+
+my ($hidden_list, $info_list, $cmd_panel) = (undef, undef, undef);
+$hidden_list->{"cmd"} = "show_prepared_script";
+$info_list->{BODY}->[0]->[0] = gettext ("Script");
+$info_list->{BODY}->[0]->[1] = '<input type=text name=script value="">';
+$info_list->{BODY}->[1]->[0] = gettext ("Operation");
+$info_list->{BODY}->[1]->[1] = $operation;
+$info_list->{BODY}->[2]->[0] = gettext ("Method to get the Owner");
+$info_list->{BODY}->[2]->[1] =
+    "<select name=owner_method>\n".
+    "  <option value=\"\">".
+      gettext ("CA-Certificate and CRL (Certification Authority itself)").     "\n".
+    "  <option value=\"CERTIFICATE_SERIAL\">".gettext ("Certificate's Serial")."\n".
+    "  <option value=\"REQUEST_SERIAL\">".    gettext ("Request's Serial").    "\n".
+    "  <option value=\"CRR_SERIAL\">".        gettext ("CRR's Serial").        "\n".
+    "  <option value=\"CGI\">".               gettext ("directly stored in a CGI-variable")."\n".
+    "  <option value=\"ANY\">".               gettext ("access to any role needed")."\n".
+    "</select>\n";
+$info_list->{BODY}->[3]->[0] = gettext ("Name of the Argument for the Method to get the Owner");
+$info_list->{BODY}->[3]->[1] = '<input type=text name=owner_argument value="">';
+$cmd_panel->[0] = '<input type="submit" value="OK">';
+
+return libSendReply (
+                     "TIMESTAMP"   => 1,
+                     "NAME"        => gettext ("Add a new Script"),
+                     "EXPLANATION" => gettext ("Please enter the data of the new script!"),
+                     "HIDDEN_LIST" => $hidden_list,
+                     "INFO_LIST"   => $info_list,
+                     "CMD_PANEL"   => $cmd_panel
+                    )
+}
+
+1;
+

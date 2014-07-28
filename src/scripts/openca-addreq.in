@@ -1,0 +1,111 @@
+#! @PERL@
+
+$VER = '0.4.32';
+
+## Add Request to DB - Version $VER
+## (c) 1999 by Massimiliano Pala 
+## OpenCA Core Team
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This program adds a request to the DB where the
+## ca/RAServer program will look for certificates. 
+##
+## This script will be run when you issue certificate through the
+## scritps in the bin/ directory and not using the Web interface.
+##
+## Please take note that this program, if the DB is not present
+## will create it: you must be sure you run it as the user the
+## httpd server will run (as the ca program needs to access to
+## the DB to properly work).
+##
+## If permissions are not set, please change them or rebuild the DB
+## (delete it and use this prog.)
+##
+## For Any clarifications, please refer to:
+##
+##	o Documentation;
+##	o openca-devel@openca.org;
+##
+
+use OpenCA::@dbmodule@;
+use OpenCA::OpenSSL;
+use OpenCA::REQ;
+use OpenCA::X509;
+
+print "\n  Add Request to DB - Version $VER (@dbmodule@ support set)\n";
+print "  (c) 1999/2000 by Massimiliano Pala and OpenCA Group\n";
+print "  OpenCA Licensed software\n\n";
+
+my @keys = @ARGV;
+
+my $reqFile 	= $keys[0];
+my $dataType	= ( $keys[1] or $ENV{'DATATYPE'} or "PENDING_REQUEST" );
+
+my $OPENCA_DIR 	= ( $keys[2] or $ENV{'ca_prefix'} );
+my $OPENSSL 	= ( $keys[3] or "@OPENSSL@" or $ENV{'OPENSSL'} );
+
+if( "$reqFile" eq "" ) {
+	print "  USAGE: $0 <fileName> [DATATYPE] [OPENCA_DIR] [SSL_DIR]\n\n";
+	print "ERROR: needed at least request file name!\n\n";
+	exit 1;
+}
+
+if( "$OPENCA_DIR" eq "" ) {
+	$OPENCA_DIR = '@ca_prefix@';
+}
+
+if( "$OPENSSL" eq "" ) {
+	$OPENSSL = "/usr/bin/openssl";
+}
+
+## Initialize the crypto shell;
+my $cryptoShell = new OpenCA::OpenSSL( SHELL=>"$OPENSSL" );
+
+$cryptoShell->setParams( CONFIG=>"$OPENCA_DIR/conf/openssl/openssl.cnf",
+                         TMPDIR=>"$OPENCA_DIR/tmp",
+                	 STDERR=>"/dev/null" );
+
+
+if ( not $cryptoShell ) {
+        configError( "Cannot initialize Crypto Shell ($shellPath)!" );
+        exit 1;
+}
+
+## Initialize the DB support
+my $db = new OpenCA::@dbmodule@ ( SHELL=>$cryptoShell, 
+				  DB_DIR=>"@var_prefix@/db" );
+
+if ( not $db ) {
+        configError( "Cannot initialize OpenCA::@dbmodule@ class! ($OPENCA_DIR/dB)" );
+        exit 1;
+}
+
+## Main Section
+## ============
+
+my $reqFile  = "${OPENCA_DIR}/tmp/${reqFile}_req.pem";
+
+my $req = new OpenCA::REQ( SHELL   => $cryptoShell,
+                           GETTEXT => \&gettext,
+                           INFILE  => "$reqFile" );
+if( not $req ) {
+        print "Error while loading certificate ($reqFile)!";
+        exit 1;
+}
+
+if ( not $db->storeItem( DATATYPE=>"$DATATYPE", OBJECT=>$req, MODE=>"INSERT")) {
+        print ("Error while storing cert to dB!");
+} else {
+        print "Certificate $reqFile successfully stored.\n\n";
+}
+
+sub gettext
+{
+    return $_[0];
+}
+
+exit 0;

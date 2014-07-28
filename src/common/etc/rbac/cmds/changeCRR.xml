@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>changeCRR</name>
+            <operation>crr edit</operation>
+            <owner_method>CRR_SERIAL</owner_method>
+            <owner_argument>key</owner_argument>
+        </command>
+    </command_config>
+</openca>

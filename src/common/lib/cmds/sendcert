@@ -1,0 +1,129 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: sendcert
+##     Version: $Revision: 1.4 $
+##       Brief: submit the ca_certificate
+## Description: submit the actual ca-certificate
+##  Parameters:                                                                              
+use strict;
+
+sub cmdSendcert {
+
+	our ( $query, $cryptoShell, $db );
+
+	my $page = undef;
+
+	if ($query->param ('key')) {
+		my $dataType = $query->param ('dataType') or 
+							"VALID_CERTIFICATE";
+		my $key      = $query->param ('key');
+		my $format   = $query->param ('format');
+		my $sendType = undef;
+		my $descr    = undef;
+
+
+		if ($query->param('format_sendcert')) {
+                	$format = $query->param('format_sendcert') 
+		}
+
+		my $item = $db->getItem (DATATYPE => (uc $dataType), 
+					 KEY      => $key);
+
+		if (not $item) {
+			generalError(i18nGettext (
+					"Cannot load certificate __SERIAL__.",
+			                           "__SERIAL__", $key));
+		}
+
+		if ( $dataType =~ /CA_CERTIFICATE/ ) {
+			$sendType = "application/x-x509-ca-cert";
+			$descr = "CA Certificate";
+		} else {
+			$sendType = "application/x-x509-email-cert";
+			$descr = "User Certificate";
+			# $sendType = "application/pkix-cert";
+		}
+
+		if ($format =~ /TXT|PEM/i) {
+			$page .= "Content-type: text/plain\n";
+			$page .= "Content-Description: $descr\n";
+			$page .= "Content-Disposition: inline\n\n";
+		} elsif ( $format =~ /CRT/i ) {
+			$page .= "Content-type: $sendType\n";
+			$page .= "Content-Description: $descr\n";
+			$page .= "Content-Disposition: inline\n\n";
+		} else {
+			my $name = "cert";
+                        $name = $item->getParsed()->{DN_HASH}->{CN}[0]
+                            if (exists $item->getParsed()->{DN_HASH}->{CN});
+			$name =~ s/[^\w.]/_/g;
+			$page .= qq{Content-Disposition: attachment; } .
+				 qq{filename="$name.$format"\n} .
+				 qq{Content-type: $sendType\n} .
+				 qq{Content-Description: $descr\n\n};
+		}
+
+		if ($format =~ /DER|CRT/i) {
+			$page .= $item->getDER;
+		} elsif ($format =~ /TXT/i) {
+			$page .= $item->getTXT;
+		} else {
+			$page .= $item->getPEM;
+		}
+
+	} else {
+		my $format   = $query->param ('format');
+		my $cmd   = $query->param ('cmd');
+		my $dataType = $query->param ( 'dataType' );
+
+		if ($query->param('format_sendcert') ne "" ) {
+                	$format = $query->param('format_sendcert') 
+		}
+
+		my $cacert = getRequired( 'CACertificate' );
+		my $outData = undef;
+
+		my $crt = new OpenCA::X509( SHELL   => $cryptoShell,
+                         GETTEXT => \&i18nGettext,
+                         INFILE  => "$cacert" );
+
+		if ( not $crt ) {
+			configError ( gettext ("Can't access CA Certificate!") );
+		}
+
+		if  ( $format =~ /^PEM$/i ) {
+			$outData = $crt->getPEM();
+			print "Content-Type: text/html\n";
+		} elsif ( $format =~ /DER|NET|CRT/i ) {
+			$outData = $crt->getDER();
+			print "Content-Type: application/x-x509-ca-cert\n";
+		} elsif ( $format =~ /TXT/i ) {
+			$outData = $crt->getTXT();
+			print "Content-Type: text/html\n";
+		} else {
+			$outData = "Format ($format) not supported!\n";
+		}
+
+		# print "Content-Type: application/x-x509-ca-cert\n";
+		print "Content-Disposition: inline\n\n";
+
+		print "$outData";
+
+		# print "Content-Disposition: attachment; " . 
+		# 		"filename=ca-certificate.$format;\n\n";
+
+		# while (<FD>) {
+		# 	print $_;
+		# }
+
+		# close FD;
+	}
+
+	print $page;
+
+	return 1;
+}
+
+1;

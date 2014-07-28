@@ -1,0 +1,65 @@
+#!@PERL@
+
+## Batch System (HTML Interface)
+## (c) 1999-2004 by Massimiliano Pala and OpenCA Group
+## All Rights Reserved
+
+@perl_use_lib@
+
+use strict;
+no warnings;
+
+use OpenCA::Configuration;
+
+our (%AUTOCONF, $config, $common_libs);
+
+%AUTOCONF = ();
+$AUTOCONF {"lib_prefix"}     = "@lib_prefix@";
+$AUTOCONF {"etc_prefix"}     = "@etc_prefix@";
+$AUTOCONF {"var_prefix"}     = "@var_prefix@";
+$AUTOCONF {"config_prefix"}  = "@batch_prefix@";
+$AUTOCONF {"VERSION"}        = "@VERSION@";
+$AUTOCONF {"PROGRAM"}        = "Batch System";
+
+## load library with CGI init
+
+my $CONFIG = $AUTOCONF {"etc_prefix"}.'/servers/'.$AUTOCONF {"config_prefix"}.'.conf';
+$config = new OpenCA::Configuration;
+if( not defined (my $ret = $config->loadCfg( "$CONFIG" )) ) {
+        print STDERR "Error while loading configuration ($CONFIG)!";
+        print "Content-type: text/html\n\n";
+        if ( -e $CONFIG ) {
+            if ( -r $CONFIG ) {
+                print "The configuration file <b>$CONFIG<b/> can not be parsed!";
+            } else {
+                print "The configuration file <b>$CONFIG</b> exists but can not be read!<p>
+                You probably misconfigured OpenCA during installation. Make sure that you used
+                the correct user and group for your webserver.<p>
+                <i>HINT:</i><br>
+                Under UNIX-like operating systems you can determine the user and group of your
+                webserver by issuing the following command<br>
+                # ps -eo \"%U %G %a\"<br>
+                and look for the process name of your webserver (in most cases httpd)<p>
+                Use this information when customizing your configure script at the following
+                configuration options:<br>
+                 --with-httpd-user=<b>user id of webserver</b><br>
+                 --with-httpd-group=apache=<b>group id of webserver</b><br>
+                ";
+            }
+        } else {
+            print "The configuration file <b>$CONFIG</b> does not exist!";
+        }
+        exit 100;
+}
+
+$common_libs  = $config->getParam('CgiLibPath')->{VALUES}->[0];
+if( not defined $common_libs or not $common_libs ) {
+        print STDERR "Error while loading path to the libraries ($CONFIG)!";
+        print "Content-type: text/html\n\n";
+        print "Error while loading path to the libraries ($CONFIG)!";
+        exit 100;
+}
+
+require "$common_libs/initCGI";
+
+exit 0;

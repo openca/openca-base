@@ -1,0 +1,239 @@
+/* CSS for main elements on the home page
+ * (c) 2010 by Massimiliano Pala and OpenCA Labs
+ * All rights reserved
+ */
+
+.home_back {
+	background-image: url('images/openca_main_back_col_1.png');
+	background-color: #ddddff;
+	background-position: bottom right;
+	/*
+	border-color: black;
+	border-width: 2px;
+	background-image: url('images/home_back_1.png');
+	background-color: #c0a68f;
+	background-position: bottom left;
+	*/
+
+	background-repeat: no-repeat;
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 2%;
+	height: 90%;
+	/* min-height: 400px; */
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-khtml-border-radius: 10px;
+}
+
+.home_trans {
+	/* background-color: #ccccdd;
+	opacity: 0.8; */
+	background-color: white;
+	background-color: #e0c6af;
+	opacity: 0.8;
+	border-style: solid;
+	border-width: 0px;
+	float: left;
+	top: 30px;
+	right: 40px;
+	left: 320px;
+	position: absolute;
+	bottom: 25%;
+	-moz-border-radius: 10px;
+    	-webkit-border-radius: 10px;
+    	border-radius: 10px;
+    	-khtml-border-radius: 10px;
+	display: none;
+}
+
+.home_content {
+	padding: 10px;
+	border-style: solid;
+	border-color: white;
+	border-width: 2px;
+	background: url('images/panel_back.png');
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-color: #ddf;
+	-moz-border-radius: 10px;
+    	-webkit-border-radius: 10px;
+    	border-radius: 10px;
+    	-khtml-border-radius: 10px;
+	margin-top: 40px;
+	margin-right: 8%;
+	margin-left: 5%;
+	margin-bottom: 10px;
+	min-width: 645px;
+	/* width: 85%; */
+}
+
+.home_content a {
+	color: #5090DA;
+	font-weight: bold;
+}
+
+.home_content a:visited {
+	color: #5090DA;
+	font-weight: bold;
+}
+
+.home_content p.title {
+	position: relative;
+	float: right;
+	/* background-color: #669; */
+	background-color: #5090da;
+	color: white;
+	top: -55px;
+	right: -50px;
+	padding: 10px;
+	margin-bottom: -50px;
+	border-color: white;
+	border-style: solid;
+	border-width: 3px;
+	-moz-border-radius: 10px;
+    	-webkit-border-radius: 10px;
+    	border-radius: 10px;
+    	-khtml-border-radius: 10px;
+	font-weight: bold;
+	font-family: Sans-Serif;
+	font-size: 14pt;
+	text-shadow: 1px 1px 3px #000, 0 0 12px #666, 0 0 4px #666, 1px 1px 2px #333;
+}
+
+.home_content p {
+	text-align: justify;
+	margin: 10px;
+}
+
+ul.notices {
+	text-align: justify;
+	margin: 10px;
+	border: inset;
+	border-width: 2px;
+	border-color: grey;
+	background-color: white;
+
+	-moz-border-radius: 10px;
+    	-webkit-border-radius: 10px;
+    	border-radius: 10px;
+    	-khtml-border-radius: 10px;
+}
+
+ul.notices li {
+	margin: 3px;
+	padding: 3px;
+}
+
+.easy {
+	margin-left: 20px;
+	margin-right: 10px;
+	margin-top: 30px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid;
+	border-color: #eef;
+
+	width: 200px;
+	min-width: 200px;
+	padding: 8px;
+	padding-left: 15px;
+	display: inline;
+
+	background-color: #5090da;
+
+	-moz-border-radius: 10px;
+    	-webkit-border-radius: 10px;
+    	border-radius: 10px;
+    	-khtml-border-radius: 10px;
+
+	color: white;
+	font-size: 12pt;
+	font-weight: bold;
+	/* text-shadow: 1px 1px 3px #000, 0 0 12px #666, 0 0 4px #666, 1px 1px 2px #333; */
+}
+
+.home_control_panel {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-style: solid;
+    border-width: 2px;
+    /* padding: 20px; */
+    border-color: white;
+    margin: 10px;
+}
+
+.easy a {
+	color: white;
+}
+
+.easy a:visited {
+	color: white;
+}
+
+.home_rounded {
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+    -khtml-border-radius: 9px;
+    width: 90%;
+    min-width: 90%;
+    margin: 5px;
+    font-size: 12pt;
+    font-family: Sans-Serif;
+    border-style: normal;
+    border-width: 2px;
+    background-color: #ddddff;
+}
+
+.inner_control_panel {
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+    -khtml-border-radius: 9px;
+
+    border-style: inset;
+    border-width: 2px;
+    border-color: white;
+    background-color: #aac;
+
+    /* background-color: #aaaacc; */
+    background-repeat: repeat-x;
+    background-image: url('images/panel_back.png');
+    font-family: Sans-Serif;
+    text-align: center;
+    padding: 10px;
+    min-width: 500px;
+}
+
+.inner_news_panel {
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+    -khtml-border-radius: 9px;
+    border-style: none;
+    border-width: 0px;
+    padding: 10px;
+    border-color: white;
+    background-color: #eef;
+    background-repeat: repeat-x;
+    background-image: url('images/panel_back.png');
+    color: black;
+    font-family: Sans-Serif;
+}
+
+.inner_control_panel a, a:visited {
+	color: white;
+}
+
+img.number {
+	position: relative;
+	top: -10px;
+	left: -30px;
+	margin-right: -30px;
+	width: 30px;
+}
+

@@ -1,0 +1,77 @@
+INSTALLATION
+------------
+
+* install with support for DBI and DBIS
+* change the settings of DBI.conf
+  (Please change only the neccessary parts of the
+   variables which start with "remote", the other
+   variables are still not used or only in an early
+   testphase. If you want to know more please use
+   "man OpenCA::DBI".)
+* the update of the man-page is still a ToDo
+  (official deadline for the updated manpage is
+  2001-Jul-15)
+
+TROUBLESHOOTING
+---------------
+
+mysql
+-----
+Please don't use MySQL in a realworld-PKI. This database
+is deprecated because it doesn't support the ACID-features
+actually and I have no chance to grant the integrity
+of your PKI-DB.
+
+A tomicity
+C onsistency
+I solation
+D urability
+
+postgresql
+----------
+Be shure that YOU set a password!
+
+You can test this with nessus (http://www.nessus.org).
+
+This was and is the most common error of us (some
+anonymous people of the staff of the datacenter of
+the Humboldt-University of Berlin ;-D).
+
+db2
+---
+If you get the error "The total environment is not set ..."
+Please read the CAVEATS-file like recommended by
+IBM. If this not help then you must do the following:
+
+$HOME is the home of the db2-instance
+
+cp $HOME/sqllib/db2profile $HOME_OF_HTTPD_USER/
+
+vi /etc/init.d/apache (or where ever your apache-
+startupscript is placed)
+> . $HOME_OF_HTTPD_USER/db2profile
+
+vi /etc/httpd/httpd.conf
+go to the position of your virtual host or 
+otherwise enter it in the right global context
+>PassEnv LD_LIBRARY_PATH
+>PassEnv PATH
+>PassEnv LIBPATH
+>PassEnv CLASSPATH
+>PassEnv DB2INSTANCE
+>PassEnv DB2DIR
+>PassEnv INSTHOME
+
+Perhaps you don't need some of the environmentvariables
+but my installation works with this environment and
+this should only be a point where you can start ;-D
+
+-----------------------------------------------------------
+
+If there are further questions or problems then you can
+contact the developers of OpenCA and especially me via:
+
+michael.bell@web.de
+michael.bell@rz.hu-berlin.de
+openca-users@lists.sf.net
+openca-devel@lists.sf.net

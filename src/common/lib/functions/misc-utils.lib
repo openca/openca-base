@@ -1,0 +1,1126 @@
+## Misc Utilities.
+
+use strict;
+use utf8;
+
+sub configError {
+    our ($ui_html, $log, $journal);
+
+    libDBAbort ();
+    if ($log) {
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+    } else {
+        print STDERR "Logging is not initialized.\n";
+    }
+
+    if (not $ui_html) {
+        my $msg = "";
+        foreach my $item (@_)
+        {
+            $msg .= "Configuration error: ".$item."\n";
+        }
+        print $msg;
+        die ($msg);
+    } else {
+        return $ui_html->configError ( @_ );
+    }
+}
+
+sub generalError {
+    our ($ui_html, $log, $journal);
+
+    configError (@_) if (not $log or not $ui_html);
+
+    libDBAbort ();
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+    return $ui_html->generalError ( @_ );
+}
+
+sub getCopyRight {
+    our $ui_html;
+    return $ui_html->getCopyRight();
+}
+
+sub closePage {
+    our $ui_html;
+    return $ui_html->closePage();
+}
+
+sub success 
+{
+  my @keys = @_;
+
+  my $exp  = $keys[0];
+  my $desc = $keys[1];
+  my $log  = $keys[2];
+
+  my $info_list = undef;
+
+  if ("$desc")
+  {
+    $info_list->{BODY}->[0]->[1] = i18nGettext("$desc");
+  } 
+  else 
+  {
+    $info_list->{BODY}->[0]->[1] = gettext("Success") . ".";
+  }
+
+  if ($log)
+  {
+    $info_list->{BODY}->[1]->[0] = "&nbsp;";
+    $info_list->{BODY}->[2]->[0] = i18nGettext("Log Message");
+    $info_list->{BODY}->[3]->[1] = 
+    "<div class=\"log\"><pre>$log</pre></div>";
+  }
+
+  return libSendReply (
+    "NAME"        => i18nGettext("Administration Success"),
+    "EXPLANATION" => i18nGettext("$exp"),
+    "INFO_LIST"   => $info_list
+  );
+}
+
+sub getRequiredList {
+
+  our $config;
+
+	## Returns required parameter SINGLE STRING VALUE
+	## this function simplifies the parameter access
+	## but returns only the first parameter
+
+	my @keys = @_;
+	my ($name, $tmp);
+	my $found = 0;
+
+	for $name (@keys) 
+  {
+		if (($tmp = $config->getParam($name)) != undef)
+    {
+			## Parameter found
+			$found = 1;
+			last;
+		}
+	}
+
+	## Check for found value
+	if ($found == 0)
+  {
+		configError( i18nGettext ("Missing Configuration Keyword(s) : __KEYS__", "__KEYS__", @keys) );
+	}
+
+	return @{$tmp->{VALUES}};
+}
+
+sub getRequired {
+
+  our $config;
+
+	## Returns required parameter SINGLE STRING VALUE
+	## this function simplifies the parameter access
+	## but returns only the first parameter
+
+	my $name	= $_[0];
+	my $cnf		= $_[1];
+	my $tmp;
+
+	if( not defined( $cnf))
+  {
+		$cnf = $config;
+	}
+
+	if (not defined ($tmp = $cnf->getParam($name)))
+  {
+		## If there is an Error, just send the missing
+		## parameter error to the browser
+		configError( i18nGettext ("Missing Configuration Keyword : __KEY__", "__KEY__", $name) );
+	}
+
+	## If all gone well we should have the value string in
+	## $ret and return it to the calling funcion;
+	my $ret = $tmp->{VALUES}->[0];
+
+	return $ret;
+}
+
+sub libDoCommand 
+{
+    our ($DEBUG, $db, $journal, $session, $log, $ui_html);
+    my $cmd = $_[0];
+    my $client = $_[1];
+
+    if (not exists $journal->{cmd})
+    {
+        $journal = {
+                'CLASS'      => "cmd",
+                'LEVEL'      => "info",
+                'session_id' => $session->getID(),
+                'cmd'        => $cmd,
+                'message'    => ""
+                   };
+    }
+    else
+    {
+      $journal->{cmd} .= "\n".$cmd;
+    }
+
+    ##// Let's get the commands directly from the cmds/ directory.
+    ## The require will load and execute it
+    $cmd = "cmd".uc (substr ($cmd, 0, 1)).substr ($cmd, 1, length ($cmd)-1);
+    # my $result = eval $cmd."()";
+    my $result = eval { \&{bless \&$cmd}($client); };
+    if ($result)
+    {
+        libDBCommit();
+    } 
+    elsif (not defined $result and $@ and not $ui_html->dead_on_error)
+    {
+        generalError (i18nGettext ("The compilation of the command __CMD__ failed. __ERRVAL__",
+                                   "__CMD__", $cmd,
+                                   "__ERRVAL__", $@));
+    }
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+}
+
+sub libDBGetFirstItem {
+
+        our $db;
+	my $datatype = $_[0];
+
+	my $result = $db->getNextItem (DATATYPE => $datatype);
+	if (not $result and $db->errno()) {
+		generalError (i18nGettext ("Database failed with errorcode " .
+                        "__ERRNO__.", "__ERRNO__", $db->errno()).
+                              " ".$db->errval());
+	}
+	return $result;
+}
+
+sub libDBGetLastItem {
+
+        our $db;
+	my $datatype = $_[0];
+	my $result = undef;
+
+        my $result = $db->getPrevItem ( DATATYPE => $datatype );
+	if (not $result and $db->errno()) {
+		generalError (i18nGettext ("Database failed with errorcode " .
+                        "__ERRNO__.", "__ERRNO__", $db->errno()).
+                              " ".$db->errval());
+	}
+	return $result;
+
+	# if ($datatype =~ /^(REQUEST|CRR)$/i and 
+        #                                 getRequired ("DBmodule") !~ /DBI/i) {
+# 		my @list = ( 'NEW', 'RENEW', 'PENDING', 'SIGNED',
+# 		             'APPROVED', 'ARCHIVED', 'DELETED' );
+# 
+#                 foreach my $status (@list) {
+# 			my $h_result = $db->getPrevItem (
+#                                         DATATYPE => "${status}_${datatype}");
+# 
+# 			if (not $result or
+# 				    ($h_result and $h_result->getSerial() 
+#                                                       > $result->getSerial())) {
+# 		                $result = $h_result
+ #                        };
+# 		};
+# 
+# 	} else {
+# 		$result = $db->getPrevItem (DATATYPE => $datatype);
+# 	}
+
+# 	if (not $result and $db->errno()) {
+# 		generalError (i18nGettext (
+ #                        "Database failed with errorcode __ERRNO__.",
+  #                                       "__ERRNO__", $db->errno()).
+   #                                                      " ".$db->errval())
+# 
+# 			if ($db->elements (DATATYPE => $datatype) or
+# 			    not defined $db->elements (DATATYPE => $datatype));
+# 		return undef;
+# 	}
+# 	return $result;
+}
+
+sub bpScanDir {
+	my $dir = $_[0];
+	my $sub = $_[1];
+
+	eval $sub." (\"$dir\");";
+
+	## get directories
+	opendir( DIR, $dir );
+	my @dirList = sort readdir( DIR );
+	closedir( DIR );
+
+	## check every directory
+	my $h;
+	foreach $h (@dirList) {
+		next if ($h eq ".");
+		next if ($h eq "..");
+		next if (not -d $dir."/".$h);
+
+		bpScanDir ($dir."/".$h, $sub);
+	}
+}
+
+sub i18nGettext {
+
+    my $i18n_string = gettext ($_[0]);
+
+    my $i = 1;
+    my $option;
+    my $value;
+    while ($_[$i]) {
+        $i18n_string =~ s/$_[$i]/$_[$i+1]/g;
+        $i += 2;
+    }
+
+    # utf8::decode( $i18n_string );
+    return $i18n_string;
+}
+
+sub libDBCommit
+{
+  our ($db);
+	if (getRequired ('DBmodule') =~ /DBI/i) {
+		return $db->commit();
+	}
+}
+
+sub libDBAbort {
+
+  our ($db);
+	if (getRequired ('DBmodule') =~ /DBI/i and $db)
+  {
+		return $db->rollback();
+	}
+}
+
+sub libGetPermissionHash
+{
+    my $hash = {};
+    foreach my $h (@_)
+    {
+        $hash->{uc $h} = 1;
+    }
+    return $hash;
+}
+
+sub libCheckPasswd {
+
+    our ($query, $db, $cryptoShell);
+    my $type = shift;
+
+    ## is a passphrase required?
+    my $pwd = getRequired ('REQUIRE_PASSWD_'.uc ($type));
+
+    if ($pwd =~ /NO|OFF/i) {
+        return 1;
+    }
+
+    ## check the passphrase
+    if ($query->param ('PASSWD_'.uc ($type)))
+    {
+        ## get all the hidden fields
+        foreach my $hidden ($query->param)
+        {
+            next if ($hidden !~ /^HIDDEN_/i);
+
+            my $name = $hidden;
+            $name =~ s/^HIDDEN_//i;
+            $query->param (-name => $name, -value => $query->param ($hidden));
+        }
+
+        ## get the object
+        my $datatype = $query->param ('DATATYPE');
+        $datatype = $query->param ('dataType') if (not $datatype);
+        my $key = $query->param ('KEY');
+        $key = $query->param ('key') if (not $key);
+        my $object = $db->getItem (DATATYPE => $datatype, KEY => $key);
+        if (not $object)
+        {
+            generalError (
+                i18nGettext ("Cannot load __DATATYPE__ __KEY__ from database.",
+                             "__DATATYPE__", $datatype,
+                             "__KEY__", $key).
+                $db->errval, $db->errno);
+        }
+
+        ## get SHA1 hash
+	my $sha1 = $cryptoShell->getDigest (
+			DATA      => $query->param ('PASSWD_'.uc ($type)),
+			ALGORITHM => "sha1");
+
+        ## check the passphrase
+	if ($object->getParsed()->{HEADER}->{'SHA1_PASSWD_'.uc ($type)} ne 
+                                                                        $sha1) {
+		generalError (gettext ("Permission denied. Wrong Passphrase."));
+	}
+
+        return 1;
+
+    } else {
+        my ($hidden_list, $info_list, $cmd_panel) = (undef, undef, undef);
+
+        my $name = gettext ("Passphrase protected content");
+        my $exp  = gettext ("The requested content is protected by a passphrase. Please enter the passphrase to access the content.");
+
+        $hidden_list->{"cmd"} = $query->param ('cmd');
+        $hidden_list->{"key"} = ($query->param ('key') or $query->param ('serial'));
+        foreach my $key ($query->param)
+        {
+            $hidden_list->{"HIDDEN_$key"} = $query->param ($key);
+        }
+
+        $cmd_panel->[0] = '<input type=submit value="'.gettext ("OK").'">';
+        $cmd_panel->[1] = '<input type=reset value="'.gettext ("Reset").'">';
+
+        $info_list->{BODY}->[0]->[0] = gettext ("Password to access the page");
+        $info_list->{BODY}->[0]->[1] = '<input type=password name="PASSWD_'.uc ($type).'" value="" size=16 minlength=8>';
+
+        libSendReply (
+                      "NAME"        => $name,
+                      "EXPLANATION" => $exp,
+                      "HIDDEN_LIST" => $hidden_list,
+                      "CMD_PANEL"   => $cmd_panel,
+                      "INFO_LIST"   => $info_list
+                     );
+        exit 1;
+    }
+}
+
+sub libSendReply
+{
+  our $ui_html;
+  my $keys = {@_};
+
+  $keys->{NAME} = checkHSMLock($keys->{NAME});
+  return $ui_html->libSendReply (%$keys);
+}
+
+
+##
+## add the HSM status indicator to the NAME section of the page
+## this is applicable only to the Luna* (and probably nCipher HSMs) in  
+## CA interface
+##
+
+sub checkHSMLock
+{
+	my $name = shift @_;
+	our $xml_cache;
+	my $option_number;
+
+	if ( getRequired ('CgiServerName') !~ /ca/i)
+	{
+		return $name;
+	}
+
+	my $path = 'token_config/token';
+	my $token_count = $xml_cache->get_xpath_count(
+                    FILENAME => getRequired ('TokenConfiguration'),
+                    XPATH    => $path );
+
+	my $token;
+	my $token_index = 0;
+	my $token_type;
+	for (my $i ; $i < $token_count; $i ++)
+	{
+		 $token_type = $xml_cache->get_xpath(
+					FILENAME => getRequired ('TokenConfiguration'),
+					XPATH    => [ $path, "type" ],
+                        		COUNTER  => [ $i, 0 ]);
+		if (($token_type !~ /^Luna/i ) and ($token_type !~ /nCipher/i ))
+		{
+			next;
+		}
+		$token_index = $i;
+
+		$token = $xml_cache->get_xpath(
+			FILENAME => getRequired ('TokenConfiguration'),
+	                XPATH    => [$path,,'type' ],
+        	        COUNTER  => [ $i,0 ]);
+
+        }
+		
+
+        # 2005-08-10 Martin Bartosch: removed nCipher because we do not
+        # have a clear and up-to-date indication of key online status
+	if ($token !~ /^Luna/i)  # and  ($token !~ /nCipher/i))
+	{
+		return $name ;
+	}
+
+
+
+	$path = 'token_config/token/option';
+
+	my $options_count = $xml_cache->get_xpath_count(
+		FILENAME => getRequired ('TokenConfiguration'),
+		XPATH    => $path ); 
+	
+	my $option;
+	for (my $index = 0 ; $index < $options_count; $index ++)
+	{
+		next if ($xml_cache->get_xpath(
+                        FILENAME => getRequired ('TokenConfiguration'),
+                        XPATH    => [ $path, "name" ],
+                        COUNTER  => [ $index, 0 ]) !~ /LOCK_FILE/);
+		$option_number    = $index;
+	}
+
+	my $lock_file = $xml_cache->get_xpath(
+		FILENAME => getRequired ('TokenConfiguration'),
+		XPATH    => [$path,,'value' ],
+		COUNTER  => [ $option_number,0 ]);
+
+	## test the existance of the lock  file
+
+	my $ret_string;
+	if( -e $lock_file)
+	{
+		$ret_string = "$name <h3>HSM Status: Logged in</h3>  ";
+	}else{
+		$ret_string = "$name <h3>HSM Status: Logged out</h3>";		
+	}
+
+	return $ret_string;
+}
+
+
+sub libSendMenu {
+    our $ui_html;
+    return $ui_html->libSendMenu (@_);
+}
+
+sub libSendStatic {
+    our $ui_html;
+    # return $ui_html->libSendStatic (@_);
+    return $ui_html->libSendReply ( MODE=>"STATIC", @_);
+}
+
+################################################################################
+
+sub libGetStateMachine
+{
+    use OpenCA::StateMachine;
+    our $xml_cache;
+
+    ## configuration for workflowengine
+    my $state_list = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/state_list_file" ],
+           COUNTER  => [ 0 ]);
+    my $function_list = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/function_list_file" ],
+           COUNTER  => [ 0 ]);
+    my $function_dir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/function_directory" ],
+           COUNTER  => [ 0 ]);
+    my $function_suffix = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/function_state_file_suffix" ],
+           COUNTER  => [ 0 ]);
+    my $user_list = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_list_file" ],
+           COUNTER  => [ 0 ]);
+    my $user_dir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+    my $user_state_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_state_file" ],
+           COUNTER  => [ 0 ]);
+
+    my $state_machine = new OpenCA::StateMachine (
+        "GETTEXT"                     => \&i18nGettext,
+        "STATE_LIST_FILE"             => $state_list,
+        "FUNCTION_LIST_FILE"          => $function_list,
+        "FUNCTION_DIRECTORY"          => $function_dir,
+        "FUNCTION_STATES_FILE_SUFFIX" => $function_suffix,
+        "USER_LIST_FILE"              => $user_list,
+        "USER_DIRECTORY"              => $user_dir,
+        "USER_STATE_FILE_NAME"        => $user_state_file,
+                                             );
+
+    if (not $state_machine)
+    {
+        our $errno  = $OpenCA::StateMachine::errno;
+        our $errval = $OpenCA::StateMachine::errval;
+        return undef;
+    }
+
+    return $state_machine;
+}
+
+sub debug
+{
+    our $DEBUG;
+    return 1 if (not $DEBUG);
+
+    print STDERR join (" ", @_)."\n";
+}
+
+sub debug_cmds
+{
+    our $DEBUG;
+    return 1 if (not $DEBUG);
+
+    my $cmd = shift;
+    $cmd = "cmds->".$cmd;
+    debug ($cmd, @_);
+}
+
+# 2004-08-31 Martin Bartosch <m.bartosch@cynops.de>
+# clean up CGI parameters
+# input: reference to CGI class instance
+# This function modifies the object itself
+sub validateCGIParameters {
+    my $queryref = shift;
+    
+    ## validate input data
+    ## 2004-08-27 Martin Bartosch <m.bartosch@cynops.de>
+    foreach my $param (keys %{$$queryref->Vars}) {
+	my @values = $$queryref->param($param);
+
+	# replace < and > with &lt; and &rt; for all CGI parameters passed
+	# NOTE/FIXME: unescaping might be necessary when actually
+	# passing this data to e. g. certificate generation routines
+	# to prevent literal XML entities in certificate contents
+	map { 
+	    s/</&lt;/gm; 
+	    s/>/&gt;/gm; 
+	    s/\"/&quot;/gm;
+	} @values;
+	$$queryref->param(-name => $param, -value => [ @values ]);
+
+	# extra sanity check just to be sure (redundant)
+	foreach (@values) {
+	    if (/<\S+.*?>/m) {
+		print "Content-type: text/html\n\n";
+		print "Security violation\n";
+		exit 101;
+	    }
+	}
+    }
+    return $queryref;
+}
+
+
+# 2004-12-21 Martin Bartosch
+# returns current time as ISO timestamp (UTC)
+# format: yyyymmddhhmmss
+sub timestamp
+{
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday) =
+	gmtime(time);
+    return sprintf("%04d%02d%02d%02d%02d%02d", 
+		   $year + 1900,
+		   $mon + 1,
+		   $mday,
+		   $hour,
+		   $min,
+		   $sec);
+}
+
+sub libBuildRefs {
+
+	our ( $query, $self, $cryptoShell, $db, $DEBUG );
+
+	my $keys = { @_ };
+
+	my $baseLnk = $keys->{BASELINK};
+        my $dataType = $keys->{DATATYPE};
+
+        my $viewFrom = ( $keys->{FROM}  or $query->param('viewFrom'));
+        my $step = $keys->{MAXITEMS};
+        my $range = $keys->{MAXITEMS} * 4;
+        my $item  = undef;
+        my $count = 0;
+        my $endRowID = 0;
+        my $startRowID = 0;
+        
+	my $leftRange = $viewFrom - $range;
+	my $bottomRange = $viewFrom + $range;
+        my $leftDots = 0;
+        my $rightDots = 0;
+        my $currTab = 1;
+        my $class = undef;
+
+	my $idx = 0;
+	my $ret = "";
+	my $param = undef;
+
+        my @k_list = ();
+
+	if ( $baseLnk eq "" ) {
+		$baseLnk = $self . "?cmd=" . $query->param("cmd");
+	}
+
+	if ( $query->param('action') ne "" ) {
+		$baseLnk .= ";action=" . $query->param('action');
+	}
+
+	# Sets the DATATYPE and the MODE
+	$param->{DATATYPE} = $dataType;
+	$param->{MODE} = "KEYLIST";
+
+	# Use this to pass the Search Keys, they are added to the
+	# params as normal
+	if( $keys->{SEARCH} ) {
+		my $search = { $keys->{SEARCH} };
+
+		foreach my $kkk ( keys %{$keys->{SEARCH}} ) {
+			$param->{$kkk} = $keys->{SEARCH}->{$kkk};
+			$baseLnk .= ";" . lc( $kkk ) . "=" .
+				$param->{$kkk};
+		}
+	}
+
+        @k_list = $db->searchItems( %{ $param } );
+
+        if( ($#k_list < $keys->{MAXITEMS}) ) {
+                $ret = qq{<div class="extraRefPanel" style="padding: 10px;">\n};
+	        $ret .= qq{<div class="extraRef" style="color: black;">};
+                $ret .= gettext(" No Extra References ");
+                $ret .= qq{</div></div>};
+
+                return $ret;
+        };
+
+        ## Start building the Return
+        $ret = qq{<div class="extraRefPanel">\n};
+
+        if ( $viewFrom <= 0 ) {
+                $viewFrom = 1;
+        }
+
+        ## Get the Current Tab
+        if ( $#k_list > 0 ) {
+                $currTab = 0;
+                for ( $idx = 0; $idx <= $#k_list; $idx += $step ) {
+			# print STDERR "refs => getting key [$idx] (".
+			# 	$k_list[ $idx ] . ")\n";
+
+                        $item = $db->getItem ( DATATYPE => $dataType,
+                                KEY => $k_list[ $idx ] );
+
+			# print STDERR "refs => item ($item) - rowID => " .
+			# 	$item->{parsedItem}->{ROWID} . "\n";
+
+                        if ( ( $item ) and 
+					( $item->{ROWID} >= 
+						$viewFrom)) {
+                                last;
+                        } 
+                        $currTab++;
+                }
+        } else {
+                $currTab = 1;
+        }
+
+        ## Now build the real references
+        $count = -1;
+        for( $idx = 0; $idx <= $#k_list; $idx += $step ) {
+                # $count = int (( $idx - ($idx % $step)) / $step);
+                $count++;
+
+                if (( $count > 0 ) and ( $count < $currTab - 3 )) {
+                        if ( $leftDots eq 0 ) {
+                                $ret .= " ... ";
+                                $leftDots++;
+                        }
+                        next;
+                }
+
+                if (( $count < int ( $#k_list / $step )) and
+                                        ( $count > $currTab + 3 )) {
+                        if ( $rightDots eq 0 ) {
+                                $ret .= " ... ";
+                                $rightDots++;
+                        }
+                        next;
+                }
+
+                ## Get the ROWID of the first item in current tab
+                if ( $item = $db->getItem ( DATATYPE => $dataType,
+                                KEY => $k_list[$idx] )) {
+                        $startRowID = $item->getParsed()->{ROWID};
+                } else {
+                        $startRowID = -1;
+                }
+
+		# print STDERR "[$idx/$#k_list] refs:startRowID => $startRowID\n";
+		# print STDERR "[$idx/$#k_list] refs:count => $count [ $currTab ]\n";
+
+                ## Get the ROWID of the last item in current tab
+                # if ( $idx + $step <= $#k_list ) {
+                #         $item = $db->getItem ( DATATYPE => $dataType,
+                #                 KEY => $k_list[$idx + $step - 1] );
+                # } else {
+                #         $item = $db->getItem ( DATATYPE => $dataType,
+                #                 KEY => $k_list[$#k_list] );
+                # }
+
+                # if ( $item ) {
+                #         $endRowID = $item->getParsed()->{ROWID};
+                # } else {
+                #         $endRowID = -1;
+                # }
+
+                if ( $count eq $currTab ) {
+                        $class = "extraRefSelected";
+                } else {
+                        $class = "extraRef";
+                }
+
+		$ret .= qq{<div class="$class">}.
+                              qq{<a href="$baseLnk;viewFrom=$startRowID;} . 
+                           qq{dataType=$dataType">} . ($count+1) .
+                           qq{</a></div>\n};
+
+        }
+        $ret .= "</div>\n";
+
+        return $ret;
+}
+
+
+sub libGetPidProcessStatus
+{
+  my $pidfile = shift;
+
+  my $pid = undef;
+  my $result = undef;
+
+  our ($DEBUG);
+
+  if ($pidfile eq "")
+  {
+    # The process is unknown, we return undef
+    if ($DEBUG)
+    {
+      print STDERR "libGetPidProcessStatus::Pidfile is empty!\n";
+    }
+    return undef;
+  };
+
+	if (-f "$pidfile")
+  {
+		my $result = undef;
+		my $FD = undef;
+
+		if (not open(FD, "<$pidfile"))
+    {
+      # The process is unknown, we return undef
+      if ($DEBUG)
+      {
+        print STDERR "libGetPidProcessStatus::Can not open pidfile ($pidfile)!\n";
+      };
+      return undef;
+		}
+    else
+    {
+			$pid = <FD>;
+			close( FD );
+		}
+
+		$result = POSIX::kill( $pid, 0);
+
+		if (($result gt 0) || ($!{EPERM}))
+    {
+			## The process is still active, error!
+      if( $DEBUG ) 
+      {
+        print STDERR "libGetPidProcessStatus::Process active!\n";
+      };
+      return $pid;
+		}
+    else
+    {
+      if ($DEBUG)
+      {
+        print STDERR "libGetPidProcessStatus::Pidfile exists" .
+                     " but process is inactive ($pid)!\n";
+      }
+			unlink ("$pidfile");
+
+      ## The process is not active, we return 0
+      return 0;
+		}
+	}
+
+  ## The process is not active, we return 0
+  if( $DEBUG )
+  {
+    print STDERR "libGetPidProcessStatus::Pidfile '$pidfile' does not exists!\n";
+  }
+
+  return 0;
+}
+
+sub libSaveCgiParams 
+{
+  our ($query);
+
+  my $filename = shift;
+	my $ret = undef;
+
+  if( $filename eq "" )
+  {
+    return undef;
+  };
+
+	if (not open(FD, ">$filename"))
+  {
+		return undef;
+	}
+  else
+  {
+		$query->save( \*FD );
+		close ( FD )
+	}
+
+  return 1;
+}
+
+sub libLoadCgiParams {
+
+  my $conf = shift;
+  my $defaults = shift;
+
+	my $params = undef;
+	my $savedQuery = undef;
+  my $refQuery = undef;
+
+	if( not open( FD, "<$conf" ) ) {
+		return $defaults;
+	} else {
+		$savedQuery = new CGI( \*FD );
+		close ( FD );
+	}
+
+  $refQuery = $savedQuery->Vars();
+
+  foreach my $p ( keys %$defaults ) {
+    my @foo = ();
+
+    if ( $refQuery->{"$p"} ) {
+      @foo = split("\0",$refQuery->{"$p"});
+    }
+
+    if( scalar (@foo) < 2 ) {
+      $params->{$p} = $savedQuery->param("$p");
+    } else {
+      $params->{$p} = \@foo;
+    }
+	}
+	
+  return $params;
+}
+ 
+sub libGetHtmlValues {
+
+        my $list = shift;
+        my $ret = "";
+
+        my @foo = undef;
+
+        if( ref( $list ) =~ /ARRAY/ ) {
+                @foo = @{ $list };
+        } else {
+                @foo = split("\0",$list);
+        }
+
+        foreach my $val ( @foo ) {
+                $ret .= "$val<br/>\n";
+        }
+
+        $ret =~ s/<br\/>$//;
+
+        return $ret;
+}
+
+sub libGetLoaLevels
+{
+  my $loaName = shift;
+
+  ## this chokes in batch mode...
+	## my $loaOption = getRequired('USE_LOAS');
+
+  my $ret = undef;
+
+	my ($loaTwig, $xmlLOA, %LOALevels, @LOANames, $loaHtml );
+	my ( $loaSelect, %LOAHash );
+
+	# if ($loaOption =~ /yes/i)
+  # {
+    $loaTwig = loadConfigXML ('LOAConfiguration');
+    if (not $loaTwig)
+    {
+      return undef;
+    }
+	# }
+
+  for my $al ($loaTwig->get_xpath("loa"))
+  {
+    my $name = undef;
+    my $value = undef;
+
+    $name = getField( $al, 'name' );
+    if( $name ne "" )
+    {
+      $ret->{$name} = getField( $al, 'level' );
+    }
+
+    $ret->{$ret->{$name}} = $name;
+	}
+
+  return $ret;
+}
+
+
+sub newConnectDB {
+
+	our ( $cryptoShell, $xml_cache, $DBICONFIG, $role_config, $DEBUG);
+
+	my $ret = undef;
+
+	my $dbi_debug = $xml_cache->get_xpath (
+                    FILENAME => $DBICONFIG,
+                    XPATH    => [ 'database_config/debug' ],
+                    COUNTER  => [ 0 ]);
+
+	$dbi_debug = $DEBUG if (not $dbi_debug and $DEBUG);
+
+	## setup of the environment
+
+	## determine database vendor
+	my $db_type = $xml_cache->get_xpath (
+                    FILENAME => $DBICONFIG,
+                    XPATH    => [ 'database_config/type' ],
+                    COUNTER  => [ 0 ]);
+
+	## find configuration and detect number of options
+	my ($vendor_name, $vendor_number, $vendor_envs) = ("", -1, 0);
+	my $vendor_number = "";
+	my $vendor_count = $xml_cache->get_xpath_count (
+                        FILENAME => $DBICONFIG,
+                        XPATH    => [ 'database_config/environment/vendor' ],
+                        COUNTER  => []);
+
+	for (my $k = 0; $k<$vendor_count; $k++) {
+		$vendor_name = $xml_cache->get_xpath (
+                        FILENAME => $DBICONFIG,
+                        XPATH    => [ 'database_config/environment/vendor', 
+					'type' ],
+                        COUNTER  => [ $k, 0 ]);
+
+		next if ($vendor_name ne $db_type);
+    		$vendor_number = $k;
+    		$vendor_envs = $xml_cache->get_xpath (
+                        FILENAME => $DBICONFIG,
+                        XPATH    => [ 'database_config/environment/vendor', 
+					'number' ],
+                        COUNTER  => [ $k, 0 ]);
+	}
+
+	## load environment
+	for (my $i = 0; $i<$vendor_envs; $i++) {
+		my $env_name = $xml_cache->get_xpath (
+                        FILENAME => $DBICONFIG,
+                        XPATH    => [ 'database_config/environment/vendor', 
+					'option', 'name' ],
+                        COUNTER  => [ $vendor_number, $i, 0 ]);
+		my $env_value = $xml_cache->get_xpath (
+                        FILENAME => $DBICONFIG,
+                        XPATH    => [ 'database_config/environment/vendor', 
+					'option', 'value' ],
+                        COUNTER  => [ $vendor_number, $i, 0 ]);
+
+		$ENV {$env_name} = $env_value;
+		# print "NUMBER: $i<br>\n".
+		# 	"OPTION: $env_name<br>\n".
+		# 	"VALUE:  $env_value<br>\n" if ($DEBUG);
+	}
+
+	my $db_name = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/name' ],
+                                COUNTER  => [ 0 ]);
+	my $db_host = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/host' ],
+                                COUNTER  => [ 0 ]);
+	my $db_port = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/port' ],
+                                COUNTER  => [ 0 ]);
+	my $db_user = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/user' ],
+                                COUNTER  => [ 0 ]);
+	my $db_passwd = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/passwd' ],
+                                COUNTER  => [ 0 ]);
+	my $db_namespace = $xml_cache->get_xpath (
+                                FILENAME => $DBICONFIG,
+                                XPATH    => [ 'database_config/namespace' ],
+                                COUNTER  => [ 0 ]);
+
+	$ret = new OpenCA::DBI (
+		SHELL          	=> $cryptoShell,
+		GETTEXT		=> \&i18nGettext,
+		DEBUG          	=> $dbi_debug,
+		DB_Type     	=> $db_type,
+		DB_Name     	=> $db_name,
+		DB_Host     	=> $db_host,
+		DB_Port     	=> $db_port,
+		DB_User     	=> $db_user,
+		DB_Passwd   	=> $db_passwd,
+		DB_Namespace   	=> $db_namespace
+	);
+
+	return $ret;
+
+};
+
+sub traceme 
+{
+	my $level = shift;
+	my $end = 0;
+  my $ret = "";
+  my @c = undef;
+
+	if ($level > 0)
+	{
+		$end = $level;
+	}
+
+  my @me = caller($end + 1);
+
+  $ret = "traceme(" . $me[3] . ")->Start.\n";
+  for (my $i = 10; $i > $end; $i--)
+  {
+    @c = caller ($i);
+    next if ($#c < 1);
+
+    $ret .= "[$i] traceme(" . $me[3] . "): " . $c[3] . "() at " . $c[1] . ":" . $c[2];
+    if ($i == $end+1)
+    {
+      $ret .= "    [*** this is me ***]";
+    }
+    $ret .= "\n";
+  }
+  $ret .= "traceme(" . $me[3] . ")->End.\n";
+
+  return $ret;
+}
+
+1;

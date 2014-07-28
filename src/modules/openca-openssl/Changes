@@ -1,0 +1,7 @@
+Revision history for Perl extension OpenCA::OpenSSL.
+
+0.1.0  Thu Feb 10 12:23:53 2000
+	- original version; created by h2xs 1.19
+
+2.1.0  Sat Aug  3 10:22:52 EDT 2013
+	- applied patches from Carlos Velasco (fixed memory leaks)

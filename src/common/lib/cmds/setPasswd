@@ -1,0 +1,89 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: setPasswd
+##       Brief: set a passphrase 
+##     Version: $Revision: 1.1.1.1 $
+## Description: set a passphrase for a special use
+##  Parameters: 
+
+use strict;
+
+our ($DATATYPE);
+
+sub cmdSetPasswd {
+
+	## Status of FORM, possible values (in this order):
+	my $KEY         = $query->param('key');
+	my $NAME        = $query->param('name');
+	my $PASSWD2	= $query->param('passwd2');
+	my $PASSWD3	= $query->param('passwd3');
+
+	## check for the passphrases or is it a new request?
+	if (not $PASSWD2) {
+            my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+            $hidden_list->{"cmd"}      = "setPasswd";
+            $hidden_list->{"dataType"} = $DATATYPE;
+            $hidden_list->{"name"}     = $NAME;
+            $hidden_list->{"key"}      = $KEY;
+
+            $info_list->{BODY}->[0]->[0] = gettext ("Certificate Serial Number");
+            $info_list->{BODY}->[0]->[1] = $KEY;
+            $info_list->{BODY}->[1]->[0] = gettext ("New passphrase");
+            $info_list->{BODY}->[1]->[1] = '<input type=password name="passwd2" value="" size=16 minlength=8>';
+            $info_list->{BODY}->[2]->[0] = gettext ("New passphrase again");
+            $info_list->{BODY}->[2]->[1] = '<input type=password name="passwd3" value="" size=16 minlength=8>';
+
+            $cmd_panel->[0] = '<input type="submit" value="'.gettext ("OK").'">';
+            $cmd_panel->[1] = '<input type="submit" name="cancel" value="'.gettext ("Cancel").
+                              '" onClick="this.form.cmd.value='."'viewCSR'".';">';
+
+            return libSendReply (
+                                 "NAME"        => gettext ("Set Download Passphrase"),
+                                 "EXPLANATION" => gettext ("Set the download passphrase of the choosen key"),
+                                 "HIDDEN_LIST" => $hidden_list,
+                                 "INFO_LIST"   => $info_list,
+                                 "CMD_PANEL"   => $cmd_panel
+                                );
+	}
+
+	## check the keys
+	if ("$PASSWD3" ne "$PASSWD2") {
+		generalError (gettext ("Two different new passphrases inserted. Please go <B><I>back</I></B> and correct the error."),
+			560 );
+	}
+	
+	## load cert
+	my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $KEY);
+	if ( not $cert ) {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+
+        ## set the passwd in the header
+	if ( not $cert->setHeaderAttribute ('PASSWD_'.$NAME => $PASSWD2) ) {
+		generalError (gettext ("Error while storing the new passphrase in the cert-object"));
+	}
+	my $sha1 = $cryptoShell->getDigest (
+					DATA      => $PASSWD2,
+					ALGORITHM => "sha1");
+	if ( not $cert->setHeaderAttribute ('SHA1_PASSWD_'.$NAME => $sha1) ) {
+		generalError (gettext ("Error while storing the new hashed passphrase in the cert-object"));
+	}
+
+	## store cert with key
+	if (not $db->storeItem ( DATATYPE => "CERTIFICATE", OBJECT => $cert, MODE => "UPDATE" )) {
+
+		## the command one line before can only be done correct by OpenCA::DBI but not by OpenCA::DB
+		if (not $db->storeItem ( DATATYPE => "VALID_CERTIFICATE", OBJECT => $cert, MODE => "UPDATE" )) {
+			generalError (gettext ("Cannot store changed certificate in the database!").
+			              "<br>".$db->errval(), $db->errno());
+		}
+	}
+
+	## Send Success Page
+	success (gettext ("Passphrase was successfully added."));
+}
+
+1;

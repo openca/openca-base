@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>newUser</name>
+            <operation>add user</operation>
+            <owner_method></owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

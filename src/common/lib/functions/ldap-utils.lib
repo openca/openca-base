@@ -1,0 +1,226 @@
+## RA Server Management Utility 
+## (c) 1999-2002 by Massimiliano Pala
+## (c) Copyright 2002-2004 The OpenCA Project
+## All Rights Reserved
+##
+## $Revision: 1.1.1.1 $
+##
+## Program currently tested with OpenLDAP v.1.2 on Linux, Solaris
+## and Sleepycat DB.
+##
+## DISC CLAIMER: THIS SOFTWARE IS GIVEN AS IS WITHOUT ANY WARRANTIES
+## ABOUT ANY DAMAGE DERIVED BY THE USE ( CORRECT OR NOT ) OF THIS
+## SOFTWARE. THE AUTHOR IS THEREFORE NOT RESPONSABLE IN ANY WAY OF
+## DAMAGES RELATED IN ANY WAY TO THIS OR SUPPORTED SOFTWARE AS WELL.
+##
+## If you want to contact me (the author) please use the e-mail
+## addresses listed below. Do not esitate in reporting bugs, enhancement
+## or anything seems useful in developing this software:
+##
+##	madwolf@comune.modena.it
+##	m.pala@mo.nettuno.it
+##	digid@netscape.net
+##
+
+## Thank you for using this software, and remember that Open Projects
+## are the future of mankind. Do not sleep, partecipate to world wide
+## efforts to make life easier for all!
+
+use strict;
+
+use X500::DN;
+
+sub LDAP_addCertsUsers {
+  my $keys = { @_ };
+  our ($ldap, $tools, $query, $db);
+
+  ## Reserved Variables
+  my ( @certsList );
+  my ( $filename, $tmp, $ID, $cert, $ret );
+
+  ## Get Required parameter
+  my $certDir = getRequired( 'CertDir' );
+
+  ## Debugging info
+  my $DEBUG = 0;
+  if ($keys->{DEBUG}) {
+	$DEBUG = 1;
+  }
+
+  ##// This file has the latest imported certificate's serials
+  $filename = "$certDir/lastImport.txt";
+
+  ##// Let's open the lastImport.txt
+  if( not -e "$filename" ) {
+    configError( i18nGettext ("File __FILE__ not found!", "__FILE__", $filename));
+  }
+
+  $tmp = $tools->getFile( "$filename");
+
+  if( $tmp eq "" ) {
+    success( gettext ("Last Import file was empty."));
+  }
+
+  @certsList = split( "\n", $tmp );
+
+  my $table = $query->buildRefs ( ELEMENTS =>, MAXITEMS =>);
+  $table .= $query->startTable (COLS=>[ gettext ("Cert.-No."),
+                                          gettext ("DN"),
+                                          gettext ("adding dn"),
+                                          gettext ("adding certificate") ],
+                              WIDTH=>"100%",
+                              TITLE_BGCOLOR=>"#DDCCFF");
+
+  foreach $ID (@certsList) {
+
+    my @line = ();
+
+    my ( $filter, $serID, $parsed, $ret, $entry );
+    ( $serID ) = ( $ID =~ /([a-f0-9]+)/i );
+
+    ##// Let's be sure it is in the right format
+    $serID = uc( $serID );
+    $serID = "0$serID" if( length($serID) % 2 );
+
+    my $cert = $db->getItem ( DATATYPE => "VALID_CERTIFICATE",
+                              KEY => $serID );
+
+    if( not $cert ) {
+      $table .= $query->addTableLine( DATA => [
+                    "<FONT COLOR=\"Red\">".
+                    i18nGettext ("ERROR [__CERT_SERIAL__] : can't get certificate from dB!",
+                                 "__CERT_SERIAL__", $serID).
+                                 "\n</FONT>" ] );
+      next;
+    }
+
+    $parsed = $cert->getParsed();
+
+    push ( @line, $serID, $parsed->{DN});
+    $ret = $ldap->add_object ( CERTIFICATE=>$cert );
+
+    my $text;
+    $text .= "<FONT COLOR=\"Red\">" if ( not $ret->{STATUS} );
+    $text .= $ret->{DESC};
+    $text .= "</FONT>" if ( not $ret->{STATUS} );
+    push ( @line, $text);
+
+    if( $ret->{STATUS} ) {
+      $ret = $ldap->add_attribute ( CERTIFICATE => $cert , NOPRINT => "true");
+
+      if ($ret->{STATUS}) {
+        push (@line, gettext ("success"));
+      } else {
+        push (@line, i18nGettext ("Error : __ERRNO__", "__ERRNO__", $ret->{CODE}));
+      }
+    } else {
+      push (@line, gettext ("operation not performed"));
+    }
+
+    $table .= $query->addTableLine ( DATA => [ @line ]);
+
+  }
+
+  $table .= $query->endTable;
+  print $table;
+
+  return gettext ("Ok.");
+}
+
+sub LDAP_get_crl {
+	## determine the newest CRL
+
+        our ($db, $cryptoShell);
+	my $keys = { @_ };
+	my $DEBUG = 0;
+	if ($keys->{DEBUG}) {
+		$DEBUG = 1;
+	}
+
+	print "ldap-utils.lib: LDAP_get_crl: try to determine the newest CRL<br>\n"
+		if ($DEBUG);
+
+	my @list = $db->searchItems ( DATATYPE => "CRL" );
+	my $newest_crl = undef;
+	my $newest_timestamp = 0;
+	foreach my $h (@list) {
+		my $timestamp = $cryptoShell->getNumericDate ($h->getParsed()->{LAST_UPDATE});
+		print "ldap-utils.lib: LDAP_get_crl: check date $timestamp<br>\n"
+			if ($DEBUG);
+		if ($newest_timestamp < $timestamp) {
+			if ($DEBUG) {
+				print "ldap-utils.lib: LDAP_get_crl: newer crl found<br>\n";
+				print "ldap-utils.lib: LDAP_get_crl: timestamp: $timestamp<br>\n";
+				print "ldap-utils.lib: LDAP_get_crl: crl:<br>\n".$h."<br>\n";
+			}
+			$newest_timestamp = $timestamp;
+			$newest_crl = $h;
+		}
+	}
+	print "ldap-utils.lib: LDAP_get_crl: return newest crl<br>\n" if ($DEBUG);
+	return $newest_crl;
+}
+
+sub LDAP_get_ca {
+	## determine the newest CA-cert
+
+        our ($db, $cryptoShell);
+	my $keys = { @_ };
+	my $DEBUG = 0;
+	if ($keys->{DEBUG}) {
+		$DEBUG = 1;
+	}
+
+	print "ldap-utils.lib: LDAP_get_ca: try to determine the newest CA-cert<br>\n"
+		if ($DEBUG);
+
+	my @list = $db->searchItems ( DATATYPE => "CA_CERTIFICATE" );
+	my $newest_ca = undef;
+	my $newest_notbefore = 0;
+	foreach my $h (@list) {
+		my $notbefore = $cryptoShell->getNumericDate ($h->getParsed()->{NOTBEFORE});
+		print "ldap-utils.lib: LDAP_get_ca: check NOTBEFORE $notbefore<br>\n"
+			if ($DEBUG);
+		if ($newest_notbefore < $notbefore) {
+			if ($DEBUG) {
+				print "ldap-utils.lib: LDAP_get_ca: newer ca-cert found<br>\n";
+				print "ldap-utils.lib: LDAP_get_ca: notbefore: $notbefore<br>\n";
+				print "ldap-utils.lib: LDAP_get_ca: ca:<br>\n".$h."<br>\n";
+			}
+			$newest_notbefore = $notbefore;
+			$newest_ca = $h;
+		}
+	}
+	print "ldap-utils.lib: LDAP_get_ca: return newest ca<br>\n" if ($DEBUG);
+	return $newest_ca;
+}
+
+#####################################################
+## support for HTML-messages instead of javascript ##
+#####################################################
+
+sub LDAP_getParamsDN
+{
+    our $query;
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("You can now enter the distinguished name of of the choosen certificate before the LDAP-server will be updated. You can abort the process at any time by choosing the 'cancel' button. Are you sure you want to continue?");
+ 		
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Enter the modified DN")."</td>\n".
+                   '    <td><input type="text" name="new_dn" size="30" value="'.$query->param('dn').'"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+
+1;

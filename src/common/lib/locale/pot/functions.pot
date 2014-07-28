@@ -1,0 +1,2181 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: common/lib/functions/crypto-utils.lib:372
+#: common/lib/functions/crypto-utils.lib:392
+#: common/lib/functions/crypto-utils.lib:416
+#: common/lib/functions/crypto-utils.lib:1606
+#: common/lib/functions/crypto-utils.lib:1643
+#: common/lib/functions/crypto-utils.lib:1715
+#: common/lib/functions/crypto-utils.lib:1731
+#: common/lib/functions/crypto-utils.lib:1910
+#: common/lib/functions/datasource-utils.lib:32
+#: common/lib/functions/datasource-utils.lib:82
+#: common/lib/functions/datasource-utils.lib:83
+#: common/lib/functions/datasource-utils.lib:327
+#: common/lib/functions/datasource-utils.lib:338
+#: common/lib/functions/datasource-utils.lib:342
+#: common/lib/functions/datasource-utils.lib:346
+#: common/lib/functions/datasource-utils.lib:351
+#: common/lib/functions/export-import.lib:97
+#: common/lib/functions/export-import.lib:357
+#: common/lib/functions/export-import.lib:532
+#: common/lib/functions/export-import.lib:707
+#: common/lib/functions/export-import.lib:946
+#: common/lib/functions/export-import.lib:1267
+#: common/lib/functions/export-import.lib:1347
+#: common/lib/functions/export-import.lib:1348
+#: common/lib/functions/export-import.lib:1349
+#: common/lib/functions/export-import.lib:2115
+#: common/lib/functions/export-import.lib:2245
+#: common/lib/functions/export-import.lib:2418
+#: common/lib/functions/export-import.lib:2430
+#: common/lib/functions/export-import.lib:2435
+#: common/lib/functions/export-import.lib:2446
+#: common/lib/functions/export-import.lib:2451
+#: common/lib/functions/ldap-utils.lib:60
+#: common/lib/functions/ldap-utils.lib:205
+#: common/lib/functions/mail-utils.lib:56
+#: common/lib/functions/mail-utils.lib:119
+#: common/lib/functions/mail-utils.lib:127
+#: common/lib/functions/misc-utils.lib:18
+#: common/lib/functions/misc-utils.lib:145
+#: common/lib/functions/misc-utils.lib:623
+#: common/lib/functions/misc-utils.lib:630
+#: common/lib/functions/misc-utils.lib:634
+#: common/lib/functions/misc-utils.lib:786
+#: common/lib/functions/misc-utils.lib:842
+#: common/lib/functions/misc-utils.lib:878
+#: common/lib/functions/misc-utils.lib:897
+#: common/lib/functions/misc-utils.lib:904
+#: common/lib/functions/misc-utils.lib:939
+#: common/lib/functions/request-utils.lib:20
+#: common/lib/functions/request-utils.lib:39
+#: common/lib/functions/request-utils.lib:118
+#: common/lib/functions/request-utils.lib:313
+#: common/lib/functions/request-utils.lib:346
+#: common/lib/functions/request-utils.lib:372
+#: common/lib/functions/request-utils.lib:384
+#: common/lib/functions/request-utils.lib:391
+#: common/lib/functions/request-utils.lib:460
+#: common/lib/functions/request-utils.lib:471
+#: common/lib/functions/request-utils.lib:591
+#: common/lib/functions/request-utils.lib:622
+#: common/lib/functions/request-utils.lib:646
+#: common/lib/functions/request-utils.lib:662
+#: common/lib/functions/request-utils.lib:678
+#: common/lib/functions/request-utils.lib:694
+#: common/lib/functions/request-utils.lib:757
+#: common/lib/functions/request-utils.lib:810
+#: common/lib/functions/request-utils.lib:835 common/lib/functions/initCGI:47
+#: common/lib/functions/initCGI:114 common/lib/functions/initCGI:137
+#: common/lib/functions/initDBI:25 common/lib/functions/initDBI:26
+#: common/lib/functions/initServer:67 common/lib/functions/initServer:107
+#: common/lib/functions/initServer:551
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-17 18:40-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: common/lib/functions/crypto-utils.lib:22
+msgid ":flock"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:134
+msgid "Parameters error, needed at least item or object"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:151#: common/lib/functions/crypto-utils.lib:154
+msgid "Signature Correctly Verified"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:164
+#: common/lib/functions/crypto-utils.lib:430
+#: common/lib/functions/crypto-utils.lib:2097
+#: common/lib/functions/crypto-utils.lib:2166
+#: common/lib/functions/export-import.lib:961
+#: common/lib/functions/export-import.lib:1028
+msgid "REVOKED_CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:167
+msgid "The signer's certificate [__SERIAL__] was revoked."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:170
+#: common/lib/functions/crypto-utils.lib:406
+#: common/lib/functions/crypto-utils.lib:2096
+#: common/lib/functions/crypto-utils.lib:2117
+#: common/lib/functions/export-import.lib:942
+#: common/lib/functions/export-import.lib:965
+#: common/lib/functions/export-import.lib:1033
+msgid "SUSPENDED_CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:173
+msgid "The signer's certificate [__SERIAL__] is suspended."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:176
+#: common/lib/functions/crypto-utils.lib:386
+#: common/lib/functions/crypto-utils.lib:2098
+#: common/lib/functions/crypto-utils.lib:2108
+#: common/lib/functions/export-import.lib:940
+msgid "EXPIRED_CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:179
+msgid "The signer's certificate [ __SERIAL__ ] is expired."
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:216
+msgid "Signer's Certificate and DB's Certificate do not match"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:236
+msgid "Cannot determine signature from non-existent object!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:245
+msgid "The body of the request is empty!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:251
+msgid "The request is not signed!"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:263
+msgid "Cannot store the body of the request in the file __FILE__."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:272
+msgid "Cannot store the signature of the request in the file __FILE__."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:308
+msgid "Cannot determine signer because there is no signature present!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:312
+#: common/lib/functions/crypto-utils.lib:1274
+#: common/lib/functions/export-import.lib:126
+#: common/lib/functions/export-import.lib:446
+#: common/lib/functions/export-import.lib:489
+#: common/lib/functions/export-import.lib:722
+#: common/lib/functions/export-import.lib:834
+#: common/lib/functions/export-import.lib:871
+#: common/lib/functions/export-import.lib:1108
+#: common/lib/functions/export-import.lib:1209
+#: common/lib/functions/export-import.lib:1229
+#: common/lib/functions/export-import.lib:1247
+#: common/lib/functions/export-import.lib:2014
+#: common/lib/functions/export-import.lib:2019
+#: common/lib/functions/export-import.lib:2023
+#: common/lib/functions/export-import.lib:2173
+#: common/lib/functions/ldap-utils.lib:100
+#: common/lib/functions/ldap-utils.lib:109
+msgid "CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:318
+#: common/lib/functions/export-import.lib:128
+#: common/lib/functions/export-import.lib:448
+#: common/lib/functions/export-import.lib:491
+#: common/lib/functions/export-import.lib:716
+#: common/lib/functions/export-import.lib:1293
+#: common/lib/functions/export-import.lib:1311
+#: common/lib/functions/export-import.lib:1331
+#: common/lib/functions/export-import.lib:1337
+#: common/lib/functions/export-import.lib:1353
+#: common/lib/functions/export-import.lib:2173
+#: common/lib/functions/ldap-utils.lib:177
+msgid "CA_CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:331
+msgid "Cannot find the certificate with the matching serial in the database!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:363
+msgid "Loading the Objects ..."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:366
+#: common/lib/functions/crypto-utils.lib:1780
+#: common/lib/functions/crypto-utils.lib:2095
+#: common/lib/functions/crypto-utils.lib:2104
+#: common/lib/functions/crypto-utils.lib:2122
+#: common/lib/functions/export-import.lib:938
+#: common/lib/functions/export-import.lib:1038
+#: common/lib/functions/ldap-utils.lib:85
+#: common/lib/functions/mail-utils.lib:75
+msgid "VALID_CERTIFICATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:444
+#: common/lib/functions/crypto-utils.lib:2177
+#: common/lib/functions/crypto-utils.lib:2180
+#: common/lib/functions/crypto-utils.lib:2183
+#: common/lib/functions/crypto-utils.lib:2186
+#: common/lib/functions/export-import.lib:768
+msgid "ARCHIVED_CRR"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:463
+msgid "Reason:"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:498
+msgid "unspecified"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:499
+msgid "keyCompromise"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:500
+msgid "CACompromise"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:501
+msgid "affiliationChanged"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:502
+msgid "superseded"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:503
+msgid "cessationOfOperation"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:505
+msgid "certificateHold"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:506
+msgid "removeFromCRL"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:507
+msgid "holdInstruction"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:508
+msgid "keyTime"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:509
+msgid "CAkeyTime"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:526
+#: common/lib/functions/crypto-utils.lib:531
+msgid ","
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:570
+#: common/lib/functions/export-import.lib:129
+#: common/lib/functions/export-import.lib:449
+#: common/lib/functions/export-import.lib:492
+#: common/lib/functions/export-import.lib:719
+#: common/lib/functions/export-import.lib:2033
+#: common/lib/functions/export-import.lib:2173
+#: common/lib/functions/ldap-utils.lib:143
+msgid "CRL"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:606
+msgid "No database was submitted."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1120#: common/lib/functions/crypto-utils.lib:1120#: common/lib/functions/crypto-utils.lib:1137#: common/lib/functions/crypto-utils.lib:1142#: common/lib/functions/crypto-utils.lib:1160#: common/lib/functions/crypto-utils.lib:1175
+msgid "crypto-tools.lib::crypto_check_lifetime start"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1180
+#: common/lib/functions/crypto-utils.lib:1203
+msgid "The value of notafter must have the format YYMMDDhhmmss."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1185
+msgid "The value of notbefore must have the format YYMMDDhhmmss."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1191
+msgid "The value of notbefore must be smaller than the value of notafter."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1238
+msgid "Cannot create X.509 object from CA certificate (__ERRNO__). __ERRVAL__"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1241
+msgid "crypto-tools.lib::crypto_check_lifetime::ERROR in X509 Mod"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1242
+msgid "::"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1246
+msgid "crypto-tools.lib::crypto_check_lifetime convert time to seconds"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1255
+msgid "crypto-tools.lib::crypto_check_lifetime final steps"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1260
+msgid "New certificate would exceed CA-certificate lifetime."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1275
+msgid "PUBKEY"
+msgstr ""
+
+
+
+#: common/lib/functions/crypto-utils.lib:1279
+msgid "<li>"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1279
+msgid "</li>\n"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1281
+msgid "Please revoke the certificates and delete the request."
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1304
+msgid "Cannot write to __FILE__."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1320
+msgid "Cannot create backup for OpenSSL's indexfile!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1328
+msgid "Cannot create backup for OpenSSL's serialfile!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1340
+#: common/lib/functions/crypto-utils.lib:1491
+msgid "NewCertsDir"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1348
+#: common/lib/functions/crypto-utils.lib:1349
+msgid "Z"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1354
+#: common/lib/functions/crypto-utils.lib:1376
+msgid "REQFILE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1356
+#: common/lib/functions/crypto-utils.lib:1378
+msgid "INFORM"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1358
+msgid "DAYS"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1359
+msgid "START_DATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1360
+msgid "END_DATE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1361
+#: common/lib/functions/crypto-utils.lib:1380
+msgid "PRESERVE_DN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1361
+#: common/lib/functions/crypto-utils.lib:1380
+msgid "Y"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1430
+msgid "CSR_SERIAL"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1433
+msgid "Error while storing the request's serial in cert-object"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1448
+msgid "ROLE"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1451
+msgid "Error while storing role in cert-object"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1467
+msgid "LOA"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1470
+msgid "Error while storing loa in cert-object"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1487
+msgid "USE_REQUEST_PIN"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1488
+msgid "SECURE_PIN_LENGTH"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1489
+msgid "SECURE_PIN_RANDOM"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1499
+msgid "crypto-utils.lib: cert->PUBKEY_ALGORITHM: "
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1533
+msgid "crypto-utils.lib: ERROR in generating a new pin "
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1536
+msgid "The parameter of the PIN are unknown!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1540
+msgid "crypto-utils.lib: ERROR no pin found/generated!"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1553
+msgid "PIN-mail cannot be loaded! Used Language: "
+msgstr ""#: common/lib/functions/crypto-utils.lib:1560#: common/lib/functions/crypto-utils.lib:1583
+msgid "PIN-mail cannot be created!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1593
+#: common/lib/functions/crypto-utils.lib:1597
+#: common/lib/functions/crypto-utils.lib:1718
+#: common/lib/functions/crypto-utils.lib:1722
+#: common/lib/functions/initServer:359 common/lib/functions/initServer:410
+#: common/lib/functions/initServer:420 common/lib/functions/initServer:422
+#: common/lib/functions/initServer:423
+msgid "C"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1595
+#: common/lib/functions/crypto-utils.lib:1720
+#: common/lib/functions/initServer:730
+msgid "UTF-8"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1605
+msgid "OpenCA Certificate and PIN information"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1607
+#: common/lib/functions/crypto-utils.lib:1644
+#: common/lib/functions/crypto-utils.lib:1732
+msgid "=?"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1607
+#: common/lib/functions/crypto-utils.lib:1644
+#: common/lib/functions/crypto-utils.lib:1732
+msgid "?B?"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1607
+#: common/lib/functions/crypto-utils.lib:1644
+#: common/lib/functions/crypto-utils.lib:1732
+msgid "?="
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1621#: common/lib/functions/crypto-utils.lib:1624
+msgid "CC"
+msgstr ""
+
+
+
+#: common/lib/functions/crypto-utils.lib:1641
+msgid "OpenCA Certificate and PIN information for certificate __CERT_SERIAL__"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1652
+msgid "crypto-utils.lib: generating SMIME for admin (encrypt is 0)"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1653
+msgid "crypto-utils.lib: feature disabled (dsa compatibility"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:1672#: common/lib/functions/crypto-utils.lib:1678
+msgid "Cannot store the PIN-mail in the directory for the mails!"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1707
+msgid "Cannot load file __FILE__!"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1730
+msgid "OpenCA Certificate information"
+msgstr ""
+
+
+
+#: common/lib/functions/crypto-utils.lib:1747
+msgid "Cannot store the CONFIRM-mail __FILE__ in the directory for the mails!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1763
+#: common/lib/functions/crypto-utils.lib:1764
+#: common/lib/functions/crypto-utils.lib:1765
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:728
+#: common/lib/functions/export-import.lib:2187
+msgid "REQUEST"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1800
+msgid "APPROVED_REQUEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1801
+#: common/lib/functions/crypto-utils.lib:1804
+#: common/lib/functions/crypto-utils.lib:1807
+#: common/lib/functions/crypto-utils.lib:1810
+#: common/lib/functions/crypto-utils.lib:1813
+msgid "ARCHIVED_REQUEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1803
+msgid "SIGNED_REQUEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1806
+msgid "PENDING_REQUEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1809
+msgid "RENEW_REQUEST"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1812
+msgid "NEW_REQUEST"
+msgstr ""
+
+
+#: common/lib/functions/crypto-utils.lib:1831
+#: common/lib/functions/crypto-utils.lib:1858
+msgid "lockFile"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1833
+#: common/lib/functions/crypto-utils.lib:1860
+msgid "Cannot open lockfile."
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1921
+msgid "libIssueCertificate::CA_TOKEN retrieved OK!\n"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:1934
+#: common/lib/functions/crypto-utils.lib:1944
+#: common/lib/functions/crypto-utils.lib:1966
+#: common/lib/functions/crypto-utils.lib:1973
+#: common/lib/functions/crypto-utils.lib:1976
+#: common/lib/functions/crypto-utils.lib:1979
+#: common/lib/functions/crypto-utils.lib:1982
+#: common/lib/functions/crypto-utils.lib:1990
+#: common/lib/functions/export-import.lib:1150
+#: common/lib/functions/export-import.lib:1163
+#: common/lib/functions/export-import.lib:1176
+#: common/lib/functions/export-import.lib:1189
+#: common/lib/functions/export-import.lib:2173
+msgid "CSR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2070
+msgid "Needed key to access database!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2074
+msgid "CA"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2077
+msgid "Cannot use the private key of the CA!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2081
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:725
+#: common/lib/functions/export-import.lib:2173
+msgid "CRR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2132
+msgid "The certificate is always revoked so please delete the CRR!"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2150#: common/lib/functions/crypto-utils.lib:2151
+msgid "CRL_REASON"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:2152
+msgid "CRL_DESCRIPTION"
+msgstr ""
+#: common/lib/functions/crypto-utils.lib:2176
+#: common/lib/functions/export-import.lib:769
+msgid "APPROVED_CRR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2179
+#: common/lib/functions/export-import.lib:770
+msgid "SIGNED_CRR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2182
+#: common/lib/functions/export-import.lib:771
+msgid "PENDING_CRR"
+msgstr ""
+
+#: common/lib/functions/crypto-utils.lib:2185
+#: common/lib/functions/export-import.lib:772
+msgid "NEW_CRR"
+msgstr ""
+
+
+
+#: common/lib/functions/datasource-utils.lib:15
+#: common/lib/functions/datasource-utils.lib:36
+msgid "DataSourcesConfig"
+msgstr ""
+#: common/lib/functions/datasource-utils.lib:21
+#: common/lib/functions/datasource-utils.lib:42
+msgid "datasources/item"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:48
+#: common/lib/functions/misc-utils.lib:934
+#: common/lib/functions/request-utils.lib:311
+#: common/lib/functions/request-utils.lib:329
+#: common/lib/functions/request-utils.lib:368
+#: common/lib/functions/request-utils.lib:380
+#: common/lib/functions/request-utils.lib:411
+#: common/lib/functions/request-utils.lib:456
+#: common/lib/functions/request-utils.lib:570
+#: common/lib/functions/request-utils.lib:595
+#: common/lib/functions/request-utils.lib:616
+#: common/lib/functions/request-utils.lib:626
+#: common/lib/functions/request-utils.lib:669
+#: common/lib/functions/request-utils.lib:764
+#: common/lib/functions/request-utils.lib:847
+#: common/lib/functions/request-utils.lib:902
+msgid "loa"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:49
+msgid "protocol"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:50
+msgid "address"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:54
+msgid "attributes/item"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:60
+msgid "map/entry"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:89
+msgid "checkDataSourceLogin()::ERROR::Can not get DS!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:107
+msgid "("
+msgstr ""
+#: common/lib/functions/datasource-utils.lib:110#: common/lib/functions/datasource-utils.lib:111
+#: common/lib/functions/datasource-utils.lib:199
+#: common/lib/functions/datasource-utils.lib:272
+msgid "filter"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:112
+#: common/lib/functions/datasource-utils.lib:200
+#: common/lib/functions/datasource-utils.lib:201
+#: common/lib/functions/datasource-utils.lib:273
+#: common/lib/functions/datasource-utils.lib:274
+msgid "base"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:113
+#: common/lib/functions/datasource-utils.lib:201
+#: common/lib/functions/datasource-utils.lib:274
+msgid "scope"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:113
+msgid "one"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:115
+msgid "checkDataSourceLogin()::DEBUG::got entrties =>"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:119
+msgid "checkDataSourceLogin()::ERROR::No Entries Found!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:126
+msgid "checkDataSourceLogin()::DEBUG::Checking Entry "
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:129
+#: common/lib/functions/datasource-utils.lib:190
+#: common/lib/functions/datasource-utils.lib:260
+msgid "password"
+msgstr ""
+#: common/lib/functions/datasource-utils.lib:167
+#: common/lib/functions/datasource-utils.lib:235
+msgid "getDataSourceAttributes()::ERROR::No Cred!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:173
+#: common/lib/functions/datasource-utils.lib:241
+msgid "getDataSourceAttributes()::ERROR::No Data Source!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:194
+#: common/lib/functions/datasource-utils.lib:264
+msgid "getDataSourceAttributes()::ERROR::Can not bind to LDAP!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:199
+#: common/lib/functions/datasource-utils.lib:272
+msgid "(objectClass=*)"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:212#: common/lib/functions/datasource-utils.lib:220
+msgid "getDataSourceAttributes()::ERROR::"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:221
+msgid " DSource not supported!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:251
+msgid "getDataSourceAttributes()::Data Source Type is LDAP!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:269
+msgid "(dn="
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:269
+#: common/lib/functions/request-utils.lib:736
+msgid ")"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:294
+msgid "getDataSourceAttributes()::ERROR::Unknown Data Source Type!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:316
+msgid "dsLdapConnect::ERROR::Can not get DS!\n"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:320
+msgid "dsLdapConnect()::DEBUG::DS type is "
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:328
+msgid "ldap"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:339
+#: common/lib/functions/datasource-utils.lib:350
+msgid "none"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:343
+msgid "tlsv1"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:376
+#: common/lib/functions/datasource-utils.lib:395
+msgid "verify"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:377
+msgid "sslversion"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:378
+msgid "ciphers"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:379
+#: common/lib/functions/datasource-utils.lib:396
+msgid "capath"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:380
+msgid "cafile"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:384
+msgid "dsLdapConnect()::ERROR::Can not seutp SSL/TLS connection!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:389
+msgid "dsLdapConnect()::DEBUG::Setting up connection to "
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:390
+msgid ":"
+msgstr ""
+#: common/lib/functions/datasource-utils.lib:400
+msgid "dsLdapConnect()::ERROR::Can not setup SSL/TLS connection (ldaps)!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:404
+msgid "dsLadpConnect()::DEBUG::Connected!"
+msgstr ""
+
+#: common/lib/functions/datasource-utils.lib:416
+msgid "dsGetMappedValues()::Missing needed params!\n"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:94
+msgid "Creating Temporary Directory __DIR__ ..."
+msgstr ""
+#: common/lib/functions/export-import.lib:95
+msgid "Cannot create temporary directory __DIR__!"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:126
+#: common/lib/functions/export-import.lib:128
+#: common/lib/functions/export-import.lib:129
+#: common/lib/functions/export-import.lib:446
+#: common/lib/functions/export-import.lib:448
+#: common/lib/functions/export-import.lib:449
+#: common/lib/functions/export-import.lib:489
+#: common/lib/functions/export-import.lib:491
+#: common/lib/functions/export-import.lib:492
+#: common/lib/functions/export-import.lib:715
+#: common/lib/functions/export-import.lib:718
+#: common/lib/functions/export-import.lib:721
+#: common/lib/functions/export-import.lib:758
+#: common/lib/functions/export-import.lib:761
+#: common/lib/functions/export-import.lib:777
+#: common/lib/functions/export-import.lib:782
+#: common/lib/functions/export-import.lib:949
+#: common/lib/functions/export-import.lib:1007
+msgid "VALID"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:126
+#: common/lib/functions/export-import.lib:128
+#: common/lib/functions/export-import.lib:446
+#: common/lib/functions/export-import.lib:448
+#: common/lib/functions/export-import.lib:489
+#: common/lib/functions/export-import.lib:491
+#: common/lib/functions/export-import.lib:715
+#: common/lib/functions/export-import.lib:721
+#: common/lib/functions/export-import.lib:756
+#: common/lib/functions/export-import.lib:775
+#: common/lib/functions/export-import.lib:780
+#: common/lib/functions/export-import.lib:952
+#: common/lib/functions/export-import.lib:1007
+msgid "EXPIRED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:126
+#: common/lib/functions/export-import.lib:446
+#: common/lib/functions/export-import.lib:489
+#: common/lib/functions/export-import.lib:721
+#: common/lib/functions/export-import.lib:764
+#: common/lib/functions/export-import.lib:1007
+msgid "REVOKED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:126
+#: common/lib/functions/export-import.lib:446
+#: common/lib/functions/export-import.lib:489
+#: common/lib/functions/export-import.lib:721
+#: common/lib/functions/export-import.lib:767
+#: common/lib/functions/export-import.lib:773
+#: common/lib/functions/export-import.lib:955
+#: common/lib/functions/export-import.lib:1007
+msgid "SUSPENDED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:796
+#: common/lib/functions/export-import.lib:812
+#: common/lib/functions/export-import.lib:977
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/misc-utils.lib:188
+msgid "NEW"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:810
+#: common/lib/functions/misc-utils.lib:188
+msgid "RENEW"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:794
+#: common/lib/functions/export-import.lib:808
+#: common/lib/functions/export-import.lib:977
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/misc-utils.lib:188
+msgid "PENDING"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:792
+#: common/lib/functions/export-import.lib:806
+#: common/lib/functions/export-import.lib:977
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/misc-utils.lib:188
+msgid "SIGNED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:790
+#: common/lib/functions/export-import.lib:804
+#: common/lib/functions/export-import.lib:977
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/misc-utils.lib:189
+msgid "APPROVED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:786
+#: common/lib/functions/export-import.lib:800
+#: common/lib/functions/export-import.lib:998
+#: common/lib/functions/export-import.lib:1025
+#: common/lib/functions/misc-utils.lib:189
+msgid "ARCHIVED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:127
+#: common/lib/functions/export-import.lib:130
+#: common/lib/functions/export-import.lib:447
+#: common/lib/functions/export-import.lib:450
+#: common/lib/functions/export-import.lib:490
+#: common/lib/functions/export-import.lib:493
+#: common/lib/functions/export-import.lib:724
+#: common/lib/functions/export-import.lib:727
+#: common/lib/functions/export-import.lib:788
+#: common/lib/functions/export-import.lib:802
+#: common/lib/functions/misc-utils.lib:189
+msgid "DELETED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:158
+msgid "Clean up ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:234
+#: common/lib/functions/export-import.lib:266
+msgid "The operation failed with errorcode __ERRNO__."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:316
+msgid "Export failed!"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:324
+msgid "Archive created successfully."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:356
+msgid "Importing archive ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:359
+msgid "Load required variables ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:365
+msgid "Changing to directory __DIR__ ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:367
+msgid "failed"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:373
+msgid "Running the import command(s) ..."
+msgstr ""
+#: common/lib/functions/export-import.lib:378#: common/lib/functions/export-import.lib:410
+msgid "FAILED"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:411
+msgid "Testing archive failed!"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:415
+#: common/lib/functions/misc-utils.lib:350
+#: common/lib/functions/request-utils.lib:827
+#: common/lib/functions/request-utils.lib:855
+msgid "OK"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:548
+msgid "Exporting __STATUS__ __OBJECT__ ..."
+msgstr ""
+#: common/lib/functions/export-import.lib:550#: common/lib/functions/export-import.lib:566
+#: common/lib/functions/misc-utils.lib:173
+#: common/lib/functions/misc-utils.lib:208
+msgid "Database failed with errorcode __ERRNO__."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:572
+#: common/lib/functions/export-import.lib:668
+msgid "No objects are present."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:574
+msgid "Exporting all necessary objects."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:608
+msgid "FAILURE: __SERIAL__ (__FORMAT__)."
+msgstr ""
+#: common/lib/functions/export-import.lib:611
+#: common/lib/functions/export-import.lib:693
+#: common/lib/functions/export-import.lib:1077
+#: common/lib/functions/export-import.lib:1080
+#: common/lib/functions/export-import.lib:1084
+#: common/lib/functions/export-import.lib:1087
+msgid "FILE: __FILE__"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:640
+msgid "Importing __STATUS__ __OBJECT__ ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:645
+msgid "Logs were only available on SQL-Databases!"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:655
+msgid "Cleaning up the collected import logs ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:692
+msgid "FAILURE: Cannot create object from file"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:839
+#: common/lib/functions/export-import.lib:876
+msgid "Only removing private key from certificate object ..."
+msgstr ""
+#: common/lib/functions/export-import.lib:984
+msgid "DELETED_CRR"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1054
+msgid "__IMPORTFILE__ updated"
+msgstr ""
+#: common/lib/functions/export-import.lib:1056
+msgid "__IMPORTFILE__ inserted"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1076
+msgid "WARNING: Cannot insert object but object is present in database"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1079
+msgid "WARNING: Cannot update object but object is present in database"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1083
+msgid "FAILURE: Cannot insert object and object is not present in database"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1212#: common/lib/functions/export-import.lib:1241
+msgid "Importing Certificates into ldap ... "
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1244
+msgid "No certificates present."
+msgstr ""
+
+
+
+#: common/lib/functions/export-import.lib:1257
+msgid "CERTIFICATE __CERT_SERIAL__ is available via LDAP"
+msgstr ""
+#: common/lib/functions/export-import.lib:1276
+msgid "Cannot update file __FILE__ with certificates of last import"
+msgstr ""
+#: common/lib/functions/export-import.lib:1318
+msgid "Importing CA-Certificates into ldap ... "
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1324
+msgid "Cannot load CA-certificate"
+msgstr ""
+
+
+#: common/lib/functions/export-import.lib:1336
+msgid "CA-Certificate __CERT_SERIAL__ is available via LDAP"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1343
+msgid "Make CA-Certificate available on the server ..."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1344
+msgid "VALID_CA_CERTIFICATE"
+msgstr ""
+#: common/lib/functions/export-import.lib:1363
+#: common/lib/functions/export-import.lib:1376
+#: common/lib/functions/export-import.lib:1389
+msgid "FAILED."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1385#: common/lib/functions/export-import.lib:1398
+msgid "OK."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1415
+msgid "Re-Building CA Chain ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1671
+msgid "Exporting the RBAC-configuration ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1693#: common/lib/functions/export-import.lib:1694#: common/lib/functions/export-import.lib:1698
+#: common/lib/functions/export-import.lib:1786
+#: common/lib/functions/export-import.lib:1995
+#: common/lib/functions/ldap-utils.lib:127
+msgid "Ok."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1706
+msgid "Exporting the configuration of the extensions of the roles ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1760
+msgid "Importing the RBAC-configuration ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1781#: common/lib/functions/export-import.lib:1782#: common/lib/functions/export-import.lib:1794
+msgid "Importing the configuration of the extensions of the roles ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1946
+msgid "BP_EXPORT_PKCS12_DIR"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:1948
+msgid "Exporting the data from the batchprocessors ... "
+msgstr ""
+#: common/lib/functions/export-import.lib:1988
+msgid "Cannot copy __SRC_DIR__ to __DEST_DIR__!"
+msgstr ""
+#: common/lib/functions/export-import.lib:1990#: common/lib/functions/export-import.lib:2041
+msgid "No appropriate object specified."
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2088
+msgid "export-import.lib: eximExportCommit"
+msgstr ""
+#: common/lib/functions/export-import.lib:2090#: common/lib/functions/export-import.lib:2098#: common/lib/functions/export-import.lib:2125#: common/lib/functions/export-import.lib:2129#: common/lib/functions/export-import.lib:2192#: common/lib/functions/export-import.lib:2192#: common/lib/functions/export-import.lib:2193#: common/lib/functions/export-import.lib:2210
+#: common/lib/functions/export-import.lib:2310
+#: common/lib/functions/request-utils.lib:436
+msgid "1"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2212
+msgid "Cannot import log for exports into file __FILENAME__."
+msgstr ""
+#: common/lib/functions/export-import.lib:2287#: common/lib/functions/export-import.lib:2298
+#: common/lib/functions/export-import.lib:2333
+#: common/lib/functions/export-import.lib:2360
+msgid ".dbm"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2310
+#: common/lib/functions/export-import.lib:2319
+#, perl-format
+msgid "%s"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2312
+msgid "Cannot log item __KEY__ in database __FILE__."
+msgstr ""
+#: common/lib/functions/export-import.lib:2319
+msgid "export-import.lib: logged "
+msgstr ""
+#: common/lib/functions/export-import.lib:2323#: common/lib/functions/export-import.lib:2380
+msgid "DB_File"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2386
+msgid "Cannot open database __FILE__."
+msgstr ""
+#: common/lib/functions/export-import.lib:2429
+msgid "LDAP-support is deactivated"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2434
+msgid "LDAP-support is activated"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2445
+msgid "Automatic LDAP-update is deactivated"
+msgstr ""
+
+#: common/lib/functions/export-import.lib:2450
+msgid "Automatic LDAP-update is activated"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:55
+#: common/lib/functions/mail-utils.lib:51
+msgid "File __FILE__ not found!"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:61
+#: common/lib/functions/mail-utils.lib:57
+msgid "Last Import file was empty."
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:67
+msgid "Cert.-No."
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:68
+msgid "DN"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:69
+msgid "adding dn"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:70
+msgid "adding certificate"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:91
+msgid "ERROR [__CERT_SERIAL__] : can't get certificate from dB!"
+msgstr ""
+
+
+#: common/lib/functions/ldap-utils.lib:112
+msgid "success"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:114
+msgid "Error : __ERRNO__"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:117
+msgid "operation not performed"
+msgstr ""
+
+#: common/lib/functions/ldap-utils.lib:140
+msgid "ldap-utils.lib: LDAP_get_crl: try to determine the newest CRL<br>\n"
+msgstr ""
+#: common/lib/functions/ldap-utils.lib:153#: common/lib/functions/ldap-utils.lib:182#: common/lib/functions/ldap-utils.lib:187#: common/lib/functions/ldap-utils.lib:217
+msgid "Enter the modified DN"
+msgstr ""
+
+
+
+#: common/lib/functions/mail-utils.lib:79
+msgid "Sending Mail [__CERT_SERIAL__] : can't get certificate from dB!"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:87
+#: common/lib/functions/mail-utils.lib:110
+msgid "Sending Mail"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:94
+msgid "Sending Mail [__CERT_SERIAL__] : non valid e-mailaddress!"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:101
+msgid "Success"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:103
+msgid "Sending Mail [__CERT_SERIAL__] : Can't Send Mail ( __ERRNO__ )"
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:111
+msgid "Mail sent succesfully"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:127#: common/lib/functions/mail-utils.lib:127#: common/lib/functions/mail-utils.lib:128
+msgid "Error Sending Mail 434"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:139
+msgid "Can not open baseMailFile (__FILE__)!"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:143#: common/lib/functions/mail-utils.lib:144#: common/lib/functions/mail-utils.lib:148#: common/lib/functions/mail-utils.lib:149#: common/lib/functions/mail-utils.lib:150
+msgid "New Issued Certificate (Serial: __CERT__SERIAL__)"
+msgstr ""
+#: common/lib/functions/mail-utils.lib:292
+msgid "Mail __MESSAGE__ does not exist."
+msgstr ""
+#: common/lib/functions/mail-utils.lib:299
+msgid "Mail __MESSAGE__ is not readable."
+msgstr ""
+
+#: common/lib/functions/mail-utils.lib:313
+msgid "Mail __MESSAGE__ is empty."
+msgstr ""
+#: common/lib/functions/misc-utils.lib:14
+msgid "Logging is not initialized.\n"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:21
+msgid "Configuration error: "
+msgstr ""
+#: common/lib/functions/misc-utils.lib:62
+msgid "&nbsp;"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:63
+msgid "Log Message"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:69
+msgid "Administration Success"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:97
+msgid "Missing Configuration Keyword(s) : __KEYS__"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:123
+msgid "Missing Configuration Keyword : __KEY__"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:158
+msgid "The compilation of the command __CMD__ failed. __ERRVAL__"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:223#: common/lib/functions/misc-utils.lib:306
+#: common/lib/functions/misc-utils.lib:573
+#: common/lib/functions/request-utils.lib:222
+#: common/lib/functions/request-utils.lib:234
+#: common/lib/functions/request-utils.lib:245
+#: common/lib/functions/request-utils.lib:258
+#: common/lib/functions/request-utils.lib:269
+#: common/lib/functions/request-utils.lib:280
+msgid "ame"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:306
+#: common/lib/functions/misc-utils.lib:573
+#: common/lib/functions/request-utils.lib:227
+#: common/lib/functions/request-utils.lib:239
+#: common/lib/functions/request-utils.lib:250
+#: common/lib/functions/request-utils.lib:263
+#: common/lib/functions/request-utils.lib:274
+#: common/lib/functions/request-utils.lib:284
+msgid "alue"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:318
+msgid "Cannot load __DATATYPE__ __KEY__ from database."
+msgstr ""
+#: common/lib/functions/misc-utils.lib:332
+msgid "Permission denied. Wrong Passphrase."
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:340
+msgid "Passphrase protected content"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:351
+msgid "Reset"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:353
+msgid "Password to access the page"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:388 common/lib/functions/initServer:642
+msgid "CgiServerName"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:393
+msgid "token_config/token"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:430
+msgid "token_config/token/option"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:458#: common/lib/functions/misc-utils.lib:579
+msgid "Security violation\n"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:595
+#, perl-format
+msgid "%04d%02d%02d%02d%02d%02d"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:631
+msgid "?cmd="
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:634
+#: common/lib/functions/misc-utils.lib:635
+msgid "action"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:635
+msgid ";action="
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:638
+#: common/lib/functions/misc-utils.lib:733
+msgid "HEX"
+msgstr ""
+
+
+#: common/lib/functions/misc-utils.lib:661
+msgid " No Extra References "
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:662
+#: common/lib/functions/misc-utils.lib:765
+msgid "</div>"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:673
+msgid "KEYLIST"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:682
+msgid ";"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:682
+msgid "="
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:689
+msgid "<div>"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:721
+#: common/lib/functions/misc-utils.lib:725
+msgid " ... "
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:741
+msgid "<span class='extraRefSelected'>"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:745
+msgid "</span>"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:757#: common/lib/functions/misc-utils.lib:767#: common/lib/functions/misc-utils.lib:789
+msgid "libGetPidProcessStatus::Pidfile is empty!\n"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:798#: common/lib/functions/misc-utils.lib:801#: common/lib/functions/misc-utils.lib:814
+msgid "libGetPidProcessStatus::Process active!\n"
+msgstr ""
+
+
+#: common/lib/functions/misc-utils.lib:830
+msgid "libGetPidProcessStatus::Pidfile does not exists!\n"
+msgstr ""
+#: common/lib/functions/misc-utils.lib:865#: common/lib/functions/misc-utils.lib:877#: common/lib/functions/misc-utils.lib:908#: common/lib/functions/misc-utils.lib:920
+#: common/lib/functions/request-utils.lib:558
+msgid "USE_LOAS"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:928
+#: common/lib/functions/request-utils.lib:326
+#: common/lib/functions/request-utils.lib:377
+#: common/lib/functions/request-utils.lib:453
+#: common/lib/functions/request-utils.lib:564
+#: common/lib/functions/request-utils.lib:586
+#: common/lib/functions/request-utils.lib:615
+#: common/lib/functions/request-utils.lib:666
+#: common/lib/functions/request-utils.lib:761
+msgid "LOAConfiguration"
+msgstr ""
+
+#: common/lib/functions/misc-utils.lib:940
+#: common/lib/functions/request-utils.lib:596
+#: common/lib/functions/request-utils.lib:627
+msgid "level"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:14
+msgid "There are no roles specified."
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:31
+#: common/lib/functions/rbac-utils.lib:51
+msgid "There are no permissions specified."
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:58
+msgid "module"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:62
+msgid "role"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:66
+msgid "operation"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:70
+msgid "owner"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:82
+msgid "The access control configuration was not initialized."
+msgstr ""
+
+
+#: common/lib/functions/rbac-utils.lib:87
+msgid "Configuration directory for the command is missing."
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:99
+msgid "There is a misconfigured command in __FILE__.The operation is missing."
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:117
+msgid "XML::Twig cannot be created"
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:152
+msgid "No XML::Twig object specified."
+msgstr ""
+
+#: common/lib/functions/rbac-utils.lib:156
+msgid "Cannot write XML configurationfile __FILE__."
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:77
+#: common/lib/functions/request-utils.lib:92
+msgid "label"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:77
+#: common/lib/functions/request-utils.lib:92
+msgid "charset"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:77
+#: common/lib/functions/request-utils.lib:92
+msgid "minlen"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:78
+#: common/lib/functions/request-utils.lib:93
+#: common/lib/functions/request-utils.lib:199
+msgid "required"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:78
+#: common/lib/functions/request-utils.lib:93
+msgid "readonly"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:78
+#: common/lib/functions/request-utils.lib:93
+msgid "errlabel"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:79
+#: common/lib/functions/request-utils.lib:94
+msgid "class"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:79
+#: common/lib/functions/request-utils.lib:94
+msgid "disabled"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:129
+msgid "popup_menu"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:131
+msgid "password_field"
+msgstr ""
+#: common/lib/functions/request-utils.lib:202
+msgid "optional"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:218
+#: common/lib/functions/request-utils.lib:230
+#: common/lib/functions/request-utils.lib:242
+#: common/lib/functions/request-utils.lib:255
+#: common/lib/functions/request-utils.lib:266
+#: common/lib/functions/request-utils.lib:277
+msgid "egx"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:219
+#: common/lib/functions/request-utils.lib:231
+#: common/lib/functions/request-utils.lib:243
+#: common/lib/functions/request-utils.lib:256
+#: common/lib/functions/request-utils.lib:267
+#: common/lib/functions/request-utils.lib:278
+msgid "ntype"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:220
+#: common/lib/functions/request-utils.lib:262
+msgid "isabled"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:221
+#: common/lib/functions/request-utils.lib:233
+#: common/lib/functions/request-utils.lib:244
+#: common/lib/functions/request-utils.lib:257
+#: common/lib/functions/request-utils.lib:268
+#: common/lib/functions/request-utils.lib:279
+msgid "lass"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:223
+#: common/lib/functions/request-utils.lib:235
+#: common/lib/functions/request-utils.lib:246
+#: common/lib/functions/request-utils.lib:259
+#: common/lib/functions/request-utils.lib:270
+#: common/lib/functions/request-utils.lib:281
+msgid "ptional"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:224
+#: common/lib/functions/request-utils.lib:236
+#: common/lib/functions/request-utils.lib:247
+#: common/lib/functions/request-utils.lib:260
+#: common/lib/functions/request-utils.lib:271
+#: common/lib/functions/request-utils.lib:282
+msgid "heck"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:224
+#: common/lib/functions/request-utils.lib:236
+#: common/lib/functions/request-utils.lib:247
+#: common/lib/functions/request-utils.lib:260
+#: common/lib/functions/request-utils.lib:271
+#: common/lib/functions/request-utils.lib:282
+msgid "fill"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:225
+#: common/lib/functions/request-utils.lib:237
+#: common/lib/functions/request-utils.lib:248
+#: common/lib/functions/request-utils.lib:261
+#: common/lib/functions/request-utils.lib:272
+#: common/lib/functions/request-utils.lib:283
+msgid "inlen"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:226
+#: common/lib/functions/request-utils.lib:238
+#: common/lib/functions/request-utils.lib:249
+msgid "abels"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:232
+#: common/lib/functions/request-utils.lib:273
+msgid "eadonly"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:291
+msgid " <a href=\""
+msgstr ""
+#: common/lib/functions/request-utils.lib:294
+msgid "\" style='vertical-align:bottom;' /></a>"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:308
+msgid "SupportedKeyStrengths"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:337
+#: common/lib/functions/request-utils.lib:464
+#: common/lib/functions/request-utils.lib:642
+msgid "requires/strength"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:388
+msgid "requires/keygen/mode"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:417
+#: common/lib/functions/request-utils.lib:419
+#: common/lib/functions/request-utils.lib:421
+msgid "RSA"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:417
+#: common/lib/functions/request-utils.lib:419
+msgid "DSA"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:417
+#: common/lib/functions/request-utils.lib:428
+msgid "ECDSA"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:479
+msgid "allowed"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:487
+msgid "id-ecPublicKey"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:513
+#: common/lib/functions/request-utils.lib:702 common/lib/functions/initCGI:91
+msgid "AGENT_NAME"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:514
+#: common/lib/functions/request-utils.lib:705 common/lib/functions/initCGI:95
+msgid "AGENT_OS_NAME"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:515
+#: common/lib/functions/request-utils.lib:704 common/lib/functions/initCGI:97
+msgid "AGENT_OS_VERSION"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:519
+msgid "genkey"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:520
+#: common/lib/functions/request-utils.lib:527
+#: common/lib/functions/request-utils.lib:550
+msgid "BASIC"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:522
+#: common/lib/functions/request-utils.lib:524
+#: common/lib/functions/request-utils.lib:529
+#: common/lib/functions/request-utils.lib:532
+#: common/lib/functions/request-utils.lib:538
+#: common/lib/functions/request-utils.lib:541
+msgid "SPKAC"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:543
+#: common/lib/functions/request-utils.lib:711
+msgid "IE"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:546
+msgid "VISTA"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:566
+msgid "Cannot load LOA configration"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:576
+msgid "advanced_csr: LOANames: "
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:644
+msgid "minkeysize"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:667
+#: common/lib/functions/request-utils.lib:762
+msgid "openca/loa"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:673
+msgid "agreement"
+msgstr ""
+#: common/lib/functions/request-utils.lib:699
+msgid "Server Generated "
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:700
+#: common/lib/functions/request-utils.lib:735
+msgid "Certificate Request"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:703 common/lib/functions/initCGI:93
+msgid "AGENT_VERSION"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:716
+msgid "Firefox"
+msgstr ""
+#: common/lib/functions/request-utils.lib:722
+msgid "Mozilla/Firefox"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:729
+msgid "Vista"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:731
+msgid "Windows"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:736
+#: common/lib/functions/request-utils.lib:803
+msgid " ("
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:758
+msgid "General Request Requirement Error!"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:774
+msgid "Error in LOA Configuration"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:777
+msgid "requires"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:801
+msgid "The selected request algorithm "
+msgstr ""#: common/lib/functions/request-utils.lib:847#: common/lib/functions/request-utils.lib:847
+msgid "<b>"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:848
+msgid "</b>"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:897#: common/lib/functions/request-utils.lib:899
+msgid "bits"
+msgstr ""
+
+#: common/lib/functions/request-utils.lib:901
+msgid "keytype"
+msgstr ""
+
+#: common/lib/functions/initCGI:25 common/lib/functions/initCGI:101
+#: common/lib/functions/initCGI:102
+msgid "HTTP_ACCEPT_LANGUAGE"
+msgstr ""
+
+#: common/lib/functions/initCGI:26 common/lib/functions/initCGI:103
+#: common/lib/functions/initCGI:104 common/lib/functions/initServer:354
+msgid "HTTP_ACCEPT_CHARSET"
+msgstr ""
+
+#: common/lib/functions/initCGI:27 common/lib/functions/initCGI:105
+#: common/lib/functions/initCGI:106
+msgid "HTTP_ACCEPT_ENCODING"
+msgstr ""
+
+#: common/lib/functions/initCGI:34 common/lib/functions/initCGI:124
+msgid "OPENCA_AC_CHANNEL_SSL_SERVER_S_DN"
+msgstr ""
+
+#: common/lib/functions/initCGI:35 common/lib/functions/initCGI:126
+msgid "OPENCA_AC_CHANNEL_SSL_CLIENT_S_DN"
+msgstr ""
+
+#: common/lib/functions/initCGI:36 common/lib/functions/initCGI:128
+msgid "OPENCA_AC_CHANNEL_SSL_PROTOCOL"
+msgstr ""
+
+#: common/lib/functions/initCGI:37 common/lib/functions/initCGI:130
+msgid "OPENCA_AC_CHANNEL_SSL_CLIENT_VERIFY"
+msgstr ""
+
+#: common/lib/functions/initCGI:133
+msgid "OPENCA_AC_INTERFACE"
+msgstr ""
+#: common/lib/functions/initCGI:144#: common/lib/functions/initCGI:147
+msgid ".fieldnames"
+msgstr ""
+
+#: common/lib/functions/initCGI:149
+msgid ".cgifields="
+msgstr ""
+#: common/lib/functions/initCGI:151
+msgid "=\n"
+msgstr ""
+#: common/lib/functions/initCGI:162#: common/lib/functions/initCGI:162#: common/lib/functions/initDB:4#: common/lib/functions/initDB:5
+msgid "Error while Loading Configuration (__FILE__)!"
+msgstr ""
+#: common/lib/functions/initDB:14
+msgid "Cannot initialize OpenCA::DB class! (__DIR__)"
+msgstr ""
+
+#: common/lib/functions/initDB:16
+msgid "Errorcode: __ERRNO__"
+msgstr ""
+
+#: common/lib/functions/initDB:17
+msgid "Errormessage: __ERRVAL__"
+msgstr ""
+
+
+#: common/lib/functions/initDBI:86
+msgid "database_config/namespace"
+msgstr ""
+
+#: common/lib/functions/initDBI:100
+msgid "DB_Namespace"
+msgstr ""
+
+
+#: common/lib/functions/initLDAP:20
+msgid "Cannot initialize LDAP management (__ERRNO__). __ERRVAL__"
+msgstr ""
+#: common/lib/functions/initServer:79#: common/lib/functions/initServer:81#: common/lib/functions/initServer:83#: common/lib/functions/initServer:85#: common/lib/functions/initServer:86
+msgid "mail-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:88
+msgid "ldap-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:90
+msgid "export-import loaded"
+msgstr ""
+#: common/lib/functions/initServer:92
+msgid "request-utils loaded"
+msgstr ""
+#: common/lib/functions/initServer:94
+msgid "datasource-utils loaded"
+msgstr ""
+
+#: common/lib/functions/initServer:102
+msgid "Cannot open directory __DIR__ which contains the commands."
+msgstr ""
+
+
+
+
+#: common/lib/functions/initServer:159 common/lib/functions/initServer:164
+#: common/lib/functions/initServer:166
+msgid "}."
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+#: common/lib/functions/initServer:354
+msgid "initServer: BrowserSupportedCharset(s)  ["
+msgstr ""
+
+#: common/lib/functions/initServer:354
+msgid "]"
+msgstr ""
+
+#: common/lib/functions/initServer:359 common/lib/functions/initServer:360
+#: common/lib/functions/initServer:361 common/lib/functions/initServer:362
+#: common/lib/functions/initServer:363 common/lib/functions/initServer:364
+#: common/lib/functions/initServer:365 common/lib/functions/initServer:366
+#: common/lib/functions/initServer:367 common/lib/functions/initServer:368
+#: common/lib/functions/initServer:369 common/lib/functions/initServer:399
+#: common/lib/functions/initServer:410
+msgid "LANG"
+msgstr ""
+
+#: common/lib/functions/initServer:359 common/lib/functions/initServer:360
+#: common/lib/functions/initServer:361 common/lib/functions/initServer:362
+#: common/lib/functions/initServer:363 common/lib/functions/initServer:364
+#: common/lib/functions/initServer:365 common/lib/functions/initServer:366
+#: common/lib/functions/initServer:367 common/lib/functions/initServer:368
+#: common/lib/functions/initServer:369 common/lib/functions/initServer:670
+msgid "utf-8"
+msgstr ""
+
+#: common/lib/functions/initServer:360
+msgid "de"
+msgstr ""
+
+#: common/lib/functions/initServer:360
+msgid "de_DE"
+msgstr ""
+
+#: common/lib/functions/initServer:361
+msgid "el"
+msgstr ""
+
+#: common/lib/functions/initServer:361
+msgid "el_GR"
+msgstr ""
+
+#: common/lib/functions/initServer:362
+msgid "en"
+msgstr ""
+
+#: common/lib/functions/initServer:362
+msgid "en_GB"
+msgstr ""
+
+#: common/lib/functions/initServer:363
+msgid "es"
+msgstr ""
+
+#: common/lib/functions/initServer:363
+msgid "es_ES"
+msgstr ""
+
+#: common/lib/functions/initServer:364
+msgid "fr"
+msgstr ""
+
+#: common/lib/functions/initServer:364
+msgid "fr_FR"
+msgstr ""
+
+#: common/lib/functions/initServer:365
+msgid "it"
+msgstr ""
+
+#: common/lib/functions/initServer:365
+msgid "it_IT"
+msgstr ""
+
+#: common/lib/functions/initServer:366
+msgid "pl"
+msgstr ""
+
+#: common/lib/functions/initServer:366
+msgid "pl_PL"
+msgstr ""
+
+#: common/lib/functions/initServer:367
+msgid "sl"
+msgstr ""
+
+#: common/lib/functions/initServer:367
+msgid "sl_SI"
+msgstr ""
+
+#: common/lib/functions/initServer:368
+msgid "ja"
+msgstr ""
+
+#: common/lib/functions/initServer:368
+msgid "ja_JP"
+msgstr ""
+
+#: common/lib/functions/initServer:369
+msgid "ru"
+msgstr ""
+
+#: common/lib/functions/initServer:369
+msgid "ru_RU"
+msgstr ""
+
+#: common/lib/functions/initServer:397
+msgid "select language: "
+msgstr ""
+
+#: common/lib/functions/initServer:422
+msgid "LC_MESSAGES=C"
+msgstr ""
+
+#: common/lib/functions/initServer:423
+msgid "LC_TIME=C"
+msgstr ""
+#: common/lib/functions/initServer:426#: common/lib/functions/initServer:427#: common/lib/functions/initServer:435#: common/lib/functions/initServer:438#: common/lib/functions/initServer:490
+msgid "LOG_DIR"
+msgstr ""
+
+#: common/lib/functions/initServer:503
+msgid "The XML cache does not work properly - aborting."
+msgstr ""
+#: common/lib/functions/initServer:535#: common/lib/functions/initServer:559
+msgid "Cannot initialize cryptographic layer (configurationfile __FILE__)!"
+msgstr ""
+
+#: common/lib/functions/initServer:567
+msgid "Cannot initialize Crypto Shell!"
+msgstr ""
+
+#: common/lib/functions/initServer:595
+msgid "Cannot initialize logging (__CONFIG__)!"
+msgstr ""
+#: common/lib/functions/initServer:627
+msgid "Cannot initialize OpenCA::Tools class!"
+msgstr ""
+
+#: common/lib/functions/initServer:648
+msgid "Cannot initialize OpenCA::Session class!"
+msgstr ""
+
+
+#: common/lib/functions/initServer:721
+msgid "access control configurations loaded and ACL cached"
+msgstr ""
+
+#: common/lib/functions/initServer:734
+msgid "locale -m"
+msgstr ""

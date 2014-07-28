@@ -1,0 +1,109 @@
+## OpenCA Command
+## (c) 1998-2008 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: getMenu
+##       Brief: generate a menu page
+## Description: generate a menu based on the webinterface and the
+##	        link chosen
+##  Parameters: iface,on
+
+use strict;
+
+sub cmdGetMenu {
+
+	my $iface 	= getRequired ('CgiServerName');
+	my $root	= "interface_menus";
+
+	print '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+	print qq{ <openca><menu name="General"><item name="pp" lnk="sda" /></menu></openca>};
+	print "\n\n";
+
+        ## get the appropriate menu
+        # my $menus = $xml_cache->get_xpath_count(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => "${root}/interface");
+	# my ($menu, $menu_class);
+        # for (my $i=0; $i < $menus; $i++) {
+        #     next if ($xml_cache->get_xpath(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => [ "${root}/interface", "name" ],
+        #                 COUNTER  => [ $i, 0 ]) !~ /${iface}/);
+        #     $menu = $i;
+        #     last;
+       #  }
+
+        ## Now do everything...
+        # $ht_prefix  = $xml_cache->get_xpath(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => [ "${root}/interface", "htdocs_prefix" ],
+        #                 COUNTER  => [ $menu, 0 ]);
+        # $cgi_prefix = $xml_cache->get_xpath(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => [ "${root}/interface", "cgi_prefix" ],
+        #                 COUNTER  => [ $menu, 0 ]);
+        # $logo_left  = $xml_cache->get_xpath(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => [ "${root}/interface", "logo_left" ],
+        #                 COUNTER  => [ $menu, 0 ]);
+	# $logo_left  =~ s/&lt;/\</g;
+	# $logo_left  =~ s/&gt;/\>/g;
+        # $logo_right = $xml_cache->get_xpath(
+        #                 FILENAME => getRequired ('MenuConfiguration'),
+        #                 XPATH    => [ "${root}/interface", "logo_right" ],
+        #                 COUNTER  => [ $menu, 0 ]);
+	# $logo_right  =~ s/&lt;/\</g;
+	# $logo_right  =~ s/&gt;/\>/g;
+	# @xpath      = ( "${root}/interface", "menu" );
+        # @counter    = ( $menu, 0 );
+        # my @id_path = $query->param ('id');
+        # my @id_scan = ();
+
+	# if( $#id_path < 0 ) {
+# 		push( @id_path, 1 );
+# 	}
+
+        # my $table = "";
+	# my $level = 0;
+        # foreach my $h_id (@id_path) {
+        #     ($row, @counter [scalar @counter]) = buildMenuRow (
+        #                                     XPATH   => [ @xpath ],
+        #                                     COUNTER => [ @counter ],
+        #                                     HTDOCS  => $ht_prefix,
+        #                                     CGI     => $cgi_prefix,
+        #                                     ID      => $h_id,
+# 					    LEVEL   => $level,
+#                                             ID_PATH => \@id_scan);
+#             @xpath [scalar @xpath] = 'item';
+#             push @id_scan, $h_id;
+# 	    $table .= $row;
+# 	    $level++;
+#         }
+#         ($row, @counter [scalar @counter]) = buildMenuRow (
+#                                         XPATH   => [ @xpath ],
+#                                         COUNTER => [ @counter ],
+ #                                        HTDOCS  => $ht_prefix,
+#                                         CGI     => $cgi_prefix,
+#                                         ID      => "",
+# 					LEVEL	=> $level,
+#                                         ID_PATH => \@id_scan);
+# 	$table .= $row;
+# 
+# 	## Insert Right Values
+#         $table = $query->subVar( $table, '__HTDOCS_PREFIX__', $ht_prefix);
+# 	$table = $query->subVar( $table, '@IMGDIR@', "$ht_prefix/images" );
+# 
+#         $logo_left = $query->subVar($logo_left,'__HTDOCS_PREFIX__',$ht_prefix);
+#         $logo_right= $query->subVar($logo_right,'__HTDOCS_PREFIX__',$ht_prefix);
+# 
+# 	$table .= recursivePath();
+# 
+#         return libSendMenu ($table, $logo_left, $logo_right);
+
+	return 1;
+}
+
+1;
+
+__END__;
+

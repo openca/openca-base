@@ -1,0 +1,40 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: show_prepared_module
+##       Brief: show a special module
+## Description: show a special module and a button to add/delete the module
+##  Parameters: module, next_cmd
+
+use strict;
+
+sub cmdShow_prepared_module {
+
+	my $id = $query->param ('id');
+        my $description = $query->param ('description');
+
+        my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+        $hidden_list->{"id"}          = $id;
+        $hidden_list->{"description"} = $description;
+ 
+	if ( $query->param ('next_cmd') =~ /^delete$/i ) {
+		$hidden_list->{"cmd"} = "delete_module";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext ("DELETE this Module")."\">\n";
+	} else {
+		$hidden_list->{"cmd"} = "new_module";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext("Create this Module")."\">\n";
+	}
+
+        return libSendReply (
+                             "NAME"        => gettext ("Show Prepared Module"),
+                             "EXPLANATION" => i18nGettext ("The prepared module is __MODULE__ (__DESCRIPTION__).",
+                                                           "__MODULE__", $id,
+                                                           "__DESCRIPTION__", $description),
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+}
+
+1;

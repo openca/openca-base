@@ -1,0 +1,7 @@
+## Uses the OpenCA::RBAC module
+
+## load rbac-utils.lib
+require "rbac-utils.lib";
+
+1;
+

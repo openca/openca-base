@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1250">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.1  (Win32)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGED" CONTENT="20100211;19572200">
+	<!-- <span style="font-size: 0.8em;">
+       Welcome to
+     </span><br />
+	-->
+</HEAD>
+<BODY LANG="ro-RO" DIR="LTR">
+<P>@ORGANIZATION@ PKI 
+</P>
+<H3 ALIGN=JUSTIFY STYLE="margin-top: 0cm; margin-bottom: 0.4cm; border: none; padding: 0cm">
+Bine aţi venit la @ORGANIZATION@!</H3>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+@ORGANIZATION@ este o organitaţie de voluntari ce produce software
+pentru managementul identităţilor digitale. @ORGANIZATION@ găzduieşte
+multe proiecte cu relevanţă în domeniul securităţii cum ar fi <A HREF="http://www.openca.org/projects/libpki">LibPKI</A>,
+<A HREF="http://www.openca.org/projects/prqpd">PRQP server</A>, <A HREF="http://www.openca.org/projects/ocspd">OCSP
+server</A>, şi <A HREF="http://www.openca.org/projects/openca">OpenCA
+PKI</A>. <A HREF="http://en.wikipedia.org/wiki/Certificate_authority">Autoritatea
+de Certificare</A> pune la dispoziţie servicii pentru generarea si
+managementul <A HREF="http://en.wikipedia.org/wiki/Digital_Certificate">Certificatelor
+Digitale</A>. 
+</P>
+<H3 ALIGN=JUSTIFY STYLE="margin-top: 0cm; margin-bottom: 0.4cm; border: none; padding: 0cm">
+Ce sunt certificatele digitale ?</H3>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+Certificatele dumneavoastră sunt identităţi digitale ce sunt
+echivalente cu ID-ul dumeavoastră normal (de exemplu: carnetul
+dumneavoastră de conducere, paşaportul sau legitimaţia
+scolară/serviciu), dar sunt păstrate într-un format digital, ce poate
+fi folosit de calculatoare şi de internet. Certificatele digitale pot
+fi eliberate unor persoane şi/sau unor servere şi sunt folosite în
+mod comun pentru mai multe scopuri:</P>
+<UL>
+	<LI><P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+	<B>Securizarea Email-ului</B> &ndash; semnarea digitală şi criptarea
+	email-ului 
+	</P>
+	<LI><P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+	<B>Semnarea documentelor</B> &ndash; inclusiv documente PDF şi
+	Office 
+	</P>
+	<LI><P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+	<B>Securizarea accesului la reţea</B> &ndash; acolo unde este
+	necesar un nivel mai ridicat de securitate decât combinaţia
+	utilizator / parolă (de exemplu: pentru accesul Wireless) 
+	</P>
+	<LI><P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+	<B>Autentificarea la Servere (https)</B> &ndash; pentru protejarea
+	comunicaţiilor cu un server web (de exemplu: pentru online banking
+	sau eCommerce) 
+	</P>
+</UL>
+<H3 ALIGN=JUSTIFY STYLE="margin-top: 0cm; margin-bottom: 0.4cm; border: none; padding: 0cm">
+Cum pot obţine un certificat digital?</H3>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.4cm; border: none; padding: 0cm">
+Obţinerea certificatelor digitale se face cât ai spune 1.. 2.. 3!
+Urmaţi paşii şi foloţi noua dumneavoastră identitate digitală pentru
+securizarea datelor si a comunicaţiilor pe internet! 
+</P>
+<P STYLE="margin-bottom: 0cm">@CONTROL_PANEL@ 
+</P>
+<P STYLE="margin-bottom: 0cm">@NOTICES_PANEL@ 
+</P>
+</BODY>
+</HTML>

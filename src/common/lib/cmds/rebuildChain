@@ -1,0 +1,39 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: rebuildChain
+##       Brief: Rebuilds Certificate Chain
+## Description: Rebuilds CAs Certificate Chain for proper Chain Verification
+##  Parameters: 
+## Cfg Keyword: OpenCADir, MakePath
+
+use strict;
+
+sub cmdRebuildChain {
+
+	my $chainDir   = getRequired( 'ChainDir' );
+	my $makeCmd     = getRequired( 'MakePath' );
+
+	my ( $ret, $command );
+	if ( not chdir( "${chainDir}" )) {
+		configError( i18nGettext ("Cannot change directory to __DIR__!", "__DIR__", $chainDir));
+		return undef;
+	}
+
+	$ret = `$makeCmd clean ; $makeCmd 2>&1`;
+	if( $? != 0 ) {
+		generalError(
+            i18nGettext ("Error while rebuilding the CA chain in __DIR__!", "__DIR__", $chainDir).
+			"<BR><BR><FONT SIZE=-1>$cmd<BR>$ret" .
+			"</FONT><BR>", "$?" );
+	} else {
+		success ( gettext ("Succesful"),
+                  gettext ("CA Certificates chain successfully rebuilt.").
+                "<BR><BR><FONT SIZE=-1 COLOR=\"#336699\">" .
+				"<OL>$ret</OL></FONT><BR>" );
+	};
+}
+
+1;
+

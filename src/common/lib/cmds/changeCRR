@@ -1,0 +1,163 @@
+## OpenCA - Public Web-Gateway Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: changeCRR
+##       Brief: change a pending CRR
+##     Version: $Revision: 1.3 $
+## Description: store an edited pending CRR
+##  Parameters: head, text
+
+use strict;
+
+sub cmdChangeCRR {
+
+    our ($db, $query, $cryptoShell);
+
+    ## To aprove a Request, we need it signed by the RA operator
+    my $beginHeader = "-----BEGIN HEADER-----";
+    my $endHeader   = "-----END HEADER-----";
+
+    ## Reserved variables
+    my ( $head, $text, $signature, $cert, $certTable );
+
+    ## Get the parameters
+    my $crr_serial = $query->param('key');
+    my $crl_reason = $query->param('crl_reason');
+    my $description = $query->param('description');
+    my $datatype = "NEW_CRR";
+    my $crr = $db->getItem ( DATATYPE => $datatype, KEY => $crr_serial );
+    if (not $crr) {
+        $datatype   = "PENDING_CRR";
+        $crr = $db->getItem ( DATATYPE => $datatype, KEY => $crr_serial );
+        generalError (i18nGettext (
+            "Cannot load CRR __SERIAL__ from the database. __ERRVAL__",
+            "__SERIAL__", $crr_serial,
+            "__ERRVAL__", $db->errval()),
+                      $db->errno())
+            if (not $crr);
+    }
+    my $serial = $crr->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+
+    if ($crr->getSignature()) {
+        ## we have to create a new CRR if the old one was signed
+        ## signed data cannot be modified inside OpenCA
+
+	if (not $db->updateItem (OBJECT => $crr, DATATYPE => "ARCHIVED_CRR")) {
+        # if (not $db->updateStatus (OBJECT   => $crr,
+        #                            DATATYPE => $datatype,
+        #                            NEWTYPE  => "ARCHIVED_CRR")) {
+            generalError (i18nGettext (
+                "Cannot archive the signed user CRR. __ERRVAL__",
+                "__ERRVAL__", $db->errval()),
+                          $db->errno());
+        }
+
+        ## calculate new serial
+        my $last_crr = libDBGetLastItem ("CRR");
+        $crr_serial    = $last_crr->getSerial("CRR") if ($last_crr);
+        $crr_serial  >>= getRequired ("ModuleShift");
+
+        if (not $serial) {
+            ##// it's not good to show the user the detailed problem
+            ## this is a security problem here !!!
+            print STDERR "SECURITY ALERT BY PKI: correct CRR cannot be stored because of DB-error (certificate: $serial)\n";
+            configError (gettext ("A databaseerror occurs during counting the existing CRRs!"));
+        }
+        $crr_serial++;
+        $crr_serial = ($crr_serial << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+    }
+
+    ## download the certificate
+    my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $serial );
+    if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	configError (i18nGettext ("Error: Cannot find the certificate __CERT_SERIAL__ in the database.",
+                                    "__CERT_SERIAL__", $serial));
+    }
+    my $parsed = $cert->getParsed();
+
+    ## Strip html and \n\r code from reason
+    $description =~ s/<[^\>]*>/ /g;
+    $description =~ s/(\n|\r)/ /g;
+    $description =~ s/^\s+//g;
+    $description =~ s/[\s]+/ /g;
+
+    ## build header
+    $head  = "$beginHeader\r\n";
+    $head .= "TYPE = CRR\r\n";
+    $head .= "SERIAL = $crr_serial\r\n";
+    $head .= "SSL_CERT_SERIAL = ".$crr->getParsed()->{HEADER}->{SSL_CERT_SERIAL}."\r\n";
+    $head .= "SSL_CERT_DN = ".$crr->getParsed()->{HEADER}->{SSL_CERT_DN}."\r\n";
+    $head .= "SSL_CERT_ISSUER = ".$crr->getParsed()->{HEADER}->{SSL_CERT_ISSUER}."\r\n";
+    $head .= "$endHeader\r\n";
+    ## build body
+    $text .= "SUBMIT_DATE = " . $crr->getParsed()->{SUBMIT_DATE}. "\r\n";
+    $text .= "CRIN = ".$crr->getParsed()->{CRIN}."\r\n";
+    $text .= "REVOKE_REASON = $crl_reason\r\n";
+    $text .= "REVOKE_DESCRIPTION = $description\r\n";
+    $text .= "REVOKE_CERTIFICATE_DN = " . $crr->getParsed()->{REVOKE_CERTIFICATE_DN} . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_NOTBEFORE = " . $crr->getParsed()->{REVOKE_CERTIFICATE_NOTBEFORE} . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_NOTAFTER = " . $crr->getParsed()->{REVOKE_CERTIFICATE_NOTAFTER} . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_SERIAL = " . $crr->getParsed()->{REVOKE_CERTIFICATE_SERIAL} . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_ISSUER_DN = " . $crr->getParsed()->{REVOKE_CERTIFICATE_ISSUER_DN} . "\r\n";
+    $text .= "REVOKE_CERTIFICATE_KEY_DIGEST = " . $crr->getParsed()->{REVOKE_CERTIFICATE_KEY_DIGEST} . "\r\n";
+    $text .= "NOTBEFORE = " . gmtime . "\r\n";
+    $text .= "NOTAFTER = \r\n";
+    $text .= "USER_CRR = ". $crr->getSerial() . "\r\n" if ($crr->getSignature());
+    my $req_txt = $head . $text;
+
+    ## Try to build the REQ object
+    my $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                DATA    => $req_txt );
+
+    if( not $req ) {
+	configError (gettext ("Error while creating the request."));
+    }
+
+    ## download the certificate
+    my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", 
+		KEY => $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL} );
+
+    if (not $cert) {
+        generalError (i18nGettext (
+            "Cannot load affected certificate __SERIAL__. __ERRVAL__",
+            "__SERIAL__", $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL},
+            "__ERRVAL__", $db->errval()),
+                      $db->errno());
+    }
+
+    if ($crr->getSignature()) {
+        generalError (i18nGettext (
+            "Cannot store CRR __SERIAL__ in the database. __ERRVAL__",
+            "__SERIAL__", $req->getSerial(),
+            "__ERRVAL__", $db->errval()),
+                      $db->errno())
+            if (not $db->storeItem (DATATYPE => "PENDING_CRR",
+                                    OBJECT   => $req,
+                                    MODE     => "INSERT",
+                                    KEY      => $req->getSerial()));
+    } else {
+	if ( not $db->updateItem ( DATATYPE => "PENDING_CRR",
+				   OBJECT   => $req )) {
+        # if ( not $db->updateStatus( DATATYPE => $datatype,
+        #                             OBJECT   => $req,
+        #                             NEWTYPE  => "PENDING_CRR" )) {
+            print STDERR "SECURITY ALERT BY PKI: database failed while " .
+		"storing a correct CRR which follows\n".  $req_txt."\n";
+            generalError (i18nGettext (
+                "Cannot update CRR __SERIAL__ in the database. __ERRVAL__",
+                "__SERIAL__", $req->getSerial(),
+                "__ERRVAL__", $db->errval()),
+                          $db->errno());
+        }
+    }
+
+    $query->param (-name => 'key',      -value => $req->getSerial());
+    $query->param (-name => 'dataType', -value => 'PENDING_CRR');
+
+    libExecuteCommand ("viewCRR");
+
+}
+
+1;

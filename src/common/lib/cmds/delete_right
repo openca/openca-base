@@ -1,0 +1,44 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001 The OpenCA Project
+##
+##   File Name: delete_right
+##       Brief: delete a right
+## Description: delete a right finally and then call show_rights
+##  Parameters: module, operation, operator, owner
+
+use strict;
+
+sub cmdDelete_right {
+
+    our ($query, $access_control);
+
+    my $twig = $access_control->{twig_acl};
+    my $delete = 0;
+
+    ## search for a module with a matching id
+    foreach my $perm (($twig->get_xpath ('access_control/acl/permission')))
+    {
+        if ( ($perm->first_child ('module'))->field    eq $query->param ('module') and
+             ($perm->first_child ('role'))->field      eq $query->param ('role')   and
+             ($perm->first_child ('operation'))->field eq $query->param ('operation') and
+             ($perm->first_child ('owner'))->field     eq $query->param ('owner') )
+        {
+            ## delete permission
+            $delete = 1;
+            $perm->cut;
+            last;
+        }
+    }
+
+    generalError (gettext ("Right cannot be deleted from the configuration because it is not present in the configurationfile."))
+        if (not $delete);
+
+    ## write the configuration
+    writeConfigXML (TWIG => $twig, FILENAME => ($access_control->{twig}->get_xpath ('access_control/acl_config/list'))[0]->field);
+
+    libExecuteCommand ("show_rights");
+
+}
+
+1;

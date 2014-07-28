@@ -1,0 +1,28 @@
+## OpenCA - command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: ldapUpdate
+##       Brief: Updates LDAP server
+## Description: Add issued certificates to LDAP server
+##  Parameters: 
+
+use strict;
+
+our ($tmpdir);
+
+sub cmdLdapUpdate {
+
+	print startLogPage( gettext("LDAP Updating") );
+	print addLogSection( gettext("Adding Certificates ... "));
+
+	if( (LDAP_addCertsUsers( $tmpdir ) ) == -1 ) {
+		print addLogLine(gettext("Failed!")) ;
+	}
+
+	print closeLogSection();
+	closePage();
+}
+
+1;
+

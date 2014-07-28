@@ -1,0 +1,71 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) 2002-2004 The OpenCA Project
+##
+##   File Name: bpListUser
+##       Brief: Build Direcotry Listing
+## Description: Build Directory Listing given ID
+##  Parameters: ID
+
+use strict;
+
+sub cmdBpListUser {
+
+our ($query, $xml_cache, $self);
+
+my $ID = $query->param( 'ID' );
+
+my ( $dateColTitle, $rows, @cols, @list );
+
+## Get required parameters ( return only the value string )
+my $batchdir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+
+if (defined $ID) {
+    $ID = join ("/", split (/ */, $ID));
+}
+$batchdir .= "/".$ID;
+
+opendir DIR, $batchdir;
+my @list = readdir DIR;
+closedir DIR;
+
+my $item_list = undef;
+$item_list->{HEAD}->[0] = gettext ("ID-prefix");
+$item_list->{BODY} = ();
+
+## Process all Directories
+my $user = i18nGettext ("There is no user with the ID __ID__.", "__ID__", $query->param( 'ID' ));
+foreach my $dirs ( @list ) {
+
+    next if ($dirs =~ /^(\.|\.\.)$/);
+
+    if ( (! -d $dirs) and
+         ($dirs =~ /^ID$/)
+       ) {
+        $user = "<a href=\"$self?cmd=bpListProcess&ID=".
+                      $query->param( 'ID' ).
+                "\">".$query->param( 'ID' )."</a>";
+    } elsif ($dirs =~ /^..+$/) {
+        next;
+    }
+
+    next if (! -d $batchdir."/".$dirs);
+
+    my $col = "<a href=\"$self?cmd=bpListUser&ID=".$query->param( 'ID' ).$dirs.
+         "\">".$query->param( 'ID' ).$dirs."</a>";
+    $item_list->{BODY}->[scalar @{$item_list->{BODY}}]->[0] = $col;
+}
+
+return libSendReply (
+                     "TIMESTAMP"   => 1,
+                     "NAME"        => gettext ("List Batchprocessor Users"),
+                     "EXPLANATION" => i18nGettext ("User: __USER__", "__USER__", $user),
+                     "ITEM_LIST"   => $item_list
+                    );
+}
+
+1;
+

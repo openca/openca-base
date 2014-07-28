@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>ldapUpdate.xml</name>
+            <operation>all ldap update</operation>
+            <owner_method>any</owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

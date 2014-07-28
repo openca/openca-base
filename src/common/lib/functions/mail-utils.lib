@@ -1,0 +1,433 @@
+## RA Server Management Utility 
+## (c) 1999 by Massimiliano Pala
+## All Rights Reserved
+##
+## Project Information:
+##
+## 	Current Version ..................... $VER
+##      Project Started on .................. 17/12/1998
+##      Last Modified on .................... 09/09/2000
+##      Project Closed on ................... n/a
+##
+## Program currently tested with OpenLDAP v.1.2 on Linux, Solaris
+## and Sleepycat DB.
+##
+## DISC CLAIMER: THIS SOFTWARE IS GIVEN AS IS WITHOUT ANY WARRANTIES
+## ABOUT ANY DAMAGE DERIVED BY THE USE ( CORRECT OR NOT ) OF THIS
+## SOFTWARE. THE AUTHOR IS THEREFORE NOT RESPONSABLE IN ANY WAY OF
+## DAMAGES RELATED IN ANY WAY TO THIS OR SUPPORTED SOFTWARE AS WELL.
+##
+## If you want to contact me (the author) please use the e-mail
+## addresses listed below. Do not esitate in reporting bugs, enhancement
+## or anything seems useful in developing this software:
+##
+##	madwolf@comune.modena.it
+##	m.pala@mo.nettuno.it
+##	digid@netscape.net
+##
+
+##// library's errorcode is 45
+##
+## warnUsers		10
+## sendMail		20
+## sendPreparedMails	30
+## sendPreparedMail	40
+
+use strict;
+
+# sub warnUsers {
+# 	my @keys = @_;
+ #        our ($db, $tools);
+  #       my ( $filename, $certDir, $ID, $mail, $user, 
+# 	     $tmp );
+ 
+# 	$certDir = $keys[0];
+# 	return unless $certDir;
+# 
+# 	$filename = "$certDir/lastImport.txt";
+# 
+# 	##// Let's open the lastImport.txt
+# 	if( not -e "$filename" ) {
+##  		configError( i18nGettext ("File __FILE__ not found!", "__FILE__", $filename));
+# 	}
+# 
+# 	$tmp = $tools->getFile( "$filename");
+# 
+# 	if( $tmp eq "" ) {
+##  		success( gettext ("Last Import file was empty."));
+# 	}
+# 
+# 	my @certsList = split( "\n", $tmp );
+# 	
+# 	foreach $ID ( @certsList ) {
+# 		my ($user, $userCert, $serID);
+# 
+# 		( $serID ) = ( $ID =~ /([a-f0-9]+)/i );
+# 
+# 		##// Let's be sure it is in the right format
+# 		$serID = uc( $serID );
+# 		$serID = "0$serID" if( length($serID) % 2 );
+##  
+  #               print i18nGettext ("Sending Mail [__CERT_SERIAL__] : <B>Certificate Serial __CERT_SERIAL__ (0x0__HEX__)",
+# 				                   "__CERT_SERIAL__", $serID,
+# 				                   "__HEX__", hex ($serID)) ."</B><BR>";
+# 
+# 		my $cert = $db->getItem ( DATATYPE => "VALID_CERTIFICATE",
+ #                                 KEY => $serID );
+# 		if( not $cert ) {
+# 			print "<FONT COLOR=\"Red\">";
+ #                	print i18nGettext ("Sending Mail [__CERT_SERIAL__] : can't get certificate from dB!",
+# 					                   "__CERT_SERIAL__", $serID)."<BR><BR>\n";
+# 			print "</FONT>";
+# 			next;
+# 		}
+# 
+ #                $userCert = $cert->getParsed();
+#  
+ #                print gettext ("Sending Mail")." [" . $cert->getSerial() . "] : " .
+# 		       $userCert->{DN_HASH}->{CN}[0];
+# 
+ #                print " ( " . $userCert->{EMAILADDRESS} . " )<BR>\n";
+# 
+# 		if( $userCert->{EMAILADDRESS} !~ /.*?\@.*?/ ) {
+# 			print "<FONT COLOR=\"Red\">";
+ #                	print i18nGettext ("Sending Mail [__CERT_SERIAL__] : non valid e-mailaddress!",
+# 					                   "__CERT_SERIAL__", $serID);
+# 			print "</FONT><BR><BR>\n";
+# 			next;
+# 		}
+# 
+ #                if( sendMail( $userCert->{EMAILADDRESS}, $cert->getSerial(),
+# 					   $userCert->{DN_HASH}->{CN}[0] ) ne gettext ("Success")) {
+# 			print "<FONT COLOR=\"Red\">";
+# 			print i18nGettext ("Sending Mail [__CERT_SERIAL__] : Can't Send Mail ( __ERRNO__ )",
+# 			                   "__CERT_SERIAL__", $serID,
+# 			                   "__ERRNO__", $!);
+# 			print "</FONT><BR><BR>\n";
+# 			next;
+ #                };
+# 		
+# 		print gettext ("Sending Mail") ."[" . $cert->getSerial() . "] : " .
+# 		      "<B>".gettext ("Mail sent succesfully")."</B>.<BR><BR>\n";
+# 	}
+# }
+
+sub sendMail 
+{
+  my @keys = @_;
+	our ($LANGUAGE, $query, $tools, $DEBUG);
+  my ($line, $mailTo, $serialID);
+  my $txt = "";
+ 
+	$mailTo   = $keys[0];
+	$serialID = $keys[1];
+  my $user     = $keys[2];
+
+  if (("$mailTo" eq "") || ("$serialID" eq "") || ("$user" eq ""))
+  {
+    configError(gettext ("Error Sending Mail 434"));
+	};
+
+	my $mailCommand       = getRequired ('mailcommand');
+	my $mailSenderAddress = getRequired ('SERVICE_MAIL_ACCOUNT');
+	my $baseMailFile      = getRequired ('basemailfile');
+
+	if(not($txt = $tools->getFile($query->subVar("$baseMailFile", "__LANGUAGE__", $LANGUAGE))))
+  {
+    configError (i18nGettext ("Can not open baseMailFile (__FILE__)!", "__FILE__", $baseMailFile));
+	}
+
+  $txt = $query->subVar( $txt, '@SERIAL@', $serialID );
+  $txt = $query->subVar( $txt, '@USER@', $user );
+  $txt = $query->subVar( $txt, '@EMAIL@', $mailTo );
+ 
+  if (not $DEBUG)
+  {
+    open( FD, "| $mailCommand >/dev/null" ) || return;
+    print FD "From: $mailSenderAddress \n";
+    print FD "To: $user <$mailTo>\n";
+    print FD "Subject: ".i18nGettext ("New Issued Certificate (Serial: __CERT__SERIAL__)", "__CERT_SERIAL__", $serialID);
+    print FD "\n";
+    print FD "$txt";
+    print FD "\n";
+    print FD "\n.\n";
+    close(FD);
+  }
+  else
+  {
+	  ## Debug Version
+    ## print "<PRE>:::> $mailCommand >/dev/null";
+    ## print ":::> From: $mailSenderAddress \n";
+    ## print ":::> To: $user <$mailTo>\n";
+    ## print ":::> Subject: New Issued Certificate (Serial: $serialID)";
+    ## print ":::> \n";
+    ## print ":::> ...";
+    ## print ":::> \n";
+    ## print ":::> =====================================================\n";
+    ## print ":::> Message generated by OpenCA (RAManager) -V.  $VER\n";
+    ## print ":::> (c) 1998 by Massimiliano Pala and the OpenCA Team.\n";
+    ## print ":::> =====================================================\n";
+    ## print "\n.\n</PRE>";
+  }
+
+  if ($? == 0)
+  {
+    return gettext ("Success");
+  }
+  else
+  {
+    return "$!";
+  }
+}
+
+sub sendPreparedMails 
+{
+  our ($errno, $errval, $DEBUG);
+
+  my $mail_type = shift;
+  my $locDB = shift;
+
+  my $sentMails;
+  my $mail_dir;
+  my $mailCommand = getRequired ('mailcommand');
+
+  if ($mail_type and ($mail_type =~ /crin/i))
+  {
+    $mail_type = "crin";
+    $mail_dir  = getRequired ('CRIN_MAIL_DIR');
+    $sentMails = getRequired ('SENT_MAIL_CRIN_COUNTER');
+  }
+  else
+  {
+    $mail_type = "default";
+    $mail_dir  = getRequired ('DEFAULT_MAIL_DIR');
+    $sentMails = getRequired ('SENT_MAIL_DEFAULT_COUNTER');
+  }
+
+  ## open database
+  my $db_file = $mail_dir."/serials.dbm";
+  my $handle = eximOpenDatabase($db_file);
+  if (not $handle)
+  {
+    $errval = i18nGettext ("Connot open Serials-DB: __DB__!", 
+                           "__DB__", $db_file);
+	return 0;
+ }
+  
+  ## get available mailfiles
+  opendir (DIR, $mail_dir);
+    my @files = grep (/\.msg/i, readdir (DIR));
+  closedir (DIR);
+  
+  my $found = 0;
+  my $FILE;
+
+  foreach $FILE ( @files )
+  {
+    ## reset erors
+    $errno = 0;
+    
+    ## get mailid, $1 will held the id
+    $FILE =~ /(.+)\.msg$/i;
+    my $serial = $1;
+    my $value;
+    
+    ## if mail id not present at db
+    if ($handle->get ($serial, $value) == 1)
+    {
+      $found = 1;
+      sendPreparedMail ($1, $mail_type);
+   
+      ## check for errors 
+      ## if error during send PreparedMail occured add to output
+      if ($errno) 
+      {
+        if ($errno == 4540005)
+        {
+          print STDERR "sendMail::ERROR::$errno - $errval\n";
+        }
+      } 
+      else
+      {
+        ## no error, add success
+        print STDERR "sendMail::SUCCESS::" .
+                    i18nGettext ("send mail __MESSAGE__ successful\n",
+                    "__MESSAGE__", "$mail_dir/$1.msg") if ( $DEBUG );
+
+        ## add serial to db
+        $handle->put ($serial, "1");
+      }
+    } 
+    else
+    {
+      ## remove mailfile
+      ## FIXME: to be implemented, when is clear how to resend mails
+      ##        or if this function gets removed...
+    }
+  } ## end of foreach
+  
+  if ($DEBUG and (not $found))
+  {
+    print STDERR i18nGettext ("Didn't find new mails. No mails send!");
+  }
+
+  return 1;
+
+}
+
+sub sendPreparedMail
+{
+        our ($errno, $errval, $DEBUG);
+        my $default_mail_dir = getRequired ('DEFAULT_MAIL_DIR');
+        my $crin_mail_dir    = getRequired ('CRIN_MAIL_DIR');
+        my $mailCommand      = getRequired ('mailcommand');
+
+        ## FIXME: (?) id or serial would be a more clear and correct name
+        my $counter   = $_[0];
+        my $mail_type = $_[1];
+
+        my $mail_dir;
+        if (not $mail_type) {
+                $mail_dir = $default_mail_dir;
+        } elsif ($mail_type =~ /crin/i) {
+                $mail_dir = $crin_mail_dir;
+        } else {
+                $mail_dir = $default_mail_dir;
+        }
+
+        if (not -e $mail_dir."/".$counter.".msg") {
+                $errval = i18nGettext ("Mail __MESSAGE__ does not exist.", 
+                                "__MESSAGE__", "$mail_dir/$counter.msg");
+                $errno = 4540005;
+                return undef;
+        }
+
+        if (not open FD, $mail_dir."/".$counter.".msg") {
+                $errval = i18nGettext ("Mail __MESSAGE__ is not readable.", 
+                        "__MESSAGE__", "$mail_dir/$counter.msg");
+                $errno = 4540010;
+                return undef;
+        }
+
+        my $msg;
+        my $line;
+        until ( not ($line = <FD>) ) {
+                $msg .= $line;
+        }
+        close FD;
+
+        if (not $msg) {
+                $errval = i18nGettext ("Mail __MESSAGE__ is empty.", 
+                                "__MESSAGE__", "$mail_dir/$counter.msg");
+                $errno = 4540020;
+                return undef;
+        }
+
+        open( FD, "| $mailCommand >/dev/null" );
+                print FD "$msg";
+        close FD;
+
+        if ( $? != 0 ) {
+                $errval = i18nGettext ("Mail __MESSAGE__ could not be send.", 
+                        "__MESSAGE__","$mail_dir/$counter.msg");
+                $errno = 4540030;
+                return undef;
+        } else {
+                return 1;
+        }
+}
+
+sub libSendEmailVerifyMessage
+{
+	my $DEBUG = undef;
+
+	my @keys = @_;
+	our ($LANGUAGE, $query, $tools, $db, $cryptoShell);
+	my ($line, $mailTo, $serialID);
+	my $txt = "";
+ 
+	my $mailCommand       = getRequired ('mailcommand');
+	my $mailSenderAddress = getRequired ('SERVICE_MAIL_ACCOUNT');
+	my $baseMailFile      = getRequired ('verifyemailfile');
+	my $secret			  = getRequired ('webSecret');
+	my $server			  = "/pki" ; # getRequired ('CgiServerName');
+
+	my $reqSer   = $keys[0];
+	my $url		 = $keys[1];
+
+	my $req = undef;
+
+	## Let's get the Request from the DB
+
+	if(($req = $db->getItem ( DATATYPE => "NEW_REQUEST", 
+		KEY => $reqSer )) == undef ) {
+
+		$req = $db->getItem(DATATYPE => "PENDING_REQUEST", 
+			KEY => $reqSer);
+	};
+
+	if ( $req == undef ) {
+		generalError(gettext("Can not retrieve Request"));
+		return undef;
+	};
+
+  my @addresses = ();
+	my $last_email = "";
+	my @date = localtime;
+	my $user = "OpenCA User";
+
+  if ($req->getParsed()->{EMAILADDRESSES} != undef )
+  {
+	  @addresses = sort @{$req->getParsed()->{EMAILADDRESSES}};
+  }
+
+	foreach my $email (@addresses)
+  {
+		next if ($email eq $last_email);
+
+		my $code = $cryptoShell->getDigest( DATA=> $reqSer . $email . $secret, 
+			ALGORITHM => "sha1" );
+
+		$mailTo = $email;
+
+		if( "$mailTo" eq "" ) {
+			configError(gettext ("Error Sending Mail 434"));
+		};
+
+		if(not ($txt = $tools->getFile( 
+			$query->subVar ("$baseMailFile", "__LANGUAGE__", $LANGUAGE)))) {
+				configError (i18nGettext ("Can not open baseMailFile" .
+				" (__FILE__)!", "__FILE__", $baseMailFile));
+		};
+
+		$txt = $query->subVar( $txt, '@CODE@', 	$code );
+		$txt = $query->subVar( $txt, '@EMAIL@', $mailTo );
+		$txt = $query->subVar( $txt, '@SERIAL@', $reqSer );
+		$txt = $query->subVar( $txt, '@server@', $server );
+		$txt = $query->subVar( $txt, '@YEAR@', ($date[5] + 1900) );
+		# $txt = $query->subVar( $txt, '@ca_organization@', $caOrg );
+ 
+		if( not $DEBUG ) {
+			open( FD, "| $mailCommand >/dev/null" ) || return;
+			print FD "From: $mailSenderAddress \n";
+			print FD "To: $user <$mailTo>\n";
+			print FD "Subject: ".i18nGettext ("Email Verification (Request Serial: __REQ__SERIAL__)", "__REQ__SERIAL__", $reqSer);
+			print FD "\n$txt";
+			print FD "\n";
+			print FD "\n.\n";
+			close(FD);
+		}
+
+        if( $? == 0 ) {
+			## success!
+			## return 1;
+        } else {
+			## Error!
+			return undef;
+        };
+	};
+
+	return 1;
+}
+
+1;

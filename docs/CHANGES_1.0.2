@@ -1,0 +1,1745 @@
+CHANGES File - OpenCA v0.9 -> OpenCA 1.0.2
+==========================================
+
+This file documents all the changes for OpenCA versions up to 1.0.2.
+For changes in OpenCA version 1.1.0+ please refer to the ChangeLog
+file.
+
+2008-Oct-14:
+	* Fixed an #include error in OpenCA.xs that prevented ECDSA
+	  to be correctly enabled
+	* Added a missing keyword in the ca.conf.template configuration
+	  file
+	* Fixed wrong permissions in binary distributions that prevented
+	  the correct import of data among different PKI components (eg.,
+	  from the CA to the RA)
+
+2008-Oct-9:
+	* Fixed OpenSolaris Installation Problems (perl and openssl
+	  compatibility issues)
+
+2008-Oct-7:
+	* Fixed extra refs link problem
+	* Fixed binary pacakge building (missing files in the distro)
+
+2008-Oct-1:
+	* Fixed CRL auto generation inter-CRL issuing period calculation
+	  (a bug made the system to issue a crl every minute if 'hours'
+	  period type was selected)
+
+2008-Oct-2:
+	* Added the 'info' option within the input for certificate requests
+	  (can be used to add information links to the input command).
+	* Added the possibility to view the LOAs
+	* Added configuration of the list of request types
+	* Fixed basic certificate display
+
+2008-Oct-1:
+	* Fixed IE7 on non-Vista OS (to work with the new request system)
+
+2008-Sep-30:
+	* Changed the Advanced and Authenticated forms - now the strength
+	  of the Key depends on the LOA selected (from loa.xml config file
+	  in PREFIX/etc)
+
+2008-Sep-25:
+	* Added Minimum Certificate Validity Period for Expiring email
+	  sending (automatically)
+	* Added extensive information in the Auto(*) daemon activation
+	  pages - to explain the available configuration options.
+
+2008-Sep-25:
+	* Finished AutoEmail daemon for automatic E-Mail sending (both
+	  for newly issued certificates and for expiring certificate
+	  warnings)
+	* Added the possibility for searching for attributes with multiple
+	  values (eg., multiple roles or LOA for certs)
+
+2008-Sep-23:
+	* Finished AutoCRL daemon for issuing CRL automatically
+	* Added autoEmail daemon (automatic E-Mail sending)
+	* Fixed loading/saving of parameters for Auto(*) daemons
+	* Extended report on the status for Auto(*) daemons
+
+2008-Sep-23:
+	* Fixed CRL and Certificates auto status update (valid/expired)
+	* Added AutoCRL daemon (needs additional work)
+	* Added new functions to misc-utils.lib for managing process status
+	  verification and parameter configuration save/restore.
+
+2008-Sep-21:
+	* Fixed search of objects and extra-refs for lists
+	* Fixed DSA and ECDSA e-mail problems (no encryption is supported)
+	* Fixed retrieval of requested certificates when the key
+	  is generated on the server (eg., a .p12 is returned now)
+
+2008-Sep-12:
+	* Updated OpenCA.xs to support OpenSSL 0.9.8+
+	* Added support for ECDSA for Certificate Requests and
+	  CA Certificate generation
+
+2008-Sep-9:
+	* Ported LDAP, BATCH, PUB, RA to new Interface systems.
+
+2008-Sep-5:
+	* Fixed CA interface - no more frames
+
+2008-Sep-5:
+	* Added dynamic Menus to Interfaces (i18n support retained)
+
+2008-Aug-14:
+	* Fixed default web user for all interfaces (now is admin)
+	* Fixed incompatibility error with startAutoCA cmd on perl-5.10
+
+2008-Aug-08:
+	* Changed the default digest algorithm to sha256 (instead of sha1)
+	* Finished configuration for the new installer interface
+	* Added "Congratulations!" and Mailing Lists subscription options
+          for package installation
+
+2008-Jul-05:
+	* Fixed Agreements default text
+
+2008-Jun-25:
+	* Fixed DBI 'utf-8' problem with mysql
+	* Added missing files in CVS repository
+	* Set default pub interface protocol to http (not https)
+	* Fixed perl modules installation (error in Makefile)
+	* Fixed X-Site scripting protection string generation (now
+	  correctly fixes all links in the page)
+
+2008-Jun-23:
+	* Fixed On-Line CA Daemon status report
+	* Fixed Error when sending the CRIN - DSA can not encrypt!
+
+2008-Jun-05:
+	* Added On-Line CA Daemon - Automatic certificate issuing
+
+2008-May-14:
+	* Fixed lists (REQ, CERTS, etc... ) display (more readable)
+
+2008-May-09:
+	* Added Level of Assurance Checking (Key Algorithm, Key Generation
+	  Mode and Key Size)
+	* Added support for requestStatus to request configuration for
+	  automatically approved requests (values can be one of NEW,
+	  PENDING, or APPROVED)
+
+2008-May-09:
+	* Fixed support for Konqueror for certificate request
+	* Added support for ldaps and starttls for ldap authenticated
+          browser requests (datasources.xml)
+
+2008-May-08:
+	* Added authenticated (ldap) browser request form
+	  (auth_browser_req.xml)
+
+2008-May-06:
+	* Added a defaul logo page (instead of software version one)
+
+2008-May-05:
+	* Added support for the new certificate request form for CA
+	  initialization
+	* Fixed a space-tolerance in RDNs
+	* Simplified the Certificate Request Page
+	* Added new certificate request form (first version)
+
+2008-Apr-19:
+	* Updated script code (no more VB - only javascript)
+	* Fixes support for IE7 on non-Vista platforms (Win2003,XP, etc..)
+
+2008-Apr-09:
+	* Finished support for Vista (IE7)
+
+2008-Apr-05:
+	* Added Vista Support (IE7) for certificate request
+
+2008-Apr-04:
+	* Added DC fields in CA Certificate Request
+	* Added possibility to specify the subjectAltName via the CA
+	  interface when self-signing the CA certificate
+
+2008-Mar-30:
+	* Added Browser and OS recognition in initCGI
+	* Initial support for IE7+Vista request generation (ieVistaCSR.js)
+
+2008-Mar-27:
+	* Fixed DN parsing in OpenSSL.pm and REQ.pm to allow bogus DNs
+	  from Windows 2003 server (problem reported by Dmitrij Mironov)
+
+2008-Mar-26:
+	* Added LDAP protocol version selection in config.xml (default 3)
+	* Added possibility to generate DSA keys, reqs, and certs via
+	  the web interface (eg., for RA/CA operators)
+	* Added CRL Revocation Code in CRRs
+	* Fixed several errors in the default RBAC definitions (ACL)
+	* Fixed name extension when sending .p12 files to the user
+
+2008-Mar-22:
+        * Applied patch from Alexander Klink (cross-site scripting security fix)
+	* Fixed generation of index.txt file (thanks to Diego de Felice)
+
+2008-Mar-21:
+	* Fixed --with-service-email-account (thanks to Robert Nelson)
+	* Eliminated debugging info when web-signing (thx to Robert Nelson)
+	* Added ca_organization, ca_locality, ca_state and ca_country in 
+	  etc/config.xml using configure
+
+2008-Mar-20:
+	* Fixed cleanup of directories and ext-modules dependecies
+
+2007-Nov-07:
+	* Fixed menu generation issue that would prevent Safari from
+	  correctly navigating the menu
+
+2007-Apr-10:
+        * v0.9.3-rc2
+	* Added autoconfig of etc/*.template on openca start
+	* Fixed an error in configure_etc.sh script
+	* Added user/password configuration in config.xml
+	* Added dir OPENCA/var/crypto/crls/ dir (missing in packages) that
+	  caused the issuing of CRLs to fail
+
+2006-Oct-09:
+	* v0.9.3-rc1
+	* fixed new package build
+	* fixed installation dir mode of PREFIX/etc directory
+
+2006-Sep-02:
+	* stripped openca-sv and openca-scep from base package
+	  (no more C-related modules inside the base package)
+	* stripped ocspd from openca base package
+	* binary pacakge building fixed
+	* package installation fixed
+
+2006-Jan-03:
+	* 0.9.2.5
+	* fixed wrong OpenSSL prefix handling (Sergei Vyshenski)
+	* fixed wrong utf8 handling in signForm.vbs (Johannes Derek)
+	* fixed format error in syslog call
+	* added LDAP authentication (Peter Gietz)
+	* fixed bug #1378831 (Julia Dubenskaya)
+	* fixed bug #1339236 (Julia Dubenskaya)
+	* fixed bug #1254337
+	* SCEP server improvements:
+	  * added utf8 support (Julia Dubenskaya)
+	  * added getCert function to SCEP server (submitted by Radu Gajea)
+	  * added certificate profile selection support via SCEP enrollment
+ 	  * added automatic approval to SCEP server
+	  * various bug fixes
+
+2005-Oct-xx:
+	* fixed UTF8 MIME issue (from Julia)
+	* fixed getSerial in OpenCA::CRL to return a string
+	* large UTF8 update from Julia and Sergei (Cryptocom)
+	* Fixed Integer Overflow error in CSR/CRR approval
+	* Fixed i18n related bug #1312049
+	    * interface of libintl-perl changed at version 1.14
+	    * nl_putenv is now required
+	    * patch supplied by Julia Dubenskaya
+	* Fixed UTF8 related bug #1312082
+	    * deactivated the translation of the test string in test_cert
+	    * output correct cert subject in openca-sv/src/callback.c
+	    * patch supplied by Julia Dubenskaya
+2005-Aug-xx:
+	* Fixed HSM login and logout commands so now they use the token's 
+	  login and logout functions instead of direct command line execution
+	* Fixed bug #1257733 (switch off CGI auto escaping to avoid wrong
+	  escaping of utf8 characters) (patch supplied by Julia Dubenskaya)
+2005-Aug-12:
+	* 0.9.2.4
+	* nCipher: Added timeout for autoloaded OpenSSL calls, fixed minor 
+	  problems with unclosed timeouts, removed HSM online indicator
+	  from CA web interface
+	* Fixed inconsistent usage of database handle caching in OpenCA::DBI
+	* Improved input parameter processing
+2005-Aug-05:
+	* 0.9.2.3
+	* Improved SCEP Server (allows policy definition, automatic
+	  retrieval of existing request data for renewals, automatic
+	  request approval (newer SCEP draft version only)). Updated
+	  docs. Automatic approval only given if signer cert is valid.
+	* Added utf8 support to openca_0_9_2 (patch was contributed by
+	  Julia Dubenskaya and Sergei Vyshenski from Cryptocom)
+	* Fixed wrong "==" in test statement of relative_ln_s.sh
+	* Parse request attribute extensions in OpenCA::REQ
+	* Extended error handling in OpenCA::PKCS7
+	* Added opaque signature handling (OpenCA::OpenSSL and OpenCA::PKCS7)
+2005-Jul-xx:
+	* fixed bux #1086090 (LOA representation in basic_csr and pkcs10_csr)
+	* fixed bug #1221739 (recreation of OpenSSL index.txt now correctly
+	  inserts revocation dates of revoked certificates).
+	* addressed (not really fixed) bug #1087060: the 'crlnumber' 
+	  file is recreated when rebuilding the OpenSSL index.txt file. 
+	  the restored number is always set to a value one higher than 
+	  the total number of CRLs issued so far). the 'crlnumber' file 
+	  is created in the same directory as the 'serial' file (config 
+	  value sslserial).
+	* fixed race condition in libIssueCertificate (only affects online
+	  CAs where certificate issuance can happen simultaneously).
+	  new configuration entry for CA server configuration file:
+	  'lockFile'
+	* added persistent infrastructure and key online caching for
+	  nCipher module (openca_0_9_2 too)
+	* added support for multivalued RDNs in OpenCA::OpenSSL
+	  (OpenSSL 0.9.8 option -multivalue-rdn)
+2005-Jun-xx:
+	* updated el_GR from Chrysa Papagianni
+	* added Russian translation from Peter Grigoriev
+	* fixed Bug #1122343: SubjectAltName extension is omitted if
+	  no SAN is specified in the request
+	* removed usage of function state from OpenCA::DBI
+2005-May-xx:
+	* fixed Bug #1206894: removed DB handle caching in OpenCA::DBI
+	* nCipher HSM module: added dynamic engine support (autodetected,
+	  existing configuration will continue to work with static engine)
+2005-Mar-xx:
+	* fixed bug #1116103 (translated HTML tag)
+	* set map_role to no in access_control.xml of the SCEP interface
+	* fixed BODY init in crlList (must be a reference an not an empty
+	  array)
+	* fixed docs/Makefile for installation of chunked HTML documentation
+	* Added HSM status indicator (Luna * and nCipher) support only
+	* Fixed wrong condition to check for attribute type without it's
+	  value in pkcs10_req
+	* added support for dynamic openssl engines with PRE and POST commands
+2005-Mar-07:
+	* 0.9.2.2
+        * automatic cleanup of PKCS#10 requests (multiple CR/LFs are removed)
+        * OpenSSL::getPIN does not log output anymore
+        * nCipher HSM module: timeouts are now configurable
+        * modified lib/cmds/changeCSR: no longer accepts SubjectAltName
+	  values without a non-empty SAN label tag
+	* LunaCA3 related updates
+	    - major update for OpenCA::Token::LunaCA3
+	    - removed unecessary use of the CA token in crypto-utils.lib
+	    - repaired hsmLogin and hsmLogut for HSMs in daemon mode
+	    - startDaemon in OpenCA::Crypto repaired
+	    - new code for stopDaemon in OpenCA:Crypto
+	    - added KEYFORM parameter to OpenCA::OpenSSL
+	* updateSearchAttributes tried to fix non-existent objects
+	* loadConfigXML used with wrong parameters in basic_csr
+	* when reading lib/cmds/ files initServer now enforces strict
+	  checking and does not allow redefinition of perl functions
+	  any longer (bug #1080565). On CVS head this will be fixed when
+	  moving to the object oriented interface.
+	  In this process some coding problems (typos in variable names)
+	  were corrected.
+	* fixed bug #1081655 (old @sendMailAutomatic@ must be
+	  @send_mail_automatic@ in node.conf.in)
+	* OpenCA::DBI
+	    - fixed LC_MESSAGES usage (POSIX usage was not compatible
+	      with perl 5.6.1)
+	* added forgotten ModuleID to ldap.conf.in
+	* fixed key conversion if private key of token is activated
+	  (bug #1010690)
+	* fixed bug #1069405 (crypto_is_unique_subject was renamed to
+	  crypto_no_unique_subject incl. fixed usage)
+	* fixed subjects of certificate and CRIN mails in
+	  crypto-utils.lib
+	* bugfix: removed extra space in SubjectAltNames in basic_csr and
+	  and ldapCreateCSR
+	* bugfix: fixed proposed filename in sendcert (IE download problem
+	  for certain cert CNs)
+2004-Oct-28:
+	* 0.9.2.1
+	* don't add an emailaddress from subject twice to the subject
+	  alternative name
+	* fixed linking of common.conf
+	* Greek translation (el_GR) is now available
+	* OpenCA::OpenSSL excludes RSA private keys from debug/log output
+	* OpenCA::AC excludes passwords from debug/log output
+	* fixed OpenCA::DBI module for Oracle database 'external 
+	  authentication' (db_name and db_passwd are left blank in this case)
+2004-Oct-11:
+	* 0.9.2.0
+	* fixed broken package builds
+	    - added target __install_dir to Makefile.global-vars.in to
+	      emulate "install -D"
+	    - LN_S statements no longer contain $(DESTDIR) to avoid
+	      problems with direct symlinks (bug #1039824)
+	    - LN_S always replace by __install_ln_s
+	    - introduced relative_ln_s.sh
+	* bpIssueCertificate and bpRevokeCertificate are now available
+	  at the CA interface too
+	* fixed datatype handling in sendcert
+	* uncommented confirm_revreq.xml in the makefile of
+	  src/common/etc/rbac/cmds/ (bug #1035100)
+	* moved xml_cache.log to LOG_DIR
+	* using get_xpath_count instead of get_xpath to detect missing
+	  elements in genMenu reduces the noise in xml_cache.log
+	* added uid to CSR_SUPPORTED_ATTRIBUTES
+	* bugfixes for crypto stuff
+	    - only send encrypted PIN mails in crypto-utils.lib if
+	      PUBKEY_ALGORITHM is RSA (bug #1031096)
+	    - crypto_check_lifetime in crypto-utils.lib tolerate now an
+	      empty role (from ldapCreateCSR in viewCSR)
+	    - fixed weak default cipher in OpenCA::OpenSSL->genkey
+	    - detect missing keysize for RSA or missing parameter file
+	      for DSA in OpenCA:OpenSSL
+	    - enabled debugging for Tokens if global debugging is
+	      activated in OpenCA::Crypto
+	    - unsecure RSA key lengths are now the last entries in lists
+	    - fixed typo in OpenCA::OpenSSL::SMIME (setError --> _setError)
+	* added new request type
+	    - authentication against LDAP
+	    - supports key generation with Mozillai
+	    - supports keygeneration on MSIE
+	    - supports key generation on server side
+	    - uses data from LDAP
+	    - OpenCA::LDAP->bind supports now DN and PASSWD
+	* fixed typo in node.conf.in (update_ldap_automatic)
+	* OpenBSD fixes
+	    - adjustments for gcc 2.95.3 (see ocspd and openca-sv)
+	    - fixed several (36) makefiles (removed GNU features)
+	    - set RM in Makefile.global-vars.in
+	    - removed src/web-interfaces/ra/htdocs/crl/Makefile
+	* added en_GB to allow fixing typos after string freeze
+	* OpenCA SV
+	    - removed load_certs from apps.c
+	    - cleanup of apps.h
+	    - removal of e_os.h
+	    - general.h is now safe against multiple includes
+	    - fixed apps.c, sv.c and verify-crypto.c for compilers which
+	      require all variable definitions at the beginning of a
+	      block (gcc 2.95.3 in OpenBSD 3.5 for example)
+	* OCSPD
+	    - general.h is now safe against multiple includes
+	    - OpenBSD is no GNU but supports semaphores (general.h)
+	    - resolv.conf requires netinet/in.h and sys/socket.h
+	* splitted error message for missing parameters into one message
+	  per parameter in OpenCA::DBI
+	* i18n stuff
+	    - updated openca.pot and openca.po files
+	    - fixed algorithm to get cmds (common/lib/locale/files)
+	    - added some new patterns to remove_perl.pl
+	* fixed content-type application/x-pki-message
+	* fixed ACL
+	    - module initialization allowed for CA now too
+	    - csr edit allowed for CA now too
+	    - more robust logout in OpenCA::AC
+	    - removed ca_cert from acl_config (unused)
+	* fixed DSA support
+	    - added parameter generation
+	    - fixed parameters for openssl gendsa
+	    - fixed login in OpenCA::Token::OpenSSL (bug #1026531)
+2004-Sep-07:
+	* fixed security bugfix for CAN-2004-0787 (openca_0_9_1 too)
+	* allow the CA to initialize the database
+	* avoid passing logout as a value of cmd trough OpenCA::AC
+	* added DirName support for subject alt names
+	* use DirName in subject alt name as distinguished name in
+	  OpenCA::LDAP->add_object
+	* i18n stuff (mainly Janez Pirc)
+	    - fixed next cmds
+	    - updated openca.po for sl_SI
+	    - i18n.xml updated for sl_SI
+	    - added support for translation of timestamps
+2004-Sep-06:
+	* fixed Cross Site Scripting vulnerability (CAN-2004-0787)
+	  (openca_0_9_1 too)
+	* no longer create RDNs without an attribute name during
+	  changeCSR (bug #1020461)
+	* fixed usage of CA cert
+	    - removed signatures from role and CRIN of a cert
+	    - fixed key usage of CA cert (bug #1020876)
+	* fixed incompatibility with Perl 5.6.1 in initCGI and
+	  initServer by Christopher Bongaarts (bug #1020671)
+	* fixed bug #1020499:
+	    - remove 'email' and 'mail' attributes when adding CA certs 
+	      to LDAP directory
+	    - removed mail from ldap.xml if last RDN is no mail address
+	* fixed memory leaks
+	    - added Apache::Leak to bpDoFunction for debugging
+	    - fixed function debug in OpenCA::Token::OpenSSL
+	    - added a function _cleanup to OpenCA::XML::Cache
+	    - fixed function debug in OpenCA::Log
+	    - fixed function debug in OpenCA::Log::Message
+	    - fixed function debug in OpenCA::Logger::Syslog
+	    - fixed function debug in OpenCA::Crypto
+	* fixed bug #1014975
+	    - added -optional to several input fields in basic_csr
+	    - OpenCA::TRIStateCGI supports the new flag -optional now
+	* fixed minimum length of IP addresses in CA and public config
+	* fixed OpenCA::X509 cert extension parsing (bug #1017584)
+	* fixed hardcoded path for BP_EXPORT_PKCS12_DIR in node.conf.in
+	* i18n fixes
+	    - added sl_SI from Janez Pirc
+	    - several missing gettext fixed in cmds by Janez Pirc
+	    - fixed ieEnroll.js in fr_FR (bug #1012204)
+	    - signForm.vbs need conversion from unicode to ascii to work
+	      properly with openca-sv because page content is unicode
+	      encoded by default (Julio D'Angelo)
+	    - fixed wrong comments (starting with // instead of ') in
+	      de_DE/signForm.vbs (Julio D'Angelo)
+	* do not try to remove dataexchange commits if openca performs
+	  a recovery import (bug #1013501)
+	* added test target to makefiles of ocspd and scep
+	* access control (OpenCA::AC)
+	    - added method for external user authentication incl.
+	      documentation (Martin Bartosch)
+	    - added function getUser
+	    - removed implicit access control via lib/servers/*/cmds
+	    - removed lib/servers completely
+	    - removed all directories src/web-interfaces/*/cmds
+            - removed all directories src/web-interfaces/*/functions
+	    - created a real default acl.xml with correct module IDs
+	    - ACL deactivation means now access to all OpenCA functions
+	    - all commands are now loaded at startup in initServer
+	    - function libLoadCommand was removed from misc-utils.lib
+	    - updated OpenCA guide
+	    - access control including configuration is now cached
+	    - store the challenge of the X.509 login on serverside
+	* added "+" as special character for attribute values in
+	  distinguished names to basic_csr (bug #1011396)
+	* removed additional "{" from verifySignature (bug #1011418)
+	* OpenCA::OpenSSL issues
+	    - added wrapper to openca-sv sign and decrypt too
+	    - fixed getPIN (using substr instead of sprintf)
+	    - removed traling = from PIN
+	    - fixed errordetection of decrypt
+	* batch system
+	    - added forgotten bpImportProcessDataCompact.xml
+	    - added better errordetection for key loading in bpDoStep
+	* huge nCipher patch (Martin Bartosch)
+	    - updated OpenCA::Token::nCipher
+	    - updated documentation
+	    - updated example configuration
+	* CRL numbering
+	    - all CRLs have now serials by default (openssl.cnf)
+	    - OpenCA::CRL->getSerial returns only a digest now if there
+	      is no serial in the CRL present
+	    - added file var/crypto/crlnumber
+	* added howto and a link to the live CD from Kevin Mitcham 
+	* removing trailing spaces if there is a list of values for a
+	  configuration option in OpenCA::Configuration (Damon Smith)
+	* removed an unnecessary zero after recovery of OpenSSL's
+	  serial file in crypto-utils.lib (bug #1007255)
+	* mail handling (bug #972741)
+	    - fixed mail suffix handling in eximDownloadMail
+	    - fixed suffix of DBM files in mail-utils.lib
+	    - created new function initTools in initServer
+	    - added DEBUG switch to OpenCA::Tools
+	    - detect invalid SRC in OpenCA::Tools->copyFiles
+	* openca_rc start detects now errors on startup
+	* fixed regex in OpenCA::REQ to split subject alt name
+	  correctly for emailaddress extraction (bug #995112)
+	* bug fixes for DBI
+	    - added support for namespaces including db_namespace in
+	      config.xml.in
+	    - the SQL table initialization code can now be displayed
+	    - rewrite the functions set_error, errno and errval
+	    - added correct error handling of DBI->connect in initServer
+	    - added environment for Oracle to DBI.conf
+	    - fixed OpenCA::DBI because the prepare statement with
+	      Oracle returns undef if tables or views are not present
+	* SPEC file cleanup (removal of all SPEC files from source tree)
+	    - removed SPEC files and build-rpm.sh from openca-0.9/src
+	    - removed openca-0.9/contrib/rpm
+	    - SPEC files and build-rpm.sh removed from configure.in
+	      files in openca-0.9 (bug #1004616)
+	* removing trailing or leading garbage from PKCS#10 requests in
+	  pkcs10_req (bug #1003718)
+	* OpenCA SV related stuff
+	    - if the key usage is available then openca-sv checks now the
+	      key usage for the signing bit before signing (bug #1011523)
+	    - massive cleanup in apps.c of OpenCA SV (removed UI stuff)
+	* added support for notbefore and notafter in requests via
+	  the already existing CHANGE_DAYS option (RFE #1001988)
+2004-Aug-03:
+	* 0.9.2 RC6
+	* fixes for OpenCA-SV and OpenSC
+	    - openca-sv detects dynamic engine now automatically
+	    - OpenCA::OpenSSL filters PINs before it outputs debugging
+	      infos
+	    - fixed output filtering via callback in OpenCA::OpenSSL
+	    - correct initialization of the key status in
+	      OpenCA::Token::OpenSC
+	    - better verbose messages in openca-sv to detect private key
+	      problems
+	* fixed CSR listing if LOA is "All" (bug #1001877)
+	* fixed loss of LOA in pkcs10_req (bug #1001898)
+	* fixed Makefile.global_vars.in to support DESTDIR of Debian
+	* fixed output handling in OpenCA::OpenSSL to handle the usage
+	  of engines for all commands
+	* fixed wrong permissions because of an implicit database
+	  initialization in OpenCA::DB during new (bug #1000426)
+2004-Jul-30
+	* usage of loa can now be set in config.xml
+	  default: yes
+	* added loa support for scep requests (bug #998661)
+	* fixed mailimport and sending behavior, now uses databases (bug #972741)
+	    - two seppared databases are used
+            - the (already available) exim-db for deciding if
+	      new mails should be imported (saves copy operations)
+	    - one db per maildir to decide to send available mails (if new) or not
+	    - no mails are deleted at current state of implementation
+	      (this is not to brake the send-crin-mail by id again functionality
+	       at the node interface: menu->utilities->send a CRIN-Mail)
+	* fixed the dataexchange
+	    - commits will be exchanged now incremental too
+	    - different DBM versions no longer matter (bug #982749)
+	* fix emailhandling in CSRs and certs (bug #995112)
+	    - fixed email displaying in viewCSR
+	    - fixed subject alt name builing in viewCSR
+	    - extended crypto_get_csr_subject with explicit CERT_SERIAL
+	    - OpenCA::REQ supports now getParsed()->{EMAILADDRESSES}
+	    - OpenCA::DBI uses now $obj->getParsed()->{EMAILADDRESSES}
+	* basic_csr
+	    - use strict
+	    - fixed removal of tempfiles
+	    - fixed displaying of subject alt name
+	    - fixed displaying of subject
+	* all objects loaded from the databases support now getStatus
+	* fixed timing problems in 1.t of OpenCA::XML::Cache
+	* updated Convert::ASN1 (bug #990992)
+	* fixed several RFC2253 incompatibilies
+	    - basic_csr regex in basic_csr_buildDN
+	    - basic_csr regex for SPKAC handling
+	* added strategy appendix
+	* updated user guide documents
+	* added missing bpImportProcessDataCompact.xml
+	* UI changes
+	    - use the browser-based language detection only once (bug #998508)
+	    - added hex-serial-numbers as addition to dec-numbers for lists
+	      and cert-view  
+	    - interfacelanguage get set through browsersupported languages
+	      change through interface still possible
+	    - removed PINs from errormessages of OpenSSL.pm (bug #993697)
+	    - renewCSR copies now additional attributes (bug #994524)
+	    - renewCSR copies now an existing LOA (bug #993669)
+	    - changed detection of encoding in initEncodings
+	    - fixed focus handling and repair IE stuff with this
+	* signature verification
+  	    - stop approving of requests in case of error in
+              signature verification
+	    - added verification of approving certificates
+	    - added error for expired certificates too
+	      maybe changed in future, but necessary to prevent
+	      expired certs from signing requests   
+	    - checking the certificate state now (bug #991142)
+	    - fixed role verification in bpIssueCertificate (bug #989369)
+	    - fixed text to sign in confirm_revreq (\n --> \r\n)
+	    - head will be signed in confirm_revreq (bug #991134)
+	    - signed user CRRs will no longer be changed (bug #991134)
+	    - create new CRR if user CRR was signed (bug #991134)
+	    - fixed detection of cert state in submit_revreq
+	    - extended viewCRR with cert and USER_CRR references
+	    - fixed getSignature in REQ.pm to be used as normal function
+	* fixed use-statements for setlocale in OpenCA::OpenSSL
+	  (bug #989366)
+	* do not check the role of a CA certificate any longer in
+	  OpenCA::AC if the datatype is CERTIFICATE (bug #981787)
+	* copied changes from bpIssueCertificate to bpRevokeCertificate to
+	  fix several problems (bug #990126)
+2004-Jul-09:
+	* security fix for bug #974063 (passphrases were logged)
+	* set serial and subject in CRIN mails (RFE #984093)
+	    - added replacement code in crypto-utils.lib
+	    - added serial and subject to PIN mails of C and de_DE
+	* fixed wrong subject alt name in template sample_openssl.ext.in
+	  which is used for new roles (bug #987231)
+	* the cursor is now in the first input field (RFE #978958)
+	* fixed incremental dataexchange (bug #982749)
+	    - dataexchange of objects is now managed via DBM files 
+	    - files have now the suffix .dbm and not .log
+	    - mails are now handled by eximSetImported too
+	    - fixed the checks of the return status of DB_File->get
+	    - fixed checks of DB_File->put like for get (bug #987821)
+	* encoding related fixes
+	    - fixed setLanguage in initServer to tolerate more Perl
+	      installations like on FreeBSD and Slackware
+	    - added function initEncodings in initServer to detect
+	      different formatted encodings
+	    - fixed encoding in XML log messages (bug #974686)
+	    - fixed regex for MIXED in OpenCA::TRIStateCGI again
+	    - added option for characterset of fields in basic_csr
+	    - added encoding to S/MIME mails in SMIME.pm (bug #984072)
+	    - send info mail for new cert with encoding - see
+	      crypto_send_info_mail in crypto-utils.lib (bug #984072)
+	* fixed bug #983310 (wrong use of RAW certificates)
+	* fixed wrong handling of certs with more then on emailaddress
+	    - OpenCA::X509 returns in EMAILADDRESS now only one address
+	    - OpenCA::X509 reutrns in EMAILADDRESSES all addresses
+	    - OpenCA::OpenSSL->getSMIME can handle now CC
+	    - crypto_add_pin_to_header in crypto-utils.lib sets CC now
+	    - viewCerts uses EMAILADDRESSES now
+	    - lists uses EMAILADDRESSES now
+	    - fixed bugs #984122 and 984144
+	* fixed typo (port) in Syslog.pm (Nuno Ricardo Gomes Antunes)
+	* added support for nCipher HSMs by Martin Bartosch
+	* fixed typo in pkcs10_req (bug #984196)
+	* signature verification
+	    - added detection of wrong digest to openca-sv
+	    - aggressive errordetection for verify in OpenCA::OpenSSL
+	    - added better errordetection to viewSignature
+	    - fixed output of attached data from signature at openca-sv
+	    - fixed OpenCA::UI::HTML (always send CRLF in variable text)
+	    - better error message from verifySignature
+	    - fixed infos from https in test_cert (bug #983525)
+	    - signatures of roles and PINs include now the data
+	    - verifySignature compensate added \r (CR) from browsers
+	    - verifySignature works now with CA certs as signer too
+	    - fixed errordetection in OpenCA::OpenSSL->pkcs7Certs
+	    - fixed errordetection in OpenCA::PKCS7->getParsed
+	    - added support for CA cert as signer in crypto-utils.lib
+	      function libGetSignerCertificateDB
+	    - added manual verification of cert's role and PIN
+	    - added "SET NAME 'charset'" to OpenCA::DBI init
+	    - fixed crypto-utils.lib for correct pst of HEADER and BODY
+	      of objects (CRLF and not LF must be used)
+	    - fixed extraction of BODY in REQ.pm
+	    - splitted listReqs into listCSR and listCRR
+	* remove Makefiles in src/modules/* if "make clean" fails
+	  because of wrong timestamps on the directories (bug #978827)
+	* better collection of emailadresses in viewCSR (bug #973280)
+	* fixed wrong usage of get_xpath_count in batch functions
+	  check_csr and check_csr_params (bug #976605)
+	* fixed displayed minimum PIN length in basic_csr (bug #976730)
+	* fixed handling of empty arrays if searching for (non-existing)
+	  levels (bug #974808)
+	* activated old code to export and import the role dependend
+	  OpenSSL config (bug #973968)
+	* added DES support to openca-scep (from Christian W. Pohl
+	  <pohl@secaron.de>)
+	* load the LDAP stuff always
+	* new script remove_perl.pl to remove Perl stuff from pot files
+2004-Jun-14:
+	* 0.9.2 RC5
+	* command loading detects now syntax problems
+	* added lifetime checks to:
+	    - editCSR
+	    - viewCSR
+	    - changeCSR
+	    - approveCSR and approveCSRnotSigned
+	* fixed SUBJECT_ALT_NAME_* handling in bpImportProcessData
+	* added [ and ] to regex for MIXED in OpenCA::TRIStateCGI
+2004-Jun-13:
+	* using DN_TYPES now to control getStaticPage output
+	* fixed bindir in config.xml
+	* OpenCA::DBI
+	    - fixed getNextItem
+	    - better handling of execute errors
+	    - fixed ordering of listItems
+	* private key handling for server side keygeneration
+	    - fixed key removal during certificate enrollment
+	    - fixed key removal from request during certificate issuing
+	* added stdout callback to OpenCA::Token::OpenSC
+2004-Jun-11:
+	* removed show scripts from the CA interface
+	* rights can be viewed again
+	* fixed session (cookie) cleanup
+	* created central debugging switch in log.xml
+	* fixed double or tripple errormessages
+	* removed nodeEnrollConfig from CA
+	* respect already generated CA keys and certificates
+	* re-added submenu for CRLs (in information tab)
+	* added module ID for web-interface batch
+	* removed FORCE mode from cmds/genDB for OpenCA::DB
+	* added htdocs/batch to configure_ets.sh (tomichael)
+	* fixed OpenCA::XML::Cache for better logging and debugging
+	* fixed OpenCA::Log to reduce the noise in var/tmp/xml_cache.log
+	* basic_csr can handle now empty fields in the CSR subject
+	* bugfix for wrong symlinks in webinterfaces/*/cmds/Makefile
+	* OpenCA::Token::OpenSC
+	    - key generation works (with carddriver flex)
+	    - card initialization integrated into key generation
+	    - dynamic OpenSSL engine integrated into OpencA::OpenSSL
+	    - added example to token.xml
+	    - request generation works (including patch for engine
+	      pkcs11 of OpenSC)
+	    - added PIN handling to OpenCA::OpenSSL
+	    - fixed OpenCA::OpenSSL::SMIME for dynamic openssl engines
+	* several fixes for OpenCA::Crypto (better errordetection)
+2004-Jun-06:
+        * fixed viewCRR for signing CRRs
+	* updated bpDoStep from 11 to 16 steps
+	* fixed editCSR related to subject alt names in basic_csr
+	* fixed basic_csr to support empty subject alt name
+	* fixed bugs in new execution system of OpenCA::OpenSSL
+	* fixed typos in OpenCA::OpenSSL::SMIME
+	* fixed several configuration issues
+2004-Jun-05:
+	* support for subject alt name in basic_csr
+	* integration of individual certificate lifetimes
+	* redirected STDERR to var/log/stderr.log from etc/log.xml
+	    - changed the debugging of OpenCA::DBI
+	    - centralized debugging in OpenCA::OpenSSL (incl. SMIME)
+	    - added debug function to misc-utils.lib
+	* fixed typo in OpenCA::Configuration
+	* fixed order of initialized global variables
+	* fixed errordetection for corrupted commands
+	* added logging for normal commands
+	* several OCSP improvements
+	    - Fixed compilation problems on Solaris
+	    - Added support for exclusion of ldap usage
+	      (--disable-openldap)
+	    - Added support for openldap directory specification
+	    - Fixed signal handling and correct children death
+	* several fixes for the XML generation in OpenCA::Log::Message
+	* added recovery for index databases of XML logging module
+	* created new web interface batch
+	* OpenSSL engine support
+	    - option ENGINE is now only supported by new and setParams
+	    - cleanup configuration
+	    - fixed bug #961480, #961558, #961571 and #961593
+	    - "-keyform e" is now present for the correct commands only
+	    - replaced "#ifdef OPENSSL_ENGINE" by
+	      "#ifndef OPENSSL_NO_ENGINE" in openca-sv
+	    - OpenCA::Crypto supports multivalued parameters
+	    - centralized OpenSSL command execution for dynamic engine
+	      support
+	    - openca-sv supports now -pre and -post for dynamic engines
+	    - reorganized openca-sv
+	* added support for "make test"
+	    - lib/bp
+	    - lib/cmds
+	    - lib/functions
+	    - modules
+	    - openca-sv
+	* several "make test" related bugfixes to OpenCA::X509,
+	  OpenCA::DB, OpenCA::DBI, OpenCA::XML::Cache, OpenCA::OpenSSL
+2004-May-10:
+	* XML cache improvements
+	    - OpenCA::AC displays better error messages on XML problems
+	    - XML cache will be checked on startup
+	    - better error messages and detection for OpenCA::XML::Cache
+	* support for an OpenSSL wrapper added (needed by nCipher)
+	* always use UTC and not localtime (OpenCA::UI::HTML)
+	* added support for "mail" and "uid" to ldap.xml
+	* renamed LDAP commands to prefix "ldap"
+	* fixed adding of CRLs and certs with changed names to LDAP
+	  (javascript variables used without ".value")
+	* better export of binary certificates with sendcert (Ed Eden)
+	* fixed creation of new revocation on public interface
+	  (Sebastien Poggi)
+	* dataexchange devices are now configurable via config.xml
+	* fixed generation of CRIN-E-Mail (Sebastien Poggi)
+	* added Japanes translation
+	* merged makefiles of src/common/lib/locale/*_* to
+	  src/common/lib/locale
+	* small fix for the output of listReqs
+2004-Apr-16:
+	* 0.9.2 RC4
+	* changed doc/guide/Makefile to support Apache FOP 0.20.5
+	* better handling of user and group for XML cache
+	* fixed make test in OpenCA::OpenSSL and OpenCA::StateMachine
+	* added javascripts to all interfaces except of scep to
+	  generally support X.509 based authentication
+	* added PIN verification during RA approval process
+	* fixed a session caching problem for AC
+	* fixed paths to openca-sv for use with configure --exec-prefix
+	* fixed channel verification of access control
+	* fixed X.509 Login Auth
+	* added missing rbac-config file for Cleanup Sessions
+	* fixed syntax error in viewCRR (Michael Portz)
+	* added commented SmartcardUser template to User.ext
+	* fixed the creation of a new CRR on the RA interface
+2004-Mar-19:
+	* added i18n support to the batch functions
+	* fixed user interface of batch system
+	    - pkcs#12 enrollment works now
+	* fixed initial CRR creation (confirm_revreq useless now?)
+2004-Mar-18:
+	* fixed wrong i18n initialization of access control module
+	* fixed certificate enrollment for IE in ieEnroll.js and
+	  OpenCA::UI::HTML
+	* removed private key check from workflow_create_pin
+	* added private key check to workflow_backup_key
+	* fixed user interface of batch system
+	    - listing of processes
+	    - view process data
+	    - keyrecovery for pure private key
+	    - keyrecovery for private key and certificate
+	    - set and unset states
+	    - single execution of a batch function
+	    - pin enrollment works now
+2004-Mar-12:
+	* fixed mail sending for RA
+	    - removed mailsendername and mailsenderaddress
+	    - mail-utils.lib now strict
+	    - fixed writeCertMail
+	* added roles to normal accounts
+	* role mapping activated by default
+	* added appendix for references
+	* removed static HTML pages for CA certificate and CRL download
+	* some fixes for openca.pot
+	* OpenCA::AC now fully translatable
+	* dynamic linking of common.conf by openca_start
+	* added mail-utils.lib to initServer
+	* added support for the subject alternative name attributes
+	  MS_UPN and MS_GUID
+	* fixed docs for Microsoft's othername usage
+	* added role Domain Controller
+2004-Mar-03:
+	* 0.9.2 RC3
+	* added support for more flexible subject alternative names
+	  (including support for Microsoft domain controllers)
+	* better automatic string extraction
+	* added otherName to the available subject alternative name
+	  attributes to support OpenSSL 0.9.8 and Mircosoft
+2004-Mar-01
+	* fixed initialization parameter DEFAULT_TOKEN in OpenCA::Crypto
+	* fixed initialization of OpenCA::OpenSSL::SMIME in function
+	  getSMIME of OpenCA::OpenSSL
+	* fixed datatype in genCRLfromFile
+	* next updates for openca.pot
+	* fixed output of LDAP.pm
+2004-Feb-25
+	* switched de_DE to native characters with ISO 8859-1 encoding
+	* integrated strings from all modules in openca.pot
+	* OpenCA::Logger::XML is now safe against process scheduling
+	* prepared all Perl modules except of XML cache for translation
+	* OpenCA::UI::HTML has native i18n support (based libintl-perl)
+2004-Feb-20:
+	* fixed bpIssueCertificate for token concept
+	* fixed potential endless loop during export
+	* fixed passphrase protected key download from pub
+	* fixed recovery code for not used serials
+	* fixed next serial after recovery
+2004-Feb-19
+	* 0.9.1.8
+	* fixed reversed subjects after recovery of OpenSSL's index.txt
+	  (openca_0_9_1 too)
+	* fixed SCEP detection
+	* added pkiclient.exe link to handle configuration errors and
+	  stupid SCEP clients
+	* added CRLDir to scep.conf
+	* added default section to LDAP schema definitions in ldap.xml
+2004-Feb-18
+	* fixed CSR generation and signing for Internet Explorer
+	* added LOG token to token.xml
+	* moved core LDAP code to OpenCA::LDAP
+	* moved LDAP schema specification from source code into ldap.xml
+	* fixes for pl_PL
+2004-Feb-13
+	* centralize the printing of the content type
+	* number of steps of the batch system can now be specified
+	* fixed reference links on lists
+	* fixed status displayed by listCerts
+	* fixed errormessage "unable to write 'random state'" during
+	  certificate issuing (added configuration option RANDFILE to
+	  token.xml because "openssl smime" needs the environment
+	  variables RANDFILE or HOME to determine a writeable randfile)
+	* splitted libIssueCertificate into several smaller functions
+	* functions for batch system:
+	   - backup_key
+	   - check_csr_params
+	   - create_csr
+	   - complete_csr
+	   - check_csr
+	   - create_cert
+	* added backup_key to the functions for the batch system
+	* fixed conversion bug in OpenCA::OpenSSL
+	* token login displays now the token name
+	* removed naming-utils.lib
+	* module MIME::Base64 no longer needed
+	* module MIME::Tools added to dependency list
+2004-Feb-05
+	* fixed used certificate for OpenCA::OpenSSL->encrypt
+	* fixed pin and key generation for batch system
+	* fixed detection of keybackup key during installation
+2004-Feb-04:
+	* added Polish (pl_PL) from F.Lewenda
+	* added support for different encodings
+	* moved from Locale::gettext to libintl-perl (required to easily
+	  support different encodings)
+	* removed wrong documentation from src/scep/docs
+	* functions for batch system:
+	   - check_key_params
+	   - create_key
+	   - check_key
+	* fixed crypto token initialization and configuration
+	* fixed OpenCA::OpenSSL->encrypt
+	* initServer waits for one second after the XML cache
+	  intialization to avoid errors during openca_start
+	* fixed CA-certificate lists on ldap interface in menu.xml
+	* fixed error messages for LDAP actions
+	* serverInfo uses now the normal output system
+2004-Feb-02
+	* 0.9.2 RC2
+	* small change in Makefile.devel for SuSE packaging
+	* fix for CRIN supported by the user during CSR generation
+	  (openca_0_9_1 too)
+2004-Jan-30:
+	* fixed wrong OS detection in src/scep/configure.in
+	* API of batch system fixed
+	* functions for batch system:
+	   - create_pin
+	   - check_pin
+	* replaced SignPath and VerifyPath by OpenCA_SV_Path
+	* using now openca-sv in OpenCA::OpenSSL
+	* added encrypt and decrypt to OpenCA::OpenSSL
+	* OpenCA::AC tolerates now empty passphrases
+2004-Jan-27:
+	* next cleanup for the autotools
+2004-Jan-26:
+	* fixed initialization of node
+	* fixe documentation for node initialization and module conflicts
+	* core components of new batch system work
+2004-Jan-20:
+	* next fixes for the makefiles to complete the use of openssl_cflags
+	  and openssl_lib instead of OPENSSL_PREFIX
+	* openca.pot updated for 0.9.2 translations
+	* next fixes for second batchprocessor generation
+	* SecClab plugin works
+	* added forgotten hidden field signature to viewCSR
+	* better errormessage for cert and key enrollment
+2004-Jan-16:
+	* 0.9.1.7
+	* fixes for pkgconfig and better openssl detection by Rob Thorne
+	* OpenCA finally compilable for Debian packaging by Alessandro Razeto
+	* added add_role to show_roles
+	* fixed docs for PostgreSQL
+	* the correct certificate in a chain must be located via a complete
+	  comparison and not only a serial match in crypto-utils.lib
+	  (security advisory CAN-2004-0004 issued) (openca_0_9_1 too)
+2004-Jan-14
+	* OpenCA::Statemachine replaces old batchprocessors
+	* etc/servers/common.conf will only be created from node.conf
+2004-Jan-09:
+	* CRL numbering by timestamp
+	* display submit date with viewCSR
+	* added HtdocsUrlPrefix to scep.conf to support single SCEP gateways
+	* added runlevel control file openca_rc
+	* added configure option --disable-external-modules
+	* fixed the detection of linux in src/openca-sv/configure.in and
+          src/ocspd/configure.in
+	* now logging CGI params too
+	* fixed basic_csr final message for usage on CA interface
+	* fixed symlink for common.conf in all src/web-interfaces/*/Makefiles
+	* some memory BIOs in OpenSSL.xs were not correctly initialized and
+	  data blocks longer than 1024 bytes were not read correctly - as a
+	  result all certificates with long keys like 4096 bit work now
+	  (bug found and fixed by Albert Novak <albert.novak@pu.CARNet.hr>)
+	* added Makefile.devel with all static development stuff (cleanup
+	  of all the autotool stuff)
+2003-Dec-19:
+	* 0.9.1.6
+	* fixed LDAP code to support certificates without an emailaddress
+	  (openca_0_9_1 too)
+	* small fix in basic_csr to detect empty passphrases correctly
+	* fixed OpenCA::DB because of sequence problems after wrong state
+	  detection
+	* added first support for SecClab plugin
+	* removed approve CSR buttons from CA interface
+	* fixed renewal button in viewCSR
+	* fixed wrong socket file position of XML cache
+2003-Dec-18:
+	* XML logging mechanism fixed for searching
+	* access control adds the session ID to the log message during login too
+	* looks like the keys of DBM files are too short for our log IDs
+2003-Dec-16:
+	* documentation update
+	* --with-hierarchy-level was removed from configure and the different
+          options were added to config.xml. ./configure without options should
+          work now. New packages from distros should now be fully usable.
+	* fixed src/web-interfaces/scep/functions/Makefile to support all
+	  libraries (necessary for initServer)
+	* upgraded Net::Server to 0.86 to fix some daemon problems with setuid
+	  and FreeBSD
+	* documentation available as chunked HTML version
+2003-Dec-10:
+	* 0.9.1.5
+	* moved PEMCACert to CACertificate (openca_0_9_1 too)
+	* CACertificate always cacert.pem (openca_0_9_1 too)
+	* removed illegal configure file from it_IT (openca_0_9_1 only)
+2003-Dec-05:
+	* 0.9.2 RC1
+	* fixed some unclean Perl stuff which will be rejected by Perl 5.8.1
+	  (openca_start and initServer)
+2003-Nov-27:
+	* 0.9.1.4
+	* changes for support of multivalued RDNs in OpenCA::X509, changeCSR
+	* additional patches for the signature verification - crypto-utils.lib,
+	  verifySignature and viewSignature are affected (openca_0_9_1 too)
+	* fixed wrong javascript form reference in test_cert and confirm_revreq
+	* fixed signature verification of role in sub CAs in bpIssueCertificate
+	  and OpenCA::PKCS7 (openca_0_9_1 too)
+2003-Nov-25:
+	* fixed three bugs in crypto-utils.lib and OpenCA::PKCS7 which corrupt
+	  the signature verification - the serial of a CA certificate was
+	  sometimes used to load and check the certificate which was used to
+	  sign the data
+	  (security advisory CAN-2003-0960 issued) (openca_0_9_1 too)
+	* added support for multivalued RDNs
+2003-Nov-24:
+	* created OpenCA::UI::HTML
+	* OpenCA is now a server via Net::Server (use etc/openca_start)
+	* fixed wrong errors (means the error which is detected is not an
+	  error) which take place if renewed requests will be edited
+	* fixed errormessage if the loading of code fails from Ronny Standtke
+	  <standtke@swiss-it.ch>
+	* setParams no longer stores CGISESSID in html pages
+	* removed name="submit" from all html input fields (Mozilla has a
+	  problem with fields with the name submit)
+	* better errormessage for empty database passphrases
+	* fixed umask problem in XML::Cache
+	* added USER_AGENT and REQUEST_METHOD to transfered parameters
+	* automatical file upload on Apache in initCGI
+	* output of issueCertificate fixed
+	* set some forgotten "$DEBUG = 1;" statements to 0
+	* added to, from and subject to the plain text message at getSMIME in
+	  OpenCA::OpenSSL
+	* verifySignature adapted to 0.9.2
+	* fixed handling of ADDITIONAL_ATTRIBUTEs in pkcs10_req
+	* fixed issueCert in OpenCA::OpenSSL for multivalued RDNs
+	* detect empty SPKAC in basic_csr
+2003-Sep-22:
+	* updated genMen command to the new menu look
+	* fixed and error in the libSendReply command (missing <form> tag)
+	* next fixes related to the initialization
+2003-Sep-19:
+	* fixed -minlen in basic_csr (allowing empty ATTRIBUTE_* fields)
+	* fixed overwritten CA key pair generation on CA init page
+	* initDBI uses now a XML configuration file
+2003-Sep-18:
+	* fixed infinite loop in exist mode for base dn in pkcs10_req
+	* updated the output of basic_csr
+	* added forgotten SIGN_FORM to viewCSR and viewCRR
+	* added caching of database handles to OpenCA::Logger::XML
+	* OpenCA::XML::Cache
+	* OpenCA::Crypto and OpenCA::Log support xml cache
+	* added Time::HiRes based performance accounting
+	* fixed parameter handling in getParams
+2003-Aug-20:
+	* 0.9.1.3
+	* SECURITY BUGFIX: configurationfiles of the servers has now permission
+	  640, owner openca_user and group httpd_group to protect the private
+	  content like ldap passphrases (openca_0_9_1 too)
+	* removed hex conversion of serial from OpenCA::X509
+2003-Aug-18:
+        * updated stylesheets
+        * i18n
+            * every language available on every interface
+            * moved --with-language to default_language in config.xml
+            * one default language per interface
+            * openca.po, javascript and mails must be translated now
+	    * moved all single quotes to double quotes (!!! never use single
+	      quotes for strings which must be translated !!!)
+        * OpenCA::Session extracted from OpenCA::AC
+2003-Aug-12:
+	* added default.css to all sheets and defined first classes
+	* easier stylesheet configuration for genMenu
+	* corners of the menu are now white and color neutral (transparent)
+	* F-Secure VPN+ 5.43 talks with our SCEP
+	* removed all sheets
+	* centralized prepared mails
+2003-Jul-31:
+	* fixed empty states during dataexchange of objects in export-import.lib
+	  (openca_0_9_1 too)
+	* CSS support for menu generation
+	* fixed csr-utils.lib to compensate removed variables in pkcs10_req
+	* all subdirectories below i18n/C were installed twice
+	* added support for unstructuredName and unstructuredAddress for SCEP
+	* fixed "make test" for OpenCA::OpenSSL
+	* fixed SPKAC in OpenSSL.xs
+	* simplified the CGI scripts by centralization of source code (now there
+	  is one initCGI for all interfaces)
+	* javascript cleanup (only signForm and IE request and certificate
+	  handling remain)
+	* new options for basic_csr:
+	    - *_ELEMENT_*_REQUIRED
+	    - *_ELEMENT_*_MINIMUM_LENGTH
+	    ­ *_ELEMENT_*_XML_FILE
+	    ­ *_ELEMENT_*_XML_PATH
+	* replaced most tests -f in makefiles with -e (openca_0_9_1 too)
+	* major regex bugfix from Lyle Winton (winton@physics.unimelb.edu.au)
+	* removed all subject related enforcements from OpenSSL configuration
+	* NetScreen ScreenOS 4 tested with SCEP code
+2003-Jul-15:
+	* CRL enrollment
+	* better extensions for mail servers (now they have client and server
+	  extensions
+	* several small fixes for cleaned up export-import.lib
+	* added support for mailaddresses in ldap-utils.lib for every possible
+	  objectclass (openca_0_9_1 too)
+2003-Jul-03:
+	* better seperated additional attributes in basic_csr
+	* rebuildChain in interface of node
+	* i18n for menu.xml (openca-extra.pot)
+	* introduced default.css
+	* fixed addCRR and viewCRR
+	* cleaned up htdocs areas
+2003-Jul-02:
+	* OpenCA::DBI fixed for CA certificates (openca_0_9_1 too)
+	* OpenCA::AC fixed for serial of CA certificates
+	* several fixes for export-import.lib
+	* cleanup of OpenCA::DBI (no longer extra logs)
+	* unified backup and recovery for DB and DBI
+2003-Jul-01:
+	* 0.9.1.2 and snapshot of CVS HEAD
+	* ca-openssl.cnf --> openssl.cnf
+	* genCRLfromFile includes revoked certificates now
+	* added search for requests
+	* added full flexible CDPs to config.xml
+	* new states for CSR and CRR
+2003-Jun-11:
+	* third pre-release of 0.9.1.2 and snapshot of CVS HEAD
+	* fixed bug related to verification of pubkey (SECURITY BUG)
+	    - not UNIQUE_DN must be allowed
+	    - option deactivates pubkey verification
+	* fixed lost datatype in removeKey from Venki
+	  <a_venkatesh79@yahoo.co.uk> (openca_0_9_1 too)
+	* added structure for docbook based documentation (don't integrate
+	  the makefiles in the make structure of OpenCA, not everybody
+	  has XSLT tools)
+	* fixed inconsistency in interface management
+	    - some links were managed by moduletype (view*)
+	    - some links were in sheets/inc
+	    - new option CmdRefs_viewCSR etc.
+	    - all links and buttons in the table
+	    - script can now be configured in the normal conf-file
+	* fixed inconsistency in session management (SECURITY_BUG)
+	    - login per interface
+	    - session (cookie) valid for every interface!!!
+	* fixed conversion of CA-cert in genCACert from PEM to TXT (found by
+	  Stefan Dietiker <dietiste@zhwin.ch>) (openca_0_9_1 too)
+	* added again some session flushs to OpenCA::AC - now it works
+	* removed several unused file in the CVS HEAD
+	* updated Perl modules
+	* ldap fixes in ldap-utils.lib (openca_0_9_1 too):
+	    - wrong regex which creates wrong attribute values for the suffix
+	    - wrong LDAP objectclass stacks
+	    - duplicate mail entries for one cert
+	    - emailaddress for certs with serialNumber and correct objectclass
+	      stack
+	    - new objectclass uniquelyIdentifiedUser from "Entrust Directory
+	      Schema Requirements for Entrust 6.0"
+	* ieCSR.vbs supports now 512, 1024 and 2048 bit rsa keys
+	* docs now in PDF too but without images
+	* more errorproof CSR editing
+	* removed encryption for mysql from OpenCA::DBI (openca_0_9_1 too)
+	* viewCert had two fields format for sendcert and send_cert_key
+	* automatical setting of ContentType in case of an error
+	* additional attributes are editable now
+	* added print button to request_success.html to support printable
+	  agreements
+	* additional attributes works now for basic_csr too
+	* added setPasswd
+	* fixed some problems with genMenu and activated it for all interfaces
+	* added objectclass uniquelyIdentifiedUser from Entrust to handle
+	  serialNumber (openca_0_9_1 too)
+	* added passphrase protected access to send_cert_key via public
+	  interface
+	* added crl_httpd_protocol to config.xml
+	* OpenCA::REQ supports now multirow attributes incl. setHeaderAttribute
+2003-May-23:
+	* added httpd_protocol to config.xml
+	* added sendcert to all interfaces except of scep and node
+	* fixed content-type for all missing commands
+	* Updated ASN.1 routines in scep code (openssl 0.9.7 compliant)
+	* dynamic csr headers
+	* PKCS#10 supports dynamic header attributes (Bahaaldin Al-Amood)
+	* small fix for translation
+	* fixed hardcoded paths of OpenCA::OpenSSL (XS)
+	* fixed pubkey verification in approveCSR*
+	* added check for missing key during SPKAC request
+	* fixed persistent files and directories in var/tmp
+	    - scep_*
+	    - *_data.msg
+	    - *_data.tmp
+	* fixed wrong right for var/crypto/chain/Makfile.crt
+2003-May-12:
+	* snapshot + second pre-release of 0.9.1.2
+	* added Italian from Simone Rossi <simone.rossi@hp.com>
+	* fixed a bug in the makefile of the ocspd in openca_0_9_1
+	* fixed debug switch in scep code
+	* subject verification for PKCS#10 requests (Bahaaldin Al-Amood)
+	* engine support for OpenCA::OpenSSL::SMIME
+	* logging to syslog
+	* logging via XML
+	* search logs
+	* warnExpiring works now
+	* preserve userdefined ordering of roles in roles.xml
+	* download certificates in various explicit format
+	* OpenCA::X509 tolerates critical extensions (openca_0_9_1 too)
+	* CRL to ldap fixed (roles must be ignored)
+	* fixed errordetection for ldap updates of CA-certs (export-import.lib)
+	  (openca_0_9_1 too)
+2003-Apr-28:
+	* snapshot + a first pre-release of 0.9.1.2
+	* incompatible SQL DB-tables so follow the instructions in
+	  SQL-DB-Format-Change (because we store SCEP's transaction ID in the
+	  request's header)
+	  otherwise you can alter some tables of your OpenCA database
+	    - vendor | field type
+	      -------------------
+	      Pg     | text
+	      mysql  | TEXT
+	      DB2    | long varchar
+	      Oracle | varchar2 (1999)
+	    - alter table request add scep_tid TEXT;
+	    - alter table log add scep_tid TEXT;
+	* removed all statical pages which are called by the interfaces
+	  directly
+        * fixed Makefile.global-vars.in (Brian May <bam@snoopy.apana.org.au>)
+        * fixed importCACert (used old export/import-config)
+	* access control added:
+            # OpenCA::AC implements a XML-based access control
+	    # etc/access_control/*.xml for configuration
+	    # etc/rbac/roles.xml
+	    # etc/rbac/modules.xml
+	    # etc/rbac/cmds/
+	    # etc/rbac/acl.xml
+        * configure_etc.sh in the etc area configures OpenCA after the
+	  installation via config.xml (now we can build usable packages)
+	* certificationAuthority --> pkiCA (LDAP objectclass changed)
+	  (Robert Hannemann <robert.hannemann@liz.lsa-net.de>)
+	* added crypto layer and tokens to support easier hardware integration
+	* added support for ldap servers which have more than one suffix
+	  (openca_0_9_1 too)
+	* general bugfix for configuration from Ramon Llorens Creus
+	  <rllorens@diputaciolleida.es> (commited to 0_9_1 too)
+	* integrated OpenCA::OpenSSL::Fast into OpenCA::OpenSSL
+	* OpenCA::OpenSSL::SMIME contributed by Martin Ferrari
+	  <mferrari@decidir.net>
+	* bugfix for OpenCA::REQ (Ives Steglich <steglich@emt.iis.fhg.de>)
+	  (openca_0_9_1 too)
+	* ldap code now schema compliant (openca_0_9_1 too)
+	* added French from Nicolas Pouvesle <npouvesle@mond.net>
+	  (openca_0_9_1 too)
+	* fixed generation of the serials (openca_0_9_1 too)
+	* special roles can be excluded from LDAP (Chris Covell
+	  <chris@katjam.co.uk>)
+	* added TLS support to ldap-utils.lib
+	* added SASL support to ldap-utils.lib
+	* dozens of bugs found by Brian May during packaging OpenCA for Debian
+	* first rudimentary support for checking for already installed
+	  Perl modules
+	* added scep support (many thanks to Ives Steglich steglich@emt.iis.fhg.de>)
+2003-Feb-23:
+	* 0.9.1.1
+	* OCSPd Correclty lookup using loaded CRL
+	* OCSPd Added extensions management from CRL to OCSP response
+	* OCSPd Updated the sample (contrib/) configuration file
+	* OCSPd Added CRL retrivial from LDAP server
+	* OCSPd Added LDAP support (needs OpenLDAP libraries)
+	* OCSPd Added CRL retrivial from file
+	* fixed SPKAC in basic_csr
+	* fixed IE DNs in basic_csr
+	* fixed export_import.lib
+	* added patches from from Marc Pfatschbacher <pfatschi@gmx.net>
+	    # basic_csr
+	    # bpRevokeCertificate
+	    # export-import.lib
+	* added DSA-keys to genSKey (only commited to HEAD)
+	* fixed removeKey for DBM-files
+	* fixed sign in OpenCA::OpenSSL (patch from Ramon Llorens Creus
+	  <rllorens@diputaciolleida.es>)
+2003-Jan-03:
+	* 0.9.1
+	* added TODO and CHANGES
+2002-Dec-22:
+	* 0.9.1 RC7
+	* only openca.pot, openca-html.pot and the javascriptfiles must be
+	  translated
+	* language es_ES available
+	* language de_DE to new mechanism migrated
+	* fixed unclean usage of OpenCA::REQ in basic_csr and bpCreateCSR
+	* several fixes for i18n (typos and wrong functions)
+	* Javascript-fixes for Mozilla and Netscape <5
+	* fixed several problems in OpenCA::DB
+	* cleanup interface of OpenCA::DBI (DB2 works again) and avoid crashes
+	  of the web interfaces if databases are down
+	* fix for use of not unique DNs in crypto-utils.lib
+	* don't overwrite mailcounter during importing mails
+	* integrated security-fix of Microsoft for MS02-48
+	* perl 5.8 supported
+	* LDAP v3 supported
+	* usercerts without emailaddress handled now correct by the ldap code
+	* better signaturehandling for listReqs and viewSignature
+	* added special CRL-generation
+	* certificates cannot have a longer lifetime then the CA-cert now
+	* PINs in the batchprocessors are now encrypted
+	* fixed several missing statechecks
+	* support for HSMs added (Chrysalis-ITS Luna CA3) - special thanks to
+	  Bahaaldin Al-Amood <balamood@vt.edu>
+	* new export/import system supports incremental exports
+	* merged basic_csr, ie_req and spkac_req (incl. automatic browser
+	  detection if wanted)
+2002-Oct-02:
+	* 0.9.1 RC6
+	* fixed a bug in src/web-interfaces/pub/Makfile (download.cer installs now
+	  correctly)
+	* removed -lfl from ocspd/src/Makefile and openca-sv/src/Makefile
+	* fixed DBI because MySQL is really sensitive for blanks between functions
+	  and parenthesis
+	* better references for scrolling certificates, CRLs and requests
+	* port-option added to configure (this allow the usage of servers on
+	  non-standardports)
+	* use strict; in all webinterfaces
+	* several modifications to support mod_perl
+	* fixed signature-handling in approveCRR, approveCRRnotSigned,
+	  changeCRR and listReqs
+	* created csr-utils.lib
+	* all cmds are now functions
+	* several performance enhancements in OpenCA::REQ and OpenCA::X509 to
+	  speedup lists
+	* explicit commit and rollback for SQL-databases
+	* i18n introduced including description in file I18N
+	* language de_DE available
+	* support for not unique DNs (patch for OpenSSL is available too)
+	* fixed mail-setting in LDAP
+	* fixed installation problem with keybackup_(key|cert).pem
+2002-Sep-10:
+	* 0.9.1 RC5
+	* fixed typo in editCSR ($datatype --> $dataType)
+	* fixed status bug in OpenCA::DBI (EXPIRED works now)
+	* fixed serials in the DN (now the user see only decimal numbers)
+	* rewrite the requestgeneration for IE because of some problems with
+	  Siemens CardOS CSP
+	* fixed the signatureverification
+	* fixed import of CRR into CA
+	* keybackup integrated into batchprocessor (still alpha)
+	* structural cleanup completed
+2002-Aug-29:
+	* 0.9.1 RC4
+	* renewCSR can handle now empty subject alternative names
+	* certsMail.txt is now in the correct directory
+	* fixed bug in crypto-utils.lib (now we can issue certificates from renewed
+	  requests directly)
+2002-Aug-28:
+	* 0.9.1 RC3
+	* RBAC:
+		* deactivated debugging in rbac-utils.lib
+		* removed conf-file for raServerInfo
+		* added conf-file for serverInfo
+		* security bugfix against misconfiguration of mod_ssl
+		* some signatures will no longer used because they bring us
+		  no additional security
+	* RPM-specs updated (the binaries are now much smaller)
+2002-Aug-23
+	* 0.9.1 RC 2
+	* IE-fixes:
+		* getcert works again
+		* download of certificates from other users via the pub-gw works
+	* Win2000 smartcardlogin tested successfully (with patched OpenSSL)
+2002-Aug-21
+	* 0.9.1 RC 1
+	* fixed src/Makefile for use without optional C-modules
+	* fixed deleteCRR to make certificates valid if there are no other CRRs
+	* several small Makefile-fixes
+	* moved Makefile.crt into correct directory (causes crashes during make
+	  install)
+	* fixed bug in OpenCA::X509 (failed for DNs with attributes which
+	  includes "/")
+	* fixed wrong CDPs in ca-openssl.cnf, ra-openssl.cnf and
+	  sample-openssl.ext.in
+	* a small fix in mail-utils.lib
+	* changePasswd fixed for OpenCA::DB
+2002-Aug-15
+	* several small changes
+	* fixed CDPs in default-configuration
+2002-Aug-14
+	* new structure - ready for i18n and more productoriented (for re-use)
+	* fixed signing for IE
+	* fixed numbers of CRIN-mails
+2002-Aug-12
+	* 0.9.0
+	* fixed typo in editCRR ($parsed --> $parsed_req)
+	* fixed typo in approveCRR and approveCRRnotSigned ($req->getSerial -->
+	  $cert->getSerial)
+2002-Aug-09
+	* RC 4
+	* fix for systems with many users (linear list of links --> exponential
+	  list of links)
+	* OpenCA::DBI returns now 50 items and not 49 if listItems asks for 50 items
+	* OpenCA::DBI start now with the first element of a list and not the
+	  second one
+	* you can download now keys which have the correct format for Apache's
+	  mod_ssl
+	* added navigation through the users of the batch processor (not an
+	  official part of 0.9)
+2002-Aug-05
+	* RC 3
+	* subject alternative name will be set automatically by default
+	* signature handling for CSRs fixed
+	* initialization for PostgreSQL fixed
+	* log for PostgreSQL fixed
+	* unused --prefix fixed
+	* ldap-utils.lib creates the root-node of the directory now too
+	* ldap-utils.lib is now caseinsensitive for DNs
+2002-Jul-26
+	* RC 2
+	* fix for OpenCA::DBI
+	* updated INSTALL, LICENSE, COPYRIGHT, README and HISTORY
+	* added OpenCA-guide and lifecycle to the docs
+2002-Jul-23
+	* RC 1
+2002-Jul-17
+	* OpenCA::DBIS removed
+	* spec-files updated (better versionnumbers for modules)
+	* build-rpm.sh updated
+2002-Jul-12
+	* ARCHIVIED --> ARCHIVED
+	* added link from viewCert to viewCSR
+	* incompatible SQL DB-tables so follow the instructions in
+	  SQL-DB-Format-Change (because we store the CSR's serial in the
+	  request's header)
+	* DBM-users has to make a backup before the installation and after the
+	  installation they have to import this backup or do the following
+		* cd openca_dir/var/db/
+		* mv archivied_xyz archived_xyz
+	* users can get their certificates via the CSR's serial and their ID from
+	  the batchprocessors too
+2002-Jul-11
+	* genCRL fixed (creates now cacrl.(pem|der|crl|txt))
+	* added the missing batchprocessors (nearly untested)
+2002-Jul-05
+	* fixed some problems with the signatureverification of requests
+2002-Jul-04
+	* forget to run autoconf (only users without autoconf was affected)
+2002-Jul-03
+	* better errormessages for genCAReq
+2002-Jul-02
+	* better errormessages for libIssueCertificate
+	* another error 256 in OpenCA::OpenSSL
+2002-Jul-01
+	* fix a small bug in editCSR which causes the initialization to fail
+	* include the first version of a batch processor
+2002-Jun-24
+	* better debuggingoutput for deleteCSR
+	* fixed broken Makefile in src/cgi-bin/cgi-online/cmds/
+	* support for full flexible CA-DNs
+	* CRINs work
+	* mailcounter will no longer be overwritten
+2002-Jun-04
+	* fix for changeCSR (yesterdays snapshot was broken)
+2002-Jun-03
+	* OpenCA works on Solaris
+	* fixed broken ca.conf
+2002-Jun-01
+	* fixed problems with CA-certs and LDAP
+2002-May-31
+	* support for tokeninitialization on the RA
+2002-May-30
+	* support for renewal of requests
+2002-May-27
+	* fixes for mailsending
+	* small fix for IE
+2002-May-27
+	* fix for IE
+	* small fix for viewCRL
+2002-May-24
+	* RPMs are supported now
+	* LDAP improvements
+	* some changes in the organization of the sourcecode
+	* several minor bugfixes
+2002-Apr-29
+	* full support for errno and errval in OpenCA::OpenSSL
+	* getCRLAttribute added to OpenCA::OpenSSL
+	* OpenCA::REQ fixed for parsing SPKAC-requests
+	* convert issuer of OpenCA::X509 and OpenCA::CRL
+	* OpenCA::OpenSSL detects errorcode 256 from OpenSSL and ignores it
+	* some small fixes for better errordetection in export-import.lib
+2002-Apr-23
+	* several fixes for emailAddress
+	* some fixes for rbac-utils.lib
+	* CA Admin --> CA Operator
+2002-Apr-19
+	* we use DNs like described in RFC2253 only
+	* the new module X500::DN and X500::RDN handles the conversion from RFC2253 and
+	  X500 to OpenSSL
+	* there is a new gateway for LDAP only
+	* you must use an OpenSSL which includes the patches for the attribute emailAddress
+	  (this require openssl-0.9.7-20020415 or higher)
+2002-Apr-12
+	* verifySignature works now with IE too
+	* fixes for LDAP (objectcreation)
+	* patch for FreeBSD from Nelson Murilo <nelson@pangeia.com.br>
+	* fix for openca-verify from Alex
+	* removed passphrases from the links (only using forms with POST and not GET)
+2002-Apr-10
+	* next fixes for the LDAP-code
+	* fixes for PKCS#7 (verification is now faster because openca-verify
+	  is only used once)
+	* button for renew CSRs (but no background code because the format is not defined)
+2002-Apr-09
+	* all lists show the affected role
+	* requests must not signed any longer
+	* store LDAP-certs with other DN
+	* update LDAP from viewCert directly
+	* added an option to disable the automatic LDAP-update during import
+	* several fixes for Javascript
+2002-Apr-08
+	* complete new names for RBAC (Base64 with small modifications)
+	* change passphrase of private key fixed
+	* fixed a bug in getItem of OpenCA::DB (CRRs should work now)
+	* full support for IE (thanks to Alexandru and Marilena Matei)
+	* fixed a bug in verifySignature on the pub-gw
+	* some small fixes in OpenCA::OpenSSL
+2002-Mar-28
+	* several fixes for Solaris (see also configs/configure.michael_solaris)
+2002-Mar-27
+	* fixes for the export of certificates and keys
+	* fixes for correct statehandling during revocation
+	* fixed missing openssl-includes in OpenCA SV Tools
+2002-Mar-22
+	* some fixes to export/import
+	* data and configuration will no longer be overwritten during installation
+2002-Mar-21
+	* several fixes for issueCertificate
+	* more debugging output available for getSMIME in OpenCA::OpenSSL
+	* all CRIN-mails in one directory
+	* crashes with "Cannot encrypt PIN-mail!" caused by OpenSSL-snapshots
+2002-Mar-15
+	* UI-messages
+	* issuing CRRs (several typos)
+	* PKCS#12-export
+2002-Mar-13
+	* some fixes from Alexandre Matei
+2002-Mar-12
+	* the next fixes for getSerial
+2002-Mar-11
+	* fixed a lot of bugs related to getSerial
+2002-Mar-08
+	* several fixes (thanks to Alexandre Matei)
+	* initialization works with OpenCA::DB too
+2002-Mar-04
+	* several fixes related to the new filesystem hierarchy
+	* fix for IE requests
+	* a lot of fixes for the new OCSP daemon
+	* initialization works
+2002-Feb-22
+	* new filesystemhierarchy
+	* headers of requests are signed too
+	* this is a real testrelease because we changed over 100 files
+	* download of certificates for IE should work
+2002-Feb-18
+	* fixed approveCSR
+	* new installation code for the CA (experimental)
+2002-Feb-15
+	* standard user and group are configurable
+2002-Feb-14
+	* OpenCA::OpenSSL->sign has some more options
+	* export-import.lib fixed (wrong code for installation of cacert.pem)
+	* corrected some misspellings
+2002-Feb-13
+	* new script to generate requests
+		* server-side generation of keypair
+		* fully configurable via public.conf
+		* support different configurations
+	* better initialization
+	* complete handling of private key on the RA
+	* some improvements in the Makefiles
+2002-Feb-05
+	* several improvements related to configure
+	* better initialization (you can simply use the web-interface)
+	* one small bugfix for OpenCA::DB
+	* configure still broken (exec-prefix must be set)
+2002-Feb-04
+	* better configure
+	* fixes for DBM-files
+	* some small bugfixes
+	* configure broken (exec-prefix must be set)
+2002-Jan-28
+	* fix two bugs in the sheets for issuing and revoking certificates
+2002-Jan-23
+	* fixed a bug in OpenCA::DBI
+2002-Jan-22
+	* misc-utils.lib fixed
+	* all files in lib/ are identical on CA, RAServer and Public
+	* all files in cmds/ with the same name are identical on CA and RAServer
+	* SCEP is no longer part of the installation (scheduled to v0.10)
+2002-Jan-16
+	* better UI for recovery
+	* libraries are now idetically in ca, raserver and public
+	* remove the CRL-state EXPIRED (CRLs never expiring)
+2002-Jan-15
+	* several small fixes
+	* ldap can handle sn now
+	* recovery fixed again
+	* approval of CSRs works now
+	* approval of CRRs works now
+	* add userCertificate to LDAP fixed
+2002-Jan-12
+	* fixes
+2002-Jan-11
+	* fix file-permissions of the RBAC-configuration
+	* complete update of the RBAC-configuration
+	* add the role Mail Server
+2002-Jan-10
+	* many bugfixes because of the new code for CSRs and CRRs
+	* since 2001-Dec-20 the recovery-code for index.txt and serial was broken (fixed)
+	* OpenCA::OpenSSL has two new functions - getOpenSSLDate and getNumericDate
+	* fixed the Makefile of cgi-public/sheets/
+	* OpenCA::DBI handles now expired certs automatically (an expired cert is not a valid cert)
+	* incompatible SQL DB-tables so follow the instructions in SQL-DB-Format-Change
+	  (because of the correct handling of expired certs)
+2002-Jan-09
+	* added some missing files for OpenCA::DB (thanks to chris crowley)
+	* complete new organization of the code for approving a request (CSRs and CRRs)
+	* this snap has many bugs because the code for approving requests is not tested
+	  (so this snapshot is not recommended for non-developers)
+	* if Req means only CSR then *Req(|s) -> *CSR
+2002-Jan-08
+	* some fixes to support Mozilla which has some bugs
+2002-Jan-04
+	* Oracle improvements again
+	* incompatible SQL DB-tables so follow the instructions in SQL-DB-Format-Change
+2002-Jan-03
+	* CRR improvements
+	* Oracle support
+	* incompatible SQL DB-tables so follow the instructions in SQL-DB-Format-Change
+2001-Dec-22
+	* sendmail integrated into configure.in
+	* several improvements for CRIN-mails
+2001-Dec-21
+	* send CRIN-mails
+	* some small fixes on the CA
+	* better support for subjectAltName
+	* displays correct DN and subjectAltName on CA and RAServer
+2001-Dec-20
+	* small fixes in OpenCA:OpenSSL (missing -config option)
+	* first fixes for PIN-Mails
+	* in OpenCA exists only decimal numbers
+	* OpenCA::CRL and OpenCA::X509 fixing the certificate's serial
+2001-Dec-19
+	* import of CRLs works completely
+	* ie_req should work now
+	* correct initialization of OpenCA::OpenSSL
+	* LDAP-code fixed
+2001-Dec-18
+	* because of a corruption of my cvs-files, this snap is highly
+          recommended
+	* fixes a Javascriptproblem for genCAReq (creates the CA's request)
+        * fixes the crl-links on the Public-GW
+        * fixes export-import-code again (more robust, bugs easier to find
+          and fix)
+        * export/import of CRLs works (still a problem with the installation
+          of the CRL-directory on Public-GW)
+2001-Dec-17
+	* fixed two files which are perhaps corrupted in the last snap
+2001-Dec-15
+	* CRRs on the RAServer works completely
+	* export/import of CRRs
+	* CRRs on the CA
+	* new design of the main-page (CA)
+	* issuing CRL works (only tested nothing to do)
+	* recovery of OpenSSL's index.txt works (tested with CRRs)
+2001-Dec-14
+	* new design of the main-page (RAServer)
+	* CRRs on the RAServer
+2001-Dec-13
+	* CRRs on the Public-GW
+	* new design of the main-page (Public-GW)
+	* command "lists" works
+2001-Dec-12
+	* fixed Makefiles of OpenSCEP
+2001-Dec-10
+	* OpenSCEP included
+2001-Dec-01
+	* initial OpenCA v0.9 snapshot
+
+SQL-DB-Format-Change
+--------------------
+	# still use your old snapshots
+	# exportDB via the link on the input/output-page (Backup)
+	# destroy your database
+	# make a backup of the CA's private key and cert (by hand)
+	# install new snapshot
+	# install the backup of the CA's private key and cert (by hand)
+	# initialize your database again via the link on the input/output-page (Recovery)
+	# replayLog via the link on the input/output-page (Recovery)
+

@@ -1,0 +1,213 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: statusAutoEmail
+##       Brief: Checks the status of the Auto (On-Line) CRL Daemon
+##     Version: $Revision: 1.7 $
+## Description: Checks the status of the Auto (On-Line) CRL Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStatusAutoEmail {
+
+	my $pidfile = undef;
+	my $pid = undef;
+	my $info_list = undef;
+	my $status = undef;
+	my $pos = 0;
+	my @stats = ();
+	my @stats2 = ();
+
+	my $params = undef;
+
+	our ( $DEBUG );
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoemail.pid";
+	if (libGetPidProcessStatus($pidfile))
+	{
+		$status = "Enabled";
+	}
+	else
+	{
+		$status = "Disabled";
+	}
+
+	$info_list->{CLASS} = "info_list";
+
+	$info_list->{BODY}->[$pos++]->[0] = "<h3>" . gettext("Daemon Status") .
+										"</h3>";
+
+	$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+						gettext ( "Status" ) .
+					  "</div>";
+	$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>" . 
+						gettext ( $status ) .
+					  "</div>";
+
+	if( $status =~ /Enabled/ )
+	{
+		@stats = stat( $pidfile );
+
+		$params = startAutoEmail_loadParams();
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Started On" ) . 
+					  "</div>";
+
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos++]->[0] = "<h3>" .
+					gettext("Email Daemon Configuration") . "</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext("Checking for new ".
+							"Email Every").
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues($params->{'period'}) . " " .
+					gettext ( libGetHtmlValues($params->{'period_type'}) ) .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext("Warn for Expiring Certificates") .
+					"</div>";
+
+		if ( $params->{'warn_expiring'} eq "1" ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("Yes") .
+					"</div>";
+			$info_list->{BODY}->[$pos++]->[0] = 
+				"<h3>". gettext("Expiring Certificates Warning") . "</h3>";
+
+			$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>".
+					gettext("First Email(Expiring within)").
+					"</div>";
+
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>".
+					$params->{'expire_1'} . " " .
+					gettext ( $params->{'expire_2_type'} ).
+					"</div>";
+
+			$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>".
+					gettext("Second Email(Expiring within)").
+					"</div>";
+
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>".
+					libGetHtmlValues( $params->{'expire_2'} ) . " " .
+					gettext ( libGetHtmlValues( $params->{'expire_2_type'}) ).
+					"</div>";
+			$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext("Min. Certificate Lifespan ").
+					"</div>";
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					libGetHtmlValues(
+						$params->{'lifespan'}) . " " .
+							gettext("Days") .
+					"</div>";
+
+		$info_list->{BODY}->[$pos++]->[0] = 
+					"<h3>Advanced (Development)</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Extended Logging (DEBUG)" .
+					"</div>";
+
+		if ( $params->{'debug'} eq "1" ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("Yes") .
+					"</div>";
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("No") .
+					"</div>";
+		}
+
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("No") .
+					"</div>";
+		}
+
+	} else {
+		my $statusfile = undef;
+		my $reason = undef;
+		my @stats2 = ();
+		my @stats = ();
+		my $started = undef;
+		my $stopped = undef;
+
+		$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoemail_status.txt";
+		if( -f $pidfile ) {
+			@stats = stat ( $pidfile );
+			$started = scalar localtime $stats[10];
+		} else {
+			$started = gettext( "Unknown" );
+		}
+
+		if( -f $statusfile ) {
+			@stats2 = stat( $statusfile );
+			$stopped = scalar localtime $stats2[10];
+		} else {
+			print STDERR "ERROR::Can not find $statusfile!\n"
+				if( $DEBUG );
+			$stopped = gettext( "Unknown" );
+		}
+
+		if( not open( FD, "<$statusfile" ) ) {
+			$reason = "Undefined";
+		} else {
+			$reason = <FD>;
+			close ( FD );
+		}
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Last Started On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					$started .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Stopped On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats2[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "End Status" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					gettext ( $reason ) .
+					"</div>";
+
+	}
+
+	return libSendReply (
+                         "NAME"        => i18nGettext ("On-Line Email Daemon"),
+                         "EXPLANATION" => 
+				gettext ("Details about the On-Line Email Daemon"),
+                         "TIMESTAMP"   => 0,
+                         "INFO_LIST"   => $info_list,
+                        );
+
+}
+
+1;

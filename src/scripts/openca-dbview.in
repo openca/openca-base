@@ -1,0 +1,54 @@
+#! @PERL@
+
+$VER = '0.121';
+
+## View DB - Version $VER
+## (c) 1999 by Massimiliano Pala
+## OpenCA Core Developer
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This Program let you verify the contents of the Certificates
+## DB used by the CA ( issued certificates ).
+##
+
+print "\nView DB - Version $VER\n";
+print "(c) 1999 by OpenCA Core Team\n\n";
+print "Enter The OpenCA dir ( @ca_prefix@ ) ? ";
+$OPENCA_DIR = <STDIN>;
+
+chop($OPENCA_DIR);
+
+if( "$OPENCA_DIR" eq "" ) {
+	$OPENCA_DIR = '@ca_prefix@';
+}
+
+## print "Enter The Serial Number ? ";
+## $serial = <STDIN>;
+chop($serial);
+
+$DBM_FILE = "$OPENCA_DIR/stuff/issued_certs";
+
+	dbmopen( %CERT_DB, "$DBM_FILE", undef ) || die "Can't access DB!";
+
+		## Uncomment following lines if you want the full
+		## Certificate DB to be displayed
+	 	while ( ($key, $value) = each  %CERT_DB ) {
+		 	## print "$key = $value\n";
+			print "Found certificate: serial=0x$key, dim=";
+			print length($value) ." bytes\n";
+	 	}
+
+		## $cert = $CERT_DB{$serial};
+
+		## print "Certificate $serial\n";
+		## print "$cert\n\n";
+		## print "Ok.\n";
+
+	dbmclose( %CERT_DB );
+
+
+exit;

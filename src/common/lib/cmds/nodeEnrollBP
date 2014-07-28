@@ -1,0 +1,31 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeEnrollBP
+##     Verison: $Revision: 1.1.1.1 $
+##       Brief: exports the batchprocessors
+## Description: exports the data from the batchprocessors to a removable media
+
+use strict;
+
+sub cmdNodeEnrollBP {
+
+    print startLogPage (gettext ("Exporting the data from the batchprocessors to a lower level of the hierarchy ..."));
+
+    my $tmp = createStructure ();
+    eximEnrollBP     ( $tmp );
+    eximEnrollCommit ( $tmp );
+    eximIOEnroll     ( $tmp );
+    removeDirectory  ( $tmp );
+
+    closePage ();
+
+}
+
+sub getParamsNodeEnrollBP
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

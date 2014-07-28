@@ -1,0 +1,152 @@
+#! @SHELL@
+
+openssl=@OPENSSL@
+
+echo ""
+echo "Enter the openssl command path  ($openssl): \c"
+read tmp
+
+if ! [ "$tmp" = "" ] ; then
+        openssl=$tmp
+fi
+
+echo "Enter the basedir for your CA [@ca_prefix@ ] : \c"
+read ca
+
+if [ "$ca" = "" ] ; then
+        ca=@ca_prefix@
+fi
+
+export ca openssl
+
+read nser <$ca/conf/openssl/serial
+
+echo "Enter the config for your CA [ $ca/conf/openssl/openssl.cnf ] : \c"
+read cnf
+if [ -z "${cnf}" ] ; then
+        cnf=${ca}/conf/openssl/openssl.cnf;
+        echo
+fi
+if ! [ -f "${cnf}" ] ; then
+	echo "ERROR: ${cnf} does not exists!"
+	exit 1;
+fi
+
+echo "Enter the Secret Key's Size (default 1024) : \c"
+read ks
+
+if [ "$ks" = "" ] ; then
+        ks=1024;
+fi 
+
+tmp="$openssl genrsa -out $ca/private/$nser"_key.pem" $ks";
+ret=`$tmp`;
+if [ $? != 0 ] ; then
+	echo
+	echo "ERROR: cannot generate private key (check write perms)"
+	echo
+	exit 1
+fi
+
+key="$ca/private/$nser"_key.pem;
+cert="$ca/outbound/certs/$nser".pem;
+req="$ca/tmp/$nser"_req.pem;
+
+echo "Generating request for certificate ($nser) ... "
+	$openssl req -config $cnf -new -key $key -out $req
+echo "Done."
+echo
+
+# echo "Importing request into DB ... \c"
+# 	rc=`@prefix@/bin/openca-addreq ${req} ARCHIVIED_REQUEST ${ca}`;
+# echo "Done."
+# echo
+
+echo "Available extensions:"
+echo ""
+echo "   1 - User Certificate"
+echo "   2 - Server Certificate"
+echo "   3 - CA Certificate"
+echo ""
+echo "Enter Extensions to be used (def. 1) : \c"
+read tmp
+if [ "$tmp" = "" ] ; then
+        tmp=1
+        echo
+fi
+
+case "${tmp}" in
+	1) 
+		exts=$ca/conf/openssl/extfiles/User_Certificate.ext
+		;;
+	2)
+		exts=$ca/conf/openssl/extfiles/Server_Certificate.ext
+		;;
+	3)
+		exts=$ca/conf/openssl/extfiles/Certification_Authority.ext
+		;;
+	default)
+		exts=$ca/conf/openssl/extfiles/User_Certificate.ext
+		;;
+esac
+
+## Check if the extensions file exists
+if ! [ -f "${exts}" ] ; then
+	echo "ERROR: ${exts} does not exists!"
+	exit 1;
+fi
+
+if [ "$tmp" = "2" ] ; then
+	echo "Enter the Server Name : \c";
+	read name
+	SERVER_NAME=$name
+
+fi
+
+echo "Enter Comment to be used (def. none) : \c"
+read tmp
+if [ -z "${tmp}" ] ; then
+	tmp="";
+fi
+COMMENT="$tmp"
+
+export COMMENT SERVER_NAME
+
+
+## Issue the Certificate
+${openssl} ca -config ${cnf} -preserveDN -extfile ${exts} -in ${req}
+
+echo
+
+## Now we need to update the DB, so let's import the new certificate into
+## the DB.
+
+
+## "Importing certificate into DB ... "
+rc=`@prefix@/bin/openca-addcert $nser $ca`;
+
+echo "Cleaning item files ... \c"
+	rm $ca/tmp/* 2>&1 >/dev/null
+	echo "Done."
+echo "($cert)."
+
+echo "ADVICE:"
+echo "======="
+echo ""
+echo "If you generated the certificates for the RAServer Web Server and the"
+echo "Secure web server, now you can find the certificates in oubound/certs"
+echo "directory. The corresponding secret keys can be found in:"
+echo ""
+echo "        $ca/private/"
+echo ""
+echo "Copy the to the corresponding server's configuration specified dir"
+echo "(usually \$apache/ssl.crt and \$apache/ssl.key)."
+echo ""
+echo "If you have, instead, generated the certificate for an RA Operator, i.e."
+echo "one person that should access the RAServer, use the openca-browserexp"
+echo "script to export certificate in .p12 (Netscape importable format)."
+echo ""
+echo "--- END ---"
+echo ""
+
+exit 0

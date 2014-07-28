@@ -1,0 +1,86 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: sendMail
+##       Brief: send a specified mail
+## Description: send a mail which was submitted by an operator
+##  Parameters: subject, emailaddress, body
+
+use strict;
+
+sub cmdSendMail {
+
+print startLogPage( gettext("E-Mail Sending Page") );
+
+print addLogSection ( gettext("Load address ...") );
+my $email = $query->param ('emailaddress');
+if ($email =~ /.*@.*/) {
+	print addLogLine (gettext("OK"));
+	print closeLogSection();
+} else {
+	print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED")."</FONT>");
+	print addPreLogLine (gettext("Cannot load emailaddress"));
+	print closeLogSection();
+	print closePage();
+	return undef;
+}
+
+print addLogSection ( gettext("Load subject ...") );
+my $subject = $query->param ('subject');
+if ($subject) {
+	print addLogLine (gettext("OK"));
+	print closeLogSection();
+} else {
+	print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED")."</FONT>");
+	print addPreLogLine (gettext("Cannot load subject"));
+	print closeLogSection();
+	print closePage();
+	return undef;
+}
+
+print addLogSection (gettext("Load message itself ...") );
+my $body = $query->param ('body');
+if ($body) {
+	print addLogLine (gettext("OK"));
+	print closeLogSection();
+} else {
+	print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED")."</FONT>");
+	print addPreLogLine (gettext("Cannot load message"));
+	print closeLogSection();
+	print closePage();
+	return undef;
+}
+
+
+print addLogSection (gettext ("Prepare message for mailprogram ...") );
+
+my $mailCommand =	getRequired('mailcommand');
+my $mailSenderAddress =	getRequired('SERVICE_MAIL_ACCOUNT');
+
+my $mail = "To: ".$email."\n";
+$mail   .= "From: ".$mailSenderAddress."\n";
+$mail   .= "Subject: ".$subject."\n";
+$mail   .= $body;
+$mail   .= "\n";
+
+if (not open( FD, "| $mailCommand >/dev/null" )) {
+	print addLogLine ("<FONT COLOR=#FF0000>".gettext("FAILED")."</FONT>");
+	print addPreLogLine (gettext("Cannot open pipe"));
+	print closeLogSection();
+	print closePage();
+	return undef;
+}
+
+print FD $mail;
+close(FD);
+
+print addLogLine (gettext("OK"));
+print closeLogSection();
+
+print closePage();
+
+}
+
+1;
+

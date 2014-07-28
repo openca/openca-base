@@ -1,0 +1,42 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: show_roles
+##       Brief: list roles
+## Description: show all actual roles - entry to rolemanagement
+##  Parameters: none
+
+use strict;
+
+sub cmdShow_roles {
+
+my @list = loadRoles();
+
+my $item_list = undef;
+my $cmd_panel = undef;
+
+## create table
+$item_list->{HEAD}->[0] = gettext("Role");
+
+my $pos = 0;
+for my $value (@list) {
+    my $role = $value;
+    # $role =~ s/ /%20/g;
+    $item_list->{BODY}->[$pos]->[0] = $role;
+    $pos++;
+}
+$item_list->{BODY}->[$pos]->[0] = gettext ("&lt;empty role - for new users&gt;");
+
+$cmd_panel->[0] = "<a href=\"?cmd=add_role\">".gettext("Add a role")."</a>";
+
+return libSendReply (
+                     "NAME"        => gettext ("Show Roles"),
+                     "EXPLANATION" => gettext ("Following you can find the available roles in this PKI."),
+                     "ITEM_LIST"   => $item_list,
+                     "CMD_PANEL"   => $cmd_panel,
+                     "TIMESTAMP"   => 1
+                    );
+}
+
+1;

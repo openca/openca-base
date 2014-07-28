@@ -1,0 +1,48 @@
+# These extensions are added when 'ca' signs a request.
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+
+basicConstraints=critical,CA:TRUE
+
+keyUsage = cRLSign, keyCertSign
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+
+# This is typical also
+
+# PKIX recommendations
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid
+
+# Import the email address.
+
+subjectAltName=@subject_alt_name
+
+# Copy subject details
+
+issuerAltName=issuer:copy
+
+# New PRQP support
+# - use the prqpTrustedAuthority if you use a 3rd party provided server
+# authorityInfoAccess = prqpTrustedAuthority;URI:http://prqp.openca.org/
+
+# default PRQP server, more info at http://www.openca.org/projects/prqpd/
+@authInfoAccess@
+
+# Old Netscape (ns), should be removed
+# nsCaRevocationUrl	= @NS_CRLDistributionPoint@
+# nsRevocationUrl		= @NS_CRLDistributionPoint@
+
+crlDistributionPoints   = @cdp_section
+
+[ subject_alt_name ]
+
+__SUBJECT_ALT_NAME__
+
+[ cdp_section ]
+
+@CRLDistributionPoints@
+
+

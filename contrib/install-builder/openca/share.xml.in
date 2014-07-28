@@ -1,0 +1,31 @@
+        <component>
+            <name>share</name>
+            <description>Shared Docs</description>
+            <canBeEdited>0</canBeEdited>
+            <selected>1</selected>
+            <show>1</show>
+            <folderList>
+                <folder>
+                    <description>Contrib Files</description>
+                    <destination>${installdir}/share/openca/contrib</destination>
+                    <name>contrib</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>@build_dir@@etc_prefix@/contrib</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>docs</description>
+                    <destination>${installdir}/share/openca/docs</destination>
+                    <name>docs</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>@build_dir@@prefix@/share/docs</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+        </component>

@@ -1,0 +1,1162 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: basic_csr
+##       Brief: basic CSR
+##     Version: $Revision: 1.10 $
+## Description: this script creates a CSR
+##  Parameters: 
+
+use strict;
+
+## holds the type of the request
+our $type;
+our $os;
+our $osver;
+ 
+sub cmdBasic_csr {
+
+our ($query, $config, $errval, $cryptoShell, $tools, $db);
+
+my $minPinLength = getRequired('minpinlength');
+my $OPERATION    = $query->param ('operation');
+our $type        = $query->param ('CSR_TYPE');
+
+my $verifyEmailAddress = getRequired('verifyEmailAddress');
+
+## read the loa.xml file and get the values
+my $loaOption = getRequired('USE_LOAS');
+my ($loaTwig, $xmlLOA, %LOALevels, @LOANames, $loaHtml, $loaSelect, %LOAHash);
+if ($loaOption =~ /yes/i)
+{
+       	$loaTwig = loadConfigXML ('LOAConfiguration');
+    	if (not $loaTwig) {
+               	generalError (gettext ("Cannot load menu configration"));
+       	}
+       	for my $al ($loaTwig->get_xpath("loa"))
+       	{
+            #$DEBUG=1;
+            $xmlLOA = gettext(($al->first_child('name'))->field);
+            $LOALevels{$xmlLOA}=gettext(($al->first_child('level'))->field);
+            $LOAHash{gettext(($al->first_child('level'))->field)}=$xmlLOA;
+            push (@LOANames, $xmlLOA);
+            debug_cmds ("basic_csr: LOANames: ".@LOANames);
+      	}
+}
+
+## check the submitted data to be consistent
+
+if ( not checkBasic_csr($OPERATION) ) {
+
+	## build the data
+
+	## load the normal DN and build the html-elements
+
+	my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+	my @user_dn = (); # array with the user fields
+	## scan every element of the DN
+	for (my $i=1; $i <= scalar @elements; $i++) {
+
+		my $html;
+		my $input_check  = "";
+		my $characterset = getRequired ("DN_TYPE_".$type."_ELEMENT_".$i."_CHARACTERSET");
+		my $optional     = 0;
+                $optional = 1
+                    if (getRequired ("DN_TYPE_".$type."_ELEMENT_".$i.'_REQUIRED') !~ /YES/i);
+
+		if ( defined $config->getParam ("DN_TYPE_".$type."_ELEMENT_".$i."_SELECT") ) {
+			my @h    = getRequiredList ("DN_TYPE_".$type."_ELEMENT_".$i."_SELECT");
+			$html = $query->newInput (
+					-regx     => $characterset,
+					-intype   => 'popup_menu',
+					-name     => 'DN_VALUE_'.$i,
+					-optional => $optional,
+					-value    => \@h);
+		} elsif ( defined $config->getParam ("DN_TYPE_".$type."_ELEMENT_".$i."_XML_FILE") ) {
+			## load file
+			my $twig = loadConfigXML ("DN_TYPE_".$type."_ELEMENT_".$i."_XML_FILE");
+
+			## load path
+			my @fields = $twig->get_xpath (getRequired ("DN_TYPE_".$type."_ELEMENT_".$i."_XML_PATH"));
+
+			## setup array
+			my @field_array = ();
+			foreach my $field (@fields)
+			{
+				push @field_array, $field->field;
+			}
+
+			## build html
+			$html = $query->newInput (
+					-regx     => $characterset,
+					-intype   => 'popup_menu',
+					-name     => 'DN_VALUE_'.$i,
+					-optional => $optional,
+					-value    => \@field_array);
+		} else {
+			$html = $query->newInput (
+					-regx     => $characterset,
+					-intype   => 'textfield',
+					-size     => 30,
+					-name     => 'DN_VALUE_'.$i,
+					-optional => $optional,
+					-check    => 'fill',
+					-minlen   => getRequired ("DN_TYPE_".$type."_ELEMENT_".$i.'_MINIMUM_LENGTH'),
+					-value  => $query->param ('DN_VALUE_'.$i));
+		}
+		push ( @user_dn, [
+				getRequired ("DN_TYPE_".$type."_ELEMENT_".$i),
+				$html
+				]);
+	}
+
+	## Subject Alternative Name Extension ## by oliwel
+	
+	my @subjectalt_attr = getRequiredList ("DN_TYPE_".$type."_SUBJECTALTNAMES");
+	## scan every element of the DN
+	for (my $i=1; $i <= scalar @subjectalt_attr; $i++) {
+
+		my $html;
+		my $input_check = "";
+		my $optional     = 0;
+                $optional = 1
+                    if (getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_REQUIRED') !~ /YES/i);
+
+		if ( defined $config->getParam ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i."_SELECT") ) {
+			my @h = getRequiredList ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i."_SELECT");
+			$html = $query->newInput (
+					-regx   => 'MIXED',
+					-intype => 'popup_menu',
+					-name   => 'SUBJECTALTNAME_VALUE_'.$i,
+					-value  => \@h);
+		} elsif ( defined $config->getParam ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i."_XML_FILE") ) {
+			## load file
+			my $twig = loadConfigXML ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i."_XML_FILE");
+
+			## load path
+			my @fields = $twig->get_xpath (getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i."_XML_PATH"));
+
+			## setup array
+			my @field_array = ();
+			foreach my $field (@fields)
+			{
+				push @field_array, $field->field;
+			}
+
+			## build html
+			$html = $query->newInput (
+					-regx     => 'MIXED',
+					-intype   => 'popup_menu',
+					-name     => 'SUBJECTALTNAME_VALUE_'.$i,
+					-optional => $optional,
+					-value    => \@field_array);
+		} elsif ( $subjectalt_attr [$i-1] =~ /EMAIL/i ) {
+			$html = $query->newInput (
+					-regx     => 'EMAIL',
+					-intype   => 'textfield',
+					-size     => 30,
+					-name     => 'SUBJECTALTNAME_VALUE_'.$i,
+					-optional => $optional,
+					-check    => 'fill',
+					-minlen   => getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_MINIMUM_LENGTH'),
+					-value    => $query->param ('SUBJECTALTNAME_VALUE_'.$i));
+		} else {
+			$html = $query->newInput (
+					-regx     => 'LATIN1_LETTERS',
+					-intype   => 'textfield',
+					-size     => 30,
+					-name     => 'SUBJECTALTNAME_VALUE_'.$i,
+					-optional => $optional,
+					-check    => 'fill',
+					-minlen   => getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_MINIMUM_LENGTH'),
+					-value    => $query->param ('SUBJECTALTNAME_VALUE_'.$i));
+		}
+		push ( @user_dn, [
+				getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i),
+				$html
+				]);
+	}
+	## end oliwel changes
+	
+        ## additional attribute handling ##
+
+        my @additional_attr = ();
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        my @additionalAttributesStringType = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE');
+        my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+
+        my $counter = 0;
+        foreach my $attribute (@additionalAttributes)
+        {
+            ## determine the attribute
+            my $attVar;
+            if($additionalAttributesDisplayValue[$counter])
+            {
+                $attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+            } else {
+                generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the configuration."));
+            }
+            my $tempAttribute = uc $attribute;
+
+            ## determine the content type
+            my $stringType = "LATIN1_LETTERS";
+            if ( $additionalAttributesStringType[$counter])
+            {
+                $stringType = $additionalAttributesStringType[$counter];
+            }
+
+            ## build the attribute list
+            push @additional_attr , [
+                $attVar, $query->newInput ( -regx     => $stringType,
+                                            -intype   => 'textfield',
+                                            -size     => 30,
+                                            -name     => 'ADDITIONAL_ATTRIBUTE_'.$tempAttribute,
+                                            -optional => 1,
+                                            -check    => 'fill',
+                                            -default  => $query->param ('ADDITIONAL_ATTRIBUTE_'.$tempAttribute) )
+                                    ];
+            $counter ++;
+        }
+
+
+	##
+	## add the html stuff for the LOA to the form if it was configured to do so
+	##
+
+	$loaSelect = $query->newInput (
+                       			-regx=>'NUMERIC',
+                      			-intype=>'popup_menu',
+                      			-name=>'loa',
+                       			-values=>[@LOANames]);
+
+
+	## put the numeric value of the loa in the pop up_menu instead of the
+	## name as a value to pass to the next page.
+	##
+	my $index=0;
+	while ($index <= $#LOANames)
+	{
+		debug_cmds ("basic_csr: index of LOANames: $index");
+		my $temp ="value="."\"".$LOANames[$index]."\"";
+		debug_cmds ("basic_csr: value of index: $temp");
+		my $numericValue="value="."\"". $LOALevels{$LOANames[$index]}."\"";
+		debug_cmds ("basic_csr: level of value of index: $LOALevels{$LOANames[$index]}");
+		debug_cmds ("basic_csr: complete value: $numericValue");
+		$loaSelect = $query->subVar( $loaSelect ,$temp, $numericValue);
+		$index ++;
+	}
+
+
+	if ($#LOANames == 0)
+	{
+        	$loaHtml= $LOANames[0];
+	}elsif ($#LOANames >= 0){
+        	$loaHtml= $loaSelect;
+	}else{
+        	$loaHtml= "";
+	}
+
+        my @ra_list = ();
+        foreach my $list_item (getRequiredList ('RegistrationAuthority'))
+        {
+            push @ra_list, gettext ($list_item);
+        }
+	my $html_ra = $query->newInput (
+				-regx=>'LETTERS',
+		    		-intype=>'popup_menu',
+		    		-name=>'ra',
+       		     		-values=>[@ra_list]);
+
+	my $html_role = $query->newInput (
+				-regx=>'LETTERS',
+		    		-intype=>'popup_menu',
+		    		-name=>'role',
+       		     		-values=>[loadRoles()]);
+
+	my $html_passwd1 = $query->newInput (
+				-regx=>'*',
+		    		-intype=>'password_field',
+		    		-name=>'passwd1',
+				-check=>'all',
+		    		-size=>16,
+		    		-minlen=>$minPinLength,
+				-value=>$query->param('passwd1'));
+
+	my $html_passwd2 = $query->newInput (
+				-regx=>'*',
+		    		-intype=>'password_field',
+		    		-name=>'passwd2',
+				-check=>'fill',
+		    		-size=>16,
+		    		-minlen=>$minPinLength,
+				-value=>$query->param('passwd2'));
+
+	my $html_bits = $query->newInput (
+				-regx=>'NUMERIC',
+		    		-intype=>'popup_menu',
+		    		-name=>'bits',
+       		     		-values=>
+				[getRequiredList('Basic_CSR_Keysizes')]);
+
+	my @keyTypeList = ();
+
+	if ( $type =~ /IE|NSS|BASIC/gi ) {
+		# We provide the possibility to choose
+		@keyTypeList = ( 'rsa', 'dsa' );
+	} else {
+		@keyTypeList = ( 'rsa' );
+	}
+
+	my $html_keytype = $query->newInput (
+				-regx=>'LETTERS',
+		    		-intype=>'popup_menu',
+		    		-name=>'keytype',
+       		     		-values=>[ @keyTypeList ]);
+
+	## add the configured RDNs
+	my $info_list = undef;
+	$info_list->{BODY}->[0]->[0] = gettext ("Certificate Data");
+	foreach my $item (@user_dn) {
+		my @h = @{$item};
+                my $pos = scalar @{$info_list->{BODY}};
+		$info_list->{BODY}->[$pos]->[0] = gettext($h[0]);
+		$info_list->{BODY}->[$pos]->[1] = gettext($h[1]);
+	}
+	$info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0] = gettext ("User Data");
+	foreach my $item (@additional_attr) {
+		my @h = @{$item};
+                my $pos = scalar @{$info_list->{BODY}};
+		$info_list->{BODY}->[$pos]->[0] = gettext($h[0]);
+		$info_list->{BODY}->[$pos]->[1] = gettext($h[1]);
+	}
+        if ($loaHtml)
+        {
+             my $pos = scalar @{$info_list->{BODY}};
+             $info_list->{BODY}->[$pos]->[0] = gettext ("Level Of Assurance\nchose the LOA you would like to be authenticated against.");
+             $info_list->{BODY}->[$pos]->[1] = gettext ($loaHtml);
+        }
+        my $pos = scalar @{$info_list->{BODY}};
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Role");
+        $info_list->{BODY}->[$pos]->[1] = $html_role;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Registration Authority\nchose the RA where you will be authenticated.");
+        $info_list->{BODY}->[$pos]->[1] = $html_ra;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = i18nGettext ("PIN\n[used to verify the certification request, min __MINIMUM_PIN_LENGTH__ chars (please write it down for later usage)]",
+                                                       "__MINIMUM_PIN_LENGTH__", $minPinLength);
+        $info_list->{BODY}->[$pos]->[1] = $html_passwd1;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Re-type your PIN for confirmation");
+        $info_list->{BODY}->[$pos]->[1] = $html_passwd2;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Choose a keysize");
+        $info_list->{BODY}->[$pos]->[1] = $html_bits;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Choose a keytype");
+        $info_list->{BODY}->[$pos]->[1] = $html_keytype;
+
+        my $hidden_list = undef;
+
+	# Browser Detection Upgraded (see InitCGI in functions/)
+	# Needed to recognize IE+Vista
+        $hidden_list->{"AGENT_OS_NAME"}    = $query->param("AGENT_OS_NAME");
+        $hidden_list->{"AGENT_OS_VERSION"} = $query->param("AGENT_OS_VERSION");
+        $hidden_list->{"AGENT_NAME"}       = $query->param("AGENT_NAME");
+        $hidden_list->{"AGENT_VERSION"}    = $query->param("AGENT_VERSION");
+        $hidden_list->{"HTTP_USER_AGENT"}  = $query->param("HTTP_USER_AGENT");
+
+        $hidden_list->{"operation"} = "client-filled-form";
+        $hidden_list->{"CSR_TYPE"}  = $type;
+        $hidden_list->{"key"}       = $query->param ('key');
+        $hidden_list->{"cmd"}       = "basic_csr";
+        $hidden_list->{"status"}    = "client-filled-form";
+
+        if ($#LOANames == 0){
+                 $hidden_list->{"loa"} = $LOALevels{$LOANames[0]};
+        }
+
+        my $cmd_panel = undef;
+	my $req_type_name = "";
+
+        $cmd_panel->[0] = '<input type=submit value="'.gettext ("Continue").'">';
+
+	if( $type =~ /BASIC/i ) {
+		$req_type_name = "Server Generated " . 
+					gettext ("Certificate Request" ) ;
+	} else {
+		my $aname = $query->param('AGENT_NAME');
+		my $aver = $query->param('AGENT_VERSION');
+		my $osver = $query->param('AGENT_OS_VERSION');
+		my $osname = $query->param('AGENT_OS_NAME');
+		my (  $myaver ) =~ /(\d+)/;
+
+		( $myaver ) = ( $aver =~ /(\d+)/ );
+
+		if( $type =~ /IE/i ) {
+			$req_type_name = "IE";
+			if( $aname =~ /IE/ ) {
+				$req_type_name .= " " . $myaver;
+			};
+		} elsif( $type =~ /NSS/i ) {
+			$req_type_name = "Firefox";
+		} elsif( $type =~ /SPKAC/i ) {
+			if( $aname =~ /(Firefox|Safari|Mozilla|Konqueror|Opera)/i ) {
+				$req_type_name = "$aname";
+				$req_type_name .= " " . $myaver;
+			} else {
+				$req_type_name = "Mozilla/Firefox";
+			}
+		}
+
+
+		if( $osname =~ /Windows NT/ ) {
+			if ( $osver >= 6 ) {
+				$osname = "Vista";
+			} else {
+				$osname = "Windows";
+			}
+		}
+
+		$req_type_name .= " " . gettext ("Certificate Request" ) .
+				  " (" . $osname . ")";
+	}
+
+        return libSendReply (
+                             "NAME"        => $req_type_name,
+                             "EXPLANATION" => gettext ("Please enter your data in the following form.")."\n".
+                                              $errval,
+                             "INFO_LIST"   => $info_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+} elsif ( $OPERATION =~ /client-filled-form/i ) {
+
+	## load the static data
+	my $PASSWD	= $query->param('passwd1');
+	my $BITS	= $query->param('bits');
+	my $keytype	= $query->param('keytype');
+	my $RA          = $query->param('ra');
+	my $ROLE        = $query->param('role');
+	my $LOA;
+        my $pos = 0;
+
+	## get the LOA value;
+	if ($loaOption =~ /yes/i)
+	{
+		$LOA = $query->param('loa');
+	}
+
+	## load the dynamic data
+	## load the normal DN and build the html-elements
+	my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+	my @subjectalt_attr = getRequiredList ("DN_TYPE_".$type."_SUBJECTALTNAMES");  
+	my $dn       = basic_csr_buildDN();
+	my $ms_dn    = basic_csr_buildDN_MS();
+	my $nss_dn   = basic_csr_buildDN_MS();
+	my $vista_dn = basic_csr_buildDN_MS();
+
+        my $ie_cert = 0;
+	my $nss_cert = 0;
+	my $vista_cert = 0;
+
+	my $os_name = $query->param("AGENT_OS_NAME");
+	my $os_ver  = $query->param("AGENT_OS_VERSION");
+
+	my $agent_name  = $query->param("AGENT_NAME");
+	my $agent_ver   = $query->param("AGENT_VERSION");
+
+        if (getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /IE/i) {
+	    $os_ver = int( $os_ver );
+	    if( $os_ver < 6 ) {
+            	$ie_cert = 1;
+	    } else {
+		$vista_cert = 1;
+	    };
+        } elsif (getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /NSS/i) {
+	    $nss_cert = 1;
+	};
+
+	## Substitute the parameters with their true values
+	my $hidden_list = undef;
+	my $info_list   = undef;
+	$info_list->{BODY}->[$pos++]->[0] = gettext ("Certificate Data");
+	for (my $i=1; $i <= scalar @elements; $i++) {
+		$hidden_list->{"DN_VALUE_".$i} = $query->param("DN_VALUE_".$i);
+		$info_list->{BODY}->[$pos]->[0] .= gettext(getRequired ("DN_TYPE_".$type."_ELEMENT_".$i));
+		$info_list->{BODY}->[$pos++]->[1] .= $query->param("DN_VALUE_".$i);
+	}
+
+	for (my $i=1; $i <= scalar @subjectalt_attr; $i++) {
+		$hidden_list->{"SUBJECTALTNAME_VALUE_".$i} = $query->param("SUBJECTALTNAME_VALUE_".$i);
+		$info_list->{BODY}->[$pos]->[0] .= gettext (getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i));
+		$info_list->{BODY}->[$pos++]->[1] .= $query->param("SUBJECTALTNAME_VALUE_".$i);
+	}
+	
+	$info_list->{BODY}->[$pos++]->[0] = gettext ("User Data");
+        my $counter = 0;
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+        foreach my $attr (@additionalAttributes)
+        {
+            ## determine the attribute
+            my $attVar;
+            if($additionalAttributesDisplayValue[$counter])
+            {
+                $attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+            } else {
+                generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the configuration."));
+            }
+            $hidden_list->{"ADDITIONAL_ATTRIBUTE_".uc ($attr)} = $query->param('ADDITIONAL_ATTRIBUTE_'.uc ($attr));
+            $info_list->{BODY}->[$pos+$counter]->[0] = $attVar;
+            $info_list->{BODY}->[$pos+$counter]->[1] = $query->param('ADDITIONAL_ATTRIBUTE_'.uc ($attr));
+            $counter++;
+        }
+        
+	## Add the HTML code for the LOA  and attach it to the additional attributes
+	##
+	if ($loaOption =~ /yes/i)
+        {
+	    my $tempLOAName = $LOAHash{$LOA};
+	    $hidden_list->{"loa"} = $LOA;
+	    $info_list->{BODY}->[$pos+$counter]->[0] = gettext ("Level Of Assurance (LOA)");
+	    $info_list->{BODY}->[$pos+$counter]->[1] = $tempLOAName;
+            $counter++;
+	}
+        $pos += $counter;
+        $hidden_list->{"role"}          = $ROLE;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Role");
+        $info_list->{BODY}->[$pos++]->[1] = $ROLE;
+        $hidden_list->{"ra"}            = $RA;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Registration Authority");
+        $info_list->{BODY}->[$pos++]->[1] = $RA;
+        $hidden_list->{"bits"}          = $BITS;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Keysize");
+        if (getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /SPKAC/)
+        {
+            $info_list->{BODY}->[$pos++]->[1] = '<KEYGEN NAME="newkey" CHALLENGE="NO_CHALLENGE">';
+        } else {
+            $info_list->{BODY}->[$pos++]->[1] = $BITS;
+        }
+	$info_list->{BODY}->[$pos]->[0] = gettext("Key Type");
+	$info_list->{BODY}->[$pos++]->[1] = $keytype;
+
+        $hidden_list->{"CSR_TYPE"}      = $type;
+        if (getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /IE/)
+        {
+            $info_list->{BODY}->[$pos]->[0] = gettext ("Cryptographic device");
+                    $info_list->{BODY}->[$pos++]->[1] = 
+                                "<select name=\"csp\" size=1 id=\"csp\">\n".
+                                "</select>\n";
+        }
+        $hidden_list->{"cmd"}       = "basic_csr";
+        $hidden_list->{"operation"} = "client-confirmed-form";
+        $hidden_list->{"passwd1"}   = $PASSWD;
+        $hidden_list->{"passwd2"}   = $PASSWD;
+        $hidden_list->{"request"}   = "";
+        $hidden_list->{"key"}       = $query->param ('key');
+        $hidden_list->{"keytype"}   = $query->param ('keytype');
+
+        $hidden_list->{"AGENT_OS_NAME"}    = $query->param("AGENT_OS_NAME");
+        $hidden_list->{"AGENT_OS_VERSION"} = $query->param("AGENT_OS_VERSION");
+        $hidden_list->{"AGENT_NAME"}       = $query->param("AGENT_NAME");
+        $hidden_list->{"AGENT_VERSION"}    = $query->param("AGENT_VERSION");
+        $hidden_list->{"HTTP_USER_AGENT"}  = $query->param("HTTP_USER_AGENT");
+
+        my $cmd_panel = undef;
+        if ($ie_cert)
+        {
+            $hidden_list->{"dn"} = $ms_dn;
+            $cmd_panel->[0] = '<input type=button name=cont value="'.gettext("Continue").'" OnClick="genReq()">';
+        } elsif ( $vista_cert ) {
+            $hidden_list->{"dn"} = $vista_dn;
+            $cmd_panel->[0] = '<input type=button name=cont value="'.gettext("Continue").'" OnClick="vistaCSR()">';
+        } elsif ( $nss_cert ) {
+            $hidden_list->{"dn"} = $nss_dn;
+            $cmd_panel->[0] = '<input type=button name=cont value="'.gettext("Continue").'" OnClick="nssCSR()">';
+	} else {
+            $hidden_list->{"dn"} = $dn;
+            $cmd_panel->[0] = '<input type=submit value="'.gettext ("Continue").'">';
+        } 
+
+        return libSendReply (
+                             "NAME"            => gettext ("Confirm Certificate Request"),
+                             "EXPLANATION"     => gettext ("Following are listed data received. Please check carefully information here reported with the ones in your possession."),
+                             "HIDDEN_LIST"     => $hidden_list,
+                             "INFO_LIST"       => $info_list,
+                             "CMD_PANEL"       => $cmd_panel,
+                             "IE_REQUEST_CERT" => $ie_cert,
+                             "VISTA_REQUEST_CERT" => $vista_cert,
+                             "NSS_REQUEST_CERT" => $nss_cert
+                            );
+} elsif ( $OPERATION =~ /client-confirmed-form/i) {
+
+        my $dn = basic_csr_buildDN();
+        my $keytype = $query->param('keytype');
+
+        ## load the static data
+        my $RA          = $query->param('ra');
+        my $ROLE        = $query->param('role');
+	## get the LOA value if was turned on
+	my $LOA;
+	if ($loaOption =~ /yes/i)
+        {
+		$LOA = $query->param('loa');
+	}
+        ## Status of FORM, possible values (in this order):
+        ##	'client-filled-form' or 'client-confirmed-form'
+        my $PASSWD	= $query->param('passwd1');
+
+        my $key = "";
+        my $req = undef;;
+        my $bits = $query->param('bits');
+        my $alg	 = $query->param('alg');
+        if (getRequired ("DN_TYPE_".$type."_BODY") =~ /(Y|YES)/i) {
+
+            if (getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /SPKAC/i )
+            {
+                my $spkac = "";
+
+                ## load the normal DN and build the html-elements
+                my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+                ## scan every element of the DN
+                for (my $i=1; $i <= scalar @elements; $i++)
+                {
+                    ## RFC2253: / must not be escaped
+                    ## $dn_element =~ s/\//\\\//g;
+                    my $dn_element = $query->param ('DN_VALUE_'.$i);
+                    $dn_element =~ s/\\/\\\\/g;
+                    $dn_element =~ s/,/\\,/g;
+                    $dn_element =~ s/=/\\=/g;
+                    $spkac .= $elements [$i-1]." = ".$dn_element."\n"
+                        if (length ($dn_element)); 
+                }
+
+                ## load the base dn
+                my @base = getRequiredList ("DN_TYPE_".$type."_BASE");
+                for (my $i=1; $i <= scalar @base; $i++) {
+                    if (getRequired ("DN_TYPE_".$type."_BASE_".$i) ne "")
+                    {
+                        $spkac .= $base [$i-1]." = ".getRequired ("DN_TYPE_".$type."_BASE_".$i)."\n";
+                    }
+                }
+
+                ## add the key
+                ## Delete ^M
+                my $NEWKEY = $query->param('newkey');
+                $NEWKEY =~ s/\015|\n//g;
+                generalError (gettext ("The keygeneration of the browser failed. SPKAC is empty."))
+                    if (not $NEWKEY);
+                $spkac .= "SPKAC = $NEWKEY\n";
+
+                if( not $req = new OpenCA::REQ (SHELL  => $cryptoShell,
+                                                GETTEXT=> \&i18nGettext,
+                                                DATA   => $spkac,
+                                                INFORM => "SPKAC" )) {
+                    generalError( gettext("Error while creating REQ object.").
+                                  " ".$OpenCA::REQ::errval, $OpenCA::REQ::errno );
+                }
+
+            } elsif(getRequired("DN_TYPE_".$type."_KEYGEN_MODE") =~ /IE|NSS/i) {
+                my $request = "";
+
+                $request .= "-----BEGIN CERTIFICATE REQUEST-----\n";
+                $request .= $query->param('request');
+                $request .= "-----END CERTIFICATE REQUEST-----\n";
+
+                if( not $req = new OpenCA::REQ( SHELL  => $cryptoShell, 
+                                                GETTEXT=> \&i18nGettext,
+                                                DATA   => "$request",
+                                                INFORM => "PEM" )) {
+                    generalError( gettext ("Error while creating REQ object.").
+                                  " ".$OpenCA::REQ::errval, $OpenCA::REQ::errno );
+                };
+
+            } else { ## this is server mode
+                ## generate keypair
+                my $TempDir = getRequired( 'tempdir' );
+
+                ## Get the parameters
+                my $keyFile	= "$TempDir/key_${$}.pem";
+
+                ## create the key
+                if( not $cryptoShell->genKey(
+                                             BITS      => $bits,
+                                             OUTFILE   => $keyFile,
+                                             TYPE      => $keytype,
+                                             ALGORITHM => $alg,
+                                             PASSWD    => $PASSWD ) ) {
+                    generalError (gettext ("Cannot create keypair!").
+                                  "<br>".$OpenCA::OpenSSL::errno,
+                                  $OpenCA::OpenSSL::errno);
+                }
+
+                ## change to pkcs#8
+                $key = $cryptoShell->dataConvert (
+                                                  DATATYPE  => "KEY",
+                                                  INFORM    => "PEM",
+                                                  OUTFORM   => "PKCS8",
+                                                  INPASSWD  => $PASSWD,
+                                                  OUTPASSWD => $PASSWD,
+                                                  INFILE    => $keyFile );
+                if ( not $key ) {
+                    generalError ( gettext ("Cannot convert key to PKCS#8!"));
+                }
+
+                ## generate PKCS#10 request
+                $req = new OpenCA::REQ (
+                                SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                KEYFILE => $keyFile,
+				# EXTENSIONS => 
+				# 	getRequired ( 'UserCertExtensions' ),
+                                SUBJECT => $dn,
+                                PASSWD  => $PASSWD,
+                                FORMAT  => "PEM");
+                if (not $req) {
+                    generalError ( i18nGettext ("Cannot create request! <br>\n(__ERRVAL__)",
+                                                "__ERRVAL__",
+                                                $OpenCA::REQ::errval),
+                                   $OpenCA::REQ::errno);
+                }
+                unlink ($keyFile);
+            }
+        }
+
+        ## compose request
+        my $tmp = "-----BEGIN HEADER-----\n";
+        if (getRequired ("DN_TYPE_".$type."_BODY") =~ /(Y|YES)/i) {
+            if (getRequired ("DN_TYPE_".$type."_KEYGEN_MODE") =~ /SPKAC/i)
+            {
+                $tmp .= "TYPE = SPKAC\n";
+            } elsif (getRequired ("DN_TYPE_".$type."_KEYGEN_MODE") =~ /IE/i) {
+                $tmp .= "TYPE = IE\n";
+            } elsif (getRequired ("DN_TYPE_".$type."_KEYGEN_MODE") =~ /NSS/i) {
+                $tmp .= "TYPE = NSS\n";
+            } else {
+                $tmp .= "TYPE = PKCS#10\n";
+            }
+        } else {
+            $tmp .= "TYPE = HEADER\n";
+        }
+	
+	## Save Client Type Used
+	$tmp .= "AGENT_NAME = " . $query->param("AGENT_NAME") ."\n";
+	$tmp .= "AGENT_VERSION = " . $query->param("AGENT_VERSION") ."\n";
+	$tmp .= "AGENT_OS_NAME = " . $query->param("AGENT_OS_NAME") ."\n";
+	$tmp .= "AGENT_OS_VERSION = " . $query->param("AGENT_OS_VERSION") ."\n";
+
+        ## build serial
+        if ( (getRequired ('CgiServerType') =~ /(RA|CA)/i) and $query->param ('key') ) {
+            $tmp .= "SERIAL = ".$query->param ('key')."\n";
+        } else {
+            my $last_req = libDBGetLastItem ("REQUEST");
+            my $req_elements = 0;
+            $req_elements    = $last_req->getSerial("REQUEST") if ($last_req);
+            $req_elements  >>= getRequired ("ModuleShift");
+            if ((not defined $req_elements) or ($req_elements < 0)) {
+                generalError ( gettext ("Database fails during counting the already existing requests!"), 669);
+            } else {
+                $req_elements++;
+            }
+            my $new_serial = ($req_elements << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+            $tmp .= "SERIAL = ".$new_serial."\n";
+        }
+        $tmp .= "NOTBEFORE = " . $tools->getDate() . "\n";
+        my $PASSWD = $query->param('passwd1');
+        if ($PASSWD) {
+            my $pin_digest = $cryptoShell->getDigest (
+                                                      DATA      => $PASSWD,
+                                                      ALGORITHM => "sha1");
+            if (not $pin_digest) {
+                generalError ( gettext ("OpenSSL fails during the calculation of the hash from the passphrase!"), 670);
+            }
+            $tmp .= "PIN = $pin_digest\n";
+        }
+        $tmp .= "RA = " . $query->param('ra') . "\n";
+        $tmp .= "ROLE = $ROLE\n";
+	## add the LOA value to  the header 
+	##
+	if ($loaOption =~ /yes/i)
+        {
+                $tmp.= "LOA = $LOA\n" ;
+        }
+
+        if (getRequired ("DN_TYPE_".$type."_BODY") !~ /(Y|YES)/i) {
+            $tmp .= "SUBJECT = $dn\n";
+            $tmp .= "KEY_ALGORITHM = ".$alg."\n";
+            $tmp .= "KEY_BITS = ".$bits."\n";
+        }
+
+        ## add Subject Alt Name Tags ## oliwel
+	my @subjectalt_attr = getRequiredList ("DN_TYPE_".$type."_SUBJECTALTNAMES");  
+	my @san = ();
+	for (my $i=1; $i <= scalar @subjectalt_attr; $i++) {
+            push(@san, $subjectalt_attr[$i-1].":".$query->param("SUBJECTALTNAME_VALUE_".$i))
+                if (length ($query->param("SUBJECTALTNAME_VALUE_".$i)));
+	}
+	if (scalar @san > 0) {
+	 	$tmp .= "SUBJECT_ALT_NAME = ".join(",",@san)."\n";
+	}
+        ## end oliwel
+        
+        ## load additional header attributes
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        foreach my $attr (@additionalAttributes)
+        {
+            $tmp .= "ADDITIONAL_ATTRIBUTE_".uc ($attr)." = ".$query->param ('ADDITIONAL_ATTRIBUTE_'.uc ($attr))."\n";
+        }
+
+        $tmp .= "-----END HEADER-----\n";
+        if (getRequired ("DN_TYPE_".$type."_BODY") =~ /(Y|YES)/i) {
+            $tmp .= $req->getBody();
+            $tmp .= "\n" . $key if ($key);
+        }
+
+        my $new_req;
+        if( not $new_req = new OpenCA::REQ( SHELL   => $cryptoShell,
+                                            GETTEXT => \&i18nGettext,
+                                            DATA    => $tmp) ) {
+            generalError( i18nGettext ("Internal Request Error (__ERRVAL__)",
+                                       "__ERRVAL__",
+                                       $OpenCA::REQ::errval),
+                          $OpenCA::REQ::errno );
+        }
+
+		my $reqKey;
+		my $status = 'NEW';
+
+		if( $verifyEmailAddress =~ /Y/i ) {
+			$status = "TEMP$status";
+		}
+		$new_req->setStatus( "$status" );
+
+        if( not ( $reqKey = $db->storeItem( 
+                               DATATYPE => $status . '_REQUEST',
+                               OBJECT   => $new_req,
+                               INFORM   => 'PEM',
+                               MODE     => "INSERT" )) ) {
+            generalError( gettext ("Error while storing REQ in database!").
+                          " ".$db->errval(). "$tmp", $db->errno() );
+        };
+
+		## Send out the Email verification Email
+		if( $verifyEmailAddress =~ /Y/i ) {
+			libSendEmailVerifyMessage( $reqKey );
+		};
+
+        ## remove temporary files
+        $tools->deleteFiles (DIR => getRequired('TempDir'), FILTER => "key_${$}.pem");
+
+        my ($info_list, $cmd_panel) = (undef, undef);
+        $cmd_panel->[0] = '<input TYPE="Button" Name="Print" Value="'.gettext ("Print").'" onClick="window.print();">';
+
+        my $explanation = i18nGettext (
+"Thank you for requesting your certificate from our organization, your request with the serial __CSR_SERIAL__ it's been successfully archived and it is now waiting for approval by any of our Registration Authorities (if you are unsure about the receiving of your request by this server, you can check the list of new requests).\nTo complete the certification process you have to go to one of our Registration Authority office with one of the following documents:\n\no ID&nbsp;card or passport.\no Documnetation asserting your role and authorization for requesting a certificate for your organization.\n\nIf you still have doubts about the issuing process, just use the links provided in the Information section to learn how to complete all the needed steps.",
+            "__CSR_SERIAL__", $new_req->getSerial());
+
+        # substitute variables
+        $info_list->{BODY} = [];
+        foreach my $attr (sort keys %{$new_req->getParsed()->{HEADER}})
+        {
+            my $id = scalar @{$info_list->{BODY}};
+            $info_list->{BODY}->[$id]->[0] = $attr;
+            $info_list->{BODY}->[$id]->[1] = $new_req->getParsed()->{HEADER}->{$attr};
+        }
+
+        return libSendReply (
+                     "NAME"        => gettext ("Certificate Request Confirm"),
+                     "EXPLANATION" => $explanation,
+                     "CMD_PANEL"   => $cmd_panel,
+                     "INFO_LIST"   => $info_list );
+} 
+
+die gettext ("ERROR: Status Unkown!");
+
+}
+
+## we support the following state:
+##
+## 1. ""
+## 2. client-filled-form
+## 3. client-confirmed-form
+
+sub checkBasic_csr
+{
+    our ($query, $errval);
+
+    my $status = $_[0];
+    my $mistake = "";
+    my $minPinLength = getRequired('minpinlength');
+
+    ## general check
+    ## which type of request do we have to handle?
+    my @types = getRequiredList ('DN_TYPES');
+    if ($type eq "PKCS10")
+    {
+        generalError ("This command cannot be used for the submission of PKCS#10 request.");
+    }
+    if ( not grep (/^${type}$/i, @types) ) {
+
+        ## starting browser detection
+        my $AGENT_NAME = $query->param ("AGENT_NAME");
+        my $AGENT_VERSION = $query->param ("AGENT_VERSION");
+        my $AGENT_OS_NAME = $query->param ("AGENT_OS_NAME");
+
+        ## Get the Browser Name and the Version
+        if ( $AGENT_NAME =~ /Opera/i ) {
+            $type = "SPKAC";
+        } elsif ( $AGENT_NAME =~ /Netscape/i ) {
+            $type = "SPKAC";
+        } elsif ( $AGENT_NAME =~ /Safari/i ) {
+		if( $AGENT_OS_NAME =~ /Windows/i ) {
+			$type="BASIC";
+		} else {
+			$type="SPKAC";
+		}
+        } elsif ( $AGENT_NAME =~ /Mozilla/i ) {
+            $type = "SPKAC";
+	} elsif ( $AGENT_NAME =~ /Firefox/i ) {
+	    #
+	    # if( $AGENT_VERSION > 1 ) {
+	    #	$type = "NSS";
+	    #} else {
+		$type = "SPKAC";
+	    #}
+        } elsif ( $AGENT_NAME =~ /MSIE/i ) {
+            $type = "IE";
+        } else {
+            $type = "BASIC";
+        }
+    }
+
+    ## second level check
+    if ($status)
+    {
+        ## load the normal DN and build the html-elements
+        my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+        ## scan every element of the DN
+        for (my $i=1; $i <= scalar @elements; $i++)
+        {
+            next if (getRequired ("DN_TYPE_".$type."_ELEMENT_".$i.'_REQUIRED') !~ /YES/i and
+                    not $query->param ('DN_VALUE_'.$i));
+            my $characterset = getRequired ("DN_TYPE_".$type."_ELEMENT_".$i."_CHARACTERSET");
+            debug_cmds ("basic_csr: type: $type, element: $i, characterset: $characterset\n");
+            my $failure = $query->newInputCheck({ 
+                                -regx   => $characterset,
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => 'DN_VALUE_'.$i,
+                                -check  => 'fill',
+                                -minlen => getRequired ("DN_TYPE_".$type."_ELEMENT_".$i.'_MINIMUM_LENGTH')});
+            if ($failure)
+            {
+                $mistake = "$mistake\n".
+                           getRequired ("DN_TYPE_".$type."_ELEMENT_".$i).
+                           " - $failure";
+            }
+        }
+
+	## check the SUBJECTATNAME Requirements ## oliwel
+        my @elements = getRequiredList ("DN_TYPE_".$type."_SUBJECTALTNAMES");
+        ## scan every element of the DN
+        for (my $i=1; $i <= scalar @elements; $i++)
+        {
+            next if (getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_REQUIRED') !~ /YES/i and
+                     not $query->param ('SUBJECTALTNAME_VALUE_'.$i));
+            my $failure;
+            if ( $elements [$i-1] =~ /EMAIL/i )
+            {
+                $failure = $query->newInputCheck({
+                                -regx   => 'EMAIL',
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => 'SUBJECTALTNAME_VALUE_'.$i,
+                                -check  => 'fill',
+                                -minlen => getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_MINIMUM_LENGTH')});
+            } else {
+                $failure = $query->newInputCheck({
+                                -regx   => 'LATIN1_LETTERS',
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => 'SUBJECTALTNAME_VALUE_'.$i,
+                                -check  => 'fill',
+                                -minlen => getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i.'_MINIMUM_LENGTH')});
+            }
+            if ($failure)
+            {
+                $mistake = "$mistake\n".
+                           getRequired ("DN_TYPE_".$type."_SUBJECTALTNAME_".$i).
+                           " - $failure";
+            }
+        }
+
+        ## additional attribute handling ##
+
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        my @additionalAttributesStringType = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE');
+
+        my $counter = 0;
+        foreach my $attribute (@additionalAttributes)
+        {
+            ## determine the attribute
+            my $tempAttribute = uc $attribute;
+
+            ## determine the content type
+            my $stringType = "LATIN1_LETTERS";
+            if ( $additionalAttributesStringType[$counter])
+            {
+                $stringType = $additionalAttributesStringType[$counter];
+            }
+
+            ## build the attribute list
+            my $failure = $query->newInputCheck({ 
+                                -regx    => $stringType,
+                                -intype => 'textfield',
+                                -size   => 30,
+                                -name   => 'ADDITIONAL_ATTRIBUTE_'.$tempAttribute,
+                                -check  => 'fill',
+                                -minlen => 0});
+            $counter ++;
+        }
+
+        ## check passwd
+        if (defined $query->param ('passwd1'))
+        {
+            my $failure = $query->newInputCheck ({
+                            -regx=>'*',
+                            -intype=>'password_field',
+                            -name=>'passwd1',
+                            -check=>'all',
+                            -size=>16,
+                            -minlen=>$minPinLength});
+            if ($failure)
+            {
+                $mistake = "$mistake\n".gettext ("Passphrase")." - $failure";
+            }
+        }
+
+        #quick hack, to get a nicer output...
+        $mistake =~ s/^[\s]*//;
+        $mistake =~ s/[\s\n\r]*$//;
+        $mistake =~ s/<br>//gi;
+        $mistake =~ s/ok//gi;
+        $mistake =~ s/\s*\(\s*\)\s*//g;
+
+        if (defined $query->param ('passwd1') and defined $query->param ('passwd2'))
+        {
+            if ($query->param ('passwd1') ne $query->param ('passwd2'))
+            {
+                $mistake .= "\n".gettext ("Two different pin inserted. Please go back and correct the error.");
+            }
+        }
+
+        if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i)
+        {
+            configError (gettext ("This command can only be used with forms which are using POST as METHOD!"));
+        }
+
+    } else {
+        return undef;
+    }
+
+    if ($mistake)
+    {
+        print STDERR "basic_csr: MISTAKE: --$mistake--\n";
+        $errval = $mistake;
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+sub basic_csr_buildDN {
+
+    our ($query);
+
+    my $dn = "";
+
+    ## load the normal DN and build the html-elements
+    my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+    ## scan every element of the DN
+    for (my $i=1; $i <= scalar @elements; $i++)
+    {
+        my $dn_element = $query->param ('DN_VALUE_'.$i);
+        ## RFC2253: / must not be escaped
+        ## $dn_element =~ s/\//\\\//g;
+        ## RFC2253: \ must be escaped
+        ## RFC2253: , must be escaped
+        ## RFC2253: = must be escaped
+        ## RFC2253: + must be escaped
+        $dn_element =~ s/\\/\\\\/g;
+        $dn_element =~ s/,/\\,/g;
+        $dn_element =~ s/=/\\=/g;
+        $dn_element =~ s/\+/\\+/g;
+        $dn .= $elements [$i-1]."=".$dn_element.","
+            if (length ($dn_element)); 
+    }
+
+    ## load the base dn
+    my @base = getRequiredList ("DN_TYPE_".$type."_BASE");
+    for (my $i=1; $i <= scalar @base; $i++) {
+        if (getRequired ("DN_TYPE_".$type."_BASE_".$i) ne "")
+        {
+            $dn .= $base [$i-1]."=".getRequired ("DN_TYPE_".$type."_BASE_".$i).",";
+        }
+    }
+
+    ## remove trailing ","
+    $dn =~ s/,$//;
+
+    return $dn;
+}
+
+sub basic_csr_buildDN_MS {
+
+    our ($query);
+
+    my $dn = "";
+
+    ## the DN must be build in the reverse order
+
+    ## load the base dn
+    my @base = getRequiredList ("DN_TYPE_".$type."_BASE");
+    for (my $i=scalar @base; $i > 0; $i--) {
+        if (getRequired ("DN_TYPE_".$type."_BASE_".$i) ne "")
+        {
+            $dn .= $base [$i-1]."=".getRequired ("DN_TYPE_".$type."_BASE_".$i).",";
+        }
+    }
+
+    ## load the normal DN and build the html-elements
+    my @elements = getRequiredList ("DN_TYPE_".$type."_ELEMENTS");
+    ## scan every element of the DN
+    for (my $i=scalar @elements; $i > 0; $i--)
+    {
+        my $dn_element = $query->param ('DN_VALUE_'.$i);
+        ## RFC2253: / must not be escaped
+        ## $dn_element =~ s/\//\\\//g;
+        ## RFC2253: \ must be escaped
+        ## RFC2253: , must be escaped
+        ## RFC2253: = must be escaped
+        ## RFC2253: + must be escaped
+        $dn_element =~ s/\\/\\\\/g;
+        $dn_element =~ s/,/\\,/g;
+        $dn_element =~ s/=/\\=/g;
+        $dn_element =~ s/\+/\\+/g;
+        $dn .= $elements [$i-1]."=".$dn_element.","
+            if (length ($dn_element)); 
+    }
+
+
+    ## remove trailing ","
+    $dn =~ s/,$//;
+
+    ## microsoft uses E for emailaddress
+    $dn =~ s/,\s*emailAddress\s*=/,E=/i;
+    $dn =~ s/^\s*emailAddress\s*=/E=/i;
+
+    return $dn;
+}
+
+1;

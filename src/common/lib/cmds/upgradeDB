@@ -1,0 +1,45 @@
+## OpenCA - CA Command
+## (c) 1998-2010 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2001-2010 The OpenCA Project
+##
+##   File Name: upgradeDB
+##     Version: $Revision: 1.1 $
+##       Brief: update DB structure from 0.9.2+
+## Description: Updates the structure of the DB to the 1.1.0+
+##  Parameters: none
+## Cnf Keyword: dbmodule, gendbsheet
+
+use strict;
+
+sub cmdUpgradeDB {
+
+    our ($db, $query);
+
+    my $mode = "NONE";
+    $mode = "DRYRUN" if ($query->param ('mode') eq "DRYRUN");
+    $mode = "FORCE" if ($query->param ('mode') eq "FORCE");
+
+    my $result = $db->upgradeDB (MODE => $mode);
+
+    if (not $result) {
+        generalError (i18nGettext 
+		("Error while updating the database. __ERRVAL__",
+                                   "__ERRVAL__", $db->errval), $db->errno);
+    }
+
+    if ($mode eq "DRYRUN") {
+        $result =~ s/;/;\n/sg;
+        return libSendReply (
+                             "NAME"        => gettext ( "SQL statements for database upgrading"),
+                             "EXPLANATION" => $result
+                            );
+    } else {
+        return libSendReply (
+                             "NAME"        => gettext ("Upgrade Database"),
+                             "EXPLANATION" => gettext ("The database was successfully upgraded.")
+                            );
+    }
+}
+
+1;
+

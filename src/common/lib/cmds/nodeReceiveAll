@@ -1,0 +1,35 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeReceiveAll
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports All
+## Description: imports on a removable media all
+
+use strict;
+
+sub cmdNodeReceiveAll {
+
+    print startLogPage ( gettext ("Importing all available items from a lower level of the hierarchy ...") );
+
+    my $tmp = createStructure ();
+    if (not eximIOReceive ( $tmp )) {
+        return undef;
+    }
+    eximReceiveCSRs      ( $tmp );
+    eximReceiveCRRs      ( $tmp );
+    eximReceiveCommit    ( $tmp );
+    removeDirectory ( $tmp );
+
+    closePage ();
+
+    return 1;
+}
+
+sub getParamsNodeReceiveAll
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

@@ -1,0 +1,67 @@
+        <component>
+            <name>scep</name>
+            <description>SCEP Interface</description>
+            <canBeEdited>1</canBeEdited>
+            <selected>0</selected>
+            <show>1</show>
+            <folderList>
+                <folder>
+                    <description>SCEP Interface CGI</description>
+                    <destination>@cgi_fs_prefix@</destination>
+                    <name>scepcgi</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>@build_dir@@scep_cgi_fs_prefix@</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>SCEP Interface ETC</description>
+                    <destination>${installdir}/etc/openca</destination>
+                    <name>scepetc</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>@build_dir@@etc_prefix@/scep</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>SCEP Interface AC</description>
+                    <destination>${installdir}/etc/openca/access_control</destination>
+                    <name>scepac</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>@build_dir@@etc_prefix@/access_control/scep.xml.template</origin>
+                        </distributionFile>
+                    </distributionFileList>
+		    <actionList>
+			<changeOwnerAndGroup>
+			    <owner>@openca_user@</owner>
+			    <group>@httpd_group@</group>
+			    <files>@build_dir@@etc_prefix@/access_control/scep.xml*</files>
+			</changeOwnerAndGroup>
+		   </actionList>
+                </folder>
+                <folder>
+                    <description>SCEP Interface SRV</description>
+                    <destination>${installdir}/etc/openca/servers</destination>
+                    <name>scepsrv</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>@build_dir@@etc_prefix@/servers/scep.conf.template</origin>
+                        </distributionFile>
+                    </distributionFileList>
+		    <actionList>
+			<changeOwnerAndGroup>
+			    <owner>@httpd_user@</owner>
+			    <group>@httpd_group@</group>
+			    <files>${installdir}/etc/openca/servers/*</files>
+			</changeOwnerAndGroup>
+		   </actionList>
+                </folder>
+            </folderList>
+        </component>

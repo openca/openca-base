@@ -1,0 +1,47 @@
+## OpenCA - CA Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: genDB
+##     Version: $Revision: 1.2 $
+##       Brief: Generate Database
+## Description: Generate the database of this hierarchy level
+##                via initDB in FORCE-MODE
+##  Parameters: none
+## Cnf Keyword: dbmodule, gendbsheet
+
+use strict;
+
+sub cmdGenDB {
+
+    our ($db, $query);
+
+    my $mode = "NONE";
+    $mode = "DRYRUN" if ($query->param ('mode') eq "DRYRUN");
+    $mode = "FORCE" if ($query->param ('mode') eq "FORCE");
+
+    my $result = $db->initDB (MODE => $mode);
+
+    if (not $result)
+    {
+        generalError (i18nGettext ("Error while initializing the database. __ERRVAL__",
+                                   "__ERRVAL__", $db->errval), $db->errno);
+    }
+
+    if ($mode eq "DRYRUN")
+    {
+        $result =~ s/;/;\n/sg;
+        return libSendReply (
+                             "NAME"        => gettext ("SQL statements for database initialization"),
+                             "EXPLANATION" => $result
+                            );
+    } else {
+        return libSendReply (
+                             "NAME"        => gettext ("Generate Database"),
+                             "EXPLANATION" => gettext ("The database was successfully initialized.")
+                            );
+    }
+}
+
+1;
+

@@ -1,0 +1,156 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: approveCRR
+##       Brief: store the revreq to the DB
+##     Version: $Revision: 1.2 $
+## Description: store the revreq to the DB for RA Operator approval
+##  Parameters: head, text, signature
+
+use strict;
+
+sub cmdApproveCRR {
+
+    our ($errval, $errno, $db, $query, $cryptoShell);
+
+    ## Reserved variables
+    my ( $text, $cert );
+
+    ## To aprove a Request, we need it signed by the RA operator
+    my $beginHeader = "-----BEGIN HEADER-----";
+    my $endHeader = "-----END HEADER-----";
+    my $beginSig = "-----BEGIN PKCS7-----";
+    my $endSig = "-----END PKCS7-----";
+
+    ## Get the parameters
+    my $head        = $query->param('head');
+    my $body        = $query->param('text');
+    my $signature   = $query->param('signature');
+    my $new_request = 1;
+
+    my $text = $head . $body ."\n";
+
+    $signature =~ s/\n*$//;
+
+    if ($signature !~ /^\s*$/) {
+	$text .= $beginSig . "\n" . $signature . 
+		    "\n" . $endSig . "\n";
+    }
+
+    ## Try to build the REQ object
+    my $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                                GETTEXT => \&i18nGettext,
+                                DATA    => $text );
+    if( not $req ) {
+	configError( gettext ("Error while creating the request."));
+    }
+
+    ## check for the old request and attach the signature of the user
+    my $h = $db->getItem (DATATYPE => "CRR", KEY => $req->getSerial());
+    $text .= $h->getParsed()->{SIGNATURE} if ($h);
+
+    $req = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                             GETTEXT => \&i18nGettext,
+                             DATA    => $text );
+
+    if( not $req ) {
+	configError( gettext ("Error while creating the request."));
+    }
+
+    my $signer = libGetSignatureObject( OBJECT=>$req );
+    if ( not $signer ) {
+	generalError ($errval, $errno);
+    }
+    libCheckSignature (OBJECT=>$req);
+    my $sigStatus = $errval;
+    
+    ## check signaturestate - explaination:
+    ## $errno gets only set by libCheckSignature in case of real error
+    ## $errval gets always set, also in success by libCheckSignature!
+    generalError ( $errval ) if $errno;
+  
+    ## get signer certificate
+    my $tmpCert = libGetSignerCertificateDB( SIGNATURE=>$signer );
+    if( not $tmpCert ) {
+        generalError ($errval, $errno);
+    }
+    ## check validity of signer certificate
+    if ($tmpCert->getStatus() =~ /REVOKED|SUSPENDED|EXPIRED/i ) { 
+        generalError ( i18nGettext ("Cannot approve request. " .
+		"Invalid Operator-Certificate detected!").
+                                    "<br>\n".$errval, $errno);
+    }
+											   
+    ## download the certificate
+    $cert = $db->getItem ( DATATYPE => "CERTIFICATE", 
+		KEY => $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL} );
+
+    if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	print STDERR "SECURITY ALERT BY PKI: database failed while loading " .
+		"certificate ".  $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL}.
+		"\n";
+	configError( gettext ("Error while loading the affected certificate."));
+    }
+
+    if ( not $db->updateItem ( DATATYPE => "APPROVED_CRR", OBJECT => $req )) {
+		if ( not $db->storeItem ( OBJECT => $req )) {
+			generalError ( gettext ( 
+				"Error while storing the request." ));
+		}
+    }
+
+    # if ( not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"PENDING_CRR", 
+# 		NEWTYPE => "APPROVED_CRR" ) and
+ #         not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"SIGNED_CRR", 
+# 		NEWTYPE => "APPROVED_CRR" ) and
+ #         not $db->updateStatus ( OBJECT=>$req, DATATYPE=>"NEW_CRR", 
+# 		NEWTYPE => "APPROVED_CRR" )) {
+# 	if ( not $db->storeItem( OBJECT=>$req, DATATYPE=>"APPROVED_CRR", 
+# 		MODE => "INSERT" )) {
+# 		print STDERR "SECURITY ALERT BY PKI: database failed while " .
+# 			"storing a correct CRR which follows\n".  $text."\n";
+# 		configError( gettext ("Error while storing the request."));
+# 	}
+ #    }
+
+    if ($cert->{STATUS} !~ /VALID|SUSPENDED/ ) {
+	print STDERR "ERROR: Certificate pointed by CRR is not VALID or ".
+		"SUSPENDED (STATUS => " . $cert->{STATUS} . ")\n";
+	generalError (i18nGettext ( "ERROR, certificate __SERIAL__ is not " . 
+			"VALID or SUSPENDED!",
+			"__SERIAL__", $cert->getSerial()));
+    }
+
+    if( not $db->updateItem ( OBJECT => $cert, 
+				DATATYPE => "SUSPENDED_CERTIFICATE" )) {
+	generalError( gettext ("Failed to change the certificate's state."));
+    }
+
+    # if (not ( $db->updateStatus (OBJECT => $cert, DATATYPE=>"VALID_CERTIFICATE",
+# 			 NEWTYPE => "SUSPENDED_CERTIFICATE") or
+ #             $db->updateStatus ( OBJECT => $cert, DATATYPE=>"EXPIRED_CERTIFICATE", NEWTYPE => "SUSPENDED_CERTIFICATE")
+  #           ))
+   #  {
+# 	if ( not $db->getItem (DATATYPE=>"SUSPENDED_CERTIFICATE", KEY=>$cert->getSerial()) and
+# 	     not $db->getItem (DATATYPE=>"REVOKED_CERTIFICATE",   KEY=>$cert->getSerial()) )
+ #        {
+# 		print STDERR "SECURITY ALERT BY PKI: database failed during storing a correct CRR which follows\n".
+# 			$text."\n";
+# 		configError( gettext ("Failed to change the certificate's state."));
+# 	}
+ #    }
+    my $message = i18nGettext ("Your revocation request has been accepted and is now <B>waiting to be processed</B>.\n If you want to check out if the request has been correctly received, you can see the __BEGIN_LINK__ Approved Revocation Requests List __END_LINK__.\n Signature: __SIGSTATUS__",
+                               "__BEGIN_LINK__", '<a href="?cmd=listCRR&dataType=APPROVED_CRR">',
+                               "__END_LINK__", "</a>",
+                               "__SIGSTATUS__", $sigStatus);
+
+    return libSendReply (
+                         "TIMESTAMP"   => 1,
+                         "NAME"        => gettext ("Revocation Request Approved and Signed"),
+                         "EXPLANATION" => $message
+                        );
+}
+
+1;

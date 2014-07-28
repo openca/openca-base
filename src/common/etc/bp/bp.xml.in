@@ -1,0 +1,62 @@
+<openca>
+    <statemachine>
+        <state_list_file>@etc_prefix@/bp/states.txt</state_list_file>
+        <function_list_file>@etc_prefix@/bp/functions.txt</function_list_file>
+        <function_directory>@etc_prefix@/bp/functions</function_directory>
+        <function_state_file_suffix>txt</function_state_file_suffix>
+        <user_directory>@var_prefix@/bp/users</user_directory>
+        <user_list_file>@var_prefix@/bp/users.txt</user_list_file>
+        <user_state_file>state.txt</user_state_file>
+        <subs_directory>@lib_prefix@/bp</subs_directory>
+        <import_new_user_file>batch_new_user.txt</import_new_user_file>
+        <import_new_process_file>batch_new_process.txt</import_new_process_file>
+        <import_process_data_file>batch_process_data.txt</import_process_data_file>
+        <functions>
+            <create_pin>
+                <!--
+                  secure PIN_LENGTH limits the PIN itself so please use
+                  SECURE_PIN_RANDOM because this option ensures the number
+                  of the secret random bits
+                  16 x 8 = 128 bit
+                  -->
+                <secure_pin_length>0</secure_pin_length>
+                <secure_pin_random>16</secure_pin_random>
+            </create_pin>
+            <create_key>
+                <default_key_length>1024</default_key_length>
+                <default_key_algorithm>rsa</default_key_algorithm>
+                <minimum_key_length>1024</minimum_key_length>
+            </create_key>
+            <backup_key>
+                <!-- you can use the following modes:
+                       DENY      - never backup a key even if it is
+                                   configured by the import
+                       ALLOW     - backup a key if it is requested
+                       RECOMMEND - backup a key if nothing is configured
+                       FORCE - allways backup the key
+                  -->
+                <mode>RECOMMEND</mode>
+            </backup_key>
+            <create_csr>
+              <minimum_key_length>1024</minimum_key_length>
+              <allowed_subjects>
+                <suffix></suffix>
+              </allowed_subjects>
+              <allowed_roles>
+                <role>User</role>
+              </allowed_roles>
+            </create_csr>
+            <enrollment>
+              <pin>
+                <waiting>@var_prefix@/bp/dataexchange/pin.waiting</waiting>
+                <list>@var_prefix@/bp/dataexchange/pin_list</list>
+              </pin>
+              <pkcs12>
+                <list>@var_prefix@/bp/dataexchange/pkcs12.waiting</list>
+                <dir>@var_prefix@/bp/dataexchange/pkcs12</dir>
+              </pkcs12>
+            </enrollment>
+        </functions>
+    </statemachine>
+</openca>
+

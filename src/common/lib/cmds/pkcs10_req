@@ -1,0 +1,595 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: pkcs10_req
+##       Brief: pkcs10 request handling
+## Description: pkcs10 requests will be handled by this script
+##  Parameters: 
+
+use strict;
+
+sub cmdPkcs10_req {
+
+    our ($query, $cryptoShell, $db, $DEBUG, $tools);
+
+    my $minPinLength    	= getRequired('minpinlength');
+	my $verifyEmailAddress 	= getRequired('verifyEmailAddress');
+
+    our $reqObj;
+
+    ## read the loa.xml file and get the values
+    my $loaOption = getRequired('USE_LOAS');
+    my ($loaTwig, $xmlLOA, %LOALevels, @LOANames);
+    @LOANames = ();
+    if ($loaOption =~ /yes/i)
+    {
+        $loaTwig = loadConfigXML ('LOAConfiguration');
+        if (not $loaTwig) {
+            generalError (gettext ("Cannot load menu configration"));
+        }
+        #$xmlLOA = $twig->get_xpath('loa');
+
+        for my $al ($loaTwig->get_xpath("loa"))
+        {
+            $DEBUG=0;
+            $xmlLOA = gettext(($al->first_child('name'))->field);
+
+            $LOALevels{$xmlLOA}=($al->first_child('level'))->field;
+
+            push (@LOANames, $xmlLOA);
+            print @LOANames if $DEBUG;
+            print "<br>" if $DEBUG;
+        }
+    }
+
+    if($query->param('operation') eq ""){
+
+        my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+        ########################################## 
+        ## build all the necessary input fields ##
+        ##########################################
+
+        $cmd_panel->[0] = '<input type="submit" value="'.gettext("OK").'">';
+        $cmd_panel->[1] = '<input type="reset" name="reset" value="'.gettext("Reset").'">';
+
+        $hidden_list->{"cmd"}       = "pkcs10_req";
+        $hidden_list->{"operation"} = "server-filled-form";
+
+        $info_list->{BODY}->[0]->[0] = gettext ("Request [PEM formatted file]");
+        $info_list->{BODY}->[0]->[1] = $query->newInput (
+                                                   -regx=>'TEXT',
+                                                   -intype=>'filefield',
+                                                   -default=>'req.pem',
+                                                   -size=>20,
+                                                   -name=>'upload');
+        $info_list->{BODY}->[1]->[0] = gettext ("Registration Authority [chose the RA where you will be authenticated.]");
+        my @ra_list = ();
+        foreach my $list_item (getRequiredList ('RegistrationAuthority'))
+        {
+            push @ra_list, gettext ($list_item);
+        }
+        $info_list->{BODY}->[1]->[1] = $query->newInput (
+                                                   -regx=>'*',
+                                                   -intype=>'popup_menu',
+                                                   -name=>'ra',
+                                                   -values=>[ @ra_list ]);
+        $info_list->{BODY}->[2]->[0] = gettext ("Role [chose the Role which you want to get.]");
+        $info_list->{BODY}->[2]->[1] = $query->newInput (
+                                                   -regx=>'LETTERS',
+                                                   -intype=>'popup_menu',
+                                                   -name=>'role',
+                                                   -values=>[loadRoles()]);
+
+        $info_list->{BODY}->[3]->[0] = gettext ("Level Of Assurance [chose the LOA you would like to be authenticated against.]");
+        if ($#LOANames == 0) {
+            $info_list->{BODY}->[3]->[1] = $LOANames[0];
+            $hidden_list->{"loa"} = $LOALevels{$LOANames[0]};
+        } elsif ($#LOANames > 0)
+        {
+            $info_list->{BODY}->[3]->[1] = $query->newInput (
+                                                       -regx=>'LETTERS',
+                                                       -intype=>'popup_menu',
+                                                       -name=>'loa',
+                                                       -values=>[@LOANames]);
+        }else{
+            $info_list->{BODY}->[3]->[1] = gettext ('n/a');
+        }
+
+        $info_list->{BODY}->[4]->[0] = i18nGettext ("PIN: [min __MIN__ chars - please write it down for later usage]", "__MIN__", $minPinLength );
+
+        $info_list->{BODY}->[4]->[1] = $query->newInput (
+                                                   -regx=>'*',
+                                                   -intype=>'password_field',
+                                                   -name=>'passwd1',
+                                                   -size=>16,
+                                                   -minlen=>$minPinLength);
+
+        $info_list->{BODY}->[5]->[0] = gettext ("Re-type your PIN for confirmation");
+        $info_list->{BODY}->[5]->[1] = $query->newInput (
+                                                   -regx=>'*',
+                                                   -intype=>'password_field',
+                                                   -name=>'passwd2',
+                                                   -size=>16,
+                                                   -minlen=>$minPinLength);
+
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        my @additionalAttributesStringType = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE');
+        my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+
+        my $tempHtml;
+        my $attVar;
+
+        my $counter = 0;
+        my $pos = 6;
+        foreach my $attribute (@additionalAttributes)
+        {
+            my $stringType;
+            if ($additionalAttributesDisplayValue[$counter])
+            {
+                $attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+            } else {
+                generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the configuration."));
+            }
+            if ( $additionalAttributesStringType[$counter])
+            {
+                $stringType = $additionalAttributesStringType[$counter];	
+            } else {
+                generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE in the configuration."));
+            }
+            $info_list->{BODY}->[$pos + $counter]->[0] = $attVar;
+            $info_list->{BODY}->[$pos + $counter]->[1] = $query->newInput (
+                                                                     -regx=>$stringType,
+                                                                     -intype	=>'textfield',
+                                                                     -size 	=> 30,
+                                                                     -name	=>'ADDITIONAL_ATTRIBUTE_'.uc ($attribute),
+                                                                     -check	=>'fill');
+            $counter ++;
+        }
+
+        return libSendReply (
+                             "NAME" => gettext ("PKCS#10 Request Form"),
+                             "HIDDEN_LIST" => $hidden_list,
+                             "INFO_LIST"   => $info_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+    } elsif ($query->param('operation') eq 'server-filled-form') {
+
+        #####################
+        ## upload the file ##
+        #####################
+
+	my ($tmp, $i);
+
+	my $request = $query->param('upload');
+
+	## fix PKCS#10 requests of critical path
+	$request =~ s/-----BEGIN PKCS#10 CERTIFICATE REQUEST-----/-----BEGIN CERTIFICATE REQUEST-----/;
+	$request =~ s/-----END PKCS#10 CERTIFICATE REQUEST-----/-----END CERTIFICATE REQUEST-----/;
+
+	## fix some apps that use NEW
+	$request =~ s/-----BEGIN NEW CERTIFICATE REQUEST-----/-----BEGIN CERTIFICATE REQUEST-----/;
+	$request =~ s/-----END NEW CERTIFICATE REQUEST-----/-----END CERTIFICATE REQUEST-----/;
+
+	## remove garbage form the request
+	$request =~ s/^.*(-----BEGIN)/$1/sg;
+	$request =~ s/(-----END [^-]*-----).*$/$1/sg;
+	$request =~ s/\r+/\r/gs;
+	$request =~ s/\n+/\n/gs;
+	$request =~ s/(\r?\n)+/\n/gs;
+
+	$reqObj = new OpenCA::REQ( SHELL   => $cryptoShell,
+                                   GETTEXT => \&i18nGettext,
+                                   DATA    => $request );
+	if( $request !~ /^\-\-\-\-\-BEGIN CERTIFICATE REQUEST\-\-\-\-\-/ ) {
+		$request =~ s/<[^>]*>//gi;
+		$request =~ s/[<>]*//gi;
+		generalError(
+			gettext ("ERROR: not a PKCS#10 PEM request received!") .
+				"<br/><br/><pre>$request</pre>" );
+	}
+	if( ( $reqObj->getParsed->{KEY} eq "" ) and 
+				($reqObj->getParsed->{DN} eq "") ) {
+		$request =~ s/<[^>]*>//gi;
+		$request =~ s/[<>]*//gi;
+		generalError(
+			gettext ("ERROR: not a PKCS#10 PEM request received!") .
+				"<br/><br/><pre>" . $request . "</pre>" );
+	}
+
+        ## update fixed request
+	$query->param(-name=>'request', -value=>$request );
+
+	checkPkcs10_req();
+
+        ########################################## 
+        ## build all the necessary input fields ##
+        ##########################################
+
+        my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+        $cmd_panel->[0] = '<input type="submit" value="'.gettext("OK").'">';
+        $cmd_panel->[1] = '<input type="reset" name="reset" value="'.gettext("Reset").'">';
+
+        $hidden_list->{"cmd"}       = "pkcs10_req";
+        $hidden_list->{"operation"} = "server-confirmed-form";
+        $hidden_list->{"request"}   = $query->param('request');
+        $hidden_list->{"ra"}        = $query->param('ra');
+        $hidden_list->{"role"}      = $query->param('role');
+        $hidden_list->{"loa"}       = $query->param('loa');
+        $hidden_list->{"passwd1"}   = $query->param('passwd1');
+        $hidden_list->{"passwd2"}   = $query->param('passwd1');
+
+        $info_list->{BODY}->[0]->[0] = gettext ("Request");
+        $info_list->{BODY}->[0]->[1] = '<pre>'.$request.'</pre>';
+        $info_list->{BODY}->[1]->[0] = gettext ("Registration Authority");
+        $info_list->{BODY}->[1]->[1] = $query->param ('ra');
+        $info_list->{BODY}->[2]->[0] = gettext ("Role");
+        $info_list->{BODY}->[2]->[1] = $query->param('role');
+        $info_list->{BODY}->[3]->[0] = gettext ("Level Of Assurance");
+        $info_list->{BODY}->[3]->[1] = $query->param('loa');
+        $info_list->{BODY}->[4]->[0] = gettext ("PIN");
+        $info_list->{BODY}->[4]->[1] = '**********';
+        $info_list->{BODY}->[5]->[0] = gettext ("Public key algorithm");
+        $info_list->{BODY}->[5]->[1] = $reqObj->getParsed()->{"PUBKEY_ALGORITHM"};
+        $info_list->{BODY}->[6]->[0] = gettext ("Keysize");
+        $info_list->{BODY}->[6]->[1] = $reqObj->getParsed()->{"KEYSIZE"};
+        $info_list->{BODY}->[7]->[0] = gettext ("Subject");
+        $info_list->{BODY}->[7]->[1] = $reqObj->getParsed()->{"DN"};
+        $info_list->{BODY}->[8]->[0] = gettext ("Not before");
+        $info_list->{BODY}->[8]->[1] = $reqObj->getParsed()->{"HEADER"}->{"NOTBEFORE"};
+
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+        my @additionalAttributesStringType = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE');
+        my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+
+        my $tempHtml;
+        my $attVar;
+
+        my $counter = 0;
+        my $pos = 9;
+        my $attr_pos = 7;
+        foreach my $attribute (@additionalAttributes)
+        {
+            if ($additionalAttributesDisplayValue[$counter])
+            {
+                $attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+            } else {
+                generalError(gettext ("The number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the configuration."));
+            }
+            $hidden_list->{"ADDITIONAL_ATTRIBUTE_".uc ($attribute)} = $query->param('ADDITIONAL_ATTRIBUTE_'.uc ($attribute));
+            $info_list->{BODY}->[$pos + $counter]->[0] = $attVar;
+            $info_list->{BODY}->[$pos + $counter]->[1] = $query->param ('ADDITIONAL_ATTRIBUTE_'.uc ($attribute));
+            $counter ++;
+        }
+
+        return libSendReply (
+                             "NAME"        => gettext ("Confirm PKCS#10 Request"),
+                             "HIDDEN_LIST" => $hidden_list,
+                             "INFO_LIST"   => $info_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+    } elsif ($query->param('operation') eq 'server-confirmed-form') {
+
+        ######################
+        ## prepare the data ##
+        ######################
+
+	$reqObj = new OpenCA::REQ( SHELL   => $cryptoShell,
+                                   GETTEXT => \&i18nGettext,
+                                   DATA    => $query->param('request') );
+	if( not $reqObj ) {
+		generalError(gettext ("ERROR: not a PKCS#10 PEM request received!"));
+	}
+
+        ## get the loa value if we are using it
+        my $LOA = "";
+        if ($#LOANames >0)
+        {
+            $LOA = $query->param('loa');
+        }
+	my $LOAid = $LOALevels{$LOA};
+
+	checkPkcs10_req();
+
+        #######################
+        ## build the request ##
+        #######################
+
+	my $tmp;
+
+        ## HEADER setup
+	
+	$tmp = "-----BEGIN HEADER-----\n";
+	$tmp .= "TYPE = PKCS#10\n";
+	my $last_req = libDBGetLastItem ("REQUEST");
+	my $req_elements = 0;
+	$req_elements    = $last_req->getSerial("REQUEST") if ($last_req);
+	$req_elements  >>= getRequired ("ModuleShift");
+        if ((not defined $req_elements) or ($req_elements < 0)) {
+		generalError (gettext ("The database fails during counting the already existing requests!"));
+        } else {
+        	$req_elements++;
+        }
+        my $new_serial = ($req_elements << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+        $tmp .= "SERIAL = $new_serial\n";
+	$tmp .= "NOTBEFORE = " . $tools->getDate() . "\n";
+        my $PASSWD = $query->param('passwd1');
+        if ($PASSWD) {
+		my $pin_digest = $cryptoShell->getDigest (
+                             DATA      => $PASSWD,
+                             ALGORITHM => "sha1");
+		if (not $pin_digest) {
+			generalError (gettext ("OpenSSL fails during calculating the hash of the passphrase!"));
+		}
+		$tmp .= "PIN = $pin_digest\n";
+        }
+        my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+	my $altNames = 0;
+	my $subjAltName = "";
+
+	foreach my $attribute (@additionalAttributes) {
+		if( $attribute =~ /SUBJECT_ALT_NAME_(DNS|IP|EMAIL|OTHERNAME|DIRNAME|URI|RID|MICROSOFT_GUID|MICROSOFT_UPN)/i ) {
+			my $type = "";
+
+			if( $attribute =~ /^SUBJECT_ALT_NAME_DNS/i ) {
+				$type = "DNS";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_IP/i ) {
+				$type = "IP";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_EMAIL/i ) {
+				$type = "email";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_OTHERNAME/i ) {
+				$type = "otherName";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_DIRNAME/i ) {
+				$type = "DirName";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_URI/i ) {
+				$type = "URI";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_RID/i ) {
+				$type = "RID";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_MICROSOFT_GUID/i ) {
+				$type = "Microsoft_GUID";
+			} elsif ( $attribute =~ /^SUBJECT_ALT_NAME_MICROSOFT_UPN/i ) {
+				$type = "Microsoft_UPN";
+			}
+
+			$attribute =~ s/\n//g;
+
+			if ( $type ne "" ) {
+				$type .= ":";
+			}
+
+			if( $altNames > 0 ) {
+				$subjAltName .= ",";
+			}
+
+			$subjAltName .= "$type" .
+				$query->param( 'ADDITIONAL_ATTRIBUTE_' . 
+					uc ($attribute));
+
+			$altNames++;
+		} else {
+			$tmp .= 'ADDITIONAL_ATTRIBUTE_'.uc ($attribute)." = ". 
+				$query->param('ADDITIONAL_ATTRIBUTE_'.
+					uc ($attribute))."\n";
+		}
+	}
+
+	if( $subjAltName ne "" ) {
+		$tmp .= "SUBJECT_ALT_NAME = " . $subjAltName . "\n";
+	}
+
+	$tmp .= "RA = ".  $query->param('ra')   ."\n";
+	$tmp .= "ROLE = ".$query->param('role') ."\n";
+
+	## LOA support
+	if ($LOAid){
+        	$tmp .= "LOA = $LOAid\n";
+	}
+	$tmp .= "-----END HEADER-----\n";
+
+        ## complete request
+
+	$tmp .= $query->param('request');
+
+        ## create object from text request
+
+	if( not $reqObj = new OpenCA::REQ( 
+				SHELL   => $cryptoShell,
+				GETTEXT => \&i18nGettext,
+				DATA    => $tmp) ) {
+		generalError( gettext ("Internal Request Error"), 978 );
+	}
+
+    ## run storage operations
+	my $status = "NEW";
+
+	if( $verifyEmailAddress =~ /Y/i ) {
+		$status = "TEMP$status";
+	}
+	$reqObj->setStatus( "$status" );
+
+
+	my $reqKey = undef;
+	if( not ( $reqKey = $db->storeItem( DATATYPE=> $status . '_REQUEST',
+				OBJECT=>$reqObj, INFORM=>"PEM", MODE=>"INSERT" ))) {
+		generalError( gettext ("Error while storing REQ in database!") );
+	};
+ 
+	## Send out the Email verification Email
+	if( $verifyEmailAddress =~ /Y/i ) {
+		libSendEmailVerifyMessage( $reqKey );
+	};
+
+	my ($info_list, $cmd_panel) = (undef, undef);
+	$cmd_panel->[0] = '<input TYPE="Button" Name="Print" Value="'.
+		gettext ("Print").'" onClick="window.print();">';
+
+	my $explanation = i18nGettext (
+"Thank you for requesting your certificate from our organization, your request with the serial __CSR_SERIAL__ it's been successfully archived and it is now waiting for approval by any of our Registration Authorities (if you are unsure about the receiving of your request by this server, you can check the request's new list __BEGIN_LINK__here__END_LINK__).\n You need, however, read the email we sent you and confirm your email address before the process can progress.\n\nTo complete the certification process you have to go to one of our Registration Authority office with one of the following documents:\n\n o ID&nbsp;card or passport.\n o Documnetation asserting your role and authorization for requesting a certificate for your organization.\n \n If you still have doubts about the issuing process, just use the links provided in the Information section to learn how to complete all the needed steps.",
+            "__BEGIN_LINK__", '<A HREF="?cmd=lists;action=newReqs">',
+            "__END_LINK__", "</a>",
+            "__CSR_SERIAL__", $reqObj->getSerial());
+
+        # substitute variables
+        $info_list->{BODY} = [];
+        foreach my $attr (keys %{$reqObj->getParsed()->{HEADER}})
+        {
+            $info_list->{BODY}->[scalar @{$info_list->{BODY}}]->[0]   = $attr;
+            $info_list->{BODY}->[scalar @{$info_list->{BODY}}-1]->[1] =
+                $reqObj->getParsed()->{HEADER}->{$attr};
+        }
+
+        return libSendReply (
+                             "NAME"        => gettext ("Certificate Request Confirm"),
+                             "EXPLANATION" => $explanation,
+                             "CMD_PANEL"   => $cmd_panel,
+                             "INFO_LIST"   => $info_list
+                            );
+    } 
+
+} ## end cmdPkcs10_req
+
+sub checkPkcs10_req {
+
+    our ($query);
+    our $reqObj;
+
+    my $state = $_[0];
+
+    if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i) {
+        configError (gettext ("This command can only be used with from which are using POST as METHOD!"));
+    }
+
+    ## FIXME: this is really unclean
+    ## FIXME: perhaps we should integrate something in OpenCA::REQ
+    ## FIXME: Example:
+    ## FIXME: $req->getParsed()->{SUBJECT_LIST}[2] --> ("CN", "Jon Doe")
+    ##
+    my $subject   = $reqObj->getParsed()->{DN};
+
+    $subject =~ s/[\/,]\s*(?=[A-Za-z0-9\-]+=)/,/g;
+    my @ls = reverse split( /\,/, $subject );
+
+    ## check the DN compliance to the policy specified in the pub.conf
+    if( not checkDNPolicy(\@ls)){
+        generalError (i18nGettext ("The subject DN \"__SUBJECT__\" does not confirm to the DN policy specified by your system admin",
+                                   "__SUBJECT__", $subject));
+    }
+
+    if ($query->param('passwd1') ne $query->param('passwd2')) {
+        generalError (gettext ("Two different pin inserted. Please go <B><I>back</I></B> and correct the error."), 560 );
+    }
+
+    return 1;
+}
+
+sub checkDNPolicy {
+        our $DEBUG;
+	#$DEBUG = 1;
+	
+	my $reversDNArrayRef = shift @_;
+	my @DNArray = reverse(@$reversDNArrayRef);
+	my @DNRequiredElementsArray = getRequiredList('DN_TYPE_PKCS10_REQUIRED_ELEMENTS');
+	my @DNBaseArray		    = getRequiredList('DN_TYPE_PKCS10_BASE');
+	my $DNEnforceBase           = getRequired('DN_TYPE_PKCS10_ENFORCE_BASE');
+	my $hashArray = undef;
+
+	foreach my $p ( @DNArray ) {
+		$p =~ /([^= ]+)\s*=\s*([^\,]+)/;
+		$hashArray->{$1}={$2};
+	}
+
+	## BASE:     YES, EXIST, NO
+
+	## FIXME: perhaps we should make it more dynamical to allow
+	## FIXME: different configuration like like for basic_csr
+	## FIXME: PKCS10 should be a passed parameter with a default value
+	my $DNTypeString = "DN_TYPE_PKCS10_BASE_";
+	my @baseDNAttributeArray=();
+	my $counter = 1;
+	my $temp;
+
+	if ( $DNEnforceBase !~ /NO/i ) {
+		foreach my $attr (@DNBaseArray) {
+			$temp = $DNTypeString . $counter;
+			if( $DNEnforceBase =~ /Y/i ) {
+				$temp = getRequired($temp);
+			} else {
+				$temp = $attr."=ANY";
+			}
+		
+			push (@baseDNAttributeArray, $temp);
+			$counter ++;
+		}
+	}
+
+	## check if the request has the required base DN values
+	##
+	while (@baseDNAttributeArray) {
+                ## get an array of elements which should be checked
+                
+                my @searchBase = ();
+		if ($DNEnforceBase =~ /YES/i) {
+			push @searchBase, pop @DNArray;
+		} else {
+			push @searchBase, @DNArray;
+		}
+
+		my $baseElement = pop @baseDNAttributeArray;
+
+                ## check elements
+                my $success = 0;
+		my $anyAttribute = "=ANY";
+		foreach my $item (@searchBase) {
+			## alternatively you can use case insensitive match
+			## $success = 1 if ($item =~ /$baseElement/i);
+
+			# if ( $baseElement eq $item ) {
+			if ( $item =~ /$baseElement/i ) {
+                                $success = 1;
+                        } elsif  (  $baseElement =~ m/$anyAttribute$/i){
+                                $success = 1;
+                        }
+
+		}
+		if (not $success) {
+			if ($DNEnforceBase =~ /YES/i) {
+				generalError ( i18nGettext ("Your request has __DN_ELEMENT__ which must be __BASE_ELEMENT__.",
+			        	                    "__DN_ELEMENT__", $searchBase[0],
+				                            "__BASE_ELEMENT__", $baseElement));
+			} else {
+				generalError ( i18nGettext ("Your request has to include __BASE_ELEMENT__.",
+				                            "__BASE_ELEMENT__", $baseElement));
+			}
+			return undef;
+		} 
+				
+	}
+	## get the request DN values again
+	@DNArray = reverse(@$reversDNArrayRef);
+
+	##
+	## check the DN for the required attributes
+	##
+	while(@DNRequiredElementsArray) {
+		my $requiredAttribute = shift (@DNRequiredElementsArray)."=";
+		my $flag = 0;
+		foreach my $requestElement (@DNArray) {
+			#if ( $hashArray->{$requiredAttribute} ne "" ) {
+			#	$flag = 1;
+			#}
+
+			if ( $requestElement =~ m/$requiredAttribute/i) {
+				$flag = 1;
+			}
+		}
+		if ($flag == 0) {
+			generalError ( i18nGettext ("Your request is missing __REQUIRED_ATTRIBUTE__.",
+			                            "__REQUIRED_ATTRIBUTE__", $requiredAttribute));
+		}
+	}	
+	return 1;
+}
+	
+1;

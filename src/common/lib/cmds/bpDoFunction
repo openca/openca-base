@@ -1,0 +1,132 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2004
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: bpDoFunction
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: run the state machine
+## Description: do one specified step for a process
+##  Parameters: process, user, function
+
+use strict;
+
+sub cmdBpDoFunction {
+
+    our ($query, $crypto_layer, $xml_cache);
+    our ($errno, $errval);
+
+    my $user     = $query->param ('USER');
+    my $process  = $query->param ('PROCESS');
+    my $function = $query->param ('FUNCTION');
+
+    ## load token for batch system
+
+    our $bp_token        = $crypto_layer->getToken ('BP');
+    our $keybackup_token = $crypto_layer->getToken ('KEYBACKUP');
+    our $ca_token        = $crypto_layer->getToken ('CA');
+    $bp_token->login        if ($bp_token and not $bp_token->keyOnline);
+    $ca_token->login        if ($ca_token and not $ca_token->keyOnline);
+
+    ## init output system
+
+    my $info_list = undef;
+
+    ## signaling key status
+
+    $info_list->{BODY}->[0]->[0] = gettext ("Batch systems token");
+    if (not $bp_token)
+    {
+        $info_list->{BODY}->[0]->[1] = i18nGettext ("The token is completely unusable (__ERRNO__). __ERRVAL__",
+                                                    "__ERRNO__", $bp_token->errno,
+                                                    "__ERRVAL__", $bp_token->errval);
+    } elsif (not $bp_token->keyOnline) {
+        $info_list->{BODY}->[0]->[1] = i18nGettext ("The private key of the token is unusable (__ERRNO__). __ERRVAL__",
+                                                    "__ERRNO__", $bp_token->errno,
+                                                    "__ERRVAL__", $bp_token->errval);
+    } else {
+        $info_list->{BODY}->[0]->[1] = gettext ("The token is fully usable.");
+    }
+
+    $info_list->{BODY}->[1]->[0] = gettext ("Keybackup token");
+    if (not $keybackup_token)
+    {
+        $info_list->{BODY}->[1]->[1] = i18nGettext ("The token is unusable (__ERRNO__). __ERRVAL__",
+                                                    "__ERRNO__", $keybackup_token->errno,
+                                                    "__ERRVAL__", $keybackup_token->errval);
+    } else {
+        $info_list->{BODY}->[1]->[1] = gettext ("The token is usable.");
+    }
+
+    $info_list->{BODY}->[2]->[0] = gettext ("CA token");
+    if (not $ca_token)
+    {
+        $info_list->{BODY}->[2]->[1] = i18nGettext ("The token is completely unusable (__ERRNO__). __ERRVAL__",
+                                                    "__ERRNO__", $ca_token->errno,
+                                                    "__ERRVAL__", $ca_token->errval);
+    } elsif (not $ca_token->keyOnline) {
+        $info_list->{BODY}->[2]->[1] = i18nGettext ("The private key of the token is unusable (__ERRNO__). __ERRVAL__",
+                                                    "__ERRNO__", $ca_token->errno,
+                                                    "__ERRVAL__", $ca_token->errval);
+    } else {
+        $info_list->{BODY}->[2]->[1] = gettext ("The token is fully usable.");
+    }
+
+    ## init statemachine
+
+    our $state_machine = libGetStateMachine ();
+    if (not $state_machine)
+    {
+        generalError (i18nGettext ("Cannot initialize statemachine. __ERRVAL__",
+                                   "__ERRVAL__", $errval),
+                      $errno);
+    }
+
+    ## load function
+
+    my $bp_subs = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/subs_directory" ],
+           COUNTER  => [ 0 ]);
+    if (not -e "$bp_subs/$function.sub")
+    {
+        generalError (
+            i18nGettext ("File __FILE__ with function __FUNCTION__ does not exist.",
+                         "__FILE__", "$bp_subs/$function.sub",
+                         "__FUNCTION__", $function),
+            116);
+    }
+    require "$bp_subs/$function.sub";
+
+    ## execute function
+
+    $info_list->{BODY}->[3]->[0] = gettext ("Message from batch function");
+    $info_list->{BODY}->[4]->[0] = gettext ("Result code from batch function");
+
+    my $return;
+    ## use Apache::Leak;
+    ## leak_test
+    ## {
+        $return = eval "workflow_$function (USER => '$user', WORKFLOW => '$process')";
+    ## };
+
+    if ($@)
+    {
+        $info_list->{BODY}->[3]->[1] =
+            i18nGettext ("The workflow function __FUNCTION__ crashs for process __PROCESS__ of user __USER__. __ERRVAL__",
+                         "__FUNCTION__", $function,
+                         "__PROCESS__",  $process,
+                         "__USER__",     $user,
+                         "__ERRVAL__",   $@);
+        $info_list->{BODY}->[4]->[1] = $?;
+    } else {
+        $info_list->{BODY}->[3]->[1] = $return->[1];
+        $info_list->{BODY}->[4]->[1] = $return->[0];
+    }
+
+    return libSendReply (
+               NAME      => gettext ('Execute a single operation for a process of a user'),
+               INFO_LIST => $info_list
+                        );
+}
+
+1;

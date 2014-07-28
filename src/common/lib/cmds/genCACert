@@ -1,0 +1,254 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: genCACert
+##       Brief: Generate CA Certificate
+##// Description: Generate the CA's Certificate (self-signed) from the
+##              request file (careq.pem).
+##  Parameters: bits, days, passwd
+
+use strict;
+
+sub cmdGenCACert {
+
+    our ($journal, $query, $tools, $crypto_layer, $cryptoShell, $db);
+
+    ## This command is executed to generate a new cacert.pem
+    ## in the $opencaDir directory. Use the already generated
+    ## careq.pem
+
+    my $makeCmd   = getRequired( 'MakePath');
+
+    ## Get the parameters
+    my $bits	= $query->param('bits');
+    my $days	= $query->param('days');
+    my $pwd	= $query->param('passwd');
+    my $role	= $query->param('ROLE');
+    my $altType = $query->param('altType');
+    my $altName = $query->param('subjectAltName');
+    my $ser     = $query->param('serial');
+
+    ## Other reserved variables
+    my $careqFile 	= getRequired ( 'ReqDir' )."/careq.pem";
+    my $cacertFile 	= getRequired ( 'CACertificate' );
+    my $cacertDER	= getRequired ( 'CACertificateDER' );
+    my $cacertCRT	= getRequired ( 'CACertificateCRT' );
+    my $cacertTXT	= getRequired ( 'CACertificateTXT' );
+
+    my $serFileName     = getRequired ('sslserial');
+
+    my $ext = getRequired ( 'CACertExtensions');
+
+    my $reqObj = undef;
+    my $reqSubject = undef;
+    my $dnObj = undef;
+    my $ret = undef;
+
+    my $chainDir 	= getRequired ( 'ChainDir' );
+
+    my ( $page, $crt );
+    my $msg = "";
+
+    my $extfile = undef;
+
+    if ( $role ne "" ) {
+	$role =~ s/ /_/g;
+    	$role .= ".ext";
+	$extfile = getRequired ( 'EXT_DIR') . "/$role";
+    }
+
+    configError(i18nGettext ("Cannot find file __FILE__!", "__FILE__", $careqFile))
+        unless ( -e "$careqFile" );
+    $journal->{message} .= "The CA request is present.\n";
+
+    ## If there is already a cacertfile, than we should move it to .old
+    if ( -e "$cacertFile" ) {
+        $journal->{message} .= "Detected an already generated certificate.\n";
+        generalError (
+            i18nGettext ("There is already a CA certificate present in this OpenCA installation (__FILE__).",
+                         "__FILE__", $cacertFile));
+    }
+
+    my $ca_token = $crypto_layer->getToken ('CA');
+    if (not ($ca_token->keyOnline || $ca_token->login))
+    {
+	my $msg = gettext ("Initializing CA token ... ").
+	         "<FONT color=#ff0000>".gettext ("FAILED")."</FONT><br>\n".
+	         i18nGettext ("Token's errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval);
+        generalError ($msg, $ca_token->errno);
+    }
+    $journal->{message} .= "Token is ready for use.\n";
+
+    ## Remove the old careq file, it is not important to keep a
+    unlink( "$cacertDER" ) if ( -e "$cacertDER" );
+
+    $reqObj = new OpenCA::REQ ( SHELL   => $cryptoShell,
+                            GETTEXT => \&i18nGettext,
+                            INFILE  => "$careqFile" );
+
+    if(not defined $reqObj ) {
+	configError(gettext("Error, can not parse CA Request File!"));
+    };
+
+    # $reqSubject = $reqObj->getParsed()->{DN};
+    # $dnObj = X500::DN->ParseRFC2253 ($reqSubject);
+
+    # $ENV{'subjectAltName'} = $altName;
+
+    my $tempExt = getRequired ( 'TempDir')."/${role}";
+    my $file = $tools->getFile ($extfile);
+
+    $file =~ s/__SUBJECT_ALT_NAME__/$altType=$altName/g;
+    $tools->saveFile (FILENAME => $tempExt, DATA => $file);
+
+    # print STDERR "RANDOM BYTES: " . 
+    # 			$cryptoShell->getRandomBytes ( 10 ) . "\n";
+
+    if ( $ser eq "" ) {
+	$ser = "00";
+    }
+
+    if ( length( $ser ) % 2 ) {
+	$ser = "0" . $ser;
+    }
+
+    $tools->saveFile ( DATA=>uc($ser), FILENAME => $serFileName );
+
+    $ret = $ca_token->genCert( 
+	  REQFILE    => "$careqFile",
+          OUTFILE    => "$cacertFile",
+	  EXTFILE    => "$tempExt",
+          DAYS       => $days );
+
+    if( not defined $ret ) {
+    	configError( "Token Error: " . $ca_token->errval );
+    }
+	
+    configError(gettext ("Error (1) while issuing certificate!"))
+        if( $? != 0 );
+    $journal->{message} .= "CA certificate was generated.\n";
+
+    $cryptoShell->dataConvert( DATATYPE=>"CERTIFICATE",
+			   INFILE=>"$cacertFile",
+			   OUTFILE=>"$cacertDER",
+			   OUTFORM=>"DER" );
+
+    configError(gettext ("Error (2) while convertig certificate!"))
+        if( $? != 0 );
+    $journal->{message} .= "CA certificate was generated.\n";
+
+    $cryptoShell->dataConvert( DATATYPE=>"CERTIFICATE",
+			   INFILE=>"$cacertFile",
+			   OUTFILE=>"$cacertTXT",
+			   OUTFORM=>"TXT" );
+
+    configError(gettext ("Error (3) while convertig certificate!"))
+        if( $? != 0 );
+    $journal->{message} .= "CA certificate stored as TXT file.\n";
+
+    $crt = new OpenCA::X509( SHELL   => $cryptoShell,
+                         GETTEXT => \&i18nGettext,
+                         INFILE  => "$cacertFile" );
+
+    configError(i18nGettext ("Error while loading CA certificate (__FILE__).",
+                             "__FILE__", $cacertFile))
+        if( not $crt );
+    $journal->{message} .= "CA certificate cannot be loaded.\n";
+
+    ##// Let's link to the chain dir
+    $tools->copyFiles ( SRC=>"$cacertFile",
+			    DEST=>"$cacertCRT");
+
+    ##// Let's make the links for chain verification
+    my $ret = `cd ${chainDir}; $makeCmd`;
+
+    if ( not $db->storeItem( DATATYPE => "VALID_CA_CERTIFICATE",
+			     OBJECT   => $crt,
+			     MODE     => "INSERT")) {
+	configError (gettext ("Error while storing CA cert to dB!"));
+    }
+    $journal->{message} .= "CA certificate stored in database.\n";
+
+    my $info_list = undef;
+    $info_list->{BODY}->[0]->[0] = '';
+    $info_list->{BODY}->[0]->[1] = "<pre>".$crt->getTXT()."</pre>";
+
+    return libSendReply (
+                     "NAME"        => gettext ("Self Signed CA Certificate"),
+                     "EXPLANATION" => gettext ("Following you can find the result of the generation process.").
+                                      $msg,
+                     "INFO_LIST"   => $info_list
+                    );
+}
+
+sub getParamsGenCACert
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("This option lets you create a new self signed certificate for your CA. You should have generated the private key and the CSR already. You can abort the process by using the back button of your browser. Are you sure you want continue?");
+
+	my $role = $query->newInput( -regx=>'*',
+                        -intype=>"popup_menu",
+                        -name=>"ROLE",
+                        -values=>  [ loadRoles () ],
+                        -default=> "Self Signed CA");
+
+	my $altType = $query->newInput ( -regx=>"*",
+			-intype => "popup_menu",
+			-name => "altType",
+			-class => "medium",
+			-values => [ "email", "DNS", "IP", "DirName",
+				     "URI", "otherName", "RID" ],
+			-default => "emai" );
+
+	$result = qq{<div style="text-align: left; margin: 10px; 
+			padding: 10px"> $message </div>};
+
+	$result .= qq{<center>};
+
+        $result .= qq{<table style="text-align: left;">\n};
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Serial Number") . 
+			" (eg., 00, a0d399)</td>\n".
+                   '    <td><input type="text" name="serial" value="00"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Certificate Validity") . " (" .
+				gettext("Days") . ")</td>\n".
+                   '    <td><input type="text" name="days" value="730"></td>'.
+                   "\n  </tr>\n";
+
+
+	$result .= qq{  <tr>
+		       <td>} . gettext ("Subject Alt Name") . qq{</td>
+	 	       <td>$altType 
+				<input type="text" name="subjectAltName" 
+				class="medium" value="} . 
+				getRequired ( 'SERVICE_MAIL_ACCOUNT' ).qq{" />
+		       </td>
+		     </tr>};
+	# $result .= "  <tr>\n".
+	# 	   "    <td>". gettext ("Extensions") . "</td>\n" .
+	 # 	   "    <td><input type=\"text\" name=\"subjectAltName\" value=\"" . getRequired ( 'CACertExtensions' ) . "\" />" .
+	# 	   qq{<a href="$self?cmd=editCAExtensions">} .
+	# 		gettext ("Edit") .
+	# 	   qq{</a>} .
+	# 	   "    </td>\n" .
+	$result .= "  <tr>\n".
+		   "    <td>". gettext ("Extensions") . "</td>\n" .
+	 	   "    <td>$role</td>\n" .
+		   "  </tr>\n";
+
+        $result .= "</table>\n";
+	$result .= "</center>";
+    }
+    return $result;
+}
+
+1;

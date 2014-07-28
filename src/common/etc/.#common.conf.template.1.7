@@ -1,0 +1,123 @@
+## Common Configuration File
+## (c) 1998-2012 by Massimiliano Pala
+## All Rights Reserved
+
+## LDAP Section:
+## =============
+
+LDAP                    "@useLDAP@"
+updateLDAPautomatic     "@update_ldap_automatic@"
+
+## Crypto Section
+## ==============
+openssl                 "/usr/bin/openssl"
+sslconfig               "/opt/openca/etc/openca/openssl/openssl.cnf"
+sslindex                "/opt/openca/var/openca/crypto/index.txt"
+sslserial               "/opt/openca/var/openca/crypto/serial"
+OCSPindex               "/opt/openca/var/openca/crypto/ocsp_index.txt"
+OpenCA_SV_Path          "/opt/openca/bin/openca-sv"
+MakePath                "/usr/bin/make -s"
+
+## General Section
+## ===============
+
+DEFAULT_LANGUAGE        "@default_language@"
+DEFAULT_CHARSET         "@default_charset@"
+SUPPORT_EMAIL           "support@pki.openca.org"
+
+## Updates Management
+Updates                 "Y"
+CgiLibPath              "/opt/openca/lib/openca/functions"
+CgiCmdsPath             "/opt/openca/lib/openca/cmds"
+CgiServerType           "node"
+CgiServerName           "node"
+
+PerlModulesPath         "@perl_modules_prefix@"
+WebGetCommand           "@web_get_command@"
+FindCommnad             "@find_command@"
+
+ModuleID                @node_module_id@
+ModuleShift             @module_shift@
+
+HtdocsUrlPrefix         "/pki/node"
+EtcPrefix               "/opt/openca/etc/openca"
+TopLogo	                "/pki/node/images/top_logo.png"
+Organization            "OpenCA Labs"
+
+## The Login feature is not supported by the interface yet, anyhow
+## this config keyword will enable the login fields to appear in the
+## top part of the UI. Enable it to see how the login fields will
+## appear in the next versions of OpenCA. To enable it, set it to
+## "Y" or "1".
+EnableLogin		"N"
+
+## The Page body is included to generate the HomePage for the server
+## to support internationalization, we look for the file with the
+## suffix for the supported language (eg., if the filename is
+## home_body.in - we look for home_body.in.en_GB if the language is
+## set to english, for home_body.in.it_IT if italian is selected, etc.)
+HOME_PAGE_BODY_INCLUDE              "/opt/openca/etc/openca/includes/home_body.inc"
+HOME_PAGE_DISPLAY_TITLE             "N"
+HOME_PAGE_DISPLAY_EASY_PANEL        "N"
+HOME_PAGE_DISPLAY_NOTICES_PANEL     "Y"
+
+SessionDir                          "/opt/openca/var/openca/session/cookie"
+SessionLifetime                     1200
+
+DBmodule                            "@dbmodule@"
+AccessControlConfiguration          "/opt/openca/etc/openca/access_control/node.xml"
+SoftwareConfiguration               "/opt/openca/etc/openca/config.xml"
+RoleConfiguration                   "/opt/openca/etc/openca/rbac/roles.xml"
+ModuleConfiguration                 "/opt/openca/etc/openca/rbac/modules.xml"
+TokenConfiguration                  "/opt/openca/etc/openca/token.xml"
+LogConfiguration           				"/opt/openca/etc/openca/log.xml"
+MenuConfiguration          				"/opt/openca/etc/openca/menu.xml"
+BackupConfiguration        				"/opt/openca/etc/openca/backup.xml"
+LDAPConfiguration          				"/opt/openca/etc/openca/ldap.xml"
+
+CertDir														"/opt/openca/var/openca/crypto/certs"
+TempDir 													"/opt/openca/var/openca/tmp"
+LOG_DIR 													"/opt/openca/var/openca/log"
+BP_DIR														"/opt/openca/var/openca/batch"
+BP_EXPORT_PKCS12_DIR    					"/opt/openca/var/openca/bp/dataexchange/pkcs12"
+MaxReturnedItems 									20
+
+## Certificates and CRLs Section
+## =============================
+
+CACertificate 		"/opt/openca/var/openca/crypto/cacerts/cacert.pem"
+CACertificateDER 	"/opt/openca/var/openca/crypto/cacerts/cacert.der"
+CACertificateTXT	"/opt/openca/var/openca/crypto/cacerts/cacert.txt"
+CACertificateCRT 	"/opt/openca/var/openca/crypto/chain/cacert.crt"
+CACertsDir 				"/opt/openca/var/openca/crypto/cacerts"
+CertsDir 					"/opt/openca/var/openca/crypto/certs"
+ChainDir	 				"/opt/openca/var/openca/crypto/chain"
+CRLDir						"/opt/openca/var/openca/crypto/crls"
+
+## Mail Section
+## ============
+##
+## The RA Manager program needs to send an e-mail to each user when he
+## certificate has been successuffly published. Because of this you
+## have to configure the sendmail program to use the right server.
+## Watch out for mail attacs. Secure yourself.
+
+## Do you want to send mail when certificate is published ?
+warnuser 							yes
+
+## Now let's define the command line for the sendmail with right options
+mailcommand          "@sendmail@"
+SERVICE_MAIL_ACCOUNT "admin@pki.openca.org"
+
+##
+## Role management Section
+## -----------------------
+
+RBAC_DIR          "/opt/openca/etc/openca/rbac"
+RBAC_MODULE       "RA 1"
+ROLES_DIR         "roles"
+RIGHTS_DIR        "rights"
+SCRIPT_CONFIG_DIR "scripts"
+OPENSSL_DIR       "/opt/openca/etc/openca/openssl/openssl"
+EXT_DIR           "/opt/openca/etc/openca/openssl/extfiles"
+

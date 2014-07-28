@@ -1,0 +1,198 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: viewSignature
+##       Brief: View Signature
+##// Description: Display given object's signature and its validity
+##  Parameters: dataType, key
+
+use strict;
+
+# 2004-12-17 Martin Bartosch; FIXME: is this really needed? (globally? at all?)
+our (@cols);
+
+sub cmdViewSignature {
+
+## Get the Configuration parameters ...
+my ( $parsed, $lnk, $serLink, $sigInfo, $sigStatus, $signer, $signature);
+my ( $baseDoc, $info, $sigCertStatus, $def, $dbStatus, $dbMessage);
+my ( $myCN, $myEmail, $mySerial, $tmpCert, $pCert, $sigCode );
+
+my $dataType 	= $query->param('dataType' );
+my $key      	= $query->param('key');
+my $tempDir  	= getRequired('tempDir');
+my ( $sigMessage, $decSerLink );
+
+my $sigInfoStyle = "position: absolute; right: 11%; border-width: 2px; " .
+		   "border-color: #556 #fff #fff #556";
+
+## Check passed parameters
+configError( gettext ("Error, needed dB key!") ) if ( not $key );
+configError ( i18nGettext ("Invalid or missing dataType (__DATATYPE__)!", "__DATATYPE__", $dataType)) if ( not $dataType);
+
+## Retrieve item from the DB
+my $item = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+configError (gettext ("Object not present in DB!") ) if ( not $item );
+configError (gettext ("Object not Signed!")) if ( not $item->getParsed()->{SIGNATURE} );
+
+## Get the parsed Object
+my $parsed = $item->getParsed();
+
+@cols = ( gettext ("Variable"), gettext ("Value") );
+
+## Get Signature
+if( not $signature = libGetSignatureObject( OBJECT=>$item )) {
+    generalError( i18nGettext ("Signature Object not returned, check the " .
+				"openca-verify command.") . 
+                        	"<div class=\"log\"><pre>$errval</pre></div>");
+}
+
+## Get Signer
+$signer = $signature->getSigner();
+
+$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+		name=>"CN", value=>$signer->{DN_HASH}->{CN}[0]} );
+$myCN = $lnk->a({-href=>"?".$lnk->query_string()}, $signer->{DN_HASH}->{CN}[0]);
+
+$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+		name=>"EMAIL", value=>$signer->{DN_HASH}->{EMAILADDRESS}[0]} );
+$myEmail = $lnk->a({-href=>"?".$lnk->query_string()}, $signer->{DN_HASH}->{EMAILADDRESS}[0]);
+
+## Check Signature Status
+$sigCode = libCheckSignature( SIGNATURE=>$signature );
+
+if( ( $sigCode ne CRYPTO_SIGNATURE_OK ) and 
+	( $sigCode ne CRYPTO_SIGNER_SUSPENDED ) and 
+		( $sigCode ne CRYPTO_SIGNER_EXPIRED ) ) {
+	# $sigStatus = "<FONT COLOR=\"Red\">".gettext("Error")."</FONT>";
+	# $sigMessage = gettext ("Signature Verification Error!");
+
+	$sigInfo = $query->img({-src=>getRequired ('SigErrorImage'),
+				-align=>"MIDDLE", -style=>"$sigInfoStyle"});
+
+	if ($sigCode eq CRYPTO_SIGNATURE_ERROR ) {
+		$sigStatus = gettext ("Error");
+		$sigMessage = gettext ("Signature general error");
+	} elsif ( $sigCode eq CRYPTO_SIGNER_NOT_IN_DB ) {
+		$sigStatus = gettext ("Verified w/ Signer's Error");
+		$sigMessage = gettext ("Signer's certificate unknown");
+	} elsif ( $sigCode eq CRYPTO_SIGNER_REVOKED ) {
+		$sigStatus = gettext ("Verified w/ Signer's Error");
+		$sigMessage = gettext ("Signer's certificate is revoked");
+	} else {
+		$sigStatus = gettext ("Unknown");
+		$sigMessage = gettext ("Signature Verfication Error") . 
+				"[" . gettext ("Error Code") . " $sigCode]";
+	}
+
+	$sigStatus = "<font color='red;'>" . $sigStatus . "</font>";
+
+} else {
+	$sigStatus = "<font color='green'>" . gettext ("Valid") . "</font>";
+	$sigMessage = gettext ("Signature correctly verified");
+	$sigInfo = $query->img({src=>getRequired ('ValidSigImage'),
+			border=>"0", align=>"MIDDLE", 
+			style=>"$sigInfoStyle"});
+
+	if ( $sigCode eq CRYPTO_SIGNER_EXPIRED ) {
+		$sigStatus .= " [but signer's cert is expired]";
+	} elsif ( $sigCode eq CRYPTO_SIGNER_SUSPENDED ) {
+		$sigStatus .= " [but signer's cert is suspended]";
+	}
+}
+
+$tmpCert = libGetSignerCertificateDB( SIGNATURE=>$signature );
+if( $tmpCert ) {
+	if( $tmpCert->getStatus() =~ /VALID/ ) {
+		$sigCertStatus = "<font color='green'>" .
+				gettext ("Valid") . "</font>";
+	} elsif ( $tmpCert->getStatus() =~ /EXPIRED/ ) {
+		$sigCertStatus = "<font color='red'>" .
+				gettext ("Expired") . "</font>";
+	} elsif ( $tmpCert->getStatus() =~ /REVOKED/ ) {
+		$sigCertStatus = "<font color='red'>" .
+				gettext("Revoked") . "</font>";
+	} elsif ( $tmpCert->getStatus() =~ /SUSPENDED/ ) {
+		$sigCertStatus = "<font color='red'>" .
+				 gettext("Suspended") . "</font>";
+	}
+
+	$dbStatus = "0";
+	$dbMessage = gettext ("Certificate present in dB");
+
+	$lnk = new CGI({ cmd=>"viewCert",
+		 dataType=>$tmpCert->{DATATYPE},
+		 key=>$tmpCert->getSerial()});
+
+	$serLink = $lnk->a({-href=>"?".$lnk->query_string()},
+			$tmpCert->getParsed()->{HEX_SERIAL} );
+
+ 	$decSerLink = " ( " . $tmpCert->getParsed()->{HEX_SERIAL} . " )";
+
+    	$lnk = new CGI({cmd      => "search",
+                    dataType => "CERTIFICATE",
+                    name     => "EMAIL",
+                    value    => $tmpCert->getParsed()->{EMAILADDRESS}} );
+    	$myEmail = $lnk->a({-href=>"?".$lnk->query_string()}, 
+				$tmpCert->getParsed()->{EMAILADDRESS});
+}
+
+if ( $tmpCert and $tmpCert->getParsed ) {
+	$pCert = $tmpCert->getParsed();
+} else {
+	$pCert = {};
+}
+
+my $info_list = undef;
+my $idx = 0;
+
+# $info_list->{HEAD}->[0] = gettext ("Variable");
+# $info_list->{HEAD}->[1] = gettext ("Value");
+
+$info_list->{CLASS} = "signView";
+
+$info_list->{BODY}->[$idx++]->[0] = gettext ("Signer's Info") . $sigInfo;
+$info_list->{BODY}->[$idx]->[0] = "<br/>";
+$info_list->{BODY}->[$idx++]->[1] = "<br/>";
+
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Signer Certificate's Serial");
+$info_list->{BODY}->[$idx++]->[1] = $serLink;
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Signer Common Name");
+$info_list->{BODY}->[$idx++]->[1] = ($myCN or gettext ("n/a") );
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Signer E-Mail");
+$info_list->{BODY}->[$idx++]->[1] = ($myEmail or gettext ("n/a") );
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Certificate Valid From");
+$info_list->{BODY}->[$idx++]->[1] = ($pCert->{NOTBEFORE} or gettext ("n/a"));
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Certificate Valid To");
+$info_list->{BODY}->[$idx++]->[1] = ($pCert->{NOTAFTER} or gettext ("n/a") );
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Certificate Status");
+$info_list->{BODY}->[$idx++]->[1] = ($sigCertStatus or gettext ("n/a") );
+
+$info_list->{BODY}->[$idx]->[0] = "<br/>";
+$info_list->{BODY}->[$idx++]->[1] = "<br/>";
+$info_list->{BODY}->[$idx++]->[0] = gettext ("Signature Info");
+$info_list->{BODY}->[$idx]->[0] = "<br/>";
+$info_list->{BODY}->[$idx++]->[1] = "<br/>";
+
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Signature Status");
+$info_list->{BODY}->[$idx++]->[1] = $sigStatus;
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Status Message");
+$info_list->{BODY}->[$idx++]->[1] = $sigMessage;
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("DB Status");
+$info_list->{BODY}->[$idx++]->[1] = $dbMessage."(".$dbStatus.")";
+$info_list->{BODY}->[$idx]->[0] = "<b>" . gettext ("Signature");
+$info_list->{BODY}->[$idx++]->[1] = "<pre>".$parsed->{SIGNATURE}."</pre>";
+
+return libSendReply (
+                     "NAME"        => gettext ("Signature Infos"),
+                     "EXPLANATION" => gettext ("Signer Informations"),
+                     "TIMESTAMP"   => 1,
+                     "INFO_LIST"   => $info_list,
+                     # "SIGINFO"     => $sigInfo
+                    );
+}
+
+1;
+

@@ -1,0 +1,125 @@
+#! @PERL@
+
+$VER = '0.11a';
+
+## Buid CertificateDB - Version $VER
+## (c) 1999 by Massimiliano Pala 
+## OpenCA Core Team
+##
+## (OpenCA Project)
+##
+## Description:
+## ============
+##
+## This program creates a DB of the certificates where the
+## ca program will look for certificates. You need to run
+## this script BEFORE starting the CA only when you issue
+## certificate through the scritps in the bin/ directory and
+## not using the Web interface.
+##
+## The DB structure is very simple, every entry looks like
+## the following :
+##
+##	$serial => $certificate
+##
+## Please take note that this program, if the DB is not present
+## will create it: you must be sure you run it as the user the
+## httpd server will run (as the ca program needs to access to
+## the DB to properly work). If permissions are not set, please
+## change them or rebuild the DB (delete it and use this prog.)
+##
+## For Any clarifications, please refer to:
+##
+##	o Documentation;
+##	o openca-devel@openca.org;
+##
+
+
+print "\n\nBuild Certificate DB - Version $VER\n";
+print "(c) 1999 by OpenCA Core Team\n";
+print "\n";
+print "WARINIG:\n";
+print "========\n";
+print "\n";
+print "This script creates/accesses files that need to be accessed\n";
+print "by the ca program (run by the web server).\n";
+print "Please be sure the script is run by the user the web server\n";
+print "will run as, or change permissions to files in second time.\n\n";
+
+print "Enter The OpenCA dir ( @ca_prefix@ ) ? ";
+$OPENCA_DIR = <STDIN>;
+chop($OPENCA_DIR);
+
+if( "$OPENCA_DIR" eq "" ) {
+	$OPENCA_DIR = '@ca_prefix@';
+}
+
+print "Enter The Certificate Dir ( $OPENCA_DIR/outbount/certs ) ? ";
+$CERTS_DIR = <STDIN>;
+chop($CERTS_DIR);
+
+if( "$CERTS_DIR" eq "" ) {
+	$CERTS_DIR = "$OPENCA_DIR/outbound/certs";
+}
+
+$OPENSSL="@OPENSSL@";
+
+print "Enter The openssl path ( $OPENSSL ) ? ";
+$TMP = <STDIN>;
+chop($TMP);
+
+if( "$SSL_DIR" ne "" ) {
+	$OPENSSL = "$TMP";
+}
+
+$DBM_FILE = "@var_prefix@/db/valid_certs";
+$STATUS_FILE = "$OPENCA_DIR/stuff/revoked_certs";
+
+opendir ( DIR , "$CERTS_DIR" );
+	@certs = grep(/pem/, readdir( DIR ) );
+closedir( DIR );
+
+
+foreach $file ( @certs ) {
+	print "Adding certificate ";
+
+	$info = `$OPENSSL x509 -text -noout <$CERTS_DIR/$file`;
+
+	next if ( $info =~ /error/i );
+
+	( $serial ) =
+		( $info =~ /Serial Number:[^x]*.([^\)]+)/i );
+
+	( $notBefore ) =
+	 	( $info =~ /Not Before: ([^\n]+)/i );
+
+	( $notAfter ) =
+		( $info =~ /Not after : ([^\n]+)/i );
+
+	if ( length( $serial ) < 2 ) {
+	 	$serial = "0" . uc($serial);
+	}
+
+	print ": ( $serial )\n";
+	print "      Not Before: $notBefore\n";
+	print "      Not After : $notAfter\n";
+	
+	$fileName = "$CERTS_DIR/$file";
+	$cert = "";
+	open( FD, "$fileName" ) or die "Can't access $fileName\n\n";
+		while( $tmp = <FD> ) {
+			next if ( ($cert eq "") and ($tmp !~ /BEGIN CERTIFICATE/ ));
+			$cert .= $tmp;
+		}
+	close( FD );
+
+	## print "$cert\n";
+
+	dbmopen( %CERT_DB, "$DBM_FILE", 0660 ) || die "Can't access DB!";
+		$CERT_DB{$serial} = "$cert";
+	dbmclose( %CERT_DB );
+
+	print "Ok.\n";
+}
+
+exit;

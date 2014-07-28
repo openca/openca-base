@@ -1,0 +1,346 @@
+# this file was manually extracted from OpenCA's source code
+# if you find a string which is not translated then add it to this file
+# it must be manually added to openca.pot
+
+msgid "Active CRRs"
+msgstr ""
+
+msgid "Active CSRs"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Approved Certificate Requests"
+msgstr ""
+
+msgid "Approved Revocation Requests"
+msgstr ""
+
+msgid "Batch Processors"
+msgstr ""
+
+msgid "CA Certificates"
+msgstr ""
+
+msgid "CA Infos"
+msgstr ""
+
+msgid "Certificate Requests"
+msgstr ""
+
+msgid "Certificate Revocation Lists"
+msgstr ""
+
+msgid "Certificate Revocation Requests"
+msgstr ""
+
+msgid "Certification Authority"
+msgstr ""
+
+msgid "Cleanup sessions"
+msgstr ""
+
+msgid "Delete Temp Files (after importing certs)"
+msgstr ""
+
+msgid "E-Mail new users"
+msgstr ""
+
+msgid "Databasehandling"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Get CA certificate"
+msgstr ""
+
+msgid "Get Requested Certificate"
+msgstr ""
+
+msgid "HSM Management"
+msgstr ""
+
+msgid "Information"
+msgstr ""
+
+msgid "Initialization"
+msgstr ""
+
+msgid "Issue new CRL"
+msgstr ""
+
+msgid "LDAP Admin"
+msgstr ""
+
+msgid "LDAP Update"
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Node Management"
+msgstr ""
+
+msgid "Pending (be processed already)"
+msgstr ""
+
+msgid "Policy"
+msgstr ""
+
+msgid "Public"
+msgstr ""
+
+msgid "Renewed"
+msgstr ""
+
+msgid "Request a Certificate"
+msgstr ""
+
+msgid "Revocation Requests"
+msgstr ""
+
+msgid "Search Certificate"
+msgstr ""
+
+msgid "Search CSR"
+msgstr ""
+
+msgid "Search Logs"
+msgstr ""
+
+msgid "Send a CRIN-mail"
+msgstr ""
+
+msgid "Server Init"
+msgstr ""
+
+msgid "Server Management"
+msgstr ""
+
+msgid "Stop Daemons of Crypto Tokens"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Usual Operations"
+msgstr ""
+
+msgid "Utilities"
+msgstr ""
+
+msgid "Waiting for additional signature"
+msgstr ""
+
+msgid "Warn Expiring Certificates"
+msgstr ""
+
+msgid "Name (first and Last name)"
+msgstr ""
+
+msgid "Department"
+msgstr ""
+
+msgid "Telephone"
+msgstr ""
+
+msgid "Trustcenter itself"
+msgstr ""
+
+msgid "Help Desk 1"
+msgstr ""
+
+msgid "Help Desk 2"
+msgstr ""
+
+msgid "Basic User Request"
+msgstr ""
+
+msgid "Certificate Request Group"
+msgstr ""
+
+msgid "Internet"
+msgstr ""
+
+msgid "Partners"
+msgstr ""
+
+msgid "Employees"
+msgstr ""
+
+msgid "Trustcenter"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Signed (waiting for additional signature)"
+msgstr ""
+
+msgid "Archived"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "__STRFTIME_FORMAT_STRING__"
+msgstr ""
+
+# new Strings from DAASI modifications in ldapAutoCreateCSR
+msgid "The PIN generation failed."
+msgstr ""
+
+msgid ""
+"other modes of DN_TYPE_LDAP_PINGEN than AUTO not yet implemented."
+msgstr ""
+
+msgid "The password generation failed."
+msgstr ""
+
+msgid ""
+"other modes of DN_TYPE_LDAP_PASSWDGEN than AUTO or PIN not yet implemented."
+msgstr ""
+
+msgid "The key generation mode must be specified."
+msgstr ""
+
+msgid "can't contact authentication LDAP server."
+msgstr ""
+
+msgid "LDAP Login: Server does not support TLS."
+msgstr ""
+
+msgid "LDAP Login: Start TLS did not succeed."
+msgstr ""
+
+msgid "Login as __LOGIN__ to the LDAP server failed. __ERRVAL__"
+msgstr ""
+
+msgid "OpenCA LDAP Authentication failed."
+msgstr ""
+
+msgid "The first and the second PIN does not match."
+msgstr ""
+
+msgid "The passphrases for the new private key does not match."
+msgstr ""
+
+msgid "Cannot create keypair. __ERRVAL__"
+msgstr ""
+
+msgid "This request type is not supported by this PKI."
+msgstr ""
+
+msgid "Please confirm your request."
+msgstr ""
+
+msgid "confirm"
+msgstr ""
+
+msgid ""
+"Do you want to create a certificate request with these data?"
+msgstr ""
+
+msgid "back"
+msgstr ""
+
+msgid "Name:"
+msgstr ""
+
+msgid "Emailadress:"
+msgstr ""
+
+msgid "Please choose a method for the keygeneration."
+msgstr ""
+
+msgid "Mozilla, Netscape or Opera"
+msgstr ""
+
+msgid "Microsoft Internet Explorer"
+msgstr ""
+
+msgid "Serverside key generation"
+msgstr ""
+
+msgid ""
+"Please enter your user, password and PIN. If you use serverside key generation then you must enter a passphrase for the new key too."
+msgstr ""
+
+msgid "Authentication PIN"
+msgstr ""
+
+msgid "Authentication PIN again"
+msgstr ""
+
+msgid "Mozilla/Netscape/Opera"
+msgstr ""
+
+msgid "Serverside Key and Requestgeneration"
+msgstr ""
+
+msgid "Passphrase for new private key"
+msgstr ""
+
+msgid "Passphrase for new private key again"
+msgstr ""
+
+# new Strings from DAASI modifications in myCertView
+
+msgid "You are not allowed to view this certificate!"
+msgstr ""
+
+msgid ""
+"To view the single certificates, please click on the serial number"
+msgstr ""
+# new Strings from DAASI modifications in AC.pm
+
+msgid "LDAP Login config error: you need to specify cacertpath for TLS."
+msgstr ""
+
+msgid "LDAP Login: connect to server failed." 
+msgstr ""
+
+msgid "LDAP Login: user not found." 
+msgstr ""
+
+msgid "LDAP Login: more than one user found."
+msgstr ""
+
+msgid "LDAP Login: password attribute is missing in the entry."
+msgstr ""
+
+msgid "LDAP Login config error: unknown passphrasehashing algorithm."
+msgstr ""
+
+msgid "LDAP Login failed."
+msgstr ""
+
+msgid "LDAP bind failed: __ERRVAL__"
+msgstr ""
+
+msgid "LDAP Login config error: unknown authentication method."
+msgstr ""
+
+msgid "LDAP Login: no role found for user."
+msgstr ""
+
+msgid "LDAP Login: no RA found for user."
+msgstr ""
+
+msgid ""
+"Request a certificate automatically with LDAP assistance"
+msgstr ""
+
+# new Strings from DAASI modifications in getStaticPage
+
+msgid "[Use this link to load all data from an LDAP server]"
+msgstr ""
+

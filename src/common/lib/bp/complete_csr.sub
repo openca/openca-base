@@ -1,0 +1,380 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: complete_csr.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: complete a new csr
+## Description: 
+
+use strict;
+
+sub workflow_complete_csr
+{
+    ## general global stuff
+    our $state_machine;
+    our ($db, $tools, $xml_cache, $cryptoShell);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "complete_csr";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ###########################################
+    ## load and prepare all necessary params ##
+    ###########################################
+
+    ## parameters are:
+    ##   * PIN (hashed)
+    ##   * ROLE
+    ##   * SUBJECT
+    ##   * SUBJECT_ALT_NAME
+    ##   * LOA
+
+    my ($hashed_pin, $role, $subject_alt_name, $subject) = ("", "", "", "");
+    my ($loa_mode, $loa, $notafter) = (undef, undef, undef);
+
+    ## hashed PIN
+
+    if (not -f $home."/public/hashedPIN")
+    {
+        my $msg = gettext ("There is no usable PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+    $hashed_pin = $tools->getFile ($home."/public/hashedPIN");
+    if (not $hashed_pin) {
+        my $msg = gettext ("The hashed PIN file cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -125, $msg ];
+    }
+
+    ## role
+
+    if (not -f $home."/data/ROLE")
+    {
+        my $msg = gettext ("There is no role defined.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+    $role = $tools->getFile ($home."/data/ROLE");
+    if (not $role) {
+        my $msg = gettext ("The ROLE file cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -135, $msg ];
+    }
+
+    ## subject
+
+    if (not -f $home."/data/SUBJECT")
+    {
+        my $msg = gettext ("There is no subject defined.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+    $subject = $tools->getFile ($home."/data/SUBJECT");
+    if (not $subject) {
+        my $msg = gettext ("The SUBJECT file cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -145, $msg ];
+    }
+
+    ## subject alternative name
+
+    if (not opendir (DIR, $home."/data"))
+    {
+        my $msg = gettext ("Cannot open data directory.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+    my @list = readdir DIR;
+    closedir DIR;
+    if (not scalar @list)
+    {
+        my $msg = gettext ("The directory listing of the data directory cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -153, $msg ];
+    }
+    @list = grep /^SUBJECT_ALT_NAME_/, @list;
+    if (not scalar @list)
+    {
+        my $msg = gettext ("The data directory contains no SUBJECT_ALT_NAME specifications.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -156, $msg ];
+    }
+    my $subject_alt_names = undef;
+    foreach my $file (@list)
+    {
+        my $number = $file;
+        $number =~ s/SUBJECT_ALT_NAME_//;
+        $subject_alt_names->{$number} = $tools->getFile ($home."/data/".$file);
+        if (not $subject_alt_names->{$number}) {
+            my $msg = i18nGettext ("The subject alternative name file __FILE__ cannot be loaded.",
+                                   "__FILE__", $home."/data/".$file);
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -160, $msg ];
+        }
+    }
+    foreach my $part (sort keys %{$subject_alt_names})
+    {
+        my $name  = $subject_alt_names->{$part};
+        my $value = $subject_alt_names->{$part};
+        $name  =~ s/\n.*$//;      # remove value
+        $value =~ s/^[^\n]*\n//;  # remove name
+        $value =~ s/^[\s\n]*//;   # remove leading nonse
+        $value =~ s/[\s\n\r]*$//; # remove trailing nonse
+        if ($name =~ /DNS/i)
+        {
+            $name  = "DNS";
+        } elsif ($name =~ /IP/i) {
+            $name = "IP";
+            ## check for IPv4 and IPv6 addresses
+            ## 3x(number + ".") + (2xnumber + "." or nothing) + number
+            if ($value !~ /^(\d{1,3}\.){3}((\d{1,3}\.){2}|)\d{1,3}$/)
+            {
+               my $msg = i18nGettext ("Wrong IP (__IP__) in subject alternative name file __FILE__.",
+                                      "__FILE__", "SUBJECT_ALT_NAME_".$part,
+                                      "__IP__", $value);
+               $journal->{message} .= $msg;
+               $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+               return [ -166, $msg ];
+            }
+        } elsif ($name =~ /EMAIL/i) {
+            $name = "email";
+            ## the minimum is an __at__ and one dot in the domainname
+            if ($value !~ /^.*\@.+\..+$/)
+            {
+                my $msg = i18nGettext ("Wrong emailaddress (__EMAIL__) in subject alternative name file __FILE__.",
+                                       "__FILE__", "SUBJECT_ALT_NAME_".$part,
+                                       "__EMAIL__", $value);
+                $journal->{message} .= $msg;
+                $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+                return [ -169, $msg ];
+            }
+        } elsif ($name =~ /(URI|URL)/i) {
+            $name = "URI";
+        } elsif ($name =~ /OTHERNAME/i) {
+            $name = "othername";
+        } else {
+            my $msg = i18nGettext ("Unsupported component (__COMPONENT__) in the subject alternative name file __FILE__.",
+                                   "__FILE__", "SUBJECT_ALT_NAME_".$part,
+                                   "__COMPONENT__", $name);
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -174, $msg ];
+        }
+        $subject_alt_name .= "," if ($subject_alt_name);
+        $subject_alt_name .= "$name:$value";
+    }
+    if (not $subject_alt_name) {
+        my $msg = gettext ("The subject alternative name cannot be determined.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -175, $msg ];
+    }
+
+    ## LOA
+
+    if (-f $home."/data/LOA_MODE")
+    {
+        $loa_mode = $tools->getFile ($home."/data/LOA_MODE");
+        if (not defined $loa_mode)
+        {
+            my $msg = gettext ("Cannot load the Level of Assurance mode.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -310, $msg ];
+        }
+    }
+    if ((not defined $loa_mode or $loa_mode !~ /IGNORE/i) and -f $home."/data/LOA")
+    {
+        $loa = $tools->getFile ($home."/data/LOA");
+        if (not defined $loa)
+        {
+            my $msg = gettext ("Cannot load the Level of Assurance.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -315, $msg ];
+        }
+    }
+
+    if (-f $home."/data/EXPIRES")
+    {
+        $notafter = $tools->getFile ($home."/data/EXPIRES");
+        if (not defined $notafter)
+        {
+            my $msg = gettext ("Cannot load expiration date.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -320, $msg ];
+        }
+        if ($notafter !~ /^[0-9]{12}$/)
+        {
+            my $msg = i18nGettext("The value of notafter must have the format YYMMDDhhmmss.");
+            $journal->{message} .= $msg;
+            $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+            return [ -325, $msg ];
+        }
+ 
+    }
+
+
+
+    ###############################################
+    ## load the request object from the database ##
+    ###############################################
+
+    ## 1. load all known request serials
+    ## 2. try to load the last request
+
+    ## load all known request serials
+
+    my $serial_file = $tools->getFile ($home."/public/csrList");
+    if (not $serial_file)
+    {
+        my $msg = gettext ("The file with the serials of the CSRs cannot be loaded.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -180, $msg ];
+    }
+    my @serials = split /\n+/, $serial_file;
+    if (not scalar @serials)
+    {
+        my $msg = gettext ("There are no known serials of any request for this workflow.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -185, $msg ];
+    }
+
+    ## try to load the last request
+
+    my $csr = undef;
+    @serials = reverse sort @serials;
+    my $status = "NEW";
+    $csr = $db->getItem (DATATYPE => "NEW_REQUEST", KEY => $serials[0]);
+    if (not $csr)
+    {
+        $status = "PENDING";
+        $csr = $db->getItem (DATATYPE => "PENDING_REQUEST", KEY => $serials[0]);
+    }
+    if (not $csr)
+    {
+        my $msg = gettext ("The request for the newest serial cannot be loaded from the database.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+
+    #################################
+    ## complete the request object ##
+    #################################
+
+    ## build request
+    my ($header, $text, $text_csr) = ("", "", "");
+
+    my $beginHeader = "-----BEGIN HEADER-----";
+    my $endHeader   = "-----END HEADER-----";
+    my $parsed_csr  = $csr->getParsed();
+
+    $header .= "$beginHeader\n";
+    $header .= "TYPE = $parsed_csr->{TYPE}\n";
+    $header .= "RA = BATCH SYSTEM\n";
+    $header .= "SERIAL = ".$csr->getSerial()."\n";
+    $header .= "RENEW = ".$parsed_csr->{HEADER}->{RENEW}."\n" if ($parsed_csr->{HEADER}->{RENEW});
+    $header .= "NOTBEFORE = $parsed_csr->{HEADER}->{NOTBEFORE}\n";
+    $header .= "CERT_NOTAFTER = ".${notafter}."\n" if (defined $notafter);
+    $header .= "PIN = ".$hashed_pin."\n";
+    $header .= "SUBJECT = $subject\n";
+    $header .= "ROLE = $role\n";
+    $header .= "SCEP_TID = ".$parsed_csr->{HEADER}->{SCEP_TID}."\n";
+    $header .= "SUBJECT_ALT_NAME = ".$subject_alt_name."\n";
+    $header .= "LOA = $loa\n" if (defined $loa);
+    $header .= "LOA_MODE = ${loa_mode}\n" if (defined $loa_mode);
+    $header .= "$endHeader\n";
+
+    $text = $parsed_csr->{BODY};
+
+    $text_csr = $header.$text;
+
+    $csr = new OpenCA::REQ (SHELL  => $cryptoShell,
+                            GETTEXT=> \&i18nGettext,
+                            DATA   => $text_csr);
+
+    if (not $csr)
+    {
+        my $msg = i18nGettext ("Cannot create new request object for changed data (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $OpenCA::REQ::errno,
+                               "__ERRVAL__", $OpenCA::REQ::errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -200, $msg ];
+    }
+
+    ########################################
+    ## update the request in the database ##
+    ########################################
+
+    if (not $db->updateStatus (DATATYPE => $status."_REQUEST",
+                               OBJECT   => $csr,
+                               NEWTYPE  => "PENDING_REQUEST"))
+    {
+        my $msg = i18nGettext ("Cannot store the changed request in the database (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $db->errno,
+                               "__ERRVAL__", $db->errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -210, $msg ];
+    }
+
+    ##################
+    ## change state ##
+    ##################
+
+    $journal->{message} .= gettext ("Request completed.");
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "complete_csr" ],
+                                "UNSET"   => [ "new_csr", "incomplete_csr" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -210, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Request completed.") ];
+}
+
+1;

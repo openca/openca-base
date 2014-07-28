@@ -1,0 +1,153 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpImportUpdateUser
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: import an update for users of the PKI
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpImportUpdateUser {
+
+our $tools;
+
+print startLogPage (gettext ("Import Update User Batch Processor"));
+
+print addLogSection (gettext ("Importing data ..."));
+my $tmpdir = createDirectory ();
+if (not eximIOImport (DIR => $tmpdir)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot extract archive from import device!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+print addLogLine (gettext("completed."));
+print closeLogSection ();
+
+print addLogSection (gettext ("Running batch processor ..."));
+
+## datadirectory for the batchprocessor
+my $batch_dir  = getRequired ("BP_DIR");
+my $batch_file = getRequired ("BP_File_ImportUpdateUser");
+
+## open file
+if (not open (FD, $tmpdir."/".$batch_file)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot open file with data for batch processor!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+
+## file format is as follows:
+##
+## ID 123456 <required>
+## EVERY_OTHER_NAME value <optional>
+##
+## the subject alternative name and the DN must be in an OpenSSL compatible format
+
+## loop
+my $line = undef;
+while (not eof FD) {
+
+	my %hash = ();
+
+	## ignore blank lines
+	do {
+		$line = <FD>;
+		next if (not $line and eof FD);
+	} while ($line =~ /^\s*\r?\n*$/);
+
+	## write lines until next blank line into an hash
+	do {
+		my $parameter = $line;
+		$parameter =~ s/^\s*//;
+		$parameter =~ s/\s.*$//;
+		$parameter =~ s/\n//;
+		my $value = $line;
+		$value =~ s/^\s*//;
+		$value =~ s/^[^\s]*\s//;
+		$value =~ s/\n//;
+		$hash{$parameter} = $value;
+		$line = <FD>;
+	} while ($line !~ /^\s*\r?\n*$/);
+
+	## check parameter
+	if (not $hash{"ID"}) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no ID!").
+				"</FONT>");
+		next;
+	}
+
+	## build the directory path for the ID
+	my $id_dir = $batch_dir;
+	my $h_id   = $hash{"ID"};
+	while ($h_id !~ /^$/) {
+		$id_dir .= "/".substr $h_id, 0, 1;
+		$h_id =~ s/^.//;
+	}
+
+	## check that the directory exist
+	if (-d $id_dir) {
+		## checking that this directory is only part of a tree
+		if (not -f $id_dir."/ID") {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+				    i18nGettext (
+                      "Directory __DIR__ exists but it is not the directory of a user. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                      "__DIR__", $id_dir,
+                      "__ID__", $hash{"ID"}).
+				    "</FONT>");
+			next;
+		}
+	} else {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+				  "Directory __DIR__ does not exist. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                  "__DIR__", $id_dir,
+                  "__ID__", $hash{"ID"}).
+				"</FONT>");
+		next;
+	}
+
+	## write every key in the appropriate file
+	foreach my $h (keys %hash) {
+		if (not $tools->saveFile (FILENAME => $id_dir."/data/".$h, DATA => $hash{$h})) {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+                    i18nGettext (
+					  "Cannot write file __FILE__. Continuing ...",
+                      "__FILE__", "$id_dir/data/$h").
+					"</FONT>");
+		}
+	}
+
+	## write out message
+	print addPreLogLine ("<FONT COLOR=#00FF00>".
+			i18nGettext ("ID __ID__ successfully updated.", "__ID__", $hash{"ID"}).
+			"</FONT>");
+}
+
+close FD;
+
+print addPreLogLine ("");
+print addLogLine (gettext ("Batch processor finished"));
+print closeLogSection ();
+
+removeDirectory ($tmpdir);
+
+print closePage();
+
+}
+
+sub getParamsBpImportUpdateUser
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

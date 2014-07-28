@@ -1,0 +1,71 @@
+## OpenCA - Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: revoke_req
+##       Brief: begin to revoke a certificate
+## Description: get the certificate which should be revoked and prompt
+##              the user to a second ok
+##  Parameters: none
+
+use strict;
+
+sub cmdRevoke_req {
+
+	## try to determine a serial
+	my $serial = $query->param ('key');
+
+	my $pos = 0;
+
+	if (not defined $serial or (not $serial and ($serial !~ /0/))) {
+		$serial = $ENV{'SSL_CLIENT_M_SERIAL'};
+	}
+
+	my ($hidden_list, $info_list, $cmd_panel) = (undef, undef, undef);
+
+	my $html_reason = $query->newInput (
+                                -regx=>'LETTERS',
+                                -intype=>'popup_menu',
+                                -name=>'crl_reason',
+                                -values=>[ 'unspecified', 'keyCompromise', 'CACompromise', 'affiliationChanged', 'superseded', 'cessationOfOperation', 'certificateHold', 'removeFromCRL']);
+
+        my @auth = grep /AUTH/, getRequiredList ("CmdRefs_revoke_req");
+
+	if ( $auth[0] !~ /(NO_AUTH|REQUIRE_AUTH)/i ) {
+            generalError (gettext ("Unknown authentication mode for " .
+							"revocation."));
+	}
+        if ($auth[0] =~ /NO_AUTH/i) {
+            $hidden_list->{"cmd"} = "addCRR";
+        } 
+
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Certificate Serial Number");
+        $info_list->{BODY}->[$pos++]->[1] = '<Input type="text" name="serial" value="'.$serial.'">';
+
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Revocation Reason");
+        $info_list->{BODY}->[$pos++]->[1] = $html_reason;
+
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Reason Description");
+        $info_list->{BODY}->[$pos++]->[1] = '<textarea cols="35" rows="5" name="description" wrap="virtual">'.
+                                       gettext ("Private key compromised.").
+                                       '</textarea>';
+
+	if ($auth[0] =~ /REQUIRE_AUTH/i) {
+            $hidden_list->{"cmd"} = "confirm_revreq";
+            $info_list->{BODY}->[$pos]->[0] = gettext ("CRIN code: [ revocation pin ]");
+            $info_list->{BODY}->[$pos++]->[1] = '<Input type="password" name="crin">';
+            $info_list->{BODY}->[$pos]->[0] = gettext ("Retype CRIN code: [ retype revocation pin ]");
+            $info_list->{BODY}->[$pos++]->[1] = '<Input type="password" name="crin2">';
+        }
+
+        $cmd_panel->[0] = '<input type="submit" name="Submit" value="'.gettext ("Continue").'">';
+
+        return libSendReply (
+                             "NAME"        => gettext ("Certificate Revocation Request"),
+                             "EXPLANATION" => gettext ("If you don't know the certificate's serial number please use the lists."),
+                             "INFO_LIST"   => $info_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+}
+
+1;

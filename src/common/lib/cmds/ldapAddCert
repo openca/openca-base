@@ -1,0 +1,55 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapAddCert
+##       Brief: Add certificate to LDAP server
+## Description: Add a single certificate to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapAddCert { 
+
+## certificates
+print startLogPage (gettext ("Exporting certificate to LDAP ..."));
+
+my $key = $query->param ('key');
+if (not $key and ($key != 0)) {
+	print addPreLogLine ("<FONT COLOR=#ff0000>".
+			gettext ("No certificate was specified! FAILED").
+			"</FONT>");
+	closeLogSection ();
+	closePage ();
+	return undef;
+}
+
+my $dataType = $query->param ('dataType');
+$dataType = "CERTIFICATE" if (not $dataType);
+
+my $item = $db->getItem ( DATATYPE => $dataType, KEY => $key );
+
+my $result;
+if ($dataType =~ /CA_CERTIFICATE/i) {
+	$result = eximObjectToLDAP ( AUTHORITY_CERTIFICATE => $item );
+} else {
+	$result = eximObjectToLDAP ( CERTIFICATE => $item );
+}
+
+if ($result and $result->{STATUS}) {
+	print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ OK", "__CERT_SERIAL__", $item->getSerial()));
+} else {
+	print addPreLogLine ("<FONT COLOR=#ff0000>".
+                    i18nGettext ("Certificate __CERT_SERIAL__ FAILED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $item->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+					"</FONT>");
+}
+closeLogSection ();
+
+closePage ();
+
+}
+
+1;

@@ -1,0 +1,306 @@
+#!@PERL@
+
+## (c) 1998-2003 by OpenCA Group
+##   File Name: openca-backup
+##     Version: $Revision: 1.3 $
+
+use strict;
+no warnings;
+use vars qw (@ISA);;
+use subs qw (output);
+
+use utf8;
+use Encode;
+use encoding 'utf8';
+
+@perl_use_lib@
+
+use OpenCA::Configuration;
+use OpenCA::TRIStateCGI;
+use OpenCA::Session;
+use OpenCA::AC;
+use OpenCA::Crypto;
+use OpenCA::Log;
+use OpenCA::X509;
+use OpenCA::CRL;
+use OpenCA::Tools;
+use OpenCA::REQ;
+use OpenCA::PKCS7;
+use OpenCA::XML::Cache;
+use OpenCA::UI::HTML;
+use Cwd;
+use Net::Server::Fork;
+@ISA = qw(Net::Server::Fork);
+# use POSIX;
+# # use Locale::Messages (':locale_h');
+# # use Locale::Messages (':libintl_h');
+# # use Locale::Messages qw (nl_putenv);
+# # use Locale::Messages qw (nl_putenv);
+# use Locale::Messages qw (:locale_h :libintl_h nl_putenv);
+# use POSIX qw (setlocale);
+
+our (%AUTOCONF, $common_libs, $config);
+our (%supportedLanguages);
+our ($xml_cache, $ui_html, $self);
+
+%AUTOCONF = ();
+$AUTOCONF {"lib_prefix"}     = "@lib_prefix@";
+$AUTOCONF {"etc_prefix"}     = "@etc_prefix@";
+$AUTOCONF {"var_prefix"}     = "@var_prefix@";
+$AUTOCONF {"config_prefix"}  = "node";
+$AUTOCONF {"VERSION"}        = "@VERSION@";
+$AUTOCONF {"PROGRAM"}        = "OpenCA Server";
+$AUTOCONF {"httpd_user"}     = "@httpd_user@";
+$AUTOCONF {"httpd_group"}    = "@httpd_group@";
+
+$AUTOCONF {"ca_htdocs_fs_prefix"}    = "@ca_htdocs_fs_prefix@";
+$AUTOCONF {"ra_htdocs_fs_prefix"}    = "@ra_htdocs_fs_prefix@";
+$AUTOCONF {"pub_htdocs_fs_prefix"}   = "@pub_htdocs_fs_prefix@";
+$AUTOCONF {"node_htdocs_fs_prefix"}  = "@node_htdocs_fs_prefix@";
+$AUTOCONF {"batch_htdocs_fs_prefix"} = "@batch_htdocs_fs_prefix@";
+$AUTOCONF {"ldap_htdocs_fs_prefix"}  = "@ldap_htdocs_fs_prefix@";
+
+# $AUTOCONF {"_htdocs_fs_prefix"}    = "@_htdocs_fs_prefix@";
+
+$ui_html     = undef;
+$self        = "";
+
+$common_libs  = $AUTOCONF {"lib_prefix"} . "/functions";
+my $CONFIG = $AUTOCONF {"etc_prefix"}.'/servers/'.$AUTOCONF {"config_prefix"}.'.conf';
+
+if (not -e "$CONFIG")
+{
+        $CONFIG = $AUTOCONF {"etc_prefix"}.'/common.conf';
+        if (not -e "$CONFIG")
+        {
+                print STDERR "Menu Translator: Error, can not find node.conf and common.conf!\n";
+        }
+}
+
+
+$config = new OpenCA::Configuration;
+if( not defined (my $ret = $config->loadCfg( "$CONFIG" )) ) {
+        print STDERR "Error while loading configuration ($CONFIG)!";
+        print "Content-type: text/html\n\n";
+        print "Error while loading configuration ($CONFIG)!";
+        exit 100;
+}
+
+require "$common_libs/misc-utils.lib";
+require "$common_libs/log-utils.lib";
+require "$common_libs/crypto-utils.lib";
+require "$common_libs/rbac-utils.lib";
+require "$common_libs/mail-utils.lib";
+require "$common_libs/ldap-utils.lib";
+require "$common_libs/export-import.lib";
+require "$common_libs/request-utils.lib";
+require "$common_libs/datasource-utils.lib";
+
+initEncodings();
+setLanguage (getRequired ('DEFAULT_LANGUAGE'), getRequired('DEFAULT_CHARSET'));
+
+## i18n
+# use Locale::gettext;
+# use Locale::Messages qw (nl_putenv);
+use Locale::Messages qw (:locale_h :libintl_h nl_putenv);
+use POSIX qw (setlocale);
+
+# my $loc = "@language@";
+# nl_putenv("LC_MESSAGES=$loc") if (setlocale(LC_MESSAGES, $loc));
+# bindtextdomain("openca", "@lib_prefix@/locale");
+# textdomain("openca");
+
+## Generate a new reference to Configuration ( instance )
+our $config = new OpenCA::Configuration;
+our $dbconfig = new OpenCA::Configuration;
+our $dbiconfig = new OpenCA::Configuration;
+
+%supportedLanguages = (
+      C  => { LANG => 'C', CHARSET => 'utf-8'},
+      de => { LANG => 'de_DE', CHARSET => 'utf-8'},
+      el => { LANG => 'el_GR', CHARSET => 'utf-8'},
+      en => { LANG => 'en_GB', CHARSET => 'utf-8'},
+      es => { LANG => 'es_ES', CHARSET => 'utf-8'},
+      fr => { LANG => 'fr_FR', CHARSET => 'utf-8'},
+      it => { LANG => 'it_IT', CHARSET => 'utf-8'},
+      pl => { LANG => 'pl_PL', CHARSET => 'utf-8'},
+      sl => { LANG => 'sl_SI', CHARSET => 'utf-8'},
+      ja => { LANG => 'ja_JP', CHARSET => 'utf-8'},
+      ru => { LANG => 'ru_RU', CHARSET => 'utf-8'}
+    );
+
+## Load basic configuration
+## ========================
+
+## my $CONFIG = '@etc_prefix@/servers/@node_prefix@.conf';
+our $DBCONFIG = '@etc_prefix@/database/DB.conf';
+our $DBICONFIG = '@etc_prefix@/database/DBI.conf';
+
+if( not defined (my $ret = $config->loadCfg( "$CONFIG" )) ) {
+	print "Error while loading configuration ($CONFIG)!";
+	exit 100;
+}
+my $common_libs  = $config->getParam('CgiLibPath')->{VALUES}->[0];
+if( not defined $common_libs or not $common_libs ) {
+	print "Error while loading path to the libraries ($CONFIG)!";
+	exit 100;
+}
+
+require "$common_libs/misc-utils.lib";
+require "$common_libs/log-utils.lib";
+require "$common_libs/crypto-utils.lib";
+require "$common_libs/mail-utils.lib";
+require "$common_libs/rbac-utils.lib";
+require "$common_libs/export-import.lib";
+
+our $tools = new OpenCA::Tools (GETTEXT => \&i18nGettext);
+
+our $errno	= 0;
+our $errval	= "";
+
+## prepare for HTML filtering
+## ==========================
+
+use FileHandle;
+our $STDIN = \*STDIN;
+my $oldfh = select $STDIN;
+
+## start the backup logic
+## ======================
+
+my $base_dir = $AUTOCONF {"etc_prefix"} . "/menus";
+my $server_dir = $AUTOCONF {"etc_prefix"} . "/servers";
+my @files = ();
+
+my @ifaces = ( "ca", "ra", "pub", "node", "ldap", "batch" );
+
+output "Translating Menu(s) ... ";
+	
+foreach my $iface ( @ifaces ) {
+	my $fs_outdir = undef;
+	my $file = undef;
+
+	$fs_outdir = $AUTOCONF{"$iface"."_htdocs_fs_prefix"};
+
+	# output "Translating Menu ($iface - $fs_outdir) ... ";
+
+	$file = "$iface-menu.xml.template";
+	if( not -f "$base_dir/$file") {
+		# output "WARNING: Missing file $file!\n";
+		next;
+	};
+
+	if( not -f "$server_dir/$iface.conf.template" ) {
+		output "Skipping: $iface ($server_dir/$iface.conf.template)\n";
+		next;
+	}
+
+	foreach my $lang (sort keys %supportedLanguages) {
+		my $lang_dir = undef;
+		my $lang_charset = undef;
+		my $txt = undef;
+		my $outdir = undef;
+
+		$lang_dir = $supportedLanguages{$lang}{LANG};
+		$lang_charset = $supportedLanguages{$lang}{CHARSET};
+
+		# output " o $lang ($lang_dir - $lang_charset)\n";
+
+		setLanguage( "$lang_dir", "$lang_charset" );
+
+		$txt = "";
+		open ( FD, "<$base_dir/$file" ) or next;
+			while( <FD> ) {
+				$txt .= $_;
+			}
+		close (FD);
+
+		$txt=~s/(name\=\")([^\"]+)(\")/my_gettext($1,$2,$3)/eg;
+		$outdir = "$fs_outdir/menu/$lang_dir";
+
+		if( not -d "$outdir" ) {
+			if( not -d "$fs_outdir/menu" ) {
+				mkdir ( "$fs_outdir/menu" );
+			};
+			mkdir ( "$outdir" );
+		}
+	
+		open ( FD,">$outdir/menu.xml" ) or next;
+			print FD $txt;
+		close ( FD );
+	}
+	output "Done.\n";
+}
+
+# output "\nMenu Translation completed.\n\n";
+
+select $oldfh;
+
+exit 0;
+
+sub output
+{
+    ## this is a hack for non-blocking input
+    select $oldfh;
+    print $_[0];
+    $oldfh = select $STDIN;
+}
+
+sub setLanguage
+{
+    our $LANGUAGE = $_[0];
+    our $CHARSET  = $_[1];
+    our %encodings;
+    $encodings{$CHARSET} = $CHARSET if (not $encodings{$CHARSET});
+
+    if ($LANGUAGE eq "C")
+    {
+        nl_putenv("LC_MESSAGES=C") if (setlocale(LC_MESSAGES, "C"));
+        nl_putenv("LC_TIME=C") if (setlocale(LC_TIME, "C"));
+    } else {
+        my $loc = "${LANGUAGE}.$encodings{$CHARSET}";
+        nl_putenv("LC_MESSAGES=$loc") if (setlocale(LC_MESSAGES, $loc));
+        nl_putenv("LC_TIME=$loc") if (setlocale(LC_TIME, $loc));
+    }
+    textdomain("openca");
+    bindtextdomain("openca", $AUTOCONF{"lib_prefix"}."/locale");
+    bind_textdomain_codeset ("openca", $encodings{$CHARSET});
+    $ui_html->setLanguage ($LANGUAGE, $CHARSET) if ($ui_html);
+}
+
+sub initEncodings
+{
+    our (%encodings);
+
+    %encodings = (
+                  "UTF-8"      => "UTF-8"
+                 );
+
+    my $ret = `locale -m`;
+    my @encs = split /\s*\n\s*/, $ret;
+
+    foreach my $code (keys %encodings)
+    {
+        $code =~ /([[:alpha:]]+)[-_\s]*([[:alnum:]]+)[-_\s]*([[:digit:]]*)/;
+        my $standard = $1;
+        my $number   = $2;
+        my $variant  = $3;
+
+        foreach my $item (@encs)
+        {
+            $encodings{$code} = $item;
+            last if ($item =~ /^$standard[-_\s]*$number[-_\s]*$variant$/i);
+            $encodings{$code} = $code;
+        }
+    }
+
+    return 1;
+}
+
+sub my_gettext($$) {
+	my ( $pre, $txt, $post ) = @_;
+	return "$pre" . gettext("$txt") . "$post";
+}
+
+1;
+

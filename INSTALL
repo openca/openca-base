@@ -1,0 +1,270 @@
+============================================================================
+            Open Certification Authority - Open Source Project
+          (c) 1999 - 2011 by Massimiliano Pala and OpenCA Group
+                            All Rights Reserved
+============================================================================
+
+Document Status:
+================
+
+  Last Updated: 
+  * 2011 Feb 14 by Massimiliano Pala <madwolf@openca.org>
+
+General Info
+============
+
+  This document describes how to quickly install the software provided
+  with this package, if you are not at ease with the project structure
+  please refer to the OpenCA-guide in docs/.
+
+  Also, please follow the main website OpenCA Labs and the OpenCA PKI
+  project:
+
+    http://www.openca.org
+    http://www.openca.org/projects/openca
+
+  For more documentation, patches, and discussions about this package,
+  please visit our WiKi pages:
+
+    http://wiki.openca.org/wiki/
+
+  and join our mailing lists:
+
+    http://www.openca.org/projects/openca/mlists.shtml
+
+
+Prerequisites
+=============
+
+  Prerequisites for building the OpenCA software are:
+
+  o GNU tar (a tar that understands the z option for gzip)
+  o GNU make (at minimum for FreeBSD because there are several problems
+    reported with the OS's own make)
+
+  Prerequisites for running the OpenCA software are:
+
+  o OpenSSL (0.9.7+) and devel pacakges (on both CA and external server);
+  o Perl (5.6.1+ with DBI support) (on both CA and external server);
+  o Berkeley DB and devel packages (libdb-dev or db4-devel)
+  o DBI Perl Support (on both CA and external server);
+  o Apache Web Server (on both CA and external server);
+  o mod_ssl (for Apache) (on external server only);
+  o OpenLDAP (v2 is recommended) (on external server) - optional;
+
+  +--- NOTICE: ------------------------------------------------------------+
+  |                                                                        |
+     Version 1.0.0+ of OpenSSL exports different interfaces than 0.9.x 
+     versions, therefore some PERL packages had to be patched in OpenCA.
+     Please do not try to update packages like IO::SSL as the ufficial
+     distribution *would not work with new OpenSSL versions*.
+  |                                                                        |
+  +------------------------------------------------------------------------+
+
+  OpenCA Tools:
+
+  You also have to install the openca-tools package before installing the base
+  openca one. Please download and install the openca-tools package now if you
+  still have to do it :-D
+
+  Database Support:
+
+  Since version 0.9.x we switched to a DBI-only database support. Therefore,
+  in order to be able to use a database for your system, you should install
+  the required packages (and devel packages as well). For example, on CentOS
+  and/or Fedora/RedHat, you should install the following packages:
+
+  o To enable MySQL support:
+    - mysql
+    - mysql-devel
+    - perl-DBD-MySQL
+
+  o To enable PostgreSQL support:
+    - postgresql
+    - postgresql-libs
+    - postgresql-devel
+    - perl-DBD-Pg
+
+  On other systems, names of required packages might vary, please use the
+  system's package management to figure out dependencies and packages names.
+  For example, on Ubuntu for MySQL support you might try to add:
+
+    libmysqlclient-dev
+
+  via the 'apt-get' tool.
+
+
+Quick Install
+=============
+
+  The easiest way to proceed is to type:
+
+	$ ./configure --help
+	$ make help
+
+  and take a look at the available targets. Continue reading, anyway
+  (expecially if you find any difficulties installing the software).
+
+
+  +--- NOTICE: ------------------------------------------------------------+
+  |                                                                        |
+     Before starting, you need to install at least the OpenSSL package
+     you can find at <http://www.openssl.org>. Typically you will install
+     the OpenSSL package in /usr/local/ssl (by choosing the default dir
+     you'll get most of the software configuration already done).
+  |                                                                        |
+  +------------------------------------------------------------------------+
+
+  An example usage is as follows:
+
+  $ ./configure --prefix=/opt/openca-1.3 \
+       --with-web-host=www.openca.org \
+       --with-httpd-fs-prefix=/var/www/WebSites/Default \
+       --with-htdocs-fs-prefix=/var/www/WebSites/Default/htdocs
+
+  If you want to install a usable CA, you also need a web server on the
+  CA machine to access CA services; another web server (ssl with client
+  authentication on suggested) is needed on the external server machine
+  carrying the RA and public servers to let the RAs access certificates
+  related and directory services.
+
+  You can install all you need for the CA and the external server by using
+  the install-ca and install-ext make targets:
+
+	$ tar xvfz openca-$(VER).tar.gz 
+	$ cd openca-$(VER)
+	$ ./configure --your-options
+	$ make
+
+  for a CA system:
+
+	$ make install-offline
+
+  for an RA/Pub interface:
+
+	$ make install-online
+
+  if you need an help about the available targets, use the following:
+
+	$ make help
+
+  (Note: Please set the options for configure carefully. You can find
+         some examples in configs/.)
+
+
+  NOTE:
+
+  If you want more up-to-date modules, you can search the PERL repository
+  at http://www.CPAN.org or take a look at httpd://www.openca.org.
+
+  +--- NOTICE: ------------------------------------------------------------+
+  |                                                                        |
+    The verify/sign tool is NOT included in the modules directory. It does
+    compile fine on Linux and Solaris ( with gcc ). You can install by hand
+    (simply unpacking the package openca-tools and follow the INSTALL 
+    instruction contained in the main directory).
+  |                                                                        |
+  +------------------------------------------------------------------------+
+
+  Please take care that this version requires OpenSSL 0.9.7+ and should
+  compile on Linux with gcc (glibc2.1+) and Solaris 8+ with gcc, if you
+  can compile it under other platforms, please report patches to
+  openca-devel@openca.org or openca-users@lists.sf.net so as to include
+  support for it.
+
+
+Configuring the Package
+=======================
+
+  All servers have configuration files in OPENCA_PREFIX/etc
+
+  Before being able to use the OpenCA package you have to finish the
+  configuration. You should edit the following file:
+
+	OPENCA_PREFIX/etc/config.xml
+
+  then to propagate the configuration options on all the openca config
+  files, you should use the configure_etc.sh script as follows:
+
+	$ cd OPENCA_PREFIX/etc
+	$ ./configure_etc.sh
+
+  then to start and stop the openca daemon, you should use the openca_rc
+  script:
+
+	$ OPENCA_PREFIX/etc/init.d/openca start
+
+  and to stop OpenCA daemon you should:
+
+	$ OPENCA_PREFIX/etc/init.d/openca stop
+
+
+  +--- NOTICE: ------------------------------------------------------------+
+  |                                                                        |
+    In order to have the daemon integrated into the system initialization   
+    you should look at the documentation from your system. Anyway a simple  
+    step to take could be providing a symlink in the /etc/init.d directory, 
+    for example:                                                            
+                                                                            
+       $ cd /etc/init.d                                                     
+       $ ln -s OPENCA_PREFIX/etc/init.d/openca openca                
+                                                                            
+    now you can start/stop/restart the OpenCA Daemon by doing:              
+                                                                            
+       $ /etc/init.d/openca [ start | stop | restart ]                      
+  |                                                                        |
+  +------------------------------------------------------------------------+
+
+
+Final Steps:
+============
+
+  The required final step is to setup a new (empty) database for OpenCA
+  needs to store all its data into the database.
+
+  In order to create the Initial Database you should refer to the documentation
+  from the DBMS provider. For example if you have postgres installed you
+  should be able to create a user by doing the following (from root account):
+
+	# su - postgres
+	$ psql template1
+	> CREATE USER ...
+
+  then you should create the DATABASE by using credentials now created:
+
+	# psql -U <user> -W template1
+	> CREATE DATABASE ...
+
+  now you should be able to access the webserver (remember to configure the
+  webserver).
+
+
+  +--- NOTICE: ------------------------------------------------------------+
+  |                                                                        |
+     Check the contrib/ directory for help in configuration of Apache or    
+     OpenLDAP servers                                                       
+  |                                                                        |
+  +------------------------------------------------------------------------+
+
+  For MySQL databases, the creation of the database and the user is really
+  simple. As reported on the WiKi (http://www.openca.org/wiki):
+
+  $ sudo bash
+  # mysql -h localhost
+  mysql> CREATE database openca;
+  mysql> use openca;
+  mysql> GRANT ALL PRIVILEGES ON *.* TO 'openca'@'localhost' IDENTIFIED BY
+         'PASSWORD';
+
+  Here we assumed that the database you will be using with openca is called
+  'openca', and the same goes for the username. Please remember to put a
+  strong password instead of 'PASSWORD'. Also, this will work if the DBMS is
+  installed in the same machine where the OpenCA is running. If you want to
+  grant privileges for network-connected system, you might want to change
+  the GRANT ALL... operation (check the MySQL manual for that)
+
+  From all the OpenCA Labs, thanks for downloading and installing OpenCA, and
+  for helping us to ever improve this wonderful product!
+
+  Enjoy OpenCA!
+

@@ -1,0 +1,764 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: viewCSR
+##       Brief: View Request
+## Description: Display given Request to the CA Manager
+##     Version: $Revision: 1.9 $
+##  Parameters: dataType, key
+
+## this script supports the following configurable references
+##
+## EDIT
+## APPROVE
+## APPROVE_WITHOUT_SIGNING
+## ISSUE_CERT
+## ISSUE_CERT_NEW
+## ISSUE_CERT_RENEW
+## ISSUE_CERT_PENDING
+## ISSUE_CERT_SIGNED
+## ISSUE_CERT_APPROVED
+## DELETE
+## DELETE_NEW
+## DELETE_RENEW
+## DELETE_PENDING
+## DELETE_SIGNED
+## DELETE_APPROVED
+## RENEW
+## RENEW_ARCHIVED
+## RENEW_DELETED
+## GENERATE_KEY
+
+use strict;
+
+sub cmdViewCSR {
+
+        our ($db, $query, $errno, $errval, $self);
+
+	## Get the Configuration parameters ...
+	my ( $def, $loa, $days);
+	my ( $myRenew, $myCN, $myEmail, $subjectAltName );
+	my ( $lnk, $sigInfo );
+	my ( $reqStatus, $signature, $signerCert, $isSigned );
+
+        my ($info_list, $cmd_list, $hidden_list) = (undef, undef, undef);
+        my ($hidden_pos, $info_pos, $cmd_pos) = (0, 0, 0);
+
+	my $dataType = $query->param('dataType' );
+	my $key      = $query->param('key');
+
+    	my $sigInfoStyle = "position: absolute; right: 11%; " .
+		   "border-width: 2px; border-color: #fff #556 #556 #fff";
+
+	## Required Configuration Key
+	my  $loaOption  = getRequired('USE_LOAS');
+	my  $daysOption = getRequired('CHANGE_DAYS');
+	if ($daysOption =~ m/yes/i){
+		$daysOption = 1;
+	} else {
+		$daysOption = 0;
+	}
+	debug_cmds ("viewCSR: daysOption: $daysOption");
+
+	my $automatic_subject_alt_name = getRequired ('AUTOMATIC_SUBJECT_ALT_NAME');
+	my $default_subject_alt_name   = getRequired ('DEFAULT_SUBJECT_ALT_NAME');
+
+	configError( gettext ("Error, needed dB key!") ) if ( not $key );
+
+	if ( $dataType eq "PENDING_REQUEST" ) {
+		$reqStatus = gettext("Waiting for Approval");
+	} elsif ( $dataType eq "NEW_REQUEST" ) {
+		$reqStatus = gettext("New Request Waiting for Approval");
+	} elsif ( $dataType eq "RENEW_REQUEST" ) {
+		$reqStatus = gettext("Renewal Request Waiting for Approval");
+	} elsif ( $dataType eq "DELETED_REQUEST" ) {
+		$reqStatus = gettext("Deleted Request");
+	} elsif ( $dataType eq "SIGNED_REQUEST" ) {
+		$reqStatus = gettext("Signed Request Waiting for Additional Signature");
+	} elsif ( $dataType eq "APPROVED_REQUEST" ) {
+		$reqStatus = gettext("Approved Request");
+	} elsif ( $dataType eq "ARCHIVED_REQUEST" ) {
+		$reqStatus = gettext("Archived Request");
+	} elsif ( $dataType eq "REQUEST" ) {
+		## try to determine the datatype
+		if ($db->getItem ( DATATYPE => "ARCHIVED_REQUEST", KEY => $key )) {
+			$dataType = "ARCHIVED_REQUEST";
+			$reqStatus = gettext ("Archived Request");
+		} elsif ($db->getItem ( DATATYPE => "APPROVED_REQUEST", KEY => $key )) {
+			$dataType = "APPROVED_REQUEST";
+			$reqStatus = gettext("Approved Request");
+		} elsif ($db->getItem ( DATATYPE => "SIGNED_REQUEST", KEY => $key )) {
+			$dataType = "SIGNED_REQUEST";
+			$reqStatus = gettext("Signed Request Waiting for Additional Signature");
+		} elsif ($db->getItem ( DATATYPE => "DELETED_REQUEST", KEY => $key )) {
+			$dataType = "DELETED_REQUEST";
+			$reqStatus = gettext("Deleted Request");
+		} elsif ($db->getItem ( DATATYPE => "RENEW_REQUEST", KEY => $key )) {
+			$dataType = "RENEW_REQUEST";
+			$reqStatus = gettext("Renewal Request Waiting for Approval");
+		} elsif ($db->getItem ( DATATYPE => "NEW_REQUEST", KEY => $key )) {
+			$dataType = "NEW_REQUEST";
+			$reqStatus = gettext("New Request Waiting for Approval");
+		} elsif ($db->getItem ( DATATYPE => "PENDING_REQUEST", KEY => $key )) {
+			$dataType = "PENDING_REQUEST";
+			$reqStatus = gettext("Waiting for Approval");
+		} else {
+			configError ( gettext("Cannot determine status of this request!"));
+		}
+	} else {
+		configError ( i18nGettext ("Invalid dataType (__DATATYPE__)!", "__DATATYPE__", $dataType));
+	}
+
+	my $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key );
+
+	configError ( i18nGettext ("Request __KEY__ not present in DB or the status of the request was changed!",
+       	                    "__KEY__", $key) ) if ( not $req );
+
+	## Get the parsed Request
+	my $parsed_req = $req->getParsed();
+
+	#####################
+	## support signing ##
+	#####################
+
+	my ($header, $text);
+
+	my $beginHeader = "-----BEGIN HEADER-----";
+	my $endHeader = "-----END HEADER-----";
+
+	$header  = "$beginHeader\n";
+	my %h_header = %{$parsed_req->{HEADER}}; ## should be copy by value
+
+	## not taken from parsed header
+	$h_header{TYPE}   = $parsed_req->{TYPE};
+	$h_header{SERIAL} = $req->getSerial();
+
+	## preserve parsed header information
+	## static: RA, RENEW, OPERATOR, NOTBEFORE, APPROVED, PIN
+	##         SUBJECT, SUBJECT_ALT_NAME, ROLE, SERIAL, TYPE
+	## header-only requests: KEY_ALGORITHM, KEY_BITS
+	## dynamic attributes introduced by Bahaaldin Al-Amood
+	foreach my $attribute (sort keys %h_header)
+	{
+    		$header .= uc ($attribute)." = ".$h_header{$attribute}."\n";
+	}
+
+	$header .= "$endHeader\n";
+
+	$text = $parsed_req->{BODY};
+
+        $hidden_list->{"head"}      = "$header";
+        $hidden_list->{"text"}      = $text;
+        $hidden_list->{"signature"} = "";
+
+	#################
+	## LOA support ##
+	#################
+
+	## get list of the LOAs type
+        my ($loaTwig, $xmlLOA, %LOALevels, );
+        if ($loaOption =~ m/yes/i)
+        {
+                $loaTwig = loadConfigXML ('LOAConfiguration');
+                if (not $loaTwig) {
+                        generalError (gettext ("Cannot load menu configration"));
+                }
+
+        #$xmlLOA = $twig->get_xpath('loa');
+                my @loaList;
+                for my $al ($loaTwig->get_xpath("loa"))
+                {
+                        $xmlLOA = gettext(($al->first_child('name'))->field);
+
+                        $LOALevels{gettext(($al->first_child('level'))->field)}=$xmlLOA;
+
+                        push (@loaList, $xmlLOA);
+                        debug_cmds ("viewCSR: \@loadList @loaList");
+                        debug_cmds ("viewCSR: LOALevel xmlLOA: $LOALevels{$xmlLOA}");
+                }
+        }
+	if ($loaOption =~ m/yes/i)
+	{
+        	$loa = $LOALevels{$h_header{LOA}};
+                debug_cmds ("viewCSR: LOA in head is $h_header{LOA} and loa is $loa");
+	}
+
+	######################################
+	## code taken from issueCertificate ##
+	######################################
+
+        debug_cmds ("viewCSR: cert_subject");
+
+	# subject
+	my $cert_subject = crypto_get_csr_subject (
+                               CSR         => $req,
+                               CERT_SERIAL => gettext ("cert's serial"));
+
+	$cert_subject =~ s/\,\s*/<br\/>/g;
+
+        debug_cmds ("viewCSR: subject_alt_name");
+
+	## subject alternative name
+        $subjectAltName = crypto_get_csr_subject_alt_name ($req);
+
+        ######################################
+        ## prepare normal links and siginfo ##
+        ######################################
+
+	if ( $req->getParsed()->{HEADER}->{RENEW} ) {
+		$lnk = new CGI({cmd=>"viewCSR", dataType=>"REQUEST",
+				key=>$req->getParsed()->{HEADER}->{RENEW}});
+		$myRenew = $lnk->a({-href=>"?".$lnk->query_string()}, $req->getParsed()->{HEADER}->{RENEW});
+	} else {
+		$myRenew = "";
+	}
+
+	if (  $req->getParsed()->{DN_HASH}->{CN}[0] ne "" ) {
+		$lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+			name=>"CN", value=>$req->getParsed()->{DN_HASH}->{CN}[0]} );
+		$myCN = $lnk->a({-href=>"?".$lnk->query_string()}, $req->getParsed()->{DN_HASH}->{CN}[0]);
+	}
+
+        debug_cmds ("viewCSR: email address");
+
+	## email address
+	my @emails = @{$req->getParsed()->{EMAILADDRESSES}};
+	@emails = sort @emails;
+	my $last_email = "";
+	foreach my $h (@emails) {
+		next if ($h eq $last_email);
+		$last_email = $h;
+		my $lnk = new CGI({cmd=>"search", dataType=>"CERTIFICATE",
+			name=>"EMAIL", value=>$h} );
+		$myEmail .= ", " if ($myEmail);
+		$myEmail .= $lnk->a({-href=>"?".$lnk->query_string()}, $h);
+		if ( $req->getParsed()->{HEADER}->{VERIFIED_EMAIL} eq $h ) {
+			$myEmail .= " <span style='color: green;'>[" .
+				gettext("Verified") . "]</span> ";
+		} else {
+			$myEmail .= " <span style='color: red;'>[" .
+				gettext("Not Verified") . "]</span> ";
+		};
+	}
+
+	## If the Request is signed
+	if ( $req->getParsed()->{TYPE} =~ /with .*? Signature/i ) {
+
+		my $tmp;
+		$isSigned = 1;
+		$lnk = new CGI({cmd=>"viewSignature", dataType=>$dataType, key=>$key});
+		if( libCheckSignature( OBJECT=>$req ) == CRYPTO_SIGNATURE_OK ) {
+			$tmp = $query->img({src=>getRequired ('ValidSigImage'),
+					border=>"0", align=>"MIDDLE",
+					style=>"$sigInfoStyle"});
+		} else {
+			$tmp = $query->img({-src=>getRequired ('SigErrorImage'),
+					-border=>"0", -align=>"MIDDLE",
+					-style=>"$sigInfoStyle"});
+		}
+
+		$sigInfo = $lnk->a({-href=>"?".$lnk->query_string()}, $tmp );
+
+	} else {
+		$def = "<FONT COLOR=\"RED\">".gettext ("Not Signed")."</FONT>";
+		$parsed_req->{OPERATOR} = $def;
+		$isSigned = 0;
+	}
+
+	###########################################
+	## handle keyless request (TYPE: HEADER) ##
+	###########################################
+
+        debug_cmds ("viewCSR: keyless request");
+
+	my $html = "";
+	if ($parsed_req->{TYPE} =~ /HEADER/i) {
+
+		my $first_name	= $req->getParsed()->{DN_HASH}->{CN}[0];
+		$first_name	=~ s/\s[^\s]*$//;
+		$hidden_list->{"first_name"} = $first_name;
+
+		my $last_name	= $req->getParsed()->{DN_HASH}->{CN}[0];
+		$last_name	=~ s/^.*\s//;
+		$hidden_list->{"last_name"} = $last_name;
+
+		$hidden_list->{"emailAddress"} = $emails[0];
+		$hidden_list->{"ra"}           = $req->getParsed()->{HEADER}->{RA};
+
+		my $i = 1;
+		foreach my $h (@{$req->getParsed()->{DN_HASH}->{OU}}) {
+			$hidden_list->{$i.'.ou'} = $h;
+			$i++;
+		}
+
+	}
+
+        debug_cmds ("viewCSR: last preparations for output");
+
+        ##################################
+        ## last preparations for output ##
+        ##################################
+
+        $hidden_list->{"cmd"}      = "";
+        $hidden_list->{"key"}      = $key;
+        $hidden_list->{"dataType"} = $dataType;
+
+        debug_cmds ("viewCSR: getting req serial");
+
+	## load the certificate which was issued from this request
+	my @certs = $db->searchItems (DATATYPE=>'CERTIFICATE', 
+					CSR_SERIAL=>$req->getSerial());
+
+
+        debug_cmds ("viewCSR: number of certificates related to req is $#certs");
+
+        #####################
+        ## build info_list ##
+        #####################
+
+        # $info_list->{HEAD}->[0] = gettext("Variable");
+        # $info_list->{HEAD}->[1] = gettext("Value");
+
+	$info_pos = 0;
+    	$info_list->{BODY}->[$info_pos++]->[0] = gettext("Request Information").
+					    $sigInfo;
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br />";
+
+	## build table
+
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Request Version");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($parsed_req->{VERSION} or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Serial Number");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($req->getSerial() or gettext("n/a"));
+
+        debug_cmds ("viewCSR: if myRenew");
+
+	if ($myRenew) {
+            $info_list->{BODY}->[$info_pos]->[0]   = gettext("Renewed from");
+            $info_list->{BODY}->[$info_pos++]->[1] = $myRenew;
+        }
+
+	if (scalar @certs) {
+            my $list = "";
+            foreach my $cert (@certs) {
+                $list .= "<a href=\"$self?cmd=viewCert&key=".$cert->getSerial()."\">".$cert->getParsed()->{HEX_SERIAL} ."</a>&nbsp;";
+            }
+            $info_list->{BODY}->[$info_pos]->[0]   = gettext("Issued Certificate");
+            $info_list->{BODY}->[$info_pos++]->[1] = $list;
+	}
+
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Common Name");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($myCN or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("E-Mail");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($myEmail or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Subject Alternative Name");
+
+	# $subjectAltName =~ s/^\s*//;
+
+	$subjectAltName =~ s/\s+/<br\/>/g;
+
+	# This code was removed as it seems it was not displaying the subjectAltName correctly
+	# my $v = "";
+	# while ( $subjectAltName =~ /([^\=]+\=[^\n]+)$/ ) {
+	# 	$v .= $1 . "<br />";
+	# 	$subjectAltName =~ s/$1//;
+	# 	$subjectAltName =~ s/^\s+//;
+	# 	$subjectAltName =~ s/\s+$//;
+	# 	if ( length ($v ) >= 1000 ) {
+	# 		last;
+	# 	}
+	# }
+	# $subjectAltName = $v;
+
+	$info_list->{BODY}->[$info_pos++]->[1] = ($subjectAltName or gettext("n/a"));
+	$info_list->{BODY}->[$info_pos]->[0]   = 
+					gettext("Distinguished Name");
+        $info_list->{BODY}->[$info_pos++]->[1] = 
+					($cert_subject or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Requested Role");
+        $info_list->{BODY}->[$info_pos++]->[1] = $parsed_req->{HEADER}->{ROLE};
+
+	if ($loaOption =~ m/yes/i) {
+            $info_list->{BODY}->[$info_pos]->[0]   = gettext("Requested LOA");
+            $info_list->{BODY}->[$info_pos++]->[1] = $loa;
+	}
+	
+        $info_list->{BODY}->[$info_pos]->[0]   = 
+			gettext("Used Identification PIN");
+        $info_list->{BODY}->[$info_pos++]->[1] = 
+			($parsed_req->{HEADER}->{PIN} or gettext("n/a"));
+
+	my $style = "color: black;";
+	if ( $parsed_req->{HEADER}->{NOTBEFORE} and 
+			( $req->getStatus() !~ /ARCHIVED|DELETED/ ) ) {
+		my $tmpDate = $cryptoShell->getNumericDateDays ( 
+				$parsed_req->{HEADER}->{NOTBEFORE} );
+		my $now = $cryptoShell->getNumericDateDays ();
+
+		my $elapsedDays = $now - $tmpDate;
+
+		if ( $elapsedDays < 8 ) {
+			$style = "color: green;";
+		} elsif ( $elapsedDays < 15 ) {
+			$style = "color: #b32; font-weight: bold;";
+		} elsif ( $elapsedDays < 22 ) {
+			$style = "color: #f00;";
+		} else {
+			$style = "color: red; font-weight: bold;";
+		}
+	}
+
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Submitted on");
+        $info_list->{BODY}->[$info_pos++]->[1] = "<span style='" .
+		$style . "\'>" .
+		($parsed_req->{HEADER}->{NOTBEFORE} or gettext("n/a")) .
+		"</span>";
+
+        my $use_request_serial = getRequired ('SET_REQUEST_SERIAL_IN_DN');
+        my $use_cert_serial = getRequired ('SET_CERTIFICATE_SERIAL_IN_DN');
+        if ( ($use_cert_serial    !~ /^(Y|YES|ON)$/i)       and
+             ($use_request_serial !~ /^(Y|YES|ON)$/i)       and
+             ($dataType           =~ /^(NEW|PENDING|SIGNED|APPROVED)_REQUEST$/i) ) {
+            my @list = $db->searchItems( DATATYPE=>"VALID_CERTIFICATE",
+                                         DN=>$cert_subject);
+            if( $#list > -1 ) {
+                $info_list->{BODY}->[$info_pos]->[0] = gettext("Certificates with the same DN");
+                $info_list->{BODY}->[$info_pos]->[1] = "";
+                foreach my $dn_cert (@list) {
+                    $info_list->{BODY}->[$info_pos]->[1] .= '<a href="'.
+                                                             $self.'?cmd=viewCert;key='.
+                                                             $dn_cert->getSerial().'">'.
+                                                             $dn_cert->getSerial().'</a> ';
+                }
+                $info_pos++;
+            }
+        }
+
+	# debug_cmds ("viewCSR: loaOption is $loaOption");
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+	$info_list->{BODY}->[$info_pos++]->[0] = 
+			gettext("Request Status Information");
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+
+	$info_list->{BODY}->[$info_pos]->[0]   = gettext("Current Status");
+	$info_list->{BODY}->[$info_pos++]->[1] = ($req->{STATUS} or gettext("n/a"));
+
+	if ( $req->{STATUS} =~ /APPROVED/ ) {
+        	$info_list->{BODY}->[$info_pos]->[0]   = 
+					gettext("Approved On");
+        	$info_list->{BODY}->[$info_pos++]->[1] = 
+		($parsed_req->{HEADER}->{APPROVED_AFTER} or gettext("n/a"));
+	}
+
+	if ( $isSigned eq "1" ) {
+		my $style = "color: green;";
+		my $status = "Ok";
+
+		# $info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+		# $info_list->{BODY}->[$info_pos++]->[0] = 
+		# 			gettext("Signer's Info");
+		# $info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+
+		if ( libCheckSignature ( OBJECT => $req ) 
+						!= CRYPTO_SIGNATURE_OK) {
+			$style = "color: red;";
+			$status = "Error ($errno)";
+		} else {
+			$style = "color: green;";
+			$status = "$errval";
+		}
+
+        	$info_list->{BODY}->[$info_pos]->[0]   = gettext("Signed By");
+		if ( $signerCert ) {
+        		$info_list->{BODY}->[$info_pos++]->[1] = 
+				'<a href="' . $self . "?cmd=viewCert;key=" .
+				$signerCert->getSerial() . '">' .
+				($signerCert->getParsed()->{HEX_SERIAL} or 
+					gettext("n/a")).
+				"</a>";
+		} else {
+        		$info_list->{BODY}->[$info_pos++]->[1] = 
+				gettext ( "Missing Cert in Signature!");
+		}
+        	$info_list->{BODY}->[$info_pos]->[0]   = 
+					gettext("Signature Status");
+        	$info_list->{BODY}->[$info_pos++]->[1] = 
+				"<span style='$style'>" . gettext ("$status") .
+				"</span>";
+					
+	} else {
+		my $style = "color: black;";
+		if ( $dataType =~ /APPROVED/ ) {
+			$style = "color: red;";
+		}
+
+        	$info_list->{BODY}->[$info_pos]->[0]   = gettext("Signed By");
+        	$info_list->{BODY}->[$info_pos++]->[1]   = 
+				"<span style='$style'>" . 
+				gettext("Not Signed") .
+				"</span>";
+	}
+
+        debug_cmds ("viewCSR: if daysOption");
+
+	if ($daysOption) {
+		$info_list->{BODY}->[$info_pos++]->[0] = "<br />";
+		$info_list->{BODY}->[$info_pos++]->[0] = 
+					gettext ("Lifetime Information");
+		$info_list->{BODY}->[$info_pos++]->[0] = "<br />";
+	        $info_list->{BODY}->[$info_pos]->[0] = gettext("Lifetime (days)");
+		if($parsed_req->{HEADER}->{DAYS}){
+			$info_list->{BODY}->[$info_pos++]->[1] = $parsed_req->{HEADER}->{DAYS};
+		} else {
+			$info_list->{BODY}->[$info_pos++]->[1] = "n/a";
+		}
+	        $info_list->{BODY}->[$info_pos]->[0] = gettext("Not before (YYMMDDhhmmss)");
+		if($parsed_req->{HEADER}->{CERT_NOTBEFORE}){
+			$info_list->{BODY}->[$info_pos++]->[1] = $parsed_req->{HEADER}->{CERT_NOTBEFORE};
+		} else {
+			$info_list->{BODY}->[$info_pos++]->[1] = "n/a";
+		}
+	        $info_list->{BODY}->[$info_pos]->[0] = gettext("Not after (YYMMDDhhmmss)");
+		if($parsed_req->{HEADER}->{CERT_NOTAFTER}){
+			$info_list->{BODY}->[$info_pos++]->[1] = $parsed_req->{HEADER}->{CERT_NOTAFTER};
+		} else {
+			$info_list->{BODY}->[$info_pos++]->[1] = "n/a";
+		}
+	}
+
+        debug_cmds ("viewCSR: related to req is $#certs");
+
+	$info_list->{BODY}->[$info_pos]->[0] = gettext("Lifetime check");
+        if (not crypto_check_lifetime ($req, 
+			$parsed_req->{HEADER}->{ROLE})) {
+            $info_list->{BODY}->[$info_pos++]->[1] = $errval;
+            $errno  = 0;
+            $errval = "";
+        } else {
+            $info_list->{BODY}->[$info_pos++]->[1] .= gettext("Lifetime would be ok.");
+        }
+	
+        debug_cmds ("viewCSR: techincal info");
+
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+	$info_list->{BODY}->[$info_pos++]->[0] = 
+				gettext("Request Technical Info");
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Request Type");
+        $info_list->{BODY}->[$info_pos++]->[1] = 
+			($parsed_req->{HEADER}->{TYPE} or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Modulus (key size)");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($parsed_req->{KEYSIZE} or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Public Key Algorithm");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($parsed_req->{PK_ALGORITHM} or gettext("n/a"));
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Public Key");
+        $info_list->{BODY}->[$info_pos++]->[1] = "<pre>".($parsed_req->{PUBKEY} or gettext("n/a"))."</pre>";
+        $info_list->{BODY}->[$info_pos]->[0]   = gettext("Signature Algorithm");
+        $info_list->{BODY}->[$info_pos++]->[1] = ($parsed_req->{SIG_ALGORITHM} or gettext("n/a"));
+
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+	$info_list->{BODY}->[$info_pos++]->[0] =
+				gettext("Additional Request Attributes");
+	$info_list->{BODY}->[$info_pos++]->[0] = "<br/>";
+
+	my $counter = 0;
+	my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+	my @additionalAttributesDisplayValue = getRequiredList('ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE');
+	foreach my $attribute (@additionalAttributes)
+	{
+		my $attVar;
+		if($additionalAttributesDisplayValue[$counter])
+        	{
+                	$attVar =  gettext ($additionalAttributesDisplayValue[$counter]) ;
+        	}else{
+                	generalError(gettext ("ERROR: the number of ADDITIONAL_REQUEST_ATTRIBUTES must equal the number of ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE in the pub.conf."));
+        	}
+	
+        	my $tempAttribute = uc $attribute;
+		debug_cmds ("viewCSR: tempAttribute: $tempAttribute");
+                $info_list->{BODY}->[$info_pos]->[0]   = gettext($attVar);
+                $info_list->{BODY}->[$info_pos++]->[1] = ($parsed_req->{HEADER}->{'ADDITIONAL_ATTRIBUTE_'.$tempAttribute} or
+                                                         gettext("n/a"));
+		$counter ++;
+	}
+
+        #######################################
+        ## here starts the filtered commands ##
+        ## cmd_list                          ##
+        #######################################
+
+        debug_cmds ("viewCSR: starts filtered commands");
+
+        $cmd_list->{HEAD}->[0] = gettext ("Operations");
+
+	my $allow = libGetPermissionHash (getRequiredList ('CmdRefs_viewCSR'));
+
+	## edit CSR
+	if ( $allow->{EDIT} and
+             ($dataType =~ /(NEW|PENDING|RENEW)/i)) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Edit the request");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="submit" value="'.
+				                 gettext("Edit Request").
+				                 '" onClick="cmd.value='."'editCSR'".';">';
+            $cmd_pos++;
+	}
+
+	## generate key for header csr
+	if ( $allow->{GENERATE_KEY} and
+    	 	($parsed_req->{HEADER}->{TYPE} =~ /HEADER/i) and
+     		($dataType =~ /NEW|PENDING/i)
+   	) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Generate private key");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+				                 gettext("Generate Key").
+				                 '" onClick="cmd.value='."'basic_csr';if (confirm ('".
+                                	         gettext("Do you want to generate a new key with your browser?").
+                                 	         "')) {this.form.submit();}\">";
+            $cmd_pos++;
+	}
+
+	## verify PIN
+        if ( ( $allow->{APPROVE} and
+                ($parsed_req->{HEADER}->{TYPE} !~ /HEADER/i) and
+                ($dataType =~ /(NEW|PENDING|RENEW|SIGNED)/i)
+            ) or 
+	    ( $allow->{APPROVE_WITHOUT_SIGNING} and
+                ($parsed_req->{HEADER}->{TYPE} !~ /HEADER/i) and
+                ($dataType =~ /(NEW|PENDING|RENEW)/i)
+	    ) or 
+	    ( $allow->{RENEW} and
+                ($dataType =~ /(ARCHIVED|DELETED)/i)
+            )
+        ) {
+	    $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Verify PIN");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+                                                 gettext("Verify PIN").
+						  '" onClick="window.open(\''.$self.'?cmd=verifyPIN'.
+						  '&pin='.$parsed_req->{HEADER}->{PIN}.
+						  '\',\'PIN Verification\',\'width=800,height=480,top=100,left=100\');">';
+            $cmd_pos++;
+	}
+
+	## approve CSR
+	if ( $allow->{APPROVE} and
+     		($parsed_req->{HEADER}->{TYPE} !~ /HEADER/i) and
+     		($dataType =~ /(NEW|PENDING|RENEW|SIGNED)/i)
+   	) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Approve and sign the request");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+				                 gettext("Approve Request").
+				                 '" onClick="cmd.value='."'approveCSR'".
+                                                 ';signForm( this.form, window )">';
+            $cmd_pos++;
+	}
+
+	## approve CSR without signing
+	if ( $allow->{APPROVE_WITHOUT_SIGNING} and
+     		($parsed_req->{HEADER}->{TYPE} !~ /HEADER/i) and
+     		($dataType =~ /(NEW|PENDING|RENEW)/i)
+   	) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Approve Request without Signing");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+				                 gettext("Approve Request without Signing").
+				                 '" onClick="cmd.value='."'approveCSRnotSigned';if (confirm ('".
+                                	         gettext ("Do you want to approve this request without signing?").
+                                	         "')) {this.form.submit();}\">";
+            $cmd_pos++;
+	}
+
+        ## issue certificate
+        if ( ( $allow->{ISSUE_CERT} and 
+               ($dataType =~ /(NEW|PENDING|RENEW|SIGNED|APPROVED)/i)
+             ) or
+             ( $allow->{ISSUE_CERT_NEW} and
+               ($dataType =~ /NEW/i)
+             ) or
+             ( $allow->{ISSUE_CERT_RENEW} and
+               ($dataType =~ /RENEW/i)
+             ) or
+             ( $allow->{ISSUE_CERT_PENDING} and
+               ($dataType =~ /PENDING/i)
+             ) or
+             ( $allow->{ISSUE_CERT_SIGNED} and
+               ($dataType =~ /SIGNED/i)
+             ) or
+             ( $allow->{ISSUE_CERT_APPROVED} and
+               ($dataType =~ /APPROVED/i)
+             )
+           ) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Issue certificate");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="submit" value="'.
+			                         gettext("Issue certificate").
+			                         '" onClick="cmd.value='."'issueCertificate'".';">';
+            $cmd_pos++;
+	}
+
+	## delete pending or approved CSR
+        if ( ( $allow->{DELETE} and 
+               ($dataType =~ /(NEW|PENDING|RENEW|SIGNED|APPROVED)/i)
+             ) or
+             ( $allow->{DELETE_NEW} and
+               ($dataType =~ /NEW/i)
+             ) or
+             ( $allow->{DELETE_RENEW} and
+               ($dataType =~ /RENEW/i)
+             ) or
+             ( $allow->{DELETE_PENDING} and
+               ($dataType =~ /PENDING/i)
+             ) or
+             ( $allow->{DELETE_SIGNED} and
+               ($dataType =~ /SIGNED/i)
+             ) or
+             ( $allow->{DELETE_APPROVED} and
+               ($dataType =~ /APPROVED/i)
+             )
+           ) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Delete request");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+			                         gettext("Delete request").
+			                         '" onClick="cmd.value='."'deleteCSR';if (confirm ('".
+                                                 gettext ("Do you want to delete this request?").
+                                                 "')) {this.form.submit();}\">";
+            $cmd_pos++;
+	}
+
+	## renew archived or deleted CSRs
+        if ( ( $allow->{RENEW} and 
+               ($dataType =~ /(ARCHIVED|DELETED)/i)
+             ) or
+             ( $allow->{RENEW_ARCHIVED} and
+               ($dataType =~ /ARCHIVED/i)
+             ) or
+             ( $allow->{RENEW_DELETED} and
+               ($dataType =~ /DELETED/i)
+             )
+           ) {
+            $cmd_list->{BODY}->[$cmd_pos]->[0] = gettext("Renew request");
+            $cmd_list->{BODY}->[$cmd_pos]->[1] = '<input type="button" value="'.
+				                 gettext("Renew request").
+				                 '" onClick="cmd.value='."'renewCSR';if (confirm ('".
+                                                 gettext ("Do you want to renew this request?").
+                                                 "')) {this.form.submit();}\">";
+            $cmd_pos++;
+	}
+
+        debug_cmds ("viewCSR: sending reply (libSendReply).");
+
+        return libSendReply (
+                             "NAME"        => $reqStatus,
+                             "EXPLANATION" => gettext ("Following you can find the CSR's details."),
+                             "TIMESTAMP"   => 1,
+                             "INFO_LIST"   => $info_list,
+                             "CMD_LIST"    => $cmd_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             # "SIGINFO"     => $sigInfo,
+                             "SIGN_FORM"   => 1
+                            );
+
+        debug_cmds ("viewCSR: done.");
+
+}
+
+1;

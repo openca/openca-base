@@ -1,0 +1,39 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeDownloadBP
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports batchprocessors
+## Description: imports the data from the batchprocessors from a removable media
+
+use strict;
+
+sub cmdNodeDownloadBP {
+
+	print startLogPage ( gettext ("Importing the data from the batchprocessors from a higher level of the hierarchy ...") );
+
+	my $tmp = createDirectory ();
+	if (not eximIODownload ($tmp)) {
+		print addPreLogSection ("<FONT COLOR=#FF0000>".
+			gettext ("Cannot extract archive from import device!").
+			"</FONT>");
+		print closeLogSection ();
+		print closeLogPage ();
+		return undef;
+	}
+	eximDownloadBP     ( $tmp );
+	eximDownloadCommit ( $tmp );
+	removeDirectory    ( $tmp );
+
+	closePage ();
+
+	return 1;
+}
+
+sub getParamsNodeDownloadBP
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

@@ -1,0 +1,150 @@
+=head1 NAME
+
+OpenCA::Tools - Misc Utilities PERL Extention.
+
+=head1 SYNOPSIS
+
+  use OpenCA::Tools;
+
+=head1 DESCRIPTION
+
+This module provides some tools to easy some standard actions. Current
+functions description follows:
+
+	new		- Returns a reference to the object.
+	getDate		- Returns a Printable date string.
+	getFile		- Load data from a file passed as argument.
+	saveFile	- Save DATA to FILENAME.
+	copyFiles	- Copy file(s).
+	moveFiles	- Move file(s).
+	deleteFiles	- Delete file(s).
+	cmpDate		- Compare two Printable date sting.
+	isInsidePeriod	- Check wether give date is within given
+			  period.
+	parseDN         - Parse a given DN returning an HASH value.
+
+=head1 FUNCTIONS
+
+=head2 sub new () - Build new instance of the class.
+
+	This function returns a new instance of the class. No parameters
+	needed.
+
+	EXAMPLE:
+	
+		my $tools = new OpenCA::Tools();
+
+=head2 sub getDate () - Get a Printable date string.
+
+	Returns a string representing current time (GMT or Local).
+	Accepted parameters are:
+
+		FORMAT  - Use it to get local or GMT time.
+			  Defaults to GMT.
+
+	EXAMPLE:
+
+		print $tools->getDate();
+
+=head2 sub copyFiles () - Copy file(s).
+
+	Use this function to copy file(s). Source path can contain
+	wildcards (i.e. '*') that will be expanded when copying.
+	Accepted parameters are:
+
+		SRC  - Source full path.
+		DEST - Destination path.
+
+	EXAMPLE:
+
+		$tools->copyFiles( SRC=>"test.pl", DEST=>"/tmp" );
+
+=head2 sub moveFiles () - Move file(s).
+
+	Use this function to move file(s). Source path can contain
+	wildcards (i.e. '*') that will be expanded when copying.
+	Accepted parameters are:
+
+		SRC  - Source full path.
+		DEST - Destination path.
+
+	EXAMPLE:
+
+		$tools->moveFiles( SRC=>"test.pl", DEST=>"/tmp" );
+
+=head2 sub deleteFiles () - Delete file(s).
+
+	Use this function to delete file(s) once provided target
+	directory and filter.
+	Accepted parameters are:
+
+		DIR    - Directory containing file(s) to delete.
+		FILTER - File filtering(*).
+
+	(*) - Optional parameters;
+
+	EXAMPLE:
+
+		$tools->deleteFiles( DIR=>"/tmp", FILTER=>"prova.p*" );
+
+=head2 sub cmpDate () - Compare two date strings.
+
+	Use this function to get informations on relationship
+	between the two provided date strings. Returns integer
+	values like strcmp() do in C, so if DATE_1 'is later'
+	than DATE_2 it returns a positive value. A negative value
+	is returned in the countrart case while 0 is returned if
+	the two dates are equal. Accepted parameters:
+
+		DATE_1  - First date string.
+		DATE_2  - Second date string.
+
+	EXAMPLE:
+
+		$tools->cmpDate( DATA_1=>"$date1", DATA_2=>"$date2" );
+
+=head2 sub isInsidePerios - Check if date is inside a given period.
+
+	This functions returns a true (1) value if the provided
+	date is within a given period. Accepted parameters are:
+
+		DATE     - Date string to check.
+		START	 - Date string indicating period's starting(*).
+		END      - Date string indicating period's ending(*).
+
+	(*) - Optional parameters;
+
+		if( not $tools->isInsidePeriod( DATE=>$d1, START=>$d2,
+				END=>$d3 ) ) {
+			print "Non in period... \n";
+		}
+
+=head2 sub parseDN () - Parse a given DN.
+
+	This function parses a given DN string and returns an HASH
+	value. Returned structure is as following:
+
+		KEY => VALUE,
+
+	Only the OU key is instead a list:
+
+		OU => [ @list ]
+
+	EXAMPLE:
+
+		$parsed = $tools->parseDN( $dn );
+		print $parsed->{CN};
+
+		foreach $tmp ( @{ $parsed->{OU} } ) {
+			print "OU=$tmp\n";
+		}
+
+=head1 AUTHOR
+
+Massimiliano Pala <madwolf@openca.org>
+
+=head1 SEE ALSO
+
+OpenCA::Configuration, OpenCA::TRIStateCGI, OpenCA::X509, OpenCA::CRL, OpenCA::REQ, OpenCA::OpenSSL, perl(1).
+
+=cut

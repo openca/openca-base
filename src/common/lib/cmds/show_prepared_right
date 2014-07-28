@@ -1,0 +1,64 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: show_prepared_right
+##       Brief: show a special right
+## Description: show a special right and a button to add/delete the right
+##  Parameters: module, operator, owner, operation, next_cmd
+
+use strict;
+
+sub cmdShow_prepared_right {
+
+	## load form-data
+	my $module    = $query->param ('module');
+	my $operation = $query->param ('operation');
+	my $operator  = $query->param ('role');
+	my $owner     = $query->param ('owner');
+
+        my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+        $hidden_list->{"module"}    = $module;
+        $hidden_list->{"operation"} = $operation;
+        $hidden_list->{"role"}      = $operator;
+        $hidden_list->{"owner"}     = $owner;
+ 
+	if ( $query->param ('next_cmd') =~ /^delete$/i ) {
+		$hidden_list->{"cmd"} = "delete_right";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext ("DELETE this Access Right")."\">\n";
+	} else {
+		$hidden_list->{"cmd"} = "new_right";
+		$cmd_panel->[0]   = "<input type=submit value=\"".gettext("Create this Access Right")."\">\n";
+	}
+
+	$info_list->{HEAD}->[0] = gettext("Name");
+	$info_list->{HEAD}->[1] = gettext("Value");
+	$info_list->{BODY}->[0]->[0] = gettext("Module");
+	$info_list->{BODY}->[0]->[1] = $module;
+	$info_list->{BODY}->[1]->[0] = gettext("Operation");
+	$info_list->{BODY}->[1]->[1] = $operation;
+	$info_list->{BODY}->[2]->[0] = gettext("Operator");
+	if ( $operator =~ /^$/ ) {
+	    $info_list->{BODY}->[2]->[1] = gettext("New OpenCA User");
+	} else {
+	    $info_list->{BODY}->[2]->[1] = $operator;
+	}
+	$info_list->{BODY}->[3]->[0] = gettext("Owner");
+	if ( $owner =~ /^$/ ) {
+	    $info_list->{BODY}->[3]->[1] = gettext("CA itself or any role");
+	} else {
+	    $info_list->{BODY}->[3]->[1] = $owner;
+	}
+
+        return libSendReply (
+                             "NAME"        => gettext ("Show Prepared Right"),
+                             "INFO_LIST"   => $info_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel,
+                             "TIMESTAMP"   => 1
+                            );
+}
+
+1;
+

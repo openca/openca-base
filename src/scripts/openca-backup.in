@@ -1,0 +1,196 @@
+#!@PERL@
+
+## (c) 1998-2003 by OpenCA Group
+##   File Name: openca-backup
+##     Version: $Revision: 1.1.1.1 $
+
+use strict;
+no warnings;
+use subs qw (output);
+
+@perl_use_lib@
+
+## i18n
+use POSIX;
+use Locale::gettext;
+use Locale::Messages qw (nl_putenv);
+
+my $loc = "@language@";
+nl_putenv("LC_MESSAGES=$loc") if (setlocale(LC_MESSAGES, $loc));
+bindtextdomain("openca", "@lib_prefix@/locale");
+textdomain("openca");
+
+use OpenCA::Configuration;
+use OpenCA::Crypto;
+use OpenCA::Log;
+use OpenCA::X509;
+use OpenCA::CRL;
+use OpenCA::Tools;
+use OpenCA::REQ;
+use OpenCA::PKCS7;
+
+## Generate a new reference to Configuration ( instance )
+our $config = new OpenCA::Configuration;
+our $dbconfig = new OpenCA::Configuration;
+our $dbiconfig = new OpenCA::Configuration;
+
+## Load basic configuration
+## ========================
+
+my $CONFIG = '@etc_prefix@/servers/@node_prefix@.conf';
+our $DBCONFIG = '@etc_prefix@/database/DB.conf';
+our $DBICONFIG = '@etc_prefix@/database/DBI.conf';
+
+if( not defined (my $ret = $config->loadCfg( "$CONFIG" )) ) {
+	print "Error while loading configuration ($CONFIG)!";
+	exit 100;
+}
+my $common_libs  = $config->getParam('CgiLibPath')->{VALUES}->[0];
+if( not defined $common_libs or not $common_libs ) {
+	print "Error while loading path to the libraries ($CONFIG)!";
+	exit 100;
+}
+
+require "$common_libs/misc-utils.lib";
+require "$common_libs/log-utils.lib";
+require "$common_libs/crypto-utils.lib";
+require "$common_libs/mail-utils.lib";
+require "$common_libs/rbac-utils.lib";
+require "$common_libs/export-import.lib";
+
+our $tools = new OpenCA::Tools (GETTEXT => \&i18nGettext);
+
+## init cryptolayer anddefault crypto token
+## ========================================
+
+our ($crypto_layer, $cryptoShell);
+
+my $token_xml = getRequired( 'TokenConfiguration');
+my $shellPath = getRequired( 'openssl' );
+my $tmpdir    = getRequired( 'TempDir' );
+my $sslcnf    = getRequired( 'sslconfig' );
+my $openca_sv = getRequired( 'OpenCA_SV_Path' );
+
+our $errno	= 0;
+our $errval	= "";
+
+$crypto_layer = new OpenCA::Crypto (CONFIG => $token_xml);
+
+if ( not $crypto_layer ) {
+    print i18nGettext ("Cannot initialize cryptographic layer (configurationfile __FILE__)!",
+                       "__FILE__", $token_xml)."\n".
+          $OpenCA::Crypto::errno.": ".$OpenCA::Crypto::errval."\n\n";
+    exit 1;
+}
+
+$cryptoShell = $crypto_layer->getToken ();
+
+if ( not $cryptoShell ) {
+    print i18nGettext ("Cannot initialize Crypto Shell (__PATH__)!", "__PATH__", $shellPath)."\n".
+          $OpenCA::Crypto::errval.": ".$OpenCA::Crypto::errval."\n\n";
+    exit 1;
+}
+
+$cryptoShell->setParams(SHELL =>"$shellPath",
+			CONFIG=>"$sslcnf",
+			TMPDIR=>"$tmpdir",
+			OpenCA_SV=>$openca_sv);
+
+## final database setup
+## ====================
+
+if ( getRequired ('DBmodule') =~ /DBI/i ) {
+        require "$common_libs/initDBI";
+} else {
+        require "$common_libs/initDB";
+}
+
+## prepare for HTML filtering
+## ==========================
+
+use FileHandle;
+our $STDIN = \*STDIN;
+my $oldfh = select $STDIN;
+
+## start the backup logic
+## ======================
+
+output "\n".gettext("OpenCA full backup ...")."\n\n\n";
+
+## load configuration
+output gettext ("Loading configuration ...");
+my $twig = loadConfigXML ('BackupConfiguration');
+output gettext ("OK")."\n\n";
+
+## destroying old backups
+output gettext ("Removing old structure ...");
+removeDirectory (($twig->get_xpath ('backup/directory'))[0]->field);
+output gettext ("OK")."\n\n";
+
+## creating new structure
+output gettext ("Creating new structure ...");
+createDirectory (($twig->get_xpath ('backup/directory'))[0]->field);
+createDirectory (($twig->get_xpath ('backup/directory'))[0]->field."/database");
+createDirectory (($twig->get_xpath ('backup/directory'))[0]->field."/filesystem");
+output gettext ("OK")."\n\n";
+
+## backup database
+output gettext ("Export database ...")."\n\n";
+if (not exportDB (($twig->get_xpath ('backup/directory'))[0]->field."/database", "BACKUP"))
+{
+    output gettext ("FAILED");
+    exit 1;
+}
+output "\n";
+
+## backup filesystem like specified in backup.xml
+output gettext ("Export filesystem ...")."\n\n";
+my $fs = ($twig->get_xpath ('backup/directory'))[0]->field."/filesystem";
+my $tmp_dir = getRequired ('TempDir');
+foreach my $dir ($twig->get_xpath ('backup/filesystem/source'))
+{
+    ## copy directory to backup destination
+    my $source = $dir->field;
+    output i18nGettext ("Exporting directory __DIR__ ...",
+                       "__DIR__", $source)."\n";
+    `tar -cf - ${source} --exclude=tmp | tar -xf - -C ${fs}`;
+}
+output "\n";
+
+## load batches
+foreach my $batch ($twig->get_xpath ('backup/batch'))
+{
+    ## execute commands for this batch
+    output gettext ("Running batch sequence ...")."\n\n";
+    foreach my $command ($batch->get_xpath ('command'))
+    {
+        output "        ".$command->field."\n";
+        my $script = $command->field;
+        my $ret = `$script`;
+        if ($?)
+        {
+            output "\n\n";
+            output i18nGettext ("The last command failed with errorcode __ERRNO__.",
+                               "__ERRNO__", $?)."\n\n";
+            output $ret."\n";
+            exit 1;
+        }
+        output "                ".$ret."\n" if ($ret);
+    }
+    print "\n";
+}
+
+output gettext ("Full backup completed.")."\n\n";
+
+select $oldfh;
+
+sub output
+{
+    ## this is a hack for non-blocking input
+    select $oldfh;
+    print $_[0];
+    $oldfh = select $STDIN;
+}
+
+1;
+

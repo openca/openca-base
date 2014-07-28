@@ -1,0 +1,214 @@
+## OpenCA Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: new_ask4rev
+##       Brief: begin to revoke a certificate
+##     Version: $Revision: 1.3 $
+## Description: get the certificate which should be revoked and prompt
+##              the user to a second ok
+##  Parameters: serial, crin, crin2, reason
+
+use strict;
+
+sub cmdConfirm_revreq {
+
+our ($query, $db, $cryptoShell, $tools);
+
+## Reserved variables
+my ( $head, $text, $cert, @search );
+
+## Get required configuration parametes
+my $server	= getRequired( 'CgiServerType' );
+my $chainDir    = getRequired( 'ChainDir');
+
+## To aprove a Request, we need it signed by the RA operator
+my $beginHeader = "-----BEGIN HEADER-----";
+my $endHeader = "-----END HEADER-----";
+
+## Get the parameters
+my $serial      = $query->param('serial');
+my $crin        = $query->param('crin');
+my $crin2       = $query->param('crin2');
+my $reason	= $query->param('reason');
+
+my $cmd_list = undef;
+$cmd_list->{BODY}->[0]->[0] = gettext ("Use this button to sign and then submit the request (suggested).");
+$cmd_list->{BODY}->[0]->[1] = '<input TYPE="Button" Name="Sign2" Value="'.
+                              gettext ("Sign and Submit").
+                              '" onClick="signForm (this.form, window )">';
+
+## download the certificate
+my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $serial );
+if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	configError (i18nGettext ("Error: Cannot find the certificate __CERT_SERIAL__ in the database.",
+                              "__CERT_SERIAL__", $serial));
+}
+my $parsed = $cert->getParsed();
+
+## Check for equal crin codes
+if ( $crin ne $crin2 ) {
+	configError (gettext ("CRIN codes are different, go back and check it."));
+} elsif ($crin) {
+	my $hashed_crin = $cryptoShell->getDigest ( DATA => $crin, ALGORITHM => "sha1" );
+
+	## get the informations about the crin
+	my $pin     = $cert->getParsed()->{HEADER}->{PIN};
+	
+	## check the crin
+	if ($pin ne $hashed_crin) {
+		## crin-mismatch
+		## should I sent here a general error?
+                my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+                $info_list->{BODY}->[0]->[0] = gettext ("Certificate Serial Number");
+                $info_list->{BODY}->[0]->[1] = '<Input type="text" name="serial" value="'.$serial.'">';
+                $info_list->{BODY}->[1]->[0] = gettext ("Reason [ Reason for revocating the certificate ]");
+                $info_list->{BODY}->[1]->[1] = '<textarea cols="35" rows="5" name="reason" wrap="virtual">'.$reason.'</textarea>';
+                $info_list->{BODY}->[2]->[0] = gettext ("Please enter the CRIN which the owner of the private keys received during the process of issuing the certificate.");
+                $info_list->{BODY}->[3]->[0] = gettext ("CRIN code [ revocation pin ]");
+                $info_list->{BODY}->[3]->[1] = '<Input type="password" name="crin">';
+                $info_list->{BODY}->[3]->[0] = gettext ("Retype CRIN code [ retype revocation pin ]");
+                $info_list->{BODY}->[3]->[1] = '<Input type="password" name="crin2">';
+
+                $hidden_list->{"cmd"} = "confirm_revreq";
+                $cmd_panel->[0]   = '<input type="submit" name="Submit" value="'.gettext ("Continue").'">';
+
+		print STDERR "SECURITY ALERT BY PKI: attempt to revoke a " .
+			     "certificate with a wrong pin (certificate: " .
+			     "$serial) from " . $query->param("REMOTE_ADDR") .
+			     ":" . $query->param("REMOTE_PORT") . "\n";
+
+		debug_cmds ( "SECURITY ALERT BY PKI: attempt to revoke a " .
+			     "certificate with a wrong pin (certificate: " .
+			     "$serial) from " . $query->param("REMOTE_ADDR") .
+			     ":" . $query->param("REMOTE_PORT") . "\n");
+
+		generalError ( gettext ("Revocation PIN is Incorrect. The " .
+			"error has been recorded and reported to the CA " .
+			"management team.<br /><br/>" .
+			"Please contact the CA management if you do not " .
+			"remember the revocation code (CRIN) you have " .
+			"received via email when the certificate was issued.") .
+			"<br/><br/>" .
+			"[Your IP address is: " . $query->param("REMOTE_ADDR").
+			":" . $query->param("REMOTE_PORT") . "]");
+	
+		# libSendReply (
+                #               "NAME"        => gettext ("Certificate Revocation Request"),
+                 #              "EXPLANATION" => gettext ("Certificate Data:\nIf you don't know the certificate's serial number please use the lists."),
+                #               "HIDDEN_LIST" => $hidden_list,
+                 #              "INFO_LIST"   => $info_list,
+                 #              "CMD_PANEL"   => $cmd_panel
+                 #             );
+                 #              
+		# return undef;
+	}
+	$cmd_list->{BODY}->[1]->[0] = gettext ("Use this Button to Submit the request without signing it");
+	$cmd_list->{BODY}->[1]->[1] = '<input TYPE="Button" Name="continue" Value="'.
+                              gettext ("Submit Request").
+                              '" onClick="this.form.submit()">';
+
+}
+
+## Strip html and \n\r code from reason
+$reason =~ s/<[^\>]*>/ /g;
+$reason =~ s/(\n|\r)/ /g;
+$reason =~ s/^\s+//g;
+$reason =~ s/[\s]+/ /g;
+
+## Get the certificate serial number of the submitter
+my $sslCert  =($ENV{'SSL_CLIENT_CERT_SERIAL'} or $ENV{'SSL_CLIENT_M_SERIAL'});
+my $sslDn    = $ENV{'SSL_CLIENT_S_DN'};
+my $issuerDn = $ENV{'SSL_CLIENT_I_DN'};
+
+$sslDn =~ s/^\///;
+$sslDn =~ s/\/([A-Za-z0-9\-]+)=/\, $1=/g;
+
+$issuerDn =~ s/^\///;
+$issuerDn =~ s/\/([A-Za-z0-9\-]+)=/\, $1=/g;
+
+if( $sslCert eq "" ) {
+        $sslCert = "n/a";
+} else {
+        if ( length( $sslCert ) % 2 ) {
+                $sslCert = "0" . $sslCert;
+        }
+}
+
+my $last_crr = libDBGetLastItem ("CRR");
+my $crr_serial = 0;
+$crr_serial    = $last_crr->getSerial("CRR") if ($last_crr);
+$crr_serial  >>= getRequired ("ModuleShift");
+if (not $serial) {
+	##// it's not good to show the user the detailed problem
+	## this is a security problem here !!!
+	print STDERR "SECURITY ALERT BY PKI: correct CRR cannot be stored because of DB-error (certificate: $serial)\n";
+	configError (gettext ("A databaseerror occurs during counting the existing CRRs!"));
+}
+$crr_serial++;
+$crr_serial = ($crr_serial << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+
+## Set Text to sign
+$head  = "$beginHeader\r\n";
+$head .= "TYPE = CRR\r\n";
+$head .= "SERIAL = $crr_serial\r\n";
+$head .= "SSL_CERT_SERIAL = $sslCert\r\n";
+$head .= "SSL_CERT_DN = $sslDn\r\n";
+$head .= "SSL_CERT_ISSUER = $issuerDn\r\n";
+$head .= "$endHeader\r\n";
+
+$text  = "SUBMIT_DATE = " . $tools->getDate() . "\r\n";
+if ( $server =~ /^RA$/i ) {
+	$text .= "APPROVED_DATE = " . $tools->getDate() . "\r\n";
+}
+$text .= "CRIN = $crin\n";
+$text .= "REVOKE_REASON = $reason\n";
+$text .= "REVOKE_CERTIFICATE_DN = " . $parsed->{DN} . "\r\n";
+$text .= "REVOKE_CERTIFICATE_NOTBEFORE = " . $parsed->{NOTBEFORE} . "\r\n";
+$text .= "REVOKE_CERTIFICATE_NOTAFTER = " . $parsed->{NOTAFTER} . "\r\n";
+$text .= "REVOKE_CERTIFICATE_SERIAL = " . $cert->getSerial(). "\r\n";
+$text .= "REVOKE_CERTIFICATE_ISSUER_DN = " . $parsed->{ISSUER} . "\r\n";
+$text .= "REVOKE_CERTIFICATE_KEY_DIGEST = " . $parsed->{KEY_DIGEST};
+
+my $tmpIssuer = $parsed->{ISSUER};
+my $tmpDN     = $parsed->{DN};
+
+$tmpIssuer =~ s/\,\s*/<BR>\n/g;
+$tmpDN =~ s/\,\s*/<BR>\n/g;
+
+my ($info_list, $hidden_list) = (undef, undef);
+
+$info_list->{BODY}->[0]->[0] = gettext ("Certificate Version");
+$info_list->{BODY}->[0]->[1] = ($parsed->{VERSION} or gettext("n/a"));
+$info_list->{BODY}->[1]->[0] = gettext ("Serial Number");
+$info_list->{BODY}->[1]->[1] = ($cert->getSerial() or gettext("n/a"));
+$info_list->{BODY}->[2]->[0] = gettext ("Distinguished Name");
+$info_list->{BODY}->[2]->[1] = ($tmpDN or gettext("n/a"));
+$info_list->{BODY}->[3]->[0] = gettext ("Issued by");
+$info_list->{BODY}->[3]->[1] = ($tmpIssuer or gettext("n/a"));
+$info_list->{BODY}->[4]->[0] = gettext ("Valid From");
+$info_list->{BODY}->[4]->[1] = ($parsed->{NOTBEFORE} or gettext("n/a"));
+$info_list->{BODY}->[5]->[0] = gettext ("Expiration on");
+$info_list->{BODY}->[5]->[1] = ($parsed->{NOTBEFORE} or gettext("n/a"));
+$info_list->{BODY}->[6]->[0] = gettext ("Revoke Reason");
+$info_list->{BODY}->[6]->[1] = ($reason or gettext("n/a"));
+
+$hidden_list->{"signature"} = "";
+$hidden_list->{"head"}      = "";
+$hidden_list->{"text"}      = $head.$text;
+$hidden_list->{"serial"}    = $cert->getSerial();
+$hidden_list->{"reason"}    = $reason;
+$hidden_list->{"cmd"}       = "submit_revreq";
+
+return libSendReply (
+                     "NAME"        => gettext ("Confirm Revocation Request"),
+                     "EXPLANATION" => gettext ("Certificate Data"),
+                     "HIDDEN_LIST" => $hidden_list,
+                     "INFO_LIST"   => $info_list,
+                     "CMD_LIST"    => $cmd_list,
+                     "SIGN_FORM"   => 1
+                    )
+}
+
+1;

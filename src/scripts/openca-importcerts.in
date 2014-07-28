@@ -1,0 +1,108 @@
+#! @PERL@
+
+$|=1;
+
+@perl_use_lib@
+use OpenCA::OpenSSL;
+use OpenCA::X509;
+use OpenCA::@dbmodule@;
+
+my $VER = '0.3.01';
+
+print "\n\nCertificates Import (valid_certs - Version $VER\n";
+print "(c) 1999/2000 by Massimiliano Pala and OpenCA Team\n\n";
+
+if( not $ARGV[0] ) {
+	print "Usage: importcerts certs-dir [openca-dir] [openssl-path]\n\n";
+	print "certs-dir    - Directory where PEM certificates are stored\n";
+	print "openca-dir   - OpenCA directory (def. @ca_prefix@)\n";
+	print "openssl-path - Path to the openssl command " . 
+			      "(def. /usr/local/ssl/bin/openssl\n";
+	print "\n";
+	exit 0;
+}
+
+my $srcDir    = $ARGV[0];
+
+my $opencaDir = ( $ARGV[1] or "@ca_prefix@" );
+my $sslPath   = ( $ARGV[2] or "@OPENSSL@" or "/usr/local/ssl/bin/openssl" );
+
+print " * Initializing crypto shell ... ";
+my $openssl = new OpenCA::OpenSSL( SHELL=>$sslPath );
+
+if( not $openssl ) {
+	print "Error!\n\n";
+	exit 1;
+} else {
+	print "Ok.\n";
+}
+
+$openssl->setParams(SHELL=>$sslPath,
+		    CONFIG=>"$opencaDir/conf/openssl/openssl.cnf",
+		    STDERR=>"/dev/null" );
+
+print " * Initializing dB object ... ";
+my $db = new OpenCA::DB( SHELL=>$openssl, DB_DIR=>"@var_prefix@/db" );
+
+if( not $db ) {
+        print "Error!\n\n";
+        exit 1;
+} else {
+	print "Ok.\n\n";
+}
+
+opendir( DIR, "$srcDir" ) or die "Error, cannot open $srcDir!\n\n";
+	my @list = grep( /[a-f0-9]+\.pem/i , readdir( DIR ) );
+closedir( DIR );
+
+print "Storing Certificates to dB:\n";
+foreach $tmpCert ( @list ) {
+        my $fileName = "$srcDir/$tmpCert";
+
+        my $data = new OpenCA::X509( SHELL =>$cryptoShell,
+                                     GETTEXT => \&gettext,
+                                     INFILE=>$fileName,
+                                     FORMAT=>$tmpFormat );
+
+        if ( (not $data) or ( not $tmpSerial = $data->getParsed()->{SERIAL})) {
+                print addErrorLog("Failed adding cert to dB(1)!");
+                closePage();
+                exit;
+        }
+
+        my $parsed = $data->getParsed();
+
+        ## print $db->elements(DATATYPE=>VALID_CERTIFICATE) . " -> ";
+        print " [ " . $parsed->{SERIAL} . " ] " . $parsed->{CN} . " " .
+                                        " (" . $parsed->{EMAIL} . ") ... ";
+
+        if( not $db->storeItem( DATATYPE => VALID_CERTIFICATE,
+                                OBJECT   => $data,
+				MODE     => "INSERT" ) ) {
+                print "Error!\n";
+                next;
+        } else {
+                print "Ok.\n";
+        }
+}
+
+print "\n * New dB Status:\n\n";
+print "   STATUS   => " . $db->getItem( DATATYPE =>VALID_CERTIFICATE,
+				     KEY=>STATUS ) . "\n";
+print "   INIT     => " . $db->getItem( DATATYPE =>VALID_CERTIFICATE,
+				     KEY=>INIT ) . "\n";
+print "   MODIFIED => " . $db->getItem( DATATYPE =>VALID_CERTIFICATE,
+				     KEY=>MODIFIED ) . "\n";
+print "   DELETED  => " . $db->getItem( DATATYPE =>VALID_CERTIFICATE,
+				     KEY=>DELETED ) . "\n";
+print "   ELEMENTS => " . $db->elements( DATATYPE => VALID_CERTIFICATE ) . "\n";
+print "   NEXT ITEM SERIAL   => " . $db->getSerial(DATATYPE => VALID_CERTIFICATE).
+									 "\n\n";
+
+sub gettext
+{
+    return $_[0];
+}
+
+exit 0; 
+

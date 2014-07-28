@@ -1,0 +1,139 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: create_key.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: create a new key
+## Description: 
+
+use strict;
+
+sub workflow_create_key
+{
+    ## general global stuff
+    our $state_machine;
+    our ($tools, $xml_cache, $cryptoShell, $bp_token);
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "create_key";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## the token of the batch system must be activated
+
+    if (not $bp_token or not $bp_token->keyOnline)
+    {
+        my $msg = gettext ("The crypto token of the batch system was not activated.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -105, $msg ];
+    }
+
+    ## is there a pin ?
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no usable PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+
+    ## load PIN
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no PIN file which could be used to create the new key.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+    my $pin = $bp_token->decrypt (
+                  INFILE     => $home."/private/purePIN",
+                                  );
+    if (not $pin) {
+        my $msg = gettext ("The PIN file cannot be decrypted.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+
+    ## load key configuration
+
+    my ($key_length, $key_alg);
+
+    ## determine keylength
+    if (-f $home."/data/KEY_LENGTH") {
+        $key_length = $tools->getFile ($home."/data/KEY_LENGTH");
+    } else {
+        $key_length = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_key/default_key_length" ],
+           COUNTER  => [ 0 ]);
+    }
+
+    ## determine keyalgorithm
+    if (-f $home."/data/KEY_ALGORITHM") {
+        $key_alg = $tools->getFile ($home."/data/KEY_ALGORITHM");
+    } else {
+        $key_alg = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/create_key/default_key_algorithm" ],
+           COUNTER  => [ 0 ]);
+    }
+
+    ## generate key
+    if( not $cryptoShell->genKey(
+                BITS    => $key_length,
+                OUTFILE => $home."/private/privateKey",
+                TYPE    => $key_alg,
+                PASSWD  => $pin) ) {
+        my $msg = i18nGettext ("Cannot generate a new key. OpenSSL fails with errorcode __ERRNO__. __ERRVAL__",
+                               "__ERRNO__", $cryptoShell->errno,
+                               "__ERRVAL__", $cryptoShell->errval);
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -150, $msg ];
+    }
+
+    $journal->{message} .= gettext ("New key created.");
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "new_key" ],
+                                "UNSET"   => [ "checked_pin", "checked_key_params" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("New key created.") ];
+}
+
+1;

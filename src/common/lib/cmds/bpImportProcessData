@@ -1,0 +1,258 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpImportProcessData
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: import data for the processes of the PKI
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpImportProcessData {
+
+    our ($errno, $errval);
+    our ($xml_cache, $tools);
+
+    print startLogPage (gettext ("Import Process Data Batch Processor"));
+
+    ## get archive
+
+    print addLogSection (gettext ("Importing data ..."));
+    my $tmpdir = createDirectory ();
+    if (not eximIOImport (DIR => $tmpdir)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot extract archive from import device!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+    }
+    print addLogLine (gettext("completed."));
+    print closeLogSection ();
+
+    ## initialize state machine
+
+    print addLogSection (gettext ("Initializing statemachine ..."));
+    my $state_machine = libGetStateMachine ();
+
+    if (not $state_machine)
+    {
+        print addLogLine (gettext ("FAILED."));
+        print addErrorLog ($errval, $errno);
+        print closeLogSection ();
+        exit 1;
+    }
+    print addLogLine (gettext ("done."));
+    print closeLogSection ();
+
+print addLogSection (gettext ("Running batch processor ..."));
+
+## datadirectory for the batchprocessor
+my $batch_dir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+my $batch_file = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/import_process_data_file" ],
+           COUNTER  => [ 0 ]);
+
+
+## open file
+if (not open (FD, $tmpdir."/".$batch_file)) {
+	print addPreLogSection ("<FONT COLOR=#FF0000>".
+				gettext ("Cannot open file with data for batch processor!").
+				"</FONT>");
+	print closeLogSection ();
+	print closeLogPage ();
+	return undef;
+}
+
+## file format is as follows:
+##
+## file    ::= ( ( id . (param | subject_alt_name)* . "\n" )*
+## id      ::= "USER ". serial . "\n" . "PROCESS " . process . "\n"
+## serial  ::= this is a user name or ID
+## process ::= this is a process name
+## param   ::= name . " " . value ."\n"
+## name    ::= name of the parameter
+## value   ::= value of the parameter
+## subject_alt_name ::= "SUBJECT_ALT_NAME_" + number + " " san_name + ("="|":") + san_value
+## number    ::= integer / position in the subject alternative name
+## san_name  ::= "DNS" | "IP" | "EMAIL" | "OTHERNAME"
+## san_value ::= value of the alternative name component
+##
+## the subject alternative name and the DN must be in an OpenSSL compatible format
+
+## loop
+my $line = undef;
+while (not eof FD) {
+
+	my %hash = ();
+
+	## ignore blank lines
+	do {
+		$line = <FD>;
+		next if (not $line and eof FD);
+	} while ($line =~ /^\s*\r?\n*$/);
+
+	## write lines until next blank line into an hash
+	do {
+		my $parameter = $line;
+		$parameter =~ s/^\s*//;
+		$parameter =~ s/\s.*$//;
+		$parameter =~ s/\n//;
+		my $value = $line;
+		$value =~ s/^\s*//;
+		$value =~ s/^[^\s]*\s//;
+		$value =~ s/\s*$//;
+		$value =~ s/\n//;
+		if ($value) { ## a single line parameter
+	        	$hash{$parameter} = $value;
+	        	$line = <FD>;
+	        } else { ## a multiline parameter
+	        	$line = <FD>;
+	        	if ($line =~ /^-----BEGIN\s(\S+)-----$/) {
+	        		my $limiter = "-----END $1-----";
+	        		$hash{$parameter} = '';
+                                $line = <FD>; ## drop begin limiter
+				while ($line !~/$limiter/) {
+	        			if ($line =~ /^\s*\r?\n*$/) {
+	        				print addPreLogLine ("<FONT COLOR=#FF0000>".
+		                	               i18nGettext ("Runaway multine delimiter (__LIMITER__) - Ignoring dataset !", 
+							"__LIMITER__", $limiter).
+                		        	        "</FONT>");
+						undef %hash;
+	        				next;
+	        			}
+	        			$hash{$parameter} .= $line;
+					$line = <FD>;		
+	        		}
+				$line = <FD>; #move to next line
+	        	}
+	        }
+	} while ($line !~ /^\s*\r?\n*$/);
+
+	## check parameter
+	if (not $hash{"USER"}) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no ID!").
+				"</FONT>");
+		next;
+	}
+	if (not $hash{"PROCESS"}) {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				gettext ("Ignoring dataset because there is no process!").
+				"</FONT>");
+		next;
+	}
+
+	## build the directory path for the ID
+	my $id_dir = $batch_dir;
+	my $h_id   = $hash{"USER"};
+	while ($h_id !~ /^$/) {
+		$id_dir .= "/".substr $h_id, 0, 1;
+		$h_id =~ s/^.//;
+	}
+
+	## check that the directory exist
+	if (-d "$id_dir/workflows/".$hash{"PROCESS"}) {
+		## checking that this directory is only part of a tree
+		if (not -f $id_dir."/ID") {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+				    i18nGettext (
+                      "Directory __DIR__ exists but it is not the directory of a user. Cannot update a nonexistent user. Ignoring dataset of ID __ID__.",
+                      "__DIR__", $id_dir."/workflows/".$hash{"PROCESS"},
+                      "__ID__", $hash{"USER"}).
+				    "</FONT>");
+			next;
+		}
+	} else {
+		print addPreLogLine ("<FONT COLOR=#FF0000>".
+				i18nGettext (
+				  "Directory __DIR__ does not exist. Cannot update a nonexistent user or process. Ignoring dataset of ID __ID__.",
+                  "__DIR__", $id_dir."/workflows/".$hash{"PROCESS"},
+                  "__ID__", $hash{"USER"}).
+				"</FONT>");
+		next;
+	}
+
+	## write every key in the appropriate file
+	foreach my $h (keys %hash) {
+		next if ($h =~ /^(USER|PROCESS)$/);
+		if ($h =~ /^set_state$/i)
+		{
+			$state_machine->set_user_states (
+                            "USER"    => $hash{"USER"},
+                            "PROCESS" => $hash{"PROCESS"},
+                            "SET"     => [ $hash{$h} ]  );
+			next;
+		}
+		if ($h =~ /^unset_state$/i)
+		{
+			$state_machine->set_user_states (
+                            "USER"    => $hash{"USER"},
+                            "PROCESS" => $hash{"PROCESS"},
+                            "UNSET"   => [ $hash{$h} ]  );
+			next;
+		}
+		if ($h =~ /^SUBJECT_ALT_NAME_/i)
+		{
+                        $hash{$h} =~ s/^([^=:]*)[=:](.*)$/$1\n$2/;
+		}
+
+	        my $file;
+		## see if the name contains a directory to save (@ notation)		
+		if ($h =~ /([^\@]+)\@(.+)/) {
+			## check for the directory
+			if (! -d $id_dir."/workflows/".$hash{"PROCESS"}."/$2") {
+	               		## create the directory
+				my $full_dir = $id_dir."/workflows/".$hash{"PROCESS"}."/$2"; 
+        		        my $ret = `mkdir -p $full_dir`;
+				if ( $? ) {
+        		                print addPreLogLine ("<FONT COLOR=#FF0000>".
+                        	                i18nGettext (
+				                      "Cannot create directory __DIR__. Ignoring dataset of ID __ID__.",
+				                      "__DIR__", "$full_dir",
+				                      "__ID__", $hash{"ID"}).
+                                	        "</FONT>");
+		                        next;
+                		}
+			}
+			$file=$2."/".$1;
+		} else {
+			$file = "data/$h";
+		}
+
+		if (not $tools->saveFile (FILENAME => $id_dir."/workflows/".$hash{"PROCESS"}."/$file",
+                                          DATA     => $hash{$h})) {
+			print addPreLogLine ("<FONT COLOR=#FF0000>".
+	                 	i18nGettext ("Cannot write file __FILE__. Continuing ...",
+					"__FILE__", $id_dir."/workflows/".$hash{"PROCESS"}."/$file").
+				"</FONT>");
+		}
+	}
+
+	## write out message
+	print addPreLogLine ("<FONT COLOR=#00FF00>".
+			i18nGettext ("Process __PROCESS__ of ID __ID__ successfully updated.",
+			             "__PROCESS__", $hash{"PROCESS"},
+			             "__ID__", $hash{"USER"}).
+			"</FONT>");
+}
+
+close FD;
+
+print addPreLogLine ("");
+print addLogLine (gettext ("Batch processor finished"));
+print closeLogSection ();
+
+removeDirectory ($tmpdir);
+
+closePage();
+
+}
+
+1;

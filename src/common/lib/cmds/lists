@@ -1,0 +1,215 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: lists
+##       Brief: lists objects
+## Description: lists requests and certificates
+##  Parameters: action (type of list)
+
+use strict;
+
+sub cmdLists {
+
+our ($query, $db, $self, $cryptoShell, $oldDataType);
+
+my $action = $query->param('action');
+my ( $dataType, $reason );
+
+if ( "$action" eq "" ) {
+        configError(gettext("Command Error (Command Missing)"));
+}
+
+
+## Variables Definition
+my $getID_url = 'pki?cmd=viewCert;';
+
+my $from    = ( $query->param( 'viewFrom' ) or 0 );
+my $matched = $query->param( 'rows' );
+
+## Set the column titles
+my ( $dbItem, $listType, @list, @cols, $newCMD );
+my ( $now, $today, $expires_after, $expires_before );
+
+my ($item_list, $cmd_panel) = (undef, undef);
+$item_list->{BODY} = [];
+
+$item_list->{CLASS} = "lists";
+$today = gmtime;
+$now = $cryptoShell->getNumericDate ( "$today" );
+
+my $idx = 0;
+## Differentiate the list parameters
+if( $action =~ /^certsList/i) {
+	$oldDataType  = 'VALID_CERTIFICATE';
+	$dataType  = 'CERTIFICATE';
+
+	$listType  = gettext("Valid Certificates");
+
+	$item_list->{HEAD} = [ gettext ("Serial"), gettext ("Owner"),
+				gettext ("Issued On"), gettext ("Expiring On")];
+
+} elsif( $action =~ /^certsExpiredList/i) {
+	$oldDataType  = 'EXPIRED_CERTIFICATE';
+	$dataType  = 'CERTIFICATE';
+	$listType  = gettext("Expired Certificates");
+
+	$item_list->{HEAD} = [ gettext("Serial"), gettext ("Owner"),
+				gettext("Issued On"), gettext ("Expired on") ];
+
+} elsif ( $action =~ /^revokedList/i ) {
+	$oldDataType = "REVOKED_CERTIFICATE";
+	$dataType  = 'CERTIFICATE';
+	$listType  = gettext("Revoked Certificates");
+
+	$item_list->{HEAD} = [ gettext("Serial"), gettext("Owner"),
+				gettext ("Revoked On"), gettext ("Reason") ];
+
+} elsif ( $action =~ /^suspendedList/i ) {
+	$dataType  = 'CERTIFICATE';
+	$oldDataType = 'SUSPENDED_CERTIFICATE';
+	$listType  = gettext("Suspended Certificates");
+
+	$item_list->{HEAD} = [ gettext ( "Serial"), gettext ("Owner"),
+				gettext ("Suspended On"), gettext ("Reason") ];
+
+} elsif( $action =~ /^newReqs/i) {
+	$dataType  = 'NEW_REQUEST';
+	$oldDataType = $dataType;
+	$listType  = gettext("New Requests");
+
+	$item_list->{HEAD} = [ gettext("Serial"), gettext ("Requested by"),
+				gettext ("Requested On"), gettext ("Status") ];
+
+} elsif( $action =~ /^newCRRs/i) {
+	$dataType  = 'CRR';
+	$oldDataType = $dataType;
+	$listType  = gettext("New Requests");
+
+	$item_list->{HEAD} = [ gettext ("Serial"), gettext ("Requested By"),
+				gettext ("Requested On"), gettext ("Reason")];
+
+} else {
+	configError(gettext("Requested List NOT available"));
+}
+
+## Get required parameters ( return only the value string )
+my $maxItems 	= getRequired( "maxReturnedItems" );
+
+# if ( not $matched ) {
+# 	$matched  = $db->elements( DATATYPE => $oldDataType );
+# };
+
+@list = $db->searchItems( 
+		DATATYPE => $oldDataType, 
+		FROM=>$from, 
+		ITEMS=>$maxItems );
+
+$cmd_panel->[0] = libBuildRefs(
+		DATATYPE  => $oldDataType,
+		MAXITEMS  => $maxItems );
+
+## Process all Files
+foreach $dbItem ( @list ) {
+
+	## Common Variables
+	my ( $format, $key, $ser_col, $op_col, $email, $email_col, $role_col );
+	my ( $lnk, $parsed, $head );
+	my ( $hex, $notBefore, $notAfter, $submit, $status );
+
+        my $pos = scalar @{$item_list->{BODY}};
+        my $index = 0;
+	my $style = "color: black;";
+
+	$parsed = $dbItem->getParsed();
+	$head	= $parsed->{HEADER};
+
+        $key    = $dbItem->getSerial();
+	$submit = $parsed->{DN_HASH}->{CN}[0];
+
+        $notBefore = ( $parsed->{NOTBEFORE} or $head->{NOTBEFORE}
+			or $parsed->{SUBMIT_DATE} or gettext ("n/a") );
+
+        $notAfter = ( $parsed->{NOTAFTER} or $head->{NOTAFTER}
+			or gettext ("n/a") );
+
+	if ( $dbItem->getStatus() =~ /VALID|APPROVED/ ) {
+		$status = gettext ( "Valid" );
+		$style = "color: green;";
+	} elsif ( $dbItem->getStatus() =~ /EXPIRED/ ) {
+		$status = gettext ( "Expired" );
+		$style = "color: #c40;";
+	} elsif ( $dbItem->getStatus() =~ /REVOKED/ ) {
+		$status = gettext ( "Revoked" );
+		$style = "color: red;";
+	} elsif ( $dbItem->getStatus() =~ /DELETED/ ) {
+		$status = gettext ( "Deleted" );
+		$style = "color: red;";
+	} elsif ( $dbItem->getStatus() =~ /Suspended/ ) {
+		$status = gettext ( "Suspended" );
+		$style = "color: red;";
+	} elsif ( $dbItem->getStatus() =~ /ARCHIVED/ ) {
+		$status = gettext ( "Processed" );
+		$style = "color: green;";
+	} elsif ( $dbItem->getStatus() =~ /NEW|PENDING/ ) {
+		$status = gettext ( "Pending" );
+		$style = "color: #c40;";
+	} else {
+		$status = gettext ( "n/a" );
+	}
+
+	$status = "<span style='$style'>$status</span>";
+
+	if ( $dataType =~ /CRR/ ) {
+		$ser_col = $key;
+
+		$item_list->{BODY}->[$pos++] = 
+			[ $ser_col, $submit, $notBefore, $status ];
+
+	} elsif ( $dataType =~ /CERTIFICATE/ ) {
+        	$ser_col = "<a class=\"list\" " .
+			   "href=\"?cmd=viewCert;dataType=$dataType" .
+                	   "&key=$key\">". 
+				$dbItem->getParsed()->{HEX_SERIAL} ."</a>";
+		if ( $dbItem->{STATUS} =~ /VALID/ ) {
+			$item_list->{BODY}->[$pos++] =
+				[ $ser_col, $submit, $notBefore, $notAfter ];
+		} elsif ( $dbItem->{STATUS} =~ /EXPIRED/ ) {
+			$item_list->{BODY}->[$pos++] =
+				[ $ser_col, $submit, $notBefore, $notAfter ];
+		} elsif ( $dbItem->{STATUS} =~ /REVOKED/ ) {
+			
+			$reason = $dbItem->getParsed()->{INVALIDITY_REASON} or
+					"n/a";
+
+			$item_list->{BODY}->[$pos++] =
+				[ $ser_col, $submit, 
+					$dbItem->getParsed()->{HEADER}->{REVOKED_AFTER},
+					gettext ( "$reason" ) ];
+
+		} elsif ( $dbItem->{STATUS} =~ /SUSPENDED/ ) {
+			$reason = $dbItem->getParsed()->{INVALIDITY_REASON} or
+					"n/a";
+			$item_list->{BODY}->[$pos++] =
+				[ $ser_col, $submit, 
+					$dbItem->getParsed()->{HEADER}->{SUSPENDED_AFTER},
+					gettext( "$reason") ];
+		}
+	} elsif ( $dataType =~ /REQUEST/ ) {
+		$ser_col = $key;
+
+		$item_list->{BODY}->[$pos++] = 
+			[ $ser_col, $submit, $notBefore, $status ];
+	};
+    }
+
+return libSendReply (
+                     "NAME"      => gettext ($listType),
+                     "ITEM_LIST" => $item_list,
+                     "CMD_PANEL" => $cmd_panel,
+                     "TIMESTAMP" => 1
+                    );
+}
+
+1;
+

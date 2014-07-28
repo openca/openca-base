@@ -1,0 +1,165 @@
+## OpenCA - Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: submit_revreq
+##       Brief: store the revreq to the DB
+##     Version: $Revision: 1.4 $
+## Description: store the revreq to the DB for RA Operator approval
+##  Parameters: head, text, signature
+
+use strict;
+
+sub cmdSubmit_revreq {
+
+our ($cryptoShell, $db, $tools, $query);
+
+## Reserved variables
+my ( $text, $cert, @search, $certTable );
+
+## Get required configuration parametes
+my $chainDir	= getRequired( 'ChainDir' );
+
+## To aprove a Request, we need it signed by the RA operator
+my $beginHeader = "-----BEGIN HEADER-----";
+my $endHeader = "-----END HEADER-----";
+my $beginSig = "-----BEGIN PKCS7-----";
+my $endSig = "-----END PKCS7-----";
+
+## Get the parameters
+my $head        = $query->param('head');
+my $body        = $query->param('text');
+my $signature   = $query->param('signature');
+my $serial	= $query->param('serial');
+my $reason	= $query->param('reason');
+
+my $req_txt = $head . $body;
+
+if ( $signature ne "" ) {
+	$req_txt .= $beginSig . "\n" . $signature . 
+		    "\n" . $endSig . "\n";
+}
+
+## Try to build the REQ object
+my $req = new OpenCA::REQ ( SHELL=>$cryptoShell,
+                            GETTEXT => \&i18nGettext,
+                            DATA=>$req_txt );
+
+if( not $req ) {
+	configError( gettext("Error while creating the request."));
+}
+
+## download the certificate
+my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", 
+		KEY => $req->getParsed()->{REVOKE_CERTIFICATE_SERIAL} );
+
+if (not $cert) {
+	##// it's not good to show the user the detailed problem
+	my $basedoc = getRequired ('db_error');
+	print $tools->getFile ( $basedoc );
+	return undef;
+}
+
+if ( $cert->getStatus() =~ /REVOKED|SUSPENDED/ ) {
+	generalError ( i18nGettext ("The certificate is already __STATUS__.",
+			"__STATUS__" , $cert->getStatus()) );
+}
+
+## check the pin/crin again
+if ($req->getParsed()->{CRIN} or not $signature) {
+	my $crin = $cryptoShell->getDigest ( DATA => $req->getParsed()->{CRIN}, 
+					ALGORITHM => "sha1" );
+
+	## get the informations about the crin
+	my $pin     = $cert->getParsed()->{HEADER}->{PIN};
+	
+	## check the crin
+	if ($pin ne $crin) {
+		## crin-mismatch
+		## should I sent here a general error?
+                my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+                $info_list->{BODY}->[0]->[0] = gettext ("Certificate Serial Number");
+                $info_list->{BODY}->[0]->[1] = '<Input type="text" name="serial" value="'.$serial.'">';
+                $info_list->{BODY}->[1]->[0] = gettext ("Reason [ Reason for revocating the certificate ]");
+                $info_list->{BODY}->[1]->[1] = '<textarea cols="35" rows="5" name="reason" wrap="virtual">'.$reason.'</textarea>';
+                $info_list->{BODY}->[2]->[0] = gettext ("Please enter the CRIN which the owner of the private keys received during the process of issuing the certificate.");
+                $info_list->{BODY}->[3]->[0] = gettext ("CRIN code [ revocation pin ]");
+                $info_list->{BODY}->[3]->[1] = '<Input type="password" name="crin">';
+                $info_list->{BODY}->[3]->[0] = gettext ("Retype CRIN code [ retype revocation pin ]");
+                $info_list->{BODY}->[3]->[1] = '<Input type="password" name="crin2">';
+
+                $hidden_list->{"cmd"} = "submit_revreq";
+                $cmd_panel->[0]   = '<input type="submit" name="Submit" value="'.gettext ("Continue").'">';
+
+		print STDERR "SECURITY ALERT BY PKI: attempt to revoke a certificate with a wrong pin (certificate: $serial)\n";
+		libSendReply (
+                              "NAME"        => gettext ("Certificate Revocation Request"),
+                              "EXPLANATION" => gettext ("Certificate Data:\nIf you don't know the certificate's serial number please use the lists."),
+                              "HIDDEN_LIST" => $hidden_list,
+                              "INFO_LIST"   => $info_list,
+                              "CMD_PANEL"   => $cmd_panel
+                             );
+                              
+		return undef;
+	}
+}
+
+if ( not $db->storeItem( OBJECT=>$req, DATATYPE=>"NEW_CRR", MODE => "INSERT")) {
+	print STDERR "SECURITY ALERT BY PKI: database failed while storing " .
+		"a correct CRR which follows\n".  $req_txt."\n";
+	generalError( i18nGettext("Error while storing the request. __ERRVAL__",
+                                  "__ERRVAL__", $db->errval),
+                      $db->errno);
+}
+
+if (not $db->updateItem ( DATATYPE => "SUSPENDED_CERTIFICATE",
+						OBJECT => $cert )) {
+	print STDERR "SECURITY ALERT BY PKI: database failed while updating ".
+		" the certificate state.\n".
+		$req_txt."\n";
+
+	generalError( i18nGettext("Failed to change the certificate's " .
+				"state. __ERRVAL__", 
+				"__ERRVAL__", $db->errval), 
+			$db->errno);
+}
+
+# if (not $db->getItem (DATATYPE=>"REVOKED_CERTIFICATE", KEY => $cert->getSerial()) and
+#    not $db->getItem (DATATYPE=>"SUSPENDED_CERTIFICATE", KEY => $cert->getSerial())
+#   )
+#{
+#    my $ret = undef;
+#    if ($db->getItem (DATATYPE=>"VALID_CERTIFICATE", KEY => $cert->getSerial()))
+#    {
+#        $ret = $db->updateStatus ( DATATYPE=>"VALID_CERTIFICATE",
+#                                   OBJECT => $cert,
+#                                   NEWTYPE=>"SUSPENDED_CERTIFICATE");
+#    } else {
+#        $ret = $db->updateStatus ( DATATYPE=>"EXPIRED_CERTIFICATE",
+#                                   OBJECT => $cert,
+#                                   NEWTYPE=>"SUSPENDED_CERTIFICATE");
+#    }
+#    if (not $ret) {
+#	print STDERR "SECURITY ALERT BY PKI: database failed during an update of the certificate state for a correct CRR which follows\n".
+#		$req_txt."\n";
+#	generalError( i18nGettext("Failed to change the certificate's state. __ERRVAL__",
+#                                  "__ERRVAL__", $db->errval),
+#                      $db->errno);
+#    }
+#}
+
+return libSendReply (
+                     "NAME"        => gettext ("Revocation Request Accepted"),
+                     "EXPLANATION" => i18nGettext ("Your revocation request ".
+	"has been accepted and is now waiting to be processed. Once your " .
+	"certificate is revoked, you will be notified by e-mail.\n\n" .
+	"If you want to check out if your request has been correctly " . 
+	"received, you can see the Revocation Requests List (use the " .
+	"Requests menu).\n\n" .
+	"If you want to cancel the revocation request (you issued it by " .
+	"error), you have to go to the nearest Registration Authority.")
+        );
+}
+
+1;
+

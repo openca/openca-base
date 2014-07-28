@@ -1,0 +1,51 @@
+## OpenCA - command
+## Written by Michael Bell for the OpenCA project 2000
+## (c) Copyright 2000-2004 The OpenCA Project
+##
+##   File Name: ldapAddCerts
+##       Brief: Add all certificates to LDAP server
+## Description: Add all issued certificates to LDAP server
+##  Parameters:
+
+use strict;
+
+sub cmdLdapAddCerts {
+
+## ca-certificates
+print startLogPage (gettext ("Exporting ca-certificates to LDAP ..."));
+my @items = $db->searchItems ( DATATYPE => "VALID_CA_CERTIFICATE" );
+for my $h (@items) {
+  my $result = eximObjectToLDAP ( AUTHORITY_CERTIFICATE => $h );
+  if ($result and $result->{STATUS}) {
+    print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ OK", "__CERT__SERIAL__", $h->getSerial()));
+  } else {
+    print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Certificate __CERT_SERIAL__ FAILED", "__CERT_SERIAL__", $h->getSerial()).
+                         "</FONT>");
+  }
+}
+closeLogSection ();
+
+## certificates
+print startLogPage (gettext ("Exporting certificates to LDAP ..."));
+my @items = $db->searchItems ( DATATYPE => "VALID_CERTIFICATE" );
+for my $h (@items) {
+  my $result = eximObjectToLDAP ( CERTIFICATE => $h );
+  if ($result and $result->{STATUS}) {
+    print addPreLogLine (i18nGettext ("Certificate __CERT_SERIAL__ OK", "__CERT_SERIAL__", $h->getSerial()));
+  } else {
+    print addPreLogLine ("<FONT COLOR=#ff0000>".
+                         i18nGettext ("Certificate __CERT_SERIAL__ FAILED (error __ERRNO__: __ERRVAL__)",
+                                      "__CERT_SERIAL__", $h->getSerial(),
+                                      "__ERRNO__", $result->{CODE},
+                                      "__ERRVAL__", $result->{DESC}).
+                         "</FONT>");
+  }
+}
+closeLogSection ();
+
+closePage ();
+
+}
+
+1;

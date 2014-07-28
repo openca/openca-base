@@ -1,0 +1,39 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: deleteCSR
+##       Brief: Delete a Request
+## Description: Move a request to the DELETED_REQUEST dB
+##  Parameters: key, dataType
+
+use strict;
+
+sub cmdDeleteCSR {
+
+our ($db, $query, $tools);
+
+## Get the parameters
+my $key		= $query->param('key');
+my $dataType	= $query->param('dataType');
+
+my $req = $db->getItem( DATATYPE=>$dataType, KEY=>$key);
+if ( not $req ) {
+	configError (i18nGettext ("No __KEY__ found in __DATATYPE__!",
+                          "__KEY__", $key,
+                          "__DATATYPE__", $dataType));
+}
+
+$req->getParsed()->{HEADER}->{DELETED} = $tools->getDate();
+if( not $db->updateItem ( OBJECT => $req, DATATYPE => "DELETED_REQUEST" )) {
+ 	generalError (i18nGettext ("Error storing REQ __KEY__ to Deleted dB!",
+                                "__KEY__", $key).
+                   "<br>\n".$db->errval(), $db->errno());
+}
+
+## Send Success Page
+success(gettext ("Delete Request"), gettext ("Certificate Request Successfully deleted."));
+
+}
+
+1;

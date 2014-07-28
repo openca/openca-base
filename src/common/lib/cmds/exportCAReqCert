@@ -1,0 +1,63 @@
+## OpenCA - CA Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: exportCAReqCert
+##//       Brief: Exports CA's Certificate or Request
+##// Description: Exports CA's Certificate or Certificate Request
+##  Parameters: dataType
+
+use strict;
+
+sub cmdExportCAReqCert {
+
+    our $query;
+
+    ## Get Parameter REQUEST|CERTIFICATE
+    my $dataType 	= $query->param('dataType');
+
+    ## To export the CA request and CA certificate we use
+    ## the same export device as the one used for the certificates
+    ## (is there any reason for not doing so ?)
+    ## Get required parameters from the configuration file
+    my $reqDir 	= getRequired( 'ReqDir' );
+    my $certDir 	= getRequired( 'CACertDir' );
+    my $cacert	= getRequired( 'CACertificate' );
+    my $cacertDER	= getRequired( 'CACertificateDER' );
+
+    ## Other reserved variables
+    my ( $dir, $file );
+
+    ## If we want to export the cacert.pem the $dir must be
+    ## set to the main OpenCA directory. If we want to export
+    ## the request for the CA, just set the $dir to the
+    ## $pendingreqs set in the config file.
+    if( $dataType eq "REQUEST" ) {
+        $dir = "$reqDir";
+        $file = "careq.pem";
+        configError (i18nGettext ("Cannot find file __FILE__!", "__FILE__", "$dir/$file"))
+            if (not -e "$dir/$file" );
+    } elsif ( $dataType eq "CERTIFICATE" ) {
+        $dir = $certDir;
+        configError (i18nGettext ("Cannot find file __FILE__!", "__FILE__", $cacert))
+        unless ( -e "$cacert" );
+        configError (i18nGettext ("Cannot find file __FILE__!", "__FILE__", $cacertDER))
+        unless ( -e "$cacertDER" );
+    } else {
+        configError(gettext ("Unknown or missing datatype!"));
+    }
+
+    print startLogPage (gettext ("Export CA Certificate Signing Request or Certificate"));
+
+    eximIOExport (DIR => $dir);
+
+    closePage();
+
+}
+
+sub getParamsExportCAReqCert
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

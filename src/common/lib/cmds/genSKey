@@ -1,0 +1,127 @@
+## OpenCA - CA Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: genSKey
+##//       Brief: Generate CA's Secret Key
+## Description: Generate The Secrete Key to be used by the CA
+##  Parameters: bits, alg, passwd
+
+use strict;
+
+sub cmdGenSKey {
+
+    our ($query, $crypto_layer, $tools);
+
+    ## This command will generate the new CA secret
+    ## key (private/cakey.pem)
+
+    ## Get the parameters
+    my $bits      = $query->param('bits');
+    my $alg       = $query->param('alg');
+    my $key_type  = $query->param('key_type');
+    my $cakeyFile = getRequired ( 'CAKey' );
+
+    ## Other reserved variables
+    my $key;
+
+    if( -e "$cakeyFile" ) {
+        generalError (
+            i18nGettext ("There is already a private key present in this OpenCA installation (__FILE__).",
+                         "__FILE__", $cakeyFile));
+    }
+
+
+    ## do not check for a successful login!
+    ## useKey is only used to set the passphrase for the token if necessary
+    my $ca_token = $crypto_layer->getToken ('CA');
+    $ca_token->login if (not $ca_token->keyOnline);
+
+    my $errno = 0;
+    my $msg   = "";
+    if( not $ca_token->genKey( BITS      => $bits,
+                               ALGORITHM => $alg,
+                               TYPE      => $key_type) ) {
+        $errno  = $ca_token->errno;
+        $msg .= i18nGettext ("OpenCA::Crypto failed: __ERRNO__", "__ERRNO__", $ca_token->errno)."<br>\n".
+                i18nGettext ("Errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval);
+    }
+
+    if ($errno)
+    {
+        $key = "&nbsp;";
+    } else {
+        ## Try loading the Key File
+        $key = $tools->getFile( "$cakeyFile" );
+    }
+
+    my $info_list = undef;
+    $info_list->{BODY}->[0]->[0] = '';
+    $info_list->{BODY}->[0]->[1] = "<pre>".$key."</pre>";
+
+    return libSendReply (
+               "NAME"        => gettext ("CA Secret Key Generation"),
+               "EXPLANATION" => gettext ("Following you can find the result of the generation process.").
+                                $msg,
+               "INFO_LIST"   => $info_list);
+}
+
+sub getParamsGenSKey
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("If you continue, you will delete the old (if any) CA secret key. Are you sure you want to continue?");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Encryption algorithm (AES,DES3,etc..)")."</td>\n".
+                   '    <td><select name="alg">'."\n".
+                   "        <option>aes256</option>\n".
+                   "        <option>aes128</option>\n".
+                   "        <option>des3</option>\n".
+                   "        <option>idea</option>\n".
+                   "        </select>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Asymmetric algorithm (rsa, dsa)")."</td>\n".
+                   '    <td><select name="key_type">'."\n".
+                   "        <option>rsa</option>\n".
+                   "        <option>ecdsa</option>\n".
+                   "        <option>dsa</option>\n".
+                   "        </select>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("CA key size (in bits)")."</td>\n".
+                   '    <td><select name="bits">'."\n".
+                   "        <option>8192</option>\n".
+                   "        <option>4096</option>\n".
+                   "        <option>2048</option>\n".
+                   "        <option>1024</option>\n".
+                   "        <option>521</option>\n".
+                   "        <option>384</option>\n".
+                   "        <option>224</option>\n".
+                   "        <option>192</option>\n".
+                   "        <option>160</option>\n".
+                   "        <option>128</option>\n".
+                   "        <option>112</option>\n".
+                   "        </select>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+
+1;

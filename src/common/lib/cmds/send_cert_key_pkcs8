@@ -1,0 +1,49 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: send_cert_key_pkcs8
+##       Brief: send cert and keypair in PEM-format
+##     Version: $Revision: 1.4 $
+##// Description: this RA-script is used to give the user it's private key and cert
+##  Parameters: key, dataType
+
+use strict;
+
+sub cmdSend_cert_key_pkcs8 {
+
+	libCheckPasswd ("PUBLIC");
+
+	##// Let's get parameters
+	my $key       = ( $query->param('key') || $query->param('serial') );
+	my $dataType  = ( $query->param('dataType') || "VALID_CERTIFICATE" );
+
+	## Get the certificate from the DB
+	my $cert;
+	if ( $cert = $db->getItem(DATATYPE=>$dataType, KEY=>$key ) ) {
+
+		my $fname = $key;
+
+		if ( $cert->getParsed()->{DN_HASH} and 
+					$cert->getParsed()->{DN_HASH}->{CN} ) {
+			$fname .= "_" . $cert->getParsed()->{DN_HASH}->{CN}[0];
+		}
+		$fname .= "_certificate";
+		$fname .= ".p8";
+
+		$fname =~ s/[\/\\\s\(\)]+/_/gi;
+
+		##// if we use the correct content-type and don't use 
+		## (shift + left mouse button) then netscape tries to import the cert
+		## without the key
+		## print "Content-type: application/x-X509-user-cert\n\n";
+		print "Content-type: application/x-pkcs8\n";
+		print "Content-Disposition: attachment; filename=$fname\n\n";
+		print $cert->getPEM();
+		print $cert->getKey();
+	} else {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+}
+
+1;

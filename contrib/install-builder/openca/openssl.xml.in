@@ -1,0 +1,26 @@
+        <component>
+            <name>openssl</name>
+            <description>OpenSSL Library</description>
+            <canBeEdited>0</canBeEdited>
+            <selected>1</selected>
+            <show>0</show>
+            <folderList>
+                <folder>
+                    <description>OpenSSL</description>
+                    <destination>@openssl_prefix@</destination>
+                    <name>openssl</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>@openssl_prefix@/lib</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>@openssl_prefix@/bin</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>@openssl_prefix@/include/openssl</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+        </component>

@@ -1,0 +1,72 @@
+## OpenCA - command
+##
+## Written by Michael Bell for the OpenCA project 2003
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: getParams
+##       Brief: get HTML paramaters
+##     Version: $Revision: 1.4 $
+## Description: get HTML parameters from specified commands
+##              this is a javascript replacement
+##  Parameters: GET_PARAMS_CMD, GET_PARAMS_STEP
+
+use strict;
+
+
+sub cmdGetParams
+{
+	## get basic data and information
+	my $cmd   = $query->param ('GET_PARAMS_CMD');
+
+	our ($function, $query);
+
+	## which step do we need?
+	my $step = $query->param ('GET_PARAMS_STEP');
+
+	## initial call?
+	$step = -1 if (not $step and (not defined $step or $step != 0));
+	$step++;
+
+	## load next step
+	$function = "getParams".uc (substr ($cmd, 0, 1)).substr ($cmd, 1, length ($cmd)-1);
+	my $field = eval $function."($step)";
+
+	## what we have  to do?
+	if (not $field)
+	{
+		## if it there is no next step then load and run the cmd
+
+		$query->param ('cmd', $cmd);
+		libExecuteCommand ($cmd, @_);
+	}
+	else
+	{
+		## if there is a next step then store the data and run the step
+		my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+
+		$hidden_list->{"GET_PARAMS_STEP"} = $step;
+		$hidden_list->{"GET_PARAMS_CMD"}  = $cmd;
+
+		foreach my $h ($query->param)
+		{
+			next if ($h =~ /^CGISESSID$/);
+			$hidden_list->{$h} = $query->param($h) if (not exists $hidden_list->{$h});
+		}
+
+		$info_list->{BODY}->[0]->[0] = '';
+		$info_list->{BODY}->[0]->[1] = $field;
+
+		$cmd_panel->[0] = "<input type=submit value=\"".gettext("OK")."\">\n";
+		$cmd_panel->[1] = "<input type=reset value=\"".gettext("Reset")."\">\n";
+
+		libSendReply("NAME" => gettext ("Get Additional Parameters"),
+								 "EXPLANATION" => gettext ("You need to enter some additional parameters for the requested functionality."),
+                 "HIDDEN_LIST" => $hidden_list,
+                 "INFO_LIST"   => $info_list,
+                 "CMD_PANEL"   => $cmd_panel
+		);
+	}
+	return 1;
+}
+
+1;

@@ -1,0 +1,107 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: changePasswd
+##       Brief: change the passphrase of the keypair
+##     Version: $Revision: 1.2 $
+## Description: change the passphrase of the keypair if the key
+##              is stored in the database
+##  Parameters: 
+
+use strict;
+
+sub cmdChangePasswd {
+
+        our ($query, $db, $cryptoShell);
+
+	## Check FORM : try to identify if the form has already been
+	## completed and needs confirmation or if we are in the earlier
+	## status ( checking for the correct parameters )
+
+	## Status of FORM, possible values (in this order):
+	my $KEY         = $query->param('key');
+	my $PASSWD	= $query->param('passwd1');
+	my $PASSWD2	= $query->param('passwd2');
+	my $PASSWD3	= $query->param('passwd3');
+
+	## check for the old passphrase or is it a new change?
+	if (not $PASSWD) {
+                my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+                $hidden_list->{"cmd"} = "changePasswd";
+                $hidden_list->{"key"} = $KEY;
+                $cmd_panel->[0]   = '<input type="submit" name="Submit" value="'.gettext ("Continue").'">';
+                $info_list->{BODY}->[0]->[0] = gettext ("Certificate Serial Number");
+                $info_list->{BODY}->[0]->[1] = $KEY;
+                $info_list->{BODY}->[1]->[0] = gettext ("Old passphrase");
+                $info_list->{BODY}->[1]->[1] = '<input type=password name="passwd1" value="" size=16 minlength=8>';
+                $info_list->{BODY}->[2]->[0] = gettext ("New passphrase");
+                $info_list->{BODY}->[2]->[1] = '<input type=password name="passwd2" value="" size=16 minlength=8>';
+                $info_list->{BODY}->[3]->[0] = gettext ("New passphrase again");
+                $info_list->{BODY}->[3]->[1] = '<input type=password name="passwd3" value="" size=16 minlength=8>';
+
+                return libSendReply (
+                                     "NAME"        => gettext ("Change Passphrase"),
+                                     "EXPLANATION" => gettext ("Change the passphrase of the choosen key"),
+                                     "HIDDEN_LIST" => $hidden_list,
+                                     "INFO_LIST"   => $info_list,
+                                     "CMD_PANEL"   => $cmd_panel
+                                    );
+	}
+
+	## check the keys
+	if ("$PASSWD3" ne "$PASSWD2") {
+		generalError (gettext ("Two different new passphrases inserted. Please go <B><I>back</I></B> and correct the error."),
+			560 );
+	}
+	
+	## load cert with key
+	my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $KEY);
+	if ( not $cert ) {
+		generalError (gettext ("Cannot load certificate from database!"));
+	}
+
+	my $key = $cert->getKey();
+	if ( not $key ) {
+		generalError (gettext ("Cannot extract key from certificate!"));
+	}
+
+	## change passphrase
+	my $new_key = $cryptoShell->dataConvert (
+			DATATYPE  => "KEY",
+			INFORM    => "PEM",
+			OUTFORM   => "PKCS8",
+			INPASSWD  => $PASSWD,
+			OUTPASSWD => $PASSWD2,
+			DATA      => $key );
+	if ( not $new_key ) {
+		generalError (gettext ("Cannot change passphrase of key!"));
+	}
+
+	## build new cert
+	my $new_cert = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                          GETTEXT => \&i18nGettext,
+					  DATA    => $cert->getPEMHeader ().
+						     $cert->getPEM ().
+						     $new_key );
+	if ( not $new_cert ) {
+		generalError (gettext ("Cannot create certificate with changed key!"));
+	}
+
+	## store cert with key
+	if (not $db->storeItem ( DATATYPE => "CERTIFICATE", OBJECT => $new_cert, MODE => "UPDATE" )) {
+
+		## the command one line before can only be done correct by OpenCA::DBI but not by OpenCA::DB
+		if (not $db->storeItem ( DATATYPE => "VALID_CERTIFICATE", OBJECT => $new_cert, MODE => "UPDATE" )) {
+			generalError (gettext ("Cannot store changed certificate and key in the database!").
+			              "<br>".$db->errval(), $db->errno());
+		}
+
+	}
+
+	## Send Success Page
+	success (gettext ("Passphrase of the key was successfully changed."));
+
+}
+
+1;

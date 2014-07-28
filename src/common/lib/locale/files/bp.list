@@ -1,0 +1,13 @@
+common/lib/bp/backup_key.sub
+common/lib/bp/check_csr_params.sub
+common/lib/bp/check_csr.sub
+common/lib/bp/check_key_params.sub
+common/lib/bp/check_key.sub
+common/lib/bp/check_pin.sub
+common/lib/bp/complete_csr.sub
+common/lib/bp/create_cert.sub
+common/lib/bp/create_csr.sub
+common/lib/bp/create_key.sub
+common/lib/bp/create_pin.sub
+common/lib/bp/enroll_pin.sub
+common/lib/bp/enroll_pkcs12.sub

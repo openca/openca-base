@@ -1,0 +1,224 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: genCRL
+##       Brief: Issue a CRL
+## Description: Issue a new CRL
+##  Parameters: passwd
+## Cfg KeyWord: OpenCADir,TempDir
+
+use strict;
+
+sub cmdGenCRL {
+
+## This function exports the CRL in DER format (preferred
+## to the default PEM format for its smaller size: CRL
+##// can get very long in a medium CAs' life cycle).
+				  
+## Get required parameters from the configuration file
+my $cacert    = getRequired( 'CACertificate' );
+my $crlDir    = getRequired( 'CRLDir' );
+
+## unique DN?
+my $nouniqueDN = 0;
+if (getRequired ('UNIQUE_DN') =~ /NO|N|OFF/i) {
+	$nouniqueDN = 1;
+}
+
+my $ca_token = $crypto_layer->getToken ('CA');
+
+if (not $ca_token) {
+
+	generalError( i18nGettext("Can not get Initialize the CA Token") .
+		"<br />" . i18nGettext ("OpenCA::Crypto errorcode: __ERRNO__", 
+					"__ERRNO__", $crypto_layer->errno));
+
+#	print addLogSection(gettext ("Loading CA token ... "));
+#	print addLogLine ("<FONT color=#ff0000>".gettext ("FAILED")."</FONT>");
+#	print addPreLogLine (i18nGettext ("OpenCA::Crypto errorcode: __ERRNO__", "__ERRNO__", $crypto_layer->errno));
+#	print addPreLogLine (i18nGettext ("OpenCA::Crypto errormessage: __ERRVAL__", "__ERRVAL__", $crypto_layer->errval));
+#	print closeLogSection ();
+#	closePage();
+	return undef;
+}
+
+if (not ($ca_token->keyOnline || $ca_token->login)) {
+
+	generalError( i18nGettext("Can not Initialize the CA Token") . "<br/>".
+		"<br />" . i18nGettext ("OpenCA::Crypto errorcode: __ERRNO__", 
+				"__ERRNO__", $crypto_layer->errno) .
+		"<br />" .i18nGettext("OpenCA::Token errormessage: __ERRVAL__",
+				"__ERRVAL__", $ca_token->errval));
+
+# 	print addLogSection(gettext ("Initializing CA token ... "));
+# 	print addLogLine ("<FONT color=#ff0000>".gettext ("FAILED")."</FONT>");
+# 	print addPreLogLine (i18nGettext ("OpenCA::Token errorcode: __ERRNO__", "__ERRNO__", $ca_token->errno));
+# 	print addPreLogLine (i18nGettext ("OpenCA::Token errormessage: __ERRVAL__", "__ERRVAL__", $ca_token->errval));
+# 	print closeLogSection ();
+# 	closePage();
+	return undef;
+}
+
+my $days    = $query->param( 'days' );
+my $exts    = $query->param( 'exts' );
+	
+# print addLogSection(gettext ("Generating Certificate Revocation List ... "));
+
+## Generate a new CRL object
+my $CRL = new OpenCA::CRL (
+                           SHELL      => $ca_token,
+                           DAYS       => $days,
+                           EXTS       => $exts,
+                           GETTEXT    => \&i18nGettext,
+                           NOUNIQUEDN => $nouniqueDN );
+
+if ( not $CRL ) {
+	generalError( i18nGettext("Error generating a new CRL Object"). "<br/>".
+		"<br />" . i18nGettext ("OpenCA::CRL errorcode: __ERRNO__", 
+				"__ERRNO__", $OpenCA::CRL::errno) .
+		"<br />" .i18nGettext("OpenCA::CRL errormessage: __ERRVAL__",
+				"__ERRVAL__", $OpenCA::CRL::errval));
+
+#	print addErrorLog   (gettext ("ERROR: Cannot initialize a new CRL Object!"));
+#	print addPreLogLine ($CRL);
+#	print addPreLogLine (i18nGettext ("OpenCA::CRL errorcode: __ERRNO__", "__ERRNO__", $OpenCA::CRL::errno));
+#	print addPreLogLine (i18nGettext ("OpenCA::CRL errormessage: __ERRVAL__", "__ERRVAL__", $OpenCA::CRL::errval));
+#	closePage();
+	return undef;
+}
+
+my $ret = $CRL->getTXT();
+
+#print addLogLine(gettext("Ok."));
+#print addPreLogLine( $ret );
+#print closeLogSection();
+
+# print addLogSection(gettext("Saving CRL to PEM format ... "));
+
+if ( open( FD, ">$crlDir/${$}_cacrl.pem" ) ) {
+	print FD $CRL->getPEM();
+	close(FD);
+} else {
+	generalError( i18nGettext("CRL saving Error (__FILE__)!", 
+				"__FILE__", "$crlDir/${$}_cacrl.pem"));
+
+# 	print addErrorLog(i18nGettext ("CRL saving Error (__FILE__)!", "__FILE__", "$crlDir/${$}_cacrl.pem"));
+# 	print addPreLogLine("$!");
+# 	closePage();
+	return undef;
+}
+
+# print addLogLine(gettext("Ok."));
+# print addPreLogLine("$crlDir/${$}_cacrl.pem");
+# print closeLogSection();
+
+# print addLogSection(gettext ("Importing CRL to dB ... "));
+
+if( not $db->storeItem( DATATYPE=>"VALID_CRL", OBJECT=>$CRL, MODE=>"INSERT" )) {
+	generalError( i18nGettext("DB Error while importing!") . 
+			"(" . $db->errno . "::" . $db->errval . ")" );
+
+#	print addErrorLog(gettext ("DB Error while importing!"));
+#	closePage();
+	return undef;
+}
+#print addLogLine(gettext ("Ok."));
+#print closeLogSection();
+
+#print addLogSection( gettext ("Making CRL available on server ... "));
+#
+if (not $tools->saveFile (FILENAME => "$crlDir/cacrl.pem",
+			DATA       => $CRL->getPEM())) {
+	print addPreLogLine ("<FONT COLOR=#FF0000>".
+		i18nGettext ("Cannot update CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.pem").
+			"</FONT>");
+} # else {
+#	print addPreLogLine ("<FONT COLOR=#00FF00>".
+#		i18nGettext ("Updated CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.pem").
+#		"</FONT>");
+#}
+if (not $tools->saveFile (FILENAME => "$crlDir/cacrl.der",
+			DATA       => $CRL->getDER())) {
+	print addPreLogLine ("<FONT COLOR=#FF0000>".
+		i18nGettext ("Cannot update CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.der").
+		"</FONT>");
+} #else {
+#	print addPreLogLine ("<FONT COLOR=#00FF00>".
+#		i18nGettext ("Updated CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.der").
+#		"</FONT>");
+#}
+if (not $tools->saveFile (FILENAME => "$crlDir/cacrl.crl",
+			DATA       => $CRL->getDER())) {
+	print addPreLogLine ("<FONT COLOR=#FF0000>".
+		i18nGettext ("Cannot update CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.crl").
+		"</FONT>");
+} #else {
+#	print addPreLogLine ("<FONT COLOR=#00FF00>".
+#		i18nGettext ("Updated CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.crl").
+#		"</FONT>");
+#}
+if (not $tools->saveFile (FILENAME => "$crlDir/cacrl.txt",
+			DATA       => $CRL->getTXT())) {
+	print addPreLogLine ("<FONT COLOR=#FF0000>".
+		i18nGettext ("Cannot update CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.txt").
+		"</FONT>");
+} #else {
+#	print addPreLogLine ("<FONT COLOR=#00FF00>".
+#		i18nGettext ("Updated CRL on server. FILE: __FILE__", "__FILE__", "$crlDir/cacrl.txt").
+#		"</FONT>");
+#}
+# print closeLogSection();
+
+success ( "New CRL", "CRL Issued Correctly.", $CRL->getTXT );
+
+# closePage();
+
+return 1;
+
+}
+
+sub getParamsGenCRL
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("You can use the button here to issue a new Certificate Revocation List. To issue a new CRL you'll need to provide a valid CA password.\nThe new CRL will be stored in the CRL dB. If you never configured the crypto shell you may need to do it before proceeding.") . "<br /><br />";
+
+	my %labels = ('crl_ext'=>'Default', ''=>'None' );
+	my $crl_exts = $query->newInput (
+                -regx=>'LETTERS',
+                -intype=>'popup_menu',
+                -name=>'exts',
+                -default=> 'crl_ext',
+                -values=>[ 'crl_ext', ''],
+		-labels=>\%labels );
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("CRL Validity Period (days)")."</td>\n".
+                   '    <td><input type="text" name="days" value="30"></td>'.
+                   "\n  </tr>\n";
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("CRL Extensions")."</td>\n".
+                   "    <td>\n". $crl_exts .
+#                   "      <select name=\"exts\">\n".
+#                   "             <option Value=\"\">None\n".
+#                   "             <option Value=\"crl_ext\">Defaults\n".
+#                   "           </select>\n".
+                   '    </td>'.
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+
+1;
+

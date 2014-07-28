@@ -1,0 +1,39 @@
+## OpenCA - Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: HSMlogout
+##       Brief: close a session on the hardware security module
+## Description: logout from the hardware security module
+##  Parameters: 
+
+use strict;
+
+sub cmdHsmLogout {
+
+
+
+ 	print startLogPage (gettext("Logout from hardware security modules in daemon mode"));
+
+	print addLogSection (gettext("Ending the HSM session:<br>"));
+
+	print closeLogSection ();
+
+    	print addLogSection (gettext("Stop modules via cryptographic layer ..."));
+
+	my $ret = $crypto_layer->tokenLogOut('CA');
+    	if (not $ret == 1) {
+
+        	print addLogLine ("<FONT COLOR=#FF0000>FAILED</FONT>");
+        	print addPreLogLine ("<FONT COLOR=#FF0000>$ret</FONT>");
+    	}
+
+
+    	print closeLogSection ();
+
+    	print closeLogPage ();
+
+    	return 1;
+}
+
+1;

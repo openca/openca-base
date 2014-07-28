@@ -1,0 +1,82 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: bpRecoverKey
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: recover Keypairs for users
+## Description: 
+##  Parameters:
+
+use strict;
+
+sub cmdBpRecoverKey {
+
+    our ($crypto_layer, $xml_cache, $query, $self);
+
+    ## get necessary private key access
+
+    my $keybackup_token = $crypto_layer->getToken ('KEYBACKUP');
+    if (not ($keybackup_token->keyOnline || $keybackup_token->login))
+    {
+        my $msg = gettext ("Initializing batchprocessor token ... ").
+                           "<FONT color=#ff0000>".gettext ("FAILED")."</FONT><br>\n".
+                           i18nGettext ("Token's errormessage: __ERRVAL__", "__ERRVAL__", $keybackup_token->errval);
+        generalError ($msg, $keybackup_token->errno);
+    }
+
+    my $info_list = undef;
+
+    ## datadirectory for the batchprocessor
+
+    my $batchdir = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/user_directory" ],
+           COUNTER  => [ 0 ]);
+    my $user     = $query->param ('USER');
+    my $process  = $query->param ('PROCESS');
+    $batchdir .= "/".join ("/", split (/ */, $user))."/workflows/".$process;
+
+    ## references on the result page
+
+    $info_list->{BODY}->[0]->[0] = gettext ("User");
+    $info_list->{BODY}->[0]->[1] = "<a href=\"$self?cmd=bpListProcess&ID=".
+                                   $user."\">".$user."</a>";
+    $info_list->{BODY}->[1]->[0] = gettext ("Process");
+    $info_list->{BODY}->[1]->[1] = "<a href=\"$self?cmd=bpViewProcess;".
+                                   "USER=${user};PROCESS=${process}\">${process}</a>";
+
+    ## decrypt the key
+    my $filename = $batchdir."/keybackup/".$query->param ('key_digest').".enc_key";
+    my $key = $keybackup_token->decrypt (
+                  INFILE     => $filename
+                                        );
+    if (not $key) {
+        $info_list->{BODY}->[2]->[0] = gettext ("Recovered key");
+        $info_list->{BODY}->[2]->[1] = gettext ("n/a");
+        $info_list->{BODY}->[3]->[0] = gettext ("Key recovery status");
+        $info_list->{BODY}->[3]->[1] = gettext ("Cannot recover key because the decryption of the private key failed.");
+    } else {
+        $info_list->{BODY}->[2]->[0] = gettext ("Recovered key");
+        $info_list->{BODY}->[2]->[1] = "<pre>${key}</pre>";
+        $info_list->{BODY}->[3]->[0] = gettext ("Key recovery status");
+        $info_list->{BODY}->[3]->[1] = gettext ("Keyrecovery finished");
+    }
+
+
+    return libSendReply (
+               NAME        => gettext ("Keyrecovery for a process of a user of the batch system"),
+               EXPLANATION => gettext ("Following you can find the results of the keyrecovery."),
+               INFO_LIST   => $info_list
+                        );
+}
+
+sub getParamsBpRecoverKey
+{
+    if (not $_[0]) ## 0 or empty
+    {
+        return gettext ("If you continue, you will need the passphrase of the keybackup's private key. Are you sure you want to continue?");
+    }
+    return "";
+}
+1;

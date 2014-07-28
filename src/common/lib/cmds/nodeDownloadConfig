@@ -1,0 +1,47 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeDownloadConfig
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: imports Configuration
+## Description: imports the configuration from a removable media
+
+use strict;
+
+sub cmdNodeDownloadConfig {
+
+	print startLogPage ( gettext("Importing the configuration from a higher level of the hierarchy ...") );
+
+	my $tmp = createDirectory ();
+	if (not eximIODownload ($tmp)) {
+		print addPreLogSection ("<FONT COLOR=#FF0000>".
+			gettext ("Cannot extract archive from import device!").
+			"</FONT>");
+		print closeLogSection ();
+		print closeLogPage ();
+		return undef;
+	}
+	if (not eximDownloadConfiguration ($tmp)) {
+		print closeLogPage ();
+		return undef;
+	}
+	if (withLDAPsupport() and withLDAPautomatic()) {
+		eximDownloadCAs           ( TMP => $tmp, LDAP => "1" );
+	} else {
+		eximDownloadCAs           ( TMP => $tmp, LDAP => "0" );
+	}
+	eximDownloadCommit ( $tmp );
+	removeDirectory    ( $tmp );
+
+	closePage ();
+
+	return 1;
+}
+
+sub getParamsNodeDownloadConfig
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

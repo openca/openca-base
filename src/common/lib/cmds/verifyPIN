@@ -1,0 +1,188 @@
+## OpenCA - Command
+## Written by Ives Steglich for the OpenCA project 2004
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: verifyPIN
+##       Brief: SHA1(pin)
+##     Version: $Revision: 1.2 $
+## Description: this script compares a SHA1 Fingerprint 
+##              with a generated one - for PIN verfification
+##  Parameters: pin, passwd1, passwd2
+
+use strict;
+
+sub cmdVerifyPIN {
+
+    our ($errval, $query, $cryptoShell);
+
+    my ($info_list, $cmd_panel);
+
+    # my $minPinLength = getRequired('minpinlength');
+    # Removed - this verification is independent from the minpinlength
+    # as it does not input the PIN, but just verifies if it is correct!
+    
+    my $minPinLength = 0;
+
+    my $OPERATION    = $query->param ('operation');
+
+    ## check the submitted data to be consistent
+
+    if ( not checkVerifyPIN($OPERATION) ) {
+
+	my $html_passwd1 = $query->newInput (
+				-regx=>'*',
+		    		-intype=>'password_field',
+		    		-name=>'passwd1',
+				-check=>'all',
+		    		-size=>16,
+		    		-minlen=>$minPinLength,
+				-value=>$query->param('passwd1'));
+
+	my $html_passwd2 = $query->newInput (
+				-regx=>'*',
+		    		-intype=>'password_field',
+		    		-name=>'passwd2',
+				-check=>'fill',
+		    		-size=>16,
+		    		-minlen=>$minPinLength,
+				-value=>$query->param('passwd2'));
+
+	my $info_list = undef;
+        $info_list->{HEAD}->[0] = gettext ("Get SHA1 Fingerprint of Password");
+        my $pos = 0;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("PIN used during your certification request");
+        $info_list->{BODY}->[$pos]->[1] = $html_passwd1;
+        $pos++;
+        $info_list->{BODY}->[$pos]->[0] = gettext ("Re-type your PIN for confirmation");
+        $info_list->{BODY}->[$pos]->[1] = $html_passwd2;
+        $pos++;
+
+	my $hidden_list = undef;
+	$hidden_list->{"pin"} = $query->param('pin');
+	$hidden_list->{"cmd"} = "verifyPIN";
+	$hidden_list->{"operation"} = "check_it";
+	
+        $cmd_panel->[0] = '<input type=submit value="'.gettext ("Continue").'">';
+
+        return libSendReply (
+                             "NAME"        => gettext ("PIN Fingerprint Verification"),
+                             "EXPLANATION" => gettext ("Please enter your PIN data in the following form.")."\n".
+                                              $errval,
+                             "INFO_LIST"   => $info_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel,
+			     "MENU"	   => 0,
+                            );
+			    
+    } elsif ( $OPERATION =~ /check_it/i ) {
+
+	my $PIN = $query->param('pin');
+        my $PASSWD = $query->param('passwd1');
+        if ($PASSWD) {
+            my $pin_digest = $cryptoShell->getDigest (
+                                                      DATA      => $PASSWD,
+                                                      ALGORITHM => "sha1");
+            if (not $pin_digest) {
+                generalError ( gettext ("OpenSSL fails during the calculation of the hash from the passphrase!"), 670);
+            }
+            $PASSWD = $pin_digest;
+        }
+
+	my $info_list = undef;
+        $info_list->{HEAD}->[0] = gettext ("Check the Fingerprints");
+        my $pos = 0;
+	
+	$info_list->{BODY}->[$pos]->[0] = gettext ("Request PIN").": ";
+        $info_list->{BODY}->[$pos]->[1] = $PIN;
+        $pos++;
+
+	$info_list->{BODY}->[$pos]->[0] = gettext ("Entered PIN").": ";
+        $info_list->{BODY}->[$pos]->[1] = $PASSWD;
+        $pos++;
+
+	$info_list->{BODY}->[$pos]->[0] = gettext ("Verification Status").": ";
+	if ($PASSWD eq $PIN) {
+		$info_list->{BODY}->[$pos]->[1] = gettext ("OK");
+	} else {
+		$info_list->{BODY}->[$pos]->[1] = gettext ("FAILED");
+	}
+	
+	$pos++;
+
+	$cmd_panel->[0] = '<input type=button value="'.gettext ("Close Window").'" onclick="window.close()">';
+
+        return libSendReply (
+                             "NAME"        => gettext ("PIN Fingerprint Verification"),
+			     "EXPLANATION" => gettext ("This are the compared Fingerprints")."\n",
+                             "INFO_LIST"   => $info_list,
+			     "CMD_PANEL"   => $cmd_panel,
+			     "MENU"	   => 0,
+                            );
+    } 
+
+    die gettext ("ERROR: Status Unkown!");
+
+}
+
+## we support the following state:
+##
+## 1. ""
+## 2. client-it
+
+sub checkVerifyPIN
+{
+    our ($errval, $query);
+
+    my $status = $_[0];
+    my $mistake = "";
+    # my $minPinLength = getRequired('minpinlength');
+    my $minPinLength = 1;
+
+    ## second level check
+    if ($status)
+    {
+        ## check passwd
+        if (defined $query->param ('passwd1'))
+        {
+            $mistake .= $query->newInputCheck ({
+                            -regx=>'*',
+                            -intype=>'password_field',
+                            -name=>'passwd1',
+                            -check=>'all',
+                            -size=>16,
+                            -minlen=>$minPinLength});
+        }
+
+        #quick hack, to get a nicer output...
+        my $tmp = "<BR>|OK|[\ \(\)]";
+        $mistake =~ s/$tmp//g;
+
+        if (defined $query->param ('passwd1') and defined $query->param ('passwd2'))
+        {
+            if ($query->param ('passwd1') ne $query->param ('passwd2'))
+            {
+                $mistake .= "<BR>";
+                $mistake .= gettext ("Two different pin inserted. Please go <B><I>back</I></B> and correct the error.");
+            }
+        }
+
+        if ($query->param ("HTTP_REQUEST_METHOD") !~ /POST/i)
+        {
+            configError (gettext ("This command can only be used with from which are using POST as METHOD!"));
+        }
+
+    } else {
+        return undef;
+    }
+
+    if ($mistake)
+    {
+        print STDERR "MISTAKE: --$mistake--\n";
+        $errval = $mistake;
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+1;

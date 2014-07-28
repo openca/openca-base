@@ -1,0 +1,64 @@
+## OpenCA - command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: send_cert_key
+##       Brief: send cert and keypair
+##     Version: $Revision: 1.1.1.1 $
+##// Description: this RA-script is used to give the user it's private key and cert
+##  Parameters: key, dataType, format, passwd
+
+use strict;
+
+sub cmdSend_cert_key {
+
+	libCheckPasswd ("PUBLIC");
+
+	my $tempDir = getRequired ('TempDir');
+
+	##// Let's get parameters
+	my $format    = $query->param('format');
+        $format = $query->param('format_send_cert_key') if ($query->param('format_send_cert_key'));
+
+	my $outform  = $format;
+	$outform  =~ s/^.*_//;
+	my $standard = $format;
+	$standard =~ s/_.*$//;
+
+	if ($standard =~ /pkcs12/) {
+		## pkcs 12
+		libExecuteCommand ("send_cert_key_pkcs12");
+	} elsif ($standard =~ /pkcs8/) {
+		## pkcs 8
+		$query->param (-name => 'encoding', -value => $outform);
+		libExecuteCommand ("send_cert_key_pkcs8");
+	} elsif ($standard =~ /openssl/i) {
+		## old openssl rsa
+		$query->param (-name => 'encoding', -value => $outform);
+		libExecuteCommand ("send_cert_key_openssl");
+	} else {
+		configError (i18nGettext ("Unknown standard __STANDARD__.", "__STANDARD__", uc($standard)));
+	}
+}
+
+sub getParamsSend_cert_key
+{
+    my $result = "";
+    if (not $_[0])
+    {
+
+        my $message = gettext ("Please enter the passphrase for the private key of the user.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td>".$message."</td></tr>\n";
+
+        $result .= "  <tr>\n".
+                   '    <td><input type="password" name="passwd" size="20"></td>'.
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+    return $result;
+}
+
+1;

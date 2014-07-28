@@ -1,0 +1,61 @@
+## OpenCA - CA Command
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: rebuildOpenSSLindexDB
+##//       Brief: rebuild OpenSSL's index database
+##// Description: rebuild OpenSSL's index database from the certificates
+##              and ca-certificates which are stored in the database
+##  Parameters: -
+
+use strict;
+use File::Spec;
+
+sub cmdRebuildOpenSSLindexDB {
+
+print startLogPage (gettext ("Try to recover OpenSSL's index database"));
+
+## I must not care about the CA-Certificates because they are never revoked
+## or if they have to be revoked then I must start again with my CA
+
+print addLogSection (gettext ("Create backups of index.txt and serial ..."));
+
+if ($tools->copyFiles ( SRC  => getRequired ('sslindex'),
+                        DEST => getRequired ('sslindex').".".$$."before_recovery")) {
+  print addPreLogLine (getRequired ('sslindex'));
+} else {
+  print addPreLogLine ("<FONT COLOR=#FF0000>".
+                       i18nGettext ("FAILED TO COPY __SSLINDEX__", "__SSLINDEX__", getRequired ('sslindex')).
+                       "</FONT>");
+  print closeLogSection ();
+  print closePage ();
+  return undef;
+}
+
+if ($tools->copyFiles ( SRC  => getRequired ('sslserial'),
+                        DEST => getRequired ('sslserial').".".$$."before_recovery")) {
+  print addPreLogLine (getRequired ('sslserial'));
+} else {
+  print addPreLogLine ("<FONT COLOR=#FF0000>".
+                       i18nGettext ("FAILED TO COPY __SSLSERIAL__", "__SSLSERIAL__", getRequired ('sslserial')).
+                       "</FONT>");
+  print closeLogSection ();
+  print closePage ();
+  return undef;
+}
+
+print closeLogSection ();
+
+# provide defaults for crlnumber file
+my ($volume, $directories, $file) = File::Spec->splitpath(getRequired('sslserial'));
+my $crlnumberfile = File::Spec->catfile($volume, $directories, 'crlnumber');
+
+export_openssl_db ( DB     => getRequired ('sslindex'),
+                    SERIAL => getRequired ('sslserial'),
+		    CRLNUMBER => $crlnumberfile );
+
+
+print closePage ();
+
+}
+
+1;

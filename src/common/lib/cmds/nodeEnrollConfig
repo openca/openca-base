@@ -1,0 +1,32 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: nodeEnrollConfig
+##     Verison: $Revision: 1.1.1.1 $
+##       Brief: exports Configuration
+## Description: exports the configuration to a removable media
+
+use strict;
+
+sub cmdNodeEnrollConfig {
+
+	print startLogPage ( gettext("Exporting the configuration to a lower level of the hierarchy ...") );
+
+	my $tmp = createStructure ();
+	eximEnrollConfiguration ( $tmp );
+	eximEnrollCAs           ( $tmp );
+	eximEnrollCommit        ( $tmp );
+	eximIOEnroll            ( $tmp );
+	removeDirectory         ( $tmp );
+
+	closePage ();
+
+}
+
+sub getParamsNodeEnrollConfig
+{
+    return eximMediaConfirm (@_);
+}
+
+1;

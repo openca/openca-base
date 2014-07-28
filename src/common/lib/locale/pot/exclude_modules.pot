@@ -1,0 +1,6664 @@
+
+#: modules/openca-ui-html/HTML.pm:26
+msgid ":locale_h"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:27
+msgid ":libintl_h"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:48
+#: modules/openca-openssl/OpenSSL/SMIME.pm:56
+#: modules/openca-openssl/OpenSSL/SMIME.pm:326 modules/openca-ac/AC.pm:47
+#: modules/openca-xml-cache/Cache.pm:51
+#: modules/openca-crypto/Token/Empty.pm:47
+#: modules/openca-crypto/Token/OpenSSL.pm:53
+#: modules/openca-crypto/Token/LunaCA3.pm:46
+#: modules/openca-crypto/Crypto.pm:43 modules/openca-dbi/DBI.pm:576
+#: modules/openca-log/Log/Message.pm:90 modules/openca-log/Log.pm:96
+#: modules/openca-log/Logger/XML.pm:45 modules/openca-log/Logger/Syslog.pm:43
+#: modules/openca-session/Session.pm:65
+msgid "DEBUG"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:49
+msgid "CONTENT_TYPE"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:50 modules/openca-ac/AC.pm:49
+#: modules/openca-crypto/Token/Empty.pm:48
+#: modules/openca-crypto/Token/OpenSSL.pm:54
+#: modules/openca-crypto/Token/LunaCA3.pm:47
+#: modules/openca-crypto/Crypto.pm:44 modules/openca-log/Log/Message.pm:91
+#: modules/openca-log/Log.pm:97 modules/openca-log/Logger/XML.pm:46
+#: modules/openca-log/Logger/Syslog.pm:44 modules/openca-session/Session.pm:66
+msgid "debug_fd"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:117 modules/openca-pkcs7/PKCS7.pm:217
+#: modules/openca-tools/Tools.pm:167 modules/openca-tools/Tools.pm:480
+#: modules/openca-tristatecgi/TRIStateCGI.pm:650
+#: modules/openca-openssl/OpenSSL/SMIME.pm:128
+#: modules/openca-openssl/OpenSSL/SMIME.pm:129
+#: modules/openca-openssl/OpenSSL/SMIME.pm:224
+#: modules/openca-openssl/OpenSSL.pm:236 modules/openca-openssl/OpenSSL.pm:237
+#: modules/openca-openssl/OpenSSL.pm:414 modules/openca-openssl/OpenSSL.pm:433
+#: modules/openca-openssl/OpenSSL.pm:708 modules/openca-openssl/OpenSSL.pm:714
+#: modules/openca-openssl/OpenSSL.pm:1632
+#: modules/openca-openssl/OpenSSL.pm:1648
+#: modules/openca-openssl/OpenSSL.pm:1649
+#: modules/openca-openssl/OpenSSL.pm:1655
+#: modules/openca-openssl/OpenSSL.pm:1903
+#: modules/openca-openssl/OpenSSL.pm:1913
+#: modules/openca-openssl/OpenSSL.pm:1914
+#: modules/openca-openssl/OpenSSL.pm:1920 modules/openca-x509/X509.pm:319
+#: modules/openca-x509/X509.pm:352 modules/openca-x509/X509.pm:375
+#: modules/openca-x509/X509.pm:572 modules/openca-ac/AC.pm:182
+#: modules/openca-xml-cache/Cache.pm:185 modules/openca-xml-cache/Cache.pm:186
+#: modules/openca-crypto/Crypto.pm:130 modules/openca-dbi/DBI.pm:689
+#: modules/openca-dbi/DBI.pm:753 modules/openca-dbi/DBI.pm:766
+#: modules/openca-dbi/DBI.pm:775 modules/openca-dbi/DBI.pm:779
+#: modules/openca-dbi/DBI.pm:780 modules/openca-dbi/DBI.pm:781
+#: modules/openca-dbi/DBI.pm:782 modules/openca-dbi/DBI.pm:837
+#: modules/openca-dbi/DBI.pm:868 modules/openca-dbi/DBI.pm:888
+#: modules/openca-dbi/DBI.pm:950 modules/openca-dbi/DBI.pm:971
+#: modules/openca-dbi/DBI.pm:996 modules/openca-dbi/DBI.pm:1009
+#: modules/openca-dbi/DBI.pm:1014 modules/openca-dbi/DBI.pm:1019
+#: modules/openca-dbi/DBI.pm:1025 modules/openca-dbi/DBI.pm:1030
+#: modules/openca-dbi/DBI.pm:1049 modules/openca-dbi/DBI.pm:1059
+#: modules/openca-dbi/DBI.pm:1068 modules/openca-dbi/DBI.pm:1069
+#: modules/openca-dbi/DBI.pm:1070 modules/openca-dbi/DBI.pm:1075
+#: modules/openca-dbi/DBI.pm:1076 modules/openca-dbi/DBI.pm:1160
+#: modules/openca-dbi/DBI.pm:1424 modules/openca-dbi/DBI.pm:1513
+#: modules/openca-dbi/DBI.pm:1759 modules/openca-dbi/DBI.pm:1808
+#: modules/openca-dbi/DBI.pm:1810 modules/openca-dbi/DBI.pm:1812
+#: modules/openca-dbi/DBI.pm:1842 modules/openca-dbi/DBI.pm:1848
+#: modules/openca-dbi/DBI.pm:1850 modules/openca-dbi/DBI.pm:1864
+#: modules/openca-dbi/DBI.pm:1870 modules/openca-dbi/DBI.pm:1889
+#: modules/openca-dbi/DBI.pm:1903 modules/openca-dbi/DBI.pm:1905
+#: modules/openca-dbi/DBI.pm:1912 modules/openca-dbi/DBI.pm:2021
+#: modules/openca-dbi/DBI.pm:2028 modules/openca-dbi/DBI.pm:2095
+#: modules/openca-dbi/DBI.pm:2108 modules/openca-dbi/DBI.pm:2264
+#: modules/openca-dbi/DBI.pm:2273 modules/openca-dbi/DBI.pm:2274
+#: modules/openca-dbi/DBI.pm:2282 modules/openca-dbi/DBI.pm:2291
+#: modules/openca-dbi/DBI.pm:2310 modules/openca-dbi/DBI.pm:2321
+#: modules/openca-dbi/DBI.pm:2376 modules/openca-dbi/DBI.pm:2390
+#: modules/openca-dbi/DBI.pm:2516 modules/openca-dbi/DBI.pm:2518
+#: modules/openca-dbi/DBI.pm:2526 modules/openca-dbi/DBI.pm:2530
+#: modules/openca-dbi/DBI.pm:2531 modules/openca-dbi/DBI.pm:2569
+#: modules/openca-dbi/DBI.pm:2606 modules/openca-dbi/DBI.pm:2607
+#: modules/openca-dbi/DBI.pm:2610 modules/openca-ldap/LDAP.pm:44
+#: modules/openca-log/Log/Message.pm:77 modules/openca-log/Logger/XML.pm:739
+#: modules/openca-req/REQ.pm:493 modules/openca-req/REQ.pm:494
+#: modules/openca-req/REQ.pm:579 modules/openca-req/REQ.pm:582
+#: modules/openca-req/REQ.pm:641 modules/openca-req/REQ.pm:642
+#: modules/openca-req/REQ.pm:668 modules/openca-req/REQ.pm:669
+#: modules/openca-req/REQ.pm:860
+msgid "<br>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:132
+msgid "600"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:138 modules/openca-ui-html/HTML.pm:161
+#: modules/openca-ui-html/HTML.pm:621
+#: modules/openca-tristatecgi/TRIStateCGI.pm:263
+msgid "title"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:139 modules/openca-ui-html/HTML.pm:162
+#: modules/openca-ui-html/HTML.pm:622
+msgid "lang"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:140 modules/openca-ui-html/HTML.pm:163
+#: modules/openca-ui-html/HTML.pm:623
+msgid "encoding"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:141 modules/openca-ui-html/HTML.pm:164
+#: modules/openca-ui-html/HTML.pm:624
+#: modules/openca-tristatecgi/TRIStateCGI.pm:264
+msgid "BGCOLOR"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:141 modules/openca-ui-html/HTML.pm:164
+#: modules/openca-ui-html/HTML.pm:624
+#: modules/openca-tristatecgi/TRIStateCGI.pm:264
+#: modules/openca-tristatecgi/TRIStateCGI.pm:349
+msgid "#FFFFFF"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:142 modules/openca-ui-html/HTML.pm:165
+msgid "<CENTER><BR><HR WIDTH=80%><BR></CENTER>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:143 modules/openca-ui-html/HTML.pm:166
+msgid "<OL><OL><H1><FONT COLOR=red>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:143 modules/openca-ui-html/HTML.pm:168
+msgid "</FONT></H1>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:144 modules/openca-ui-html/HTML.pm:169
+msgid "<OL> <B>"
+msgstr ""#: modules/openca-ui-html/HTML.pm:186
+msgid "text/html"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:236 modules/openca-ui-html/HTML.pm:472
+#: modules/openca-ui-html/HTML.pm:533
+msgid "\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:237 modules/openca-ui-html/HTML.pm:534
+msgid "<title>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:237 modules/openca-ui-html/HTML.pm:534
+msgid "</title>"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:239 modules/openca-ui-html/HTML.pm:536
+msgid "/default.css\" type=\"text/css\" />\n"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:241 modules/openca-ui-html/HTML.pm:243
+#: modules/openca-ui-html/HTML.pm:259 modules/openca-ui-html/HTML.pm:263
+msgid "/scripts/"
+msgstr ""
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:259
+msgid "    <script LANGUAGE=\"Javascript\" SRC=\""
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:263
+msgid "    <script LANGUAGE=\"VBScript\" SRC=\""
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:267
+msgid "  </head>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:270
+msgid "  <body class=\"back\" onLoad=\"InstallCertIE(this.form);\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:272
+msgid "  <body class=\"back\" onload=\"enumCSP()\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:274 modules/openca-ui-html/HTML.pm:537
+msgid "  <body>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:277
+msgid "    &nbsp;\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:280 modules/openca-ui-html/HTML.pm:286
+msgid "method"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:280 modules/openca-ui-html/HTML.pm:286
+msgid "POST"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:282
+msgid "target"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:283 modules/openca-ui-html/HTML.pm:288
+msgid "action"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:283 modules/openca-ui-html/HTML.pm:288
+msgid "HTTP_CGI_SCRIPT"
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:301
+msgid "      <tr>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:308
+msgid "        <td class=\"explanation\">\n"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:317
+msgid "        <td class=\"siginfo\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:321
+msgid "      </tr>\n"
+msgstr ""
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:343
+msgid "<th class=\"item_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:343 modules/openca-ui-html/HTML.pm:378
+#: modules/openca-ui-html/HTML.pm:389 modules/openca-ui-html/HTML.pm:419
+#: modules/openca-ui-html/HTML.pm:423
+msgid "</th>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:346 modules/openca-ui-html/HTML.pm:356
+#: modules/openca-ui-html/HTML.pm:381 modules/openca-ui-html/HTML.pm:397
+#: modules/openca-ui-html/HTML.pm:427 modules/openca-ui-html/HTML.pm:438
+msgid "            </tr>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:350
+msgid "            <tr class=\"item_list\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:353
+msgid "<td class=\"item_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:353 modules/openca-ui-html/HTML.pm:393
+#: modules/openca-ui-html/HTML.pm:435 modules/openca-ui-html/HTML.pm:456
+msgid "</td>\n"
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:375 modules/openca-ui-html/HTML.pm:386
+msgid "            <tr class=\"info_list\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:378
+msgid "<th class=\"info_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:393
+msgid "<td class=\"info_list\">"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:416 modules/openca-ui-html/HTML.pm:432
+msgid "            <tr class=\"cmd_list\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:419
+msgid "<th class=\"cmd_list\" colspan=\"2\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:423
+msgid "<th class=\"cmd_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:435
+msgid "<td class=\"cmd_list\">"
+msgstr ""
+
+
+
+#: modules/openca-ui-html/HTML.pm:456
+msgid "<td class=\"cmd_panel\">"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:466
+msgid "    </table>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:472
+msgid "<input type=\"hidden\" name=\""
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:472
+msgid "\" value=\""
+msgstr ""
+
+
+
+
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:536
+msgid "    <link rel=\"stylesheet\" href=\""
+msgstr ""
+
+
+
+
+
+
+
+#: modules/openca-ui-html/HTML.pm:590
+msgid "<tr><td class=\"item_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:590
+msgid "</td></tr>\n"
+msgstr ""
+
+
+#: modules/openca-ui-html/HTML.pm:625
+#: modules/openca-tristatecgi/TRIStateCGI.pm:219 modules/openca-dbi/DBI.pm:125
+#: modules/openca-dbi/DBI.pm:126 modules/openca-dbi/DBI.pm:127
+#: modules/openca-dbi/DBI.pm:147 modules/openca-dbi/DBI.pm:149
+#: modules/openca-dbi/DBI.pm:150 modules/openca-dbi/DBI.pm:151
+#: modules/openca-dbi/DBI.pm:152 modules/openca-dbi/DBI.pm:153
+#: modules/openca-dbi/DBI.pm:154 modules/openca-dbi/DBI.pm:155
+#: modules/openca-dbi/DBI.pm:156 modules/openca-dbi/DBI.pm:157
+#: modules/openca-dbi/DBI.pm:158 modules/openca-dbi/DBI.pm:159
+#: modules/openca-dbi/DBI.pm:160 modules/openca-dbi/DBI.pm:162
+#: modules/openca-dbi/DBI.pm:163 modules/openca-dbi/DBI.pm:166
+#: modules/openca-dbi/DBI.pm:167 modules/openca-dbi/DBI.pm:168
+#: modules/openca-dbi/DBI.pm:170 modules/openca-dbi/DBI.pm:171
+#: modules/openca-dbi/DBI.pm:172 modules/openca-dbi/DBI.pm:173
+#: modules/openca-dbi/DBI.pm:174 modules/openca-dbi/DBI.pm:175
+#: modules/openca-dbi/DBI.pm:501 modules/openca-dbi/DBI.pm:516
+#: modules/openca-dbi/DBI.pm:517 modules/openca-dbi/DBI.pm:529
+#: modules/openca-dbi/DBI.pm:544
+msgid "TEXT"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:625
+msgid "#445599"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:627
+msgid "<CENTER>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:628
+msgid "<FONT SIZE=\"+3\">"
+msgstr ""
+#: modules/openca-ui-html/HTML.pm:630
+msgid "<FONT SIZE=\"+1\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:631 modules/openca-dbi/DBI.pm:1409
+#: modules/openca-dbi/DBI.pm:1411 modules/openca-dbi/DBI.pm:1835
+#: modules/openca-dbi/DBI.pm:1859 modules/openca-dbi/DBI.pm:1866
+#: modules/openca-dbi/DBI.pm:1872 modules/openca-log/Log.pm:174
+msgid "("
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:631
+msgid ")</FONT><BR>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:632
+msgid "<HR WIDTH=80%>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:633
+msgid "</CENTER>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:634
+msgid "<div class=\"log\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:645
+msgid "</div>\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:646
+msgid "<CENTER><HR WIDTH=\"80%\"></CENTER>"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:659
+msgid "<FONT SIZE=+1><FONT FACE=\"Arial, Helvetica\">\n"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:670
+msgid "</FONT></FONT>\n"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:29
+#: modules/openca-statemachine/StateMachine.pm:35
+msgid "states.list"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:30
+msgid "functions.list"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:112
+#: modules/openca-statemachine/StateMachine.pm:210
+#: modules/openca-statemachine/StateMachine.pm:301
+#: modules/openca-statemachine/StateMachine.pm:474
+#: modules/openca-statemachine/StateMachine.pm:484 modules/openca-ac/AC.pm:763
+#: modules/openca-db/DB.pm:293 modules/openca-db/DB.pm:321
+#: modules/openca-ldap/LDAP.pm:154 modules/openca-ldap/LDAP.pm:162
+#: modules/openca-ldap/LDAP.pm:171 modules/openca-ldap/LDAP.pm:180
+#: modules/openca-ldap/LDAP.pm:188 modules/openca-ldap/LDAP.pm:197
+#: modules/openca-ldap/LDAP.pm:205 modules/openca-ldap/LDAP.pm:214
+#: modules/openca-ldap/LDAP.pm:222 modules/openca-ldap/LDAP.pm:231
+#: modules/openca-log/Logger/XML.pm:136 modules/openca-log/Logger/XML.pm:147
+#: modules/openca-log/Logger/XML.pm:243 modules/openca-log/Logger/XML.pm:245
+#: modules/openca-log/Logger/XML.pm:359 modules/openca-log/Logger/XML.pm:485
+#: modules/openca-log/Logger/XML.pm:576 modules/openca-log/Logger/XML.pm:586
+#: modules/openca-log/Logger/XML.pm:600 modules/openca-log/Logger/XML.pm:618
+#: modules/openca-log/Logger/XML.pm:629 modules/openca-log/Logger/XML.pm:639
+#: modules/openca-log/Logger/XML.pm:643 modules/openca-log/Logger/XML.pm:676
+#: modules/openca-log/Logger/XML.pm:682 modules/openca-log/Logger/XML.pm:683
+msgid "/"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:113
+#: modules/openca-ac/AC.pm:1038
+msgid "."
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:135
+msgid "run: starting workflow loop"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:143
+msgid "run: user list file opened"
+msgstr ""
+#: modules/openca-statemachine/StateMachine.pm:161#: modules/openca-statemachine/StateMachine.pm:164
+msgid "run: no next function"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:171
+msgid "run: loops finished"
+msgstr ""#: modules/openca-statemachine/StateMachine.pm:297
+#: modules/openca-statemachine/StateMachine.pm:494
+#: modules/openca-openssl/OpenSSL/SMIME.pm:346
+#: modules/openca-openssl/OpenSSL/SMIME.pm:469 modules/openca-x509/X509.pm:200
+#: modules/openca-x509/X509.pm:203 modules/openca-x509/X509.pm:204
+#: modules/openca-x509/X509.pm:205 modules/openca-x509/X509.pm:210
+#: modules/openca-x509/X509.pm:237 modules/openca-x509/X509.pm:567
+#: modules/openca-x509/X509.pm:607 modules/openca-ac/AC.pm:106
+#: modules/openca-ac/AC.pm:110 modules/openca-ac/AC.pm:844
+#: modules/openca-ac/AC.pm:958 modules/openca-ac/AC.pm:1009
+#: modules/openca-db/DB.pm:1054 modules/openca-xml-cache/Cache.pm:147
+#: modules/openca-xml-cache/Cache.pm:161 modules/openca-xml-cache/Cache.pm:164
+#: modules/openca-xml-cache/Cache.pm:166 modules/openca-xml-cache/Cache.pm:190
+#: modules/openca-xml-cache/Cache.pm:191 modules/openca-xml-cache/Cache.pm:192
+#: modules/openca-xml-cache/Cache.pm:193 modules/openca-xml-cache/Cache.pm:194
+#: modules/openca-xml-cache/Cache.pm:195 modules/openca-xml-cache/Cache.pm:196
+#: modules/openca-xml-cache/Cache.pm:197 modules/openca-xml-cache/Cache.pm:198
+#: modules/openca-xml-cache/Cache.pm:199 modules/openca-xml-cache/Cache.pm:262
+#: modules/openca-xml-cache/Cache.pm:336 modules/openca-xml-cache/Cache.pm:508
+#: modules/openca-xml-cache/Cache.pm:555 modules/openca-xml-cache/Cache.pm:561
+#: modules/openca-xml-cache/Cache.pm:562 modules/openca-xml-cache/Cache.pm:565
+#: modules/openca-xml-cache/Cache.pm:566 modules/openca-xml-cache/Cache.pm:568
+#: modules/openca-crypto/Token/OpenSSL.pm:143
+#: modules/openca-crypto/Token/OpenSSL.pm:144 modules/openca-dbi/DBI.pm:777
+#: modules/openca-dbi/DBI.pm:1246 modules/openca-dbi/DBI.pm:1306
+#: modules/openca-dbi/DBI.pm:1318 modules/openca-dbi/DBI.pm:2100
+#: modules/openca-dbi/DBI.pm:2103 modules/openca-dbi/DBI.pm:2133
+#: modules/openca-crl/CRL.pm:253 modules/openca-crl/CRL.pm:390
+#: modules/openca-crl/CRL.pm:392 modules/openca-ldap/LDAP.pm:608
+#: modules/openca-ldap/LDAP.pm:661 modules/openca-ldap/LDAP.pm:724
+#: modules/openca-ldap/LDAP.pm:824 modules/openca-ldap/LDAP.pm:887
+#: modules/openca-log/Log/Message.pm:217 modules/openca-log/Log/Message.pm:219
+#: modules/openca-log/Log/Message.pm:221 modules/openca-log/Log.pm:83
+#: modules/openca-req/REQ.pm:325 modules/openca-req/REQ.pm:486
+#: modules/openca-req/REQ.pm:743 modules/openca-req/REQ.pm:855
+#: modules/openca-session/Session.pm:106 modules/openca-session/Session.pm:190
+#: modules/openca-session/Session.pm:196
+msgid "\n"
+msgstr ""#: modules/openca-statemachine/StateMachine.pm:381#: modules/openca-statemachine/StateMachine.pm:399#: modules/openca-statemachine/StateMachine.pm:404#: modules/openca-statemachine/StateMachine.pm:407#: modules/openca-statemachine/StateMachine.pm:410#: modules/openca-statemachine/StateMachine.pm:425#: modules/openca-statemachine/StateMachine.pm:434#: modules/openca-statemachine/StateMachine.pm:485
+msgid "/workflows/"
+msgstr ""
+
+#: modules/openca-statemachine/StateMachine.pm:494
+msgid "OpenCA::StateMachine->"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:75
+msgid "inFile"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:77
+msgid "dataFile"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:78
+msgid "caCert"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:79
+msgid "caDir"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:80
+msgid "parsed"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:81
+msgid "context"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:82 modules/openca-openssl/OpenSSL/SMIME.pm:51
+#: modules/openca-x509/X509.pm:90 modules/openca-db/DB.pm:105
+#: modules/openca-dbi/DBI.pm:574 modules/openca-crl/CRL.pm:87
+#: modules/openca-req/REQ.pm:94
+msgid "backend"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:84
+msgid "nochain"
+msgstr ""#: modules/openca-pkcs7/PKCS7.pm:210 modules/openca-pkcs7/PKCS7.pm:289
+#: modules/openca-ac/AC.pm:584 modules/openca-ac/AC.pm:845
+#: modules/openca-ac/AC.pm:959 modules/openca-ac/AC.pm:1010
+msgid "SIGNATURE"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:212 modules/openca-pkcs7/PKCS7.pm:235
+#: modules/openca-pkcs7/PKCS7.pm:245 modules/openca-pkcs7/PKCS7.pm:290
+#: modules/openca-x509/X509.pm:310 modules/openca-x509/X509.pm:315
+#: modules/openca-x509/X509.pm:475 modules/openca-x509/X509.pm:507
+#: modules/openca-x509/X509.pm:527 modules/openca-x509/X509.pm:621
+#: modules/openca-ac/AC.pm:585 modules/openca-ac/AC.pm:844
+#: modules/openca-ac/AC.pm:958 modules/openca-ac/AC.pm:1009
+#: modules/openca-db/DB.pm:600 modules/openca-db/DB.pm:908
+#: modules/openca-db/DB.pm:970 modules/openca-db/DB.pm:1004
+#: modules/openca-db/DB.pm:1008 modules/openca-db/DB.pm:1014
+#: modules/openca-dbi/DBI.pm:128 modules/openca-dbi/DBI.pm:185
+#: modules/openca-dbi/DBI.pm:202 modules/openca-dbi/DBI.pm:221
+#: modules/openca-dbi/DBI.pm:234 modules/openca-dbi/DBI.pm:250
+#: modules/openca-dbi/DBI.pm:2625 modules/openca-dbi/DBI.pm:2631
+#: modules/openca-dbi/DBI.pm:2637 modules/openca-crl/CRL.pm:236
+#: modules/openca-crl/CRL.pm:333 modules/openca-crl/CRL.pm:354
+#: modules/openca-crl/CRL.pm:372 modules/openca-log/Log.pm:236
+#: modules/openca-log/Log.pm:254 modules/openca-req/REQ.pm:486
+#: modules/openca-req/REQ.pm:713 modules/openca-req/REQ.pm:748
+#: modules/openca-req/REQ.pm:782
+msgid "DATA"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:213 modules/openca-pkcs7/PKCS7.pm:291
+#: modules/openca-ac/AC.pm:846 modules/openca-ac/AC.pm:960
+#: modules/openca-ac/AC.pm:1011
+msgid "CA_CERT"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:214 modules/openca-pkcs7/PKCS7.pm:292
+#: modules/openca-ac/AC.pm:586
+msgid "CA_DIR"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:215 modules/openca-pkcs7/PKCS7.pm:293
+msgid "VERBOSE"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:235
+msgid "DEPTH"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:235 modules/openca-ac/AC.pm:1206
+#: modules/openca-db/DB.pm:802 modules/openca-xml-cache/Cache.pm:543
+#: modules/openca-dbi/DBI.pm:377
+msgid "0"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:250
+msgid "PKCS7"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:57
+msgid "0.4.3"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:97
+msgid "GMT"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:100
+msgid " GMT"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:120#: modules/openca-tools/Tools.pm:147#: modules/openca-tools/Tools.pm:162#: modules/openca-tools/Tools.pm:165
+msgid "OpenCA::Tools: copyFiles<br>\n"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:167
+msgid "OpenCA::Tools: fileList = "
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:167 modules/openca-ldap/LDAP.pm:367
+msgid ","
+msgstr ""
+#: modules/openca-tools/Tools.pm:181#: modules/openca-tools/Tools.pm:182#: modules/openca-tools/Tools.pm:183#: modules/openca-tools/Tools.pm:189
+msgid "OpenCA::Tools: copying completed<br>\n"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:202 modules/openca-db/DB.pm:209
+#: modules/openca-db/DB.pm:240 modules/openca-db/DB.pm:572
+#: modules/openca-db/DB.pm:643 modules/openca-db/DB.pm:681
+#: modules/openca-db/DB.pm:798 modules/openca-db/DB.pm:823
+#: modules/openca-dbi/DBI.pm:1363 modules/openca-dbi/DBI.pm:1531
+#: modules/openca-dbi/DBI.pm:1625 modules/openca-dbi/DBI.pm:2081
+#: modules/openca-log/Logger/XML.pm:203
+msgid "MODE"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:202
+msgid "MOVE"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:214 modules/openca-log/Log.pm:201
+#: modules/openca-log/Log.pm:202 modules/openca-log/Log.pm:209
+#: modules/openca-log/Log.pm:210
+msgid "*"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Jan"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Feb"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Mar"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Apr"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "May"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Jun"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:235
+msgid "Jul"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:236
+msgid "Aug"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:236
+msgid "Sep"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:236
+msgid "Oct"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:236
+msgid "Nov"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:236
+msgid "Dec"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:255 modules/openca-tools/Tools.pm:256
+#, perl-format
+msgid "%2.2d"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:260 modules/openca-tools/Tools.pm:262
+#, perl-format
+msgid "%4.4d%s%2.2d%2.2d%2.2d%2.2d"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:281 modules/openca-tools/Tools.pm:286
+msgid "DATE_1"
+msgstr ""
+#: modules/openca-tools/Tools.pm:281 modules/openca-tools/Tools.pm:286
+msgid "DATE_2"
+msgstr ""
+#: modules/openca-tools/Tools.pm:286#: modules/openca-tools/Tools.pm:316
+msgid "OU"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:394
+msgid "software_config"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:401 modules/openca-tools/Tools.pm:413
+msgid "software_config/prefix"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:406 modules/openca-tools/Tools.pm:414
+msgid "software_config/suffix"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:419
+msgid "software_config/option"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:456
+#: modules/openca-tristatecgi/TRIStateCGI.pm:626
+msgid "PKI Master Alert: Access control is misconfigured\n"
+msgstr ""
+
+#: modules/openca-tools/Tools.pm:457
+#: modules/openca-tristatecgi/TRIStateCGI.pm:627
+#: modules/openca-crypto/Token/Empty.pm:76
+#: modules/openca-crypto/Token/LunaCA3.pm:92 modules/openca-log/Log.pm:51
+msgid "PKI Master Alert: Aborting all operations\n"
+msgstr ""
+#: modules/openca-tools/Tools.pm:459#: modules/openca-tools/Tools.pm:460
+#: modules/openca-tristatecgi/TRIStateCGI.pm:630
+msgid "PKI Master Alert: debugging messages of access control follow\n"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:70
+msgid "CGI"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:75
+msgid "1.5.5"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:101
+#: modules/openca-tristatecgi/TRIStateCGI.pm:132
+#: modules/openca-log/Logger/XML.pm:196
+msgid "start"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:117
+#: modules/openca-tristatecgi/TRIStateCGI.pm:157
+#: modules/openca-x509/X509.pm:303
+msgid "HASH"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:121
+#: modules/openca-tristatecgi/TRIStateCGI.pm:161
+#: modules/openca-tristatecgi/TRIStateCGI.pm:172 modules/openca-ac/AC.pm:545
+#: modules/openca-ac/AC.pm:636 modules/openca-ac/AC.pm:1270
+#: modules/openca-configuration/Configuration.pm:196
+#: modules/openca-configuration/Configuration.pm:212
+#: modules/openca-log/Logger/XML.pm:184 modules/openca-log/Logger/XML.pm:190
+#: modules/openca-log/Logger/XML.pm:196 modules/openca-log/Logger/XML.pm:202
+#: modules/openca-log/Logger/XML.pm:209 modules/openca-log/Logger/XML.pm:265
+#: modules/openca-log/Logger/XML.pm:270 modules/openca-log/Logger/XML.pm:331
+#: modules/openca-log/Logger/XML.pm:505
+msgid "NAME"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:123
+#: modules/openca-tristatecgi/TRIStateCGI.pm:163
+msgid "-intype"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:127
+#: modules/openca-tristatecgi/TRIStateCGI.pm:171
+msgid "INTYPE"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:127
+#: modules/openca-tristatecgi/TRIStateCGI.pm:171
+msgid "MAXLEN"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:127
+#: modules/openca-tristatecgi/TRIStateCGI.pm:171
+msgid "MINLEN"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:127
+#: modules/openca-tristatecgi/TRIStateCGI.pm:171
+msgid "REGX"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:138
+msgid ".*\""
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:164
+msgid "-maxlen"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:165
+msgid "-minlen"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:166
+msgid "-regx"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:167
+msgid "-name"
+msgstr ""#: modules/openca-tristatecgi/TRIStateCGI.pm:191#: modules/openca-tristatecgi/TRIStateCGI.pm:203
+msgid "[a-zA-Z Â -Ã¿]+"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:203
+msgid "LETTERS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:206
+msgid "[0-9]+"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:206
+#: modules/openca-tristatecgi/TRIStateCGI.pm:222
+msgid "NUMERIC"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:208
+msgid "[0-9-/]+"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:208
+#: modules/openca-tristatecgi/TRIStateCGI.pm:224 modules/openca-dbi/DBI.pm:125
+#: modules/openca-crl/CRL.pm:258
+msgid "DATE"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:210
+#: modules/openca-tristatecgi/TRIStateCGI.pm:226 modules/openca-db/DB.pm:499
+#: modules/openca-db/DB.pm:501 modules/openca-db/DB.pm:503
+#: modules/openca-db/DB.pm:513 modules/openca-db/DB.pm:515
+#: modules/openca-dbi/DBI.pm:151 modules/openca-dbi/DBI.pm:188
+#: modules/openca-dbi/DBI.pm:205 modules/openca-dbi/DBI.pm:224
+#: modules/openca-dbi/DBI.pm:237 modules/openca-dbi/DBI.pm:2180
+#: modules/openca-dbi/DBI.pm:2192 modules/openca-dbi/DBI.pm:2199
+#: modules/openca-dbi/DBI.pm:2210
+msgid "EMAIL"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:212
+#: modules/openca-tristatecgi/TRIStateCGI.pm:221
+msgid "LATIN1"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:217
+msgid "<BR>"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:220
+msgid "LATIN1_LETTERS"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:223
+msgid "MIXED"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:225
+msgid "TEL"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:229
+msgid "<BR><FONT COLOR=RED>"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:232
+msgid "</FONT><BR>"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:266
+msgid "<FONT FACE=Helvetica SIZE=+4 COLOR=\"#E54211\">"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:272
+msgid "</FONT><BR><BR>\n"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:274
+msgid "<FONT SIZE=+1 COLOR=\"#113388\">"
+msgstr ""
+
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:337
+#: modules/openca-tristatecgi/TRIStateCGI.pm:338
+#: modules/openca-tristatecgi/TRIStateCGI.pm:339 modules/openca-ac/AC.pm:374
+#: modules/openca-ac/AC.pm:617 modules/openca-ac/AC.pm:618
+#: modules/openca-ac/AC.pm:847 modules/openca-ac/AC.pm:961
+#: modules/openca-ac/AC.pm:1012 modules/openca-ac/AC.pm:1209
+#: modules/openca-xml-cache/Cache.pm:345
+#: modules/openca-crypto/Token/OpenSSL.pm:169
+msgid "1"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:345
+msgid "100%"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:346
+#: modules/openca-tristatecgi/TRIStateCGI.pm:606
+msgid "#000000"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:348
+msgid "#DDDDEE"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:351
+msgid "FONT FACE=Helvetica,Arial"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:354#: modules/openca-tristatecgi/TRIStateCGI.pm:355#: modules/openca-tristatecgi/TRIStateCGI.pm:356
+msgid "><TR><TD>\n"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:359#: modules/openca-tristatecgi/TRIStateCGI.pm:360#: modules/openca-tristatecgi/TRIStateCGI.pm:366
+#: modules/openca-tristatecgi/TRIStateCGI.pm:395
+msgid "</TR>\n"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:384
+msgid "<TR>\n"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:389
+msgid "</FONT>"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:404
+msgid "</TABLE></TD></TR></TABLE><P>\n"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:416
+msgid "&copy 1998-2004 by OpenCA Group"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:438
+#: modules/openca-tristatecgi/TRIStateCGI.pm:503
+#: modules/openca-tristatecgi/TRIStateCGI.pm:553
+#: modules/openca-tristatecgi/TRIStateCGI.pm:589
+msgid "viewFrom"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:443
+msgid "viewTo"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:450
+#: modules/openca-tristatecgi/TRIStateCGI.pm:455
+#: modules/openca-tristatecgi/TRIStateCGI.pm:567
+#: modules/openca-tristatecgi/TRIStateCGI.pm:579
+#: modules/openca-tristatecgi/TRIStateCGI.pm:597
+msgid "<DIV ALIGN=\"RIGHT\"><FONT SIZE=\"-1\">"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:479
+#: modules/openca-tristatecgi/TRIStateCGI.pm:488
+#: modules/openca-tristatecgi/TRIStateCGI.pm:528
+#: modules/openca-tristatecgi/TRIStateCGI.pm:538
+#, perl-format
+msgid "%.0f"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:504
+#: modules/openca-tristatecgi/TRIStateCGI.pm:554
+#: modules/openca-tristatecgi/TRIStateCGI.pm:590
+msgid "?"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:506
+#: modules/openca-tristatecgi/TRIStateCGI.pm:559
+msgid "|"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:509
+msgid "&lt;"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:511
+#: modules/openca-tristatecgi/TRIStateCGI.pm:561
+msgid "</a> "
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:557
+msgid "&gt;"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:586
+#, perl-format
+msgid "%lx"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:603
+msgid "</FONT></DIV>"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:604
+msgid "COLS"
+msgstr ""
+#: modules/openca-tristatecgi/TRIStateCGI.pm:605
+msgid "TITLE_BGCOLOR"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:605
+msgid "#EEEEF1"
+msgstr ""
+
+#: modules/openca-tristatecgi/TRIStateCGI.pm:606
+msgid "TABLE_BGCOLOR"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:52
+msgid "file"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:53
+msgid "entity"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:54
+msgid "ca_certs"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:55
+msgid "ca_certs_file"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:57
+#: modules/openca-openssl/OpenSSL.pm:114
+msgid "tmpDir"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:59
+msgid "header_cache"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:60
+msgid "needs_extract"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:64
+msgid "last_signer"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:66
+msgid "last_signer_x509"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:67
+#: modules/openca-openssl/OpenSSL.pm:120 modules/openca-db/DB.pm:115
+msgid "errno"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:68
+#: modules/openca-log/Logger/Syslog/Net.pm:65
+msgid "err"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:85
+msgid "DIR"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:86
+msgid "UNLINK"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:89
+#: modules/openca-openssl/OpenSSL/SMIME.pm:365
+msgid "GLOB"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:128
+msgid "OpenCA::OpenSSL::SMIME->_setError: errno:"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:129
+msgid "OpenCA::OpenSSL::SMIME->_setError: err:"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:223
+msgid "OpenCA::OpenSSL::SMIME->_exec: about to exec:<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:224
+msgid "OpenCA::OpenSSL::SMIME->_exec: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:224
+#: modules/openca-openssl/OpenSSL/SMIME.pm:231
+#: modules/openca-openssl/OpenSSL.pm:268 modules/openca-openssl/OpenSSL.pm:384
+#: modules/openca-openssl/OpenSSL.pm:787 modules/openca-openssl/OpenSSL.pm:860
+#: modules/openca-openssl/OpenSSL.pm:871 modules/openca-openssl/OpenSSL.pm:887
+#: modules/openca-openssl/OpenSSL.pm:1129
+#: modules/openca-openssl/OpenSSL.pm:1242
+#: modules/openca-openssl/OpenSSL.pm:1316
+#: modules/openca-openssl/OpenSSL.pm:1689
+#: modules/openca-openssl/OpenSSL.pm:1954 modules/openca-ac/AC.pm:1270
+#: modules/openca-dbi/DBI.pm:845 modules/openca-dbi/DBI.pm:850
+#: modules/openca-dbi/DBI.pm:856 modules/openca-dbi/DBI.pm:865
+#: modules/openca-dbi/DBI.pm:1285
+msgid " "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:227
+msgid "-|"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:231
+msgid "OpenCA::OpenSSL::SMIME->_exec: Problems executing "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:236
+msgid ">&STDOUT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:236
+msgid "Can't dup stdout"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:237
+msgid ">/dev/null"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:237
+msgid "Can't close stdout"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:239
+msgid "Can't exec"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:323 modules/openca-ac/AC.pm:582
+#: modules/openca-db/DB.pm:1002 modules/openca-db/DB.pm:1007
+#: modules/openca-db/DB.pm:1012 modules/openca-dbi/DBI.pm:2622
+#: modules/openca-dbi/DBI.pm:2628 modules/openca-dbi/DBI.pm:2635
+msgid "SHELL"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:324
+#: modules/openca-openssl/OpenSSL/SMIME.pm:924 modules/openca-ac/AC.pm:71
+#: modules/openca-ac/AC.pm:583 modules/openca-db/DB.pm:196
+#: modules/openca-db/DB.pm:1003 modules/openca-db/DB.pm:1009
+#: modules/openca-db/DB.pm:1013 modules/openca-crypto/Crypto.pm:210
+#: modules/openca-dbi/DBI.pm:2623 modules/openca-dbi/DBI.pm:2630
+#: modules/openca-dbi/DBI.pm:2636 modules/openca-log/Log.pm:149
+msgid "GETTEXT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:325
+#: modules/openca-openssl/OpenSSL/SMIME.pm:331
+msgid "TMPDIR"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:331
+msgid "CLEANUP"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:338
+#: modules/openca-openssl/OpenSSL/SMIME.pm:368
+#: modules/openca-xml-cache/Cache.pm:534 modules/openca-xml-cache/Cache.pm:537
+#: modules/openca-xml-cache/Cache.pm:556 modules/openca-xml-cache/Cache.pm:613
+#: modules/openca-xml-cache/Cache.pm:624 modules/openca-xml-cache/Cache.pm:657
+#: modules/openca-xml-cache/Cache.pm:668 modules/openca-dbi/DBI.pm:2602
+msgid "ARRAY"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:496
+#: modules/openca-openssl/OpenSSL/SMIME.pm:519
+#: modules/openca-openssl/OpenSSL/SMIME.pm:798
+#: modules/openca-openssl/OpenSSL.pm:300 modules/openca-openssl/OpenSSL.pm:304
+#: modules/openca-openssl/OpenSSL.pm:316 modules/openca-openssl/OpenSSL.pm:413
+#: modules/openca-openssl/OpenSSL.pm:419 modules/openca-openssl/OpenSSL.pm:428
+#: modules/openca-openssl/OpenSSL.pm:934 modules/openca-openssl/OpenSSL.pm:945
+#: modules/openca-openssl/OpenSSL.pm:1168
+#: modules/openca-openssl/OpenSSL.pm:1174
+#: modules/openca-openssl/OpenSSL.pm:1179
+#: modules/openca-openssl/OpenSSL.pm:1249
+#: modules/openca-openssl/OpenSSL.pm:1253
+#: modules/openca-openssl/OpenSSL.pm:1260
+#: modules/openca-openssl/OpenSSL.pm:1325
+#: modules/openca-openssl/OpenSSL.pm:1327 modules/openca-crl/CRL.pm:81
+msgid "pwd"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:501
+#: modules/openca-openssl/OpenSSL/SMIME.pm:591
+#: modules/openca-openssl/OpenSSL/SMIME.pm:720
+#: modules/openca-openssl/OpenSSL/SMIME.pm:803
+msgid "smime"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:501
+msgid "-sign"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:503
+#: modules/openca-openssl/OpenSSL/SMIME.pm:592
+#: modules/openca-openssl/OpenSSL/SMIME.pm:722
+#: modules/openca-openssl/OpenSSL/SMIME.pm:805
+msgid "-engine"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:503
+#: modules/openca-openssl/OpenSSL/SMIME.pm:504
+#: modules/openca-openssl/OpenSSL/SMIME.pm:592
+#: modules/openca-openssl/OpenSSL/SMIME.pm:593
+#: modules/openca-openssl/OpenSSL/SMIME.pm:722
+#: modules/openca-openssl/OpenSSL/SMIME.pm:723
+#: modules/openca-openssl/OpenSSL/SMIME.pm:805
+#: modules/openca-openssl/OpenSSL/SMIME.pm:806
+msgid "ENGINE"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:506
+msgid "-nocerts"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:507
+msgid "-nodetach"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:510
+#: modules/openca-openssl/OpenSSL/SMIME.pm:808
+msgid "-passin"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:510
+#: modules/openca-openssl/OpenSSL/SMIME.pm:808
+msgid "env:pwd"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:511
+#: modules/openca-openssl/OpenSSL/SMIME.pm:596
+msgid "-certfile"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:512
+#: modules/openca-openssl/OpenSSL/SMIME.pm:599
+msgid "-signer"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:513
+#: modules/openca-openssl/OpenSSL/SMIME.pm:810
+msgid "-inkey"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:514
+#: modules/openca-openssl/OpenSSL/SMIME.pm:597
+#: modules/openca-openssl/OpenSSL/SMIME.pm:725
+#: modules/openca-openssl/OpenSSL/SMIME.pm:811
+msgid "-in"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:515
+#: modules/openca-openssl/OpenSSL/SMIME.pm:598
+#: modules/openca-openssl/OpenSSL/SMIME.pm:726
+#: modules/openca-openssl/OpenSSL/SMIME.pm:812
+msgid "-out"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:591
+msgid "-verify"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:594
+msgid "-nointern"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:595
+msgid "-CAfile"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:720
+msgid "-encrypt"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:803
+msgid "-decrypt"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:809
+msgid "-recip"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:835
+msgid "message not encrypted"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:925
+#: modules/openca-openssl/OpenSSL.pm:1336
+msgid "INFILE"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:112
+msgid "shell"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:113
+#: modules/openca-openssl/OpenSSL.pm:1242
+#: modules/openca-openssl/OpenSSL.pm:1316
+msgid "cnf"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:115
+msgid "baseDir"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:116 modules/openca-ldap/LDAP.pm:977
+msgid "verify"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:117
+msgid "sign"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:118
+msgid "decrypt"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:119
+msgid "encrypt"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:121 modules/openca-db/DB.pm:116
+msgid "errval"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:140
+msgid "/usr/bin"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:148#: modules/openca-openssl/OpenSSL.pm:152#: modules/openca-openssl/OpenSSL.pm:156#: modules/openca-openssl/OpenSSL.pm:160#: modules/openca-openssl/OpenSSL.pm:164
+msgid "/tmp"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:197
+msgid " verify"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:198
+msgid " sign"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:199
+msgid " decrypt"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:200
+msgid " encrypt"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:236
+msgid "OpenCA::OpenSSL->setError: errno:"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:237
+msgid "OpenCA::OpenSSL->setError: errval:"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:256
+msgid "aes256"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:262 modules/openca-openssl/OpenSSL.pm:344
+#: modules/openca-openssl/OpenSSL.pm:1041
+#: modules/openca-openssl/OpenSSL.pm:1227
+#: modules/openca-openssl/OpenSSL.pm:1300
+#: modules/openca-openssl/OpenSSL.pm:1376
+msgid "engine"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:268
+msgid " gen"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:270
+msgid " genrsa "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:278
+msgid "-passout env:pwd "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:279 modules/openca-openssl/OpenSSL.pm:853
+msgid "des"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:287 modules/openca-openssl/OpenSSL.pm:408#: modules/openca-openssl/OpenSSL.pm:291#: modules/openca-openssl/OpenSSL.pm:293 modules/openca-openssl/OpenSSL.pm:317
+msgid "RANDFILE"
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:384 modules/openca-openssl/OpenSSL.pm:787
+#: modules/openca-openssl/OpenSSL.pm:1129
+#: modules/openca-openssl/OpenSSL.pm:1242
+#: modules/openca-openssl/OpenSSL.pm:1316
+msgid "-config "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:387
+#: modules/openca-openssl/OpenSSL.pm:1131
+#: modules/openca-openssl/OpenSSL.pm:1244
+#: modules/openca-openssl/OpenSSL.pm:1318
+#: modules/openca-openssl/OpenSSL.pm:1754
+#: modules/openca-openssl/OpenSSL.pm:2019
+msgid "-passin env:pwd "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:399#: modules/openca-openssl/OpenSSL.pm:401 modules/openca-openssl/OpenSSL.pm:846
+msgid "-text -noout "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:410#: modules/openca-openssl/OpenSSL.pm:414
+msgid "OpenCA::OpenSSL->genReq: command: "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:424#: modules/openca-openssl/OpenSSL.pm:434
+msgid "OpenCA::OpenSSL->genReq: deleting error<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:691 modules/openca-crl/CRL.pm:168
+#: modules/openca-req/REQ.pm:167
+msgid "PASSWD"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:693
+msgid "P12PASSWD"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:694
+msgid "INPASSWD"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:695
+msgid "OUTPASSWD"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:696
+msgid "ALGO"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:696 modules/openca-openssl/OpenSSL.pm:854
+msgid "des3"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:697
+msgid "NOKEYS"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:698 modules/openca-crl/CRL.pm:165
+msgid "CACERT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:700
+msgid "PUBIN"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:701
+msgid "PUBOUT"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:737 modules/openca-openssl/OpenSSL.pm:779
+#: modules/openca-openssl/OpenSSL.pm:842 modules/openca-openssl/OpenSSL.pm:848
+#: modules/openca-openssl/OpenSSL.pm:862 modules/openca-openssl/OpenSSL.pm:885
+#: modules/openca-openssl/OpenSSL.pm:888
+msgid "PKCS12"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:752#: modules/openca-openssl/OpenSSL.pm:753
+msgid "OpenCA::OpenSSL->dataConvert: the data is like follows<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:756
+#: modules/openca-openssl/OpenSSL.pm:1105
+#: modules/openca-openssl/OpenSSL.pm:1711
+#: modules/openca-openssl/OpenSSL.pm:1724
+#: modules/openca-openssl/OpenSSL.pm:1738
+#: modules/openca-openssl/OpenSSL.pm:1976
+#: modules/openca-openssl/OpenSSL.pm:1989
+#: modules/openca-openssl/OpenSSL.pm:2003
+#: modules/openca-xml-cache/Cache.pm:249 modules/openca-xml-cache/Cache.pm:489
+#: modules/openca-log/Log/Message.pm:217 modules/openca-log/Log/Message.pm:219
+#: modules/openca-log/Log/Message.pm:221 modules/openca-log/Log/Message.pm:223
+msgid ">"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:770 modules/openca-openssl/OpenSSL.pm:771
+#: modules/openca-openssl/OpenSSL.pm:1119 modules/openca-x509/X509.pm:134
+#: modules/openca-x509/X509.pm:316 modules/openca-x509/X509.pm:469
+#: modules/openca-x509/X509.pm:478 modules/openca-x509/X509.pm:594
+#: modules/openca-db/DB.pm:188 modules/openca-db/DB.pm:189
+#: modules/openca-db/DB.pm:190 modules/openca-dbi/DBI.pm:1057
+#: modules/openca-dbi/DBI.pm:1066 modules/openca-dbi/DBI.pm:2624
+#: modules/openca-dbi/DBI.pm:2629 modules/openca-crl/CRL.pm:122
+#: modules/openca-crl/CRL.pm:327 modules/openca-crl/CRL.pm:336
+#: modules/openca-req/REQ.pm:161 modules/openca-req/REQ.pm:201
+#: modules/openca-req/REQ.pm:742 modules/openca-req/REQ.pm:751
+msgid "PEM"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:777
+msgid " crl "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:780
+msgid " pkcs12 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:782
+msgid " x509 -nameopt RFC2253 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:785
+msgid " req -nameopt RFC2253 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:793
+msgid " pkcs8 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:795
+msgid " rsa "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:798
+msgid " -pubout "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:801
+msgid " -pubin "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:812
+msgid " -passin env:inpwd "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:828
+msgid " -passout env:outpwd "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:842#: modules/openca-openssl/OpenSSL.pm:849
+msgid "-passout env:pempwd "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:850
+msgid "-passin env:p12pwd "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:851
+msgid "-nokeys "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:855
+msgid "idea"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:857
+msgid "-nodes"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:860
+msgid "-outform "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:863
+msgid "-export "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:864
+msgid "-passout env:p12pwd "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:865
+msgid "-passin env:pempwd "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:868
+msgid " -topk8 "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:869
+msgid " -nocrypt "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:871
+msgid " -outform "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:873
+msgid " -outform PEM "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:887
+msgid "-inform "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:890
+msgid "PKCS8"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:904
+msgid "OpenCA::OpenSSL->dataConvert: p12pass is set<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:905
+msgid "OpenCA::OpenSSL->dataConvert: passwd is set<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:906
+msgid "OpenCA::OpenSSL->dataConvert: inpwd is set<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:907
+msgid "OpenCA::OpenSSL->dataConvert: outpwd is set<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:919
+msgid "p12pwd"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:920 modules/openca-openssl/OpenSSL.pm:935
+#: modules/openca-openssl/OpenSSL.pm:946
+msgid "pempwd"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:921 modules/openca-openssl/OpenSSL.pm:936
+#: modules/openca-openssl/OpenSSL.pm:947
+msgid "inpwd"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:922 modules/openca-openssl/OpenSSL.pm:937
+#: modules/openca-openssl/OpenSSL.pm:948
+msgid "outpwd"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:925
+msgid "OpenCA::OpenSSL->dataConvert: using infile<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:928
+msgid "OpenCA::OpenSSL->dataConvert: piping data<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:943
+msgid "OpenCA::OpenSSL->dataConvert: openssl itself successful<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:949
+msgid "OpenCA::OpenSSL->dataConvert: passphrases deleted<br>\n"
+msgstr ""
+
+
+#: modules/openca-openssl/OpenSSL.pm:993
+msgid "OpenCA::OpenSSL->dataConvert: return result like follows<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1023
+msgid "N"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1061 modules/openca-x509/X509.pm:340
+#: modules/openca-req/REQ.pm:592 modules/openca-req/REQ.pm:599
+msgid "\\"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1075
+msgid "OpenCA::OpenSSL->issueCert: subject parsed by X500::DN<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1099#: modules/openca-openssl/OpenSSL.pm:1101#: modules/openca-openssl/OpenSSL.pm:1102
+msgid "OpenCA::OpenSSL->issueCert: the data is like follows<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1121#: modules/openca-openssl/OpenSSL.pm:1130#: modules/openca-openssl/OpenSSL.pm:1132#: modules/openca-openssl/OpenSSL.pm:1133#: modules/openca-openssl/OpenSSL.pm:1134#: modules/openca-openssl/OpenSSL.pm:1135
+msgid "-preserveDN "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1137#: modules/openca-openssl/OpenSSL.pm:1138#: modules/openca-openssl/OpenSSL.pm:1140
+msgid "-noemailDN "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1141
+#: modules/openca-openssl/OpenSSL.pm:1246
+#: modules/openca-openssl/OpenSSL.pm:1323
+msgid "-nouniqueDN "
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:1171#: modules/openca-openssl/OpenSSL.pm:1189
+msgid "OpenCA::OpenSSL->issueCert: certificate issued successfully<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1245#: modules/openca-openssl/OpenSSL.pm:1247#: modules/openca-openssl/OpenSSL.pm:1250#: modules/openca-openssl/OpenSSL.pm:1303#: modules/openca-openssl/OpenSSL.pm:1310#: modules/openca-openssl/OpenSSL.pm:1314#: modules/openca-openssl/OpenSSL.pm:1320#: modules/openca-openssl/OpenSSL.pm:1321#: modules/openca-openssl/OpenSSL.pm:1322#: modules/openca-openssl/OpenSSL.pm:1337 modules/openca-x509/X509.pm:478
+#: modules/openca-x509/X509.pm:510 modules/openca-x509/X509.pm:530
+#: modules/openca-crl/CRL.pm:166 modules/openca-crl/CRL.pm:336
+#: modules/openca-crl/CRL.pm:357 modules/openca-crl/CRL.pm:375
+#: modules/openca-req/REQ.pm:166 modules/openca-req/REQ.pm:716
+#: modules/openca-req/REQ.pm:751 modules/openca-req/REQ.pm:785
+msgid "OUTFORM"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1338 modules/openca-x509/X509.pm:476
+#: modules/openca-x509/X509.pm:508 modules/openca-x509/X509.pm:528
+#: modules/openca-ac/AC.pm:835 modules/openca-ac/AC.pm:944
+#: modules/openca-ac/AC.pm:946 modules/openca-ac/AC.pm:975
+#: modules/openca-ac/AC.pm:989 modules/openca-ac/AC.pm:998
+#: modules/openca-db/DB.pm:239 modules/openca-db/DB.pm:395
+#: modules/openca-db/DB.pm:408 modules/openca-db/DB.pm:453
+#: modules/openca-db/DB.pm:570 modules/openca-db/DB.pm:587
+#: modules/openca-db/DB.pm:600 modules/openca-db/DB.pm:624
+#: modules/openca-db/DB.pm:643 modules/openca-db/DB.pm:661
+#: modules/openca-db/DB.pm:681 modules/openca-db/DB.pm:713
+#: modules/openca-db/DB.pm:718 modules/openca-db/DB.pm:774
+#: modules/openca-db/DB.pm:789 modules/openca-db/DB.pm:798
+#: modules/openca-db/DB.pm:860 modules/openca-db/DB.pm:871
+#: modules/openca-db/DB.pm:881 modules/openca-db/DB.pm:907
+#: modules/openca-db/DB.pm:952 modules/openca-db/DB.pm:969
+#: modules/openca-crypto/Token/OpenSSL.pm:169 modules/openca-dbi/DBI.pm:158
+#: modules/openca-dbi/DBI.pm:166 modules/openca-dbi/DBI.pm:999
+#: modules/openca-dbi/DBI.pm:1041 modules/openca-dbi/DBI.pm:1357
+#: modules/openca-dbi/DBI.pm:1365 modules/openca-dbi/DBI.pm:1529
+#: modules/openca-dbi/DBI.pm:1623 modules/openca-dbi/DBI.pm:1845
+#: modules/openca-dbi/DBI.pm:1928 modules/openca-dbi/DBI.pm:2277
+#: modules/openca-dbi/DBI.pm:2296 modules/openca-crl/CRL.pm:334
+#: modules/openca-crl/CRL.pm:355 modules/openca-crl/CRL.pm:373
+#: modules/openca-req/REQ.pm:714 modules/openca-req/REQ.pm:749
+#: modules/openca-req/REQ.pm:783
+msgid "DATATYPE"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1353#: modules/openca-openssl/OpenSSL.pm:1371
+msgid " spkac -verify "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1383#: modules/openca-openssl/OpenSSL.pm:1384#: modules/openca-openssl/OpenSSL.pm:1390#: modules/openca-openssl/OpenSSL.pm:1616#: modules/openca-openssl/OpenSSL.pm:1633
+msgid "OpenCA::OpenSSL->verify: deleting error<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1638
+msgid "OpenCA::OpenSSL->verify: error detected<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1639
+msgid "OpenCA::OpenSSL->verify: original errorcode: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1648
+msgid "OpenCA::OpenSSL->verify: errorcode: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1649
+msgid "OpenCA::OpenSSL->verify: errormsg: "
+msgstr ""
+
+
+#: modules/openca-openssl/OpenSSL.pm:1659
+msgid "OpenCA::OpenSSL->verify: finished successfully (return output)<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1663
+msgid "OpenCA::OpenSSL->verify: finished successfully (return 1)<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1723#: modules/openca-openssl/OpenSSL.pm:1737#: modules/openca-openssl/OpenSSL.pm:1752#: modules/openca-openssl/OpenSSL.pm:1753#: modules/openca-openssl/OpenSSL.pm:1755
+msgid "-nd "
+msgstr ""#: modules/openca-openssl/OpenSSL.pm:1870
+msgid "OpenCA::OpenSSL->encrypt: ?: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1895
+msgid "OpenCA::OpenSSL->encrypt: error detected<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1896
+msgid "OpenCA::OpenSSL->encrypt: original errorcode: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1913
+msgid "OpenCA::OpenSSL->encrypt: errorcode: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1914
+msgid "OpenCA::OpenSSL->encrypt: errormsg: "
+msgstr ""
+
+
+#: modules/openca-openssl/OpenSSL.pm:1924
+msgid "OpenCA::OpenSSL->encrypt: finished successfully (return output)<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:1928
+msgid "OpenCA::OpenSSL->encrypt: finished successfully (return 1)<br>\n"
+msgstr ""
+#: modules/openca-x509/X509.pm:84
+msgid "cert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:85 modules/openca-crl/CRL.pm:80
+#: modules/openca-req/REQ.pm:85
+msgid "item"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:86
+msgid "pemCert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:87
+msgid "pemHeader"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:88
+msgid "derCert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:89
+msgid "txtCert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:91 modules/openca-crl/CRL.pm:86
+#: modules/openca-req/REQ.pm:93
+msgid "parsedItem"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:92
+msgid "beginCert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:93
+msgid "endCert"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:94 modules/openca-crl/CRL.pm:88
+#: modules/openca-req/REQ.pm:95
+msgid "beginHeader"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:95 modules/openca-crl/CRL.pm:89
+#: modules/openca-req/REQ.pm:96
+msgid "endHeader"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:96 modules/openca-req/REQ.pm:99
+msgid "beginKey"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:97 modules/openca-req/REQ.pm:100
+msgid "endKey"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:98 modules/openca-req/REQ.pm:101
+msgid "beginAttribute"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:99 modules/openca-req/REQ.pm:102
+msgid "endAttribute"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:100
+msgid "certFormat"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:140
+msgid "-----BEGIN CERTIFICATE-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:141
+msgid "-----END CERTIFICATE-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:142 modules/openca-db/DB.pm:191
+#: modules/openca-dbi/DBI.pm:564 modules/openca-crl/CRL.pm:137
+#: modules/openca-req/REQ.pm:132
+msgid "-----BEGIN HEADER-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:143 modules/openca-db/DB.pm:192
+#: modules/openca-dbi/DBI.pm:565 modules/openca-crl/CRL.pm:138
+#: modules/openca-req/REQ.pm:133
+msgid "-----END HEADER-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:144 modules/openca-dbi/DBI.pm:566
+#: modules/openca-req/REQ.pm:138
+msgid "-----BEGIN ATTRIBUTE-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:145 modules/openca-dbi/DBI.pm:567
+#: modules/openca-req/REQ.pm:139
+msgid "-----END ATTRIBUTE-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:146 modules/openca-req/REQ.pm:136
+msgid "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:147 modules/openca-req/REQ.pm:137
+msgid "-----END ENCRYPTED PRIVATE KEY-----"
+msgstr ""
+#: modules/openca-x509/X509.pm:163 modules/openca-x509/X509.pm:445
+#: modules/openca-x509/X509.pm:446 modules/openca-x509/X509.pm:447
+#: modules/openca-crl/CRL.pm:183 modules/openca-crl/CRL.pm:269
+#: modules/openca-crl/CRL.pm:270 modules/openca-crl/CRL.pm:271
+msgid "ITEM"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:200 modules/openca-x509/X509.pm:374
+#: modules/openca-ldap/LDAP.pm:366 modules/openca-req/REQ.pm:523
+#: modules/openca-req/REQ.pm:595
+msgid "="
+msgstr ""
+
+#: modules/openca-x509/X509.pm:302 modules/openca-dbi/DBI.pm:130
+#: modules/openca-crl/CRL.pm:257
+msgid "SERIAL"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:302 modules/openca-db/DB.pm:499
+#: modules/openca-db/DB.pm:501 modules/openca-db/DB.pm:503
+#: modules/openca-db/DB.pm:513 modules/openca-db/DB.pm:515
+#: modules/openca-dbi/DBI.pm:147 modules/openca-dbi/DBI.pm:186
+#: modules/openca-dbi/DBI.pm:203 modules/openca-dbi/DBI.pm:222
+#: modules/openca-dbi/DBI.pm:2178 modules/openca-dbi/DBI.pm:2190
+#: modules/openca-dbi/DBI.pm:2197 modules/openca-req/REQ.pm:164
+#: modules/openca-req/REQ.pm:481
+msgid "DN"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:302 modules/openca-crl/CRL.pm:232
+#: modules/openca-crl/CRL.pm:266
+msgid "ISSUER"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:302
+msgid "NOTBEFORE"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:302 modules/openca-dbi/DBI.pm:161
+#: modules/openca-dbi/DBI.pm:213 modules/openca-dbi/DBI.pm:227
+msgid "NOTAFTER"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:303
+msgid "ALIAS"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:303 modules/openca-req/REQ.pm:478
+#: modules/openca-req/REQ.pm:482
+msgid "MODULUS"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:303 modules/openca-db/DB.pm:513
+#: modules/openca-db/DB.pm:515 modules/openca-crypto/Token/OpenSSL.pm:169
+#: modules/openca-dbi/DBI.pm:160 modules/openca-dbi/DBI.pm:195
+#: modules/openca-dbi/DBI.pm:212 modules/openca-dbi/DBI.pm:226
+#: modules/openca-dbi/DBI.pm:2184 modules/openca-dbi/DBI.pm:2193
+#: modules/openca-dbi/DBI.pm:2201 modules/openca-req/REQ.pm:478
+#: modules/openca-req/REQ.pm:482
+msgid "PUBKEY"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:303
+msgid "FINGERPRINT"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:303
+msgid "EMAILADDRESS"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:304 modules/openca-crl/CRL.pm:232
+#: modules/openca-crl/CRL.pm:264 modules/openca-req/REQ.pm:481
+msgid "VERSION"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:304 modules/openca-req/REQ.pm:478
+#: modules/openca-req/REQ.pm:482
+msgid "PUBKEY_ALGORITHM"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:304 modules/openca-crl/CRL.pm:232
+#: modules/openca-req/REQ.pm:479 modules/openca-req/REQ.pm:481
+msgid "SIGNATURE_ALGORITHM"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:304 modules/openca-req/REQ.pm:478
+#: modules/openca-req/REQ.pm:482
+msgid "EXPONENT"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:305 modules/openca-req/REQ.pm:478
+#: modules/openca-req/REQ.pm:482
+msgid "KEYSIZE"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:305
+msgid "EXTENSIONS"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:305
+msgid "OPENSSL_SUBJECT"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:306 modules/openca-x509/X509.pm:311
+#: modules/openca-x509/X509.pm:503 modules/openca-x509/X509.pm:510
+#: modules/openca-crl/CRL.pm:350 modules/openca-crl/CRL.pm:357
+#: modules/openca-req/REQ.pm:777 modules/openca-req/REQ.pm:785
+msgid "DER"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:309 modules/openca-x509/X509.pm:314
+#: modules/openca-crl/CRL.pm:235 modules/openca-req/REQ.pm:487
+msgid "ATTRIBUTE_LIST"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:311 modules/openca-x509/X509.pm:316
+#: modules/openca-x509/X509.pm:477 modules/openca-x509/X509.pm:509
+#: modules/openca-x509/X509.pm:529 modules/openca-dbi/DBI.pm:2624
+#: modules/openca-dbi/DBI.pm:2629 modules/openca-crl/CRL.pm:237
+#: modules/openca-crl/CRL.pm:335 modules/openca-crl/CRL.pm:356
+#: modules/openca-crl/CRL.pm:374 modules/openca-req/REQ.pm:487
+#: modules/openca-req/REQ.pm:715 modules/openca-req/REQ.pm:750
+#: modules/openca-req/REQ.pm:784
+msgid "INFORM"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:319 modules/openca-x509/X509.pm:352
+msgid "OpenCA::X509->parseCert: DN: "
+msgstr ""
+#: modules/openca-x509/X509.pm:373
+msgid "OpenCA::X509->parseCert: DN_HASH: "
+msgstr ""
+
+#: modules/openca-x509/X509.pm:426
+msgid "OpenCA::X509->parseCert: show all extensions and their values<br>\n"
+msgstr ""
+#: modules/openca-x509/X509.pm:429#: modules/openca-x509/X509.pm:530 modules/openca-crl/CRL.pm:375
+#: modules/openca-req/REQ.pm:716
+msgid "TXT"
+msgstr ""
+
+#: modules/openca-x509/X509.pm:562
+msgid "X509->setHeaderAttribute: correct format - PEM<br>\n"
+msgstr ""
+#: modules/openca-x509/X509.pm:594 modules/openca-db/DB.pm:1005
+#: modules/openca-db/DB.pm:1010 modules/openca-dbi/DBI.pm:127
+#: modules/openca-dbi/DBI.pm:184 modules/openca-dbi/DBI.pm:201
+#: modules/openca-dbi/DBI.pm:220 modules/openca-dbi/DBI.pm:233
+#: modules/openca-dbi/DBI.pm:249 modules/openca-req/REQ.pm:209
+#: modules/openca-req/REQ.pm:230 modules/openca-req/REQ.pm:242
+#: modules/openca-req/REQ.pm:253 modules/openca-req/REQ.pm:266
+#: modules/openca-req/REQ.pm:882
+msgid "FORMAT"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:48 modules/openca-xml-cache/Cache.pm:52
+msgid "DEBUG_CT"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:110 modules/openca-ac/AC.pm:603
+msgid ": "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:112 modules/openca-ac/AC.pm:135
+msgid "HASHREF"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:133 modules/openca-log/Logger/Syslog/Net.pm:68
+msgid "info"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:144
+msgid "access_control"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:145
+msgid "critical"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:152
+msgid "value position=0"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:152
+msgid "********"
+msgstr ""
+#: modules/openca-ac/AC.pm:198
+msgid "Checking the channel ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:200
+msgid "    loading configuration ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:203 modules/openca-ac/AC.pm:207
+#: modules/openca-ac/AC.pm:211 modules/openca-ac/AC.pm:215
+#: modules/openca-ac/AC.pm:219 modules/openca-ac/AC.pm:223
+#: modules/openca-ac/AC.pm:227 modules/openca-ac/AC.pm:351
+#: modules/openca-ac/AC.pm:433 modules/openca-ac/AC.pm:445
+#: modules/openca-ac/AC.pm:450 modules/openca-ac/AC.pm:468
+#: modules/openca-ac/AC.pm:472 modules/openca-ac/AC.pm:587
+#: modules/openca-ac/AC.pm:698 modules/openca-ac/AC.pm:703
+#: modules/openca-ac/AC.pm:708 modules/openca-ac/AC.pm:748
+#: modules/openca-ac/AC.pm:756 modules/openca-ac/AC.pm:765
+#: modules/openca-ac/AC.pm:785 modules/openca-ac/AC.pm:804
+#: modules/openca-ac/AC.pm:809 modules/openca-ac/AC.pm:869
+#: modules/openca-ac/AC.pm:886 modules/openca-ac/AC.pm:901
+#: modules/openca-ac/AC.pm:904 modules/openca-ac/AC.pm:1051
+#: modules/openca-ac/AC.pm:1064 modules/openca-ac/AC.pm:1068
+#: modules/openca-ac/AC.pm:1072 modules/openca-ac/AC.pm:1076
+#: modules/openca-ac/AC.pm:1109 modules/openca-ac/AC.pm:1231
+#: modules/openca-ac/AC.pm:1236 modules/openca-ac/AC.pm:1289
+#: modules/openca-db/DB.pm:240 modules/openca-xml-cache/Cache.pm:389
+#: modules/openca-xml-cache/Cache.pm:425 modules/openca-xml-cache/Cache.pm:633
+#: modules/openca-xml-cache/Cache.pm:677 modules/openca-crypto/Crypto.pm:61
+#: modules/openca-crypto/Crypto.pm:196 modules/openca-crypto/Crypto.pm:202
+#: modules/openca-crypto/Crypto.pm:214 modules/openca-crypto/Crypto.pm:222
+#: modules/openca-crypto/Crypto.pm:228 modules/openca-crypto/Crypto.pm:234
+#: modules/openca-crypto/Crypto.pm:244 modules/openca-crypto/Crypto.pm:343
+#: modules/openca-crypto/Crypto.pm:348 modules/openca-crypto/Crypto.pm:352
+#: modules/openca-ldap/LDAP.pm:113 modules/openca-ldap/LDAP.pm:120
+#: modules/openca-ldap/LDAP.pm:128 modules/openca-ldap/LDAP.pm:153
+#: modules/openca-ldap/LDAP.pm:161 modules/openca-ldap/LDAP.pm:170
+#: modules/openca-ldap/LDAP.pm:179 modules/openca-ldap/LDAP.pm:187
+#: modules/openca-ldap/LDAP.pm:196 modules/openca-ldap/LDAP.pm:204
+#: modules/openca-ldap/LDAP.pm:213 modules/openca-ldap/LDAP.pm:221
+#: modules/openca-ldap/LDAP.pm:230 modules/openca-log/Log.pm:120
+#: modules/openca-log/Log.pm:126 modules/openca-log/Log.pm:130
+#: modules/openca-log/Log.pm:134 modules/openca-log/Log.pm:140
+#: modules/openca-log/Log.pm:155
+msgid "FILENAME"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:204 modules/openca-ac/AC.pm:208
+#: modules/openca-ac/AC.pm:212 modules/openca-ac/AC.pm:216
+#: modules/openca-ac/AC.pm:220 modules/openca-ac/AC.pm:224
+#: modules/openca-ac/AC.pm:228 modules/openca-ac/AC.pm:352
+#: modules/openca-ac/AC.pm:434 modules/openca-ac/AC.pm:446
+#: modules/openca-ac/AC.pm:451 modules/openca-ac/AC.pm:469
+#: modules/openca-ac/AC.pm:473 modules/openca-ac/AC.pm:588
+#: modules/openca-ac/AC.pm:699 modules/openca-ac/AC.pm:704
+#: modules/openca-ac/AC.pm:709 modules/openca-ac/AC.pm:749
+#: modules/openca-ac/AC.pm:757 modules/openca-ac/AC.pm:766
+#: modules/openca-ac/AC.pm:786 modules/openca-ac/AC.pm:805
+#: modules/openca-ac/AC.pm:810 modules/openca-ac/AC.pm:870
+#: modules/openca-ac/AC.pm:887 modules/openca-ac/AC.pm:902
+#: modules/openca-ac/AC.pm:905 modules/openca-ac/AC.pm:1052
+#: modules/openca-ac/AC.pm:1065 modules/openca-ac/AC.pm:1069
+#: modules/openca-ac/AC.pm:1073 modules/openca-ac/AC.pm:1077
+#: modules/openca-ac/AC.pm:1110 modules/openca-ac/AC.pm:1232
+#: modules/openca-ac/AC.pm:1237 modules/openca-ac/AC.pm:1290
+#: modules/openca-xml-cache/Cache.pm:390 modules/openca-xml-cache/Cache.pm:426
+#: modules/openca-xml-cache/Cache.pm:448 modules/openca-xml-cache/Cache.pm:473
+#: modules/openca-xml-cache/Cache.pm:634 modules/openca-xml-cache/Cache.pm:678
+#: modules/openca-crypto/Crypto.pm:62 modules/openca-crypto/Crypto.pm:197
+#: modules/openca-crypto/Crypto.pm:203 modules/openca-crypto/Crypto.pm:215
+#: modules/openca-crypto/Crypto.pm:223 modules/openca-crypto/Crypto.pm:229
+#: modules/openca-crypto/Crypto.pm:235 modules/openca-crypto/Crypto.pm:245
+#: modules/openca-crypto/Crypto.pm:344 modules/openca-crypto/Crypto.pm:349
+#: modules/openca-crypto/Crypto.pm:353 modules/openca-ldap/LDAP.pm:114
+#: modules/openca-ldap/LDAP.pm:121 modules/openca-ldap/LDAP.pm:129
+#: modules/openca-ldap/LDAP.pm:154 modules/openca-ldap/LDAP.pm:162
+#: modules/openca-ldap/LDAP.pm:171 modules/openca-ldap/LDAP.pm:180
+#: modules/openca-ldap/LDAP.pm:188 modules/openca-ldap/LDAP.pm:197
+#: modules/openca-ldap/LDAP.pm:205 modules/openca-ldap/LDAP.pm:214
+#: modules/openca-ldap/LDAP.pm:222 modules/openca-ldap/LDAP.pm:231
+#: modules/openca-log/Log.pm:121 modules/openca-log/Log.pm:127
+#: modules/openca-log/Log.pm:131 modules/openca-log/Log.pm:135
+#: modules/openca-log/Log.pm:141 modules/openca-log/Log.pm:156
+msgid "XPATH"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:204
+msgid "access_control/channel/type"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:208
+msgid "access_control/channel/protocol"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:212
+msgid "access_control/channel/source"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:216
+msgid "access_control/channel/asymmetric_cipher"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:220
+msgid "access_control/channel/asymmetric_keylength"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:224
+msgid "access_control/channel/symmetric_cipher"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:228
+msgid "access_control/channel/symmetric_keylength"
+msgstr ""
+#: modules/openca-ac/AC.pm:235#: modules/openca-ac/AC.pm:236#: modules/openca-ac/AC.pm:237#: modules/openca-ac/AC.pm:238#: modules/openca-ac/AC.pm:239#: modules/openca-ac/AC.pm:240#: modules/openca-ac/AC.pm:242
+msgid "    loading channel data ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:256 modules/openca-ac/AC.pm:258
+msgid "mod_ssl"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:261
+msgid "        channel type ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:265 modules/openca-ac/AC.pm:266
+msgid "ssl"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:271
+msgid "http"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:276
+msgid "    check channel data ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:279
+msgid "        channel type ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:283 modules/openca-ac/AC.pm:291
+#: modules/openca-ac/AC.pm:299 modules/openca-ac/AC.pm:307
+#: modules/openca-ac/AC.pm:315 modules/openca-ac/AC.pm:323
+#: modules/openca-ac/AC.pm:331 modules/openca-ac/AC.pm:596
+#: modules/openca-dbi/DBI.pm:864 modules/openca-dbi/DBI.pm:1315
+#: modules/openca-dbi/DBI.pm:1421 modules/openca-dbi/DBI.pm:2807
+#: modules/openca-log/Log.pm:174
+msgid ")"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:287
+msgid "        security protocol ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:295
+msgid "        source ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:303
+msgid "        asymmetric cipher ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:311
+msgid "        asymmetric keylength ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:319
+msgid "        symmetric cipher ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:327
+msgid "        symmetric keylength ... ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:335
+msgid "Channel is ok"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:348
+msgid "Starting authentication ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:352
+msgid "access_control/login/type"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:356
+msgid "    channel type ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:374 modules/openca-ac/AC.pm:398
+#: modules/openca-ac/AC.pm:617 modules/openca-ac/AC.pm:1133
+#: modules/openca-ac/AC.pm:1209
+msgid "valid"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:377 modules/openca-ac/AC.pm:408
+#: modules/openca-ac/AC.pm:660 modules/openca-session/Session.pm:168
+#: modules/openca-session/Session.pm:189
+msgid "cookie"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:381 modules/openca-ac/AC.pm:531
+#: modules/openca-ac/AC.pm:623 modules/openca-ac/AC.pm:762
+#: modules/openca-ac/AC.pm:865 modules/openca-ac/AC.pm:1243
+msgid "cmd"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:381
+msgid "logout"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:391
+msgid "    Try to get a session ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:399 modules/openca-ac/AC.pm:564
+#: modules/openca-ac/AC.pm:618
+msgid "prepare_ident"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:406 modules/openca-ac/AC.pm:619
+msgid "TRUE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:418
+msgid "    Try to login ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:421
+msgid "        type ... none"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:422
+msgid "        identification disabled"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:423
+msgid "none"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:426
+msgid "        type ... passwd"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:427 modules/openca-ac/AC.pm:482
+#: modules/openca-ac/AC.pm:487 modules/openca-ac/AC.pm:490
+#: modules/openca-ldap/LDAP.pm:90
+msgid "passwd"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:428 modules/openca-ac/AC.pm:430
+#: modules/openca-ldap/LDAP.pm:91
+msgid "login"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:429
+msgid "        credentials ... present"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:431
+msgid "        name ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:434
+msgid "access_control/login/database"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:436
+msgid "        database ... internal"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:446 modules/openca-ac/AC.pm:451
+#: modules/openca-ac/AC.pm:469 modules/openca-ac/AC.pm:473
+msgid "access_control/login/passwd/user"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:452 modules/openca-ac/AC.pm:470
+#: modules/openca-ac/AC.pm:474 modules/openca-ac/AC.pm:1066
+#: modules/openca-ac/AC.pm:1070 modules/openca-ac/AC.pm:1074
+#: modules/openca-ac/AC.pm:1078 modules/openca-ac/AC.pm:1238
+#: modules/openca-xml-cache/Cache.pm:391 modules/openca-xml-cache/Cache.pm:427
+#: modules/openca-xml-cache/Cache.pm:448 modules/openca-xml-cache/Cache.pm:473
+#: modules/openca-xml-cache/Cache.pm:635 modules/openca-xml-cache/Cache.pm:679
+#: modules/openca-crypto/Crypto.pm:63 modules/openca-crypto/Crypto.pm:204
+#: modules/openca-crypto/Crypto.pm:216 modules/openca-crypto/Crypto.pm:224
+#: modules/openca-crypto/Crypto.pm:230 modules/openca-crypto/Crypto.pm:236
+#: modules/openca-crypto/Crypto.pm:246 modules/openca-crypto/Crypto.pm:350
+#: modules/openca-crypto/Crypto.pm:354 modules/openca-ldap/LDAP.pm:122
+#: modules/openca-ldap/LDAP.pm:130 modules/openca-ldap/LDAP.pm:163
+#: modules/openca-ldap/LDAP.pm:172 modules/openca-ldap/LDAP.pm:181
+#: modules/openca-ldap/LDAP.pm:189 modules/openca-ldap/LDAP.pm:198
+#: modules/openca-ldap/LDAP.pm:206 modules/openca-ldap/LDAP.pm:215
+#: modules/openca-ldap/LDAP.pm:223 modules/openca-ldap/LDAP.pm:232
+#: modules/openca-log/Log.pm:128 modules/openca-log/Log.pm:132
+#: modules/openca-log/Log.pm:136 modules/openca-log/Log.pm:142
+#: modules/openca-log/Log.pm:157
+msgid "COUNTER"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:453
+msgid "        scanned user ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:455
+msgid "        scanned user matchs searched user"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:469
+msgid "digest"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:473
+msgid "algorithm"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:498
+msgid "        ident name ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:499
+msgid "        ident algorithm ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:500
+msgid "        ident digest ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:510
+msgid "        ident role ... "
+msgstr ""
+
+#: modules/openca-ac/AC.pm:518
+msgid "redir"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:522
+msgid "full"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:522
+msgid "relative"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:523 modules/openca-ac/AC.pm:525
+msgid "?redir=1"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:527
+msgid "onLoad"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:531 modules/openca-ac/AC.pm:623
+#: modules/openca-ac/AC.pm:1243
+msgid "getStaticPage"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:532 modules/openca-ac/AC.pm:624
+#: modules/openca-ac/AC.pm:1244
+msgid "index"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:534 modules/openca-ac/AC.pm:1246
+msgid "<input type=\"submit\" value=\""
+msgstr ""
+
+#: modules/openca-ac/AC.pm:535 modules/openca-ac/AC.pm:1247
+msgid "OK"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:535 modules/openca-ac/AC.pm:537
+#: modules/openca-ac/AC.pm:1247 modules/openca-ac/AC.pm:1249
+msgid "\">"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:536 modules/openca-ac/AC.pm:1248
+msgid "<input type=\"reset\" value=\""
+msgstr ""
+
+#: modules/openca-ac/AC.pm:540
+msgid "<input type=\"text\" name=\"login\" value=\"\""
+msgstr ""
+
+#: modules/openca-ac/AC.pm:542
+msgid "<input type=\"password\" name=\"passwd\" value=\"\""
+msgstr ""
+
+#: modules/openca-ac/AC.pm:546 modules/openca-ac/AC.pm:639
+#: modules/openca-ac/AC.pm:1272
+msgid "HIDDEN_LIST"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:547 modules/openca-ac/AC.pm:640
+#: modules/openca-ac/AC.pm:1273
+msgid "INFO_LIST"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:548 modules/openca-ac/AC.pm:641
+#: modules/openca-ac/AC.pm:1274
+msgid "CMD_PANEL"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:549
+msgid "TARGET"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:549
+msgid "_top"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:554
+msgid "        type ... x509"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:555
+msgid "x509"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:561
+msgid "        signature ... present"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:568 modules/openca-ac/AC.pm:626
+#: modules/openca-dbi/DBI.pm:501 modules/openca-dbi/DBI.pm:502
+#: modules/openca-dbi/DBI.pm:503
+msgid "text"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:575
+msgid "-----BEGIN PKCS7-----\n"
+msgstr ""
+#: modules/openca-ac/AC.pm:577
+msgid "-----END PKCS7-----\n"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:588
+msgid "access_control/login/chain"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:596 modules/openca-dbi/DBI.pm:838
+#: modules/openca-dbi/DBI.pm:1509 modules/openca-dbi/DBI.pm:1602
+#: modules/openca-dbi/DBI.pm:2017
+msgid " ("
+msgstr ""
+
+#: modules/openca-ac/AC.pm:628
+msgid "<input TYPE=\"Button\" Name=\"Submit\" Value=\""
+msgstr ""
+
+#: modules/openca-ac/AC.pm:630
+msgid "\" onClick=\"signForm( this.form, window)\">"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:637 modules/openca-ac/AC.pm:1271
+msgid "EXPLANATION"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:638
+msgid "SIGN_FORM"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:649
+msgid "    Logged in ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:655
+msgid "    Remove session ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:693
+msgid "    checkACL ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:696
+msgid "on"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:699 modules/openca-ac/AC.pm:704
+#: modules/openca-ac/AC.pm:709
+msgid "access_control/acl_config/acl"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:705
+msgid "off"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:714
+msgid "    ACL found"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:718
+msgid "    RBAC loaded"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:722
+msgid "    module loaded"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:726
+msgid "    role loaded"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:730
+msgid "    operation loaded"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:734
+msgid "    owner loaded"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:738
+msgid "    access granted"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:749
+msgid "access_control/acl_config/list"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:757
+msgid "access_control/acl_config/command_dir"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:763 modules/openca-log/Logger/XML.pm:147
+#: modules/openca-log/Logger/XML.pm:178 modules/openca-log/Logger/XML.pm:179
+#: modules/openca-log/Logger/XML.pm:245
+msgid ".xml"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:766
+msgid "command_config/command/name"
+msgstr ""
+#: modules/openca-ac/AC.pm:786
+msgid "access_control/acl_config/module_id"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:805
+msgid "access_control/acl_config/ca_cert"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:810
+msgid "access_control/acl_config/map_role"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:835 modules/openca-ac/AC.pm:944
+#: modules/openca-ac/AC.pm:946 modules/openca-ac/AC.pm:976
+#: modules/openca-ac/AC.pm:990 modules/openca-ac/AC.pm:997
+#: modules/openca-db/DB.pm:395 modules/openca-db/DB.pm:454
+#: modules/openca-db/DB.pm:571 modules/openca-db/DB.pm:643
+#: modules/openca-db/DB.pm:681 modules/openca-db/DB.pm:713
+#: modules/openca-db/DB.pm:861 modules/openca-crypto/Token/OpenSSL.pm:169
+#: modules/openca-dbi/DBI.pm:131 modules/openca-dbi/DBI.pm:1357
+#: modules/openca-dbi/DBI.pm:1530 modules/openca-dbi/DBI.pm:1624
+#: modules/openca-dbi/DBI.pm:1930 modules/openca-dbi/DBI.pm:2176
+#: modules/openca-dbi/DBI.pm:2188 modules/openca-dbi/DBI.pm:2195
+#: modules/openca-dbi/DBI.pm:2205 modules/openca-dbi/DBI.pm:2217
+msgid "KEY"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:847 modules/openca-ac/AC.pm:961
+#: modules/openca-ac/AC.pm:1012
+msgid "NOCHAIN"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:870
+msgid "access_control/acl_config/map_operation"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:887
+msgid "command_config/command/operation"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:902
+msgid "command_config/command/owner_method"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:905
+msgid "command_config/command/owner_argument"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1052 modules/openca-ac/AC.pm:1065
+#: modules/openca-ac/AC.pm:1069 modules/openca-ac/AC.pm:1073
+#: modules/openca-ac/AC.pm:1077
+msgid "access_control/acl/permission"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1087
+msgid "getAccess: access granted"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1110
+msgid "access_control/session/directory"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1152
+msgid "initToken: starting"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1154 modules/openca-ac/AC.pm:1173
+#: modules/openca-ac/AC.pm:1225
+msgid "ACCESS_CONTROL_TOKEN_NAME"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1155 modules/openca-ac/AC.pm:1184
+#: modules/openca-ac/AC.pm:1203 modules/openca-ac/AC.pm:1206
+#: modules/openca-ac/AC.pm:1226
+msgid "ACCESS_CONTROL_TOKEN_LOGIN"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1157
+msgid "initToken: successfully finished"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1165
+msgid "    OpenCA::AC->getTokenParam ..."
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1176
+msgid "    OpenCA::AC->getTokenParam: name="
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1187
+msgid "    OpenCA::AC->getTokenParam: argc="
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1194 modules/openca-ac/AC.pm:1195
+#: modules/openca-ac/AC.pm:1216
+msgid "_GET_TOKEN_PARAM_"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1197
+msgid "    OpenCA::AC->getTokenParam: argv="
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1202
+msgid "    OpenCA::AC->getTokenParam: restore CGI data"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1218
+msgid "returned params"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1221
+msgid "    OpenCA::AC->getTokenParam: ask for passphrase(s)"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1232 modules/openca-ac/AC.pm:1237
+#: modules/openca-crypto/Crypto.pm:197 modules/openca-crypto/Crypto.pm:203
+#: modules/openca-crypto/Crypto.pm:215 modules/openca-crypto/Crypto.pm:223
+#: modules/openca-crypto/Crypto.pm:229 modules/openca-crypto/Crypto.pm:235
+#: modules/openca-crypto/Crypto.pm:245 modules/openca-crypto/Crypto.pm:344
+#: modules/openca-crypto/Crypto.pm:349 modules/openca-crypto/Crypto.pm:353
+msgid "token_config/token"
+msgstr ""
+#: modules/openca-ac/AC.pm:1276
+msgid "printed login page"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:1290
+msgid "token_config_file"
+msgstr ""
+
+#: modules/openca-db/DB.pm:101
+msgid "2.0.5"
+msgstr ""
+
+#: modules/openca-db/DB.pm:104
+msgid "dbDir"
+msgstr ""
+
+#: modules/openca-db/DB.pm:106
+msgid "dBs"
+msgstr ""
+
+#: modules/openca-db/DB.pm:107
+msgid "defStoredFormat"
+msgstr ""
+
+#: modules/openca-db/DB.pm:108
+msgid "defInFormat"
+msgstr ""
+
+#: modules/openca-db/DB.pm:109
+msgid "defOutFormat"
+msgstr ""
+
+#: modules/openca-db/DB.pm:110
+msgid "tools"
+msgstr ""
+
+#: modules/openca-db/DB.pm:111
+msgid "dbms"
+msgstr ""
+
+#: modules/openca-db/DB.pm:112
+msgid "dbms_h"
+msgstr ""
+
+#: modules/openca-db/DB.pm:113
+msgid "dbms_search"
+msgstr ""
+
+#: modules/openca-db/DB.pm:114
+msgid "dbms_search_h"
+msgstr ""
+
+#: modules/openca-db/DB.pm:173
+msgid "search_certs"
+msgstr ""
+
+#: modules/openca-db/DB.pm:175
+msgid "cacertificates"
+msgstr ""
+
+#: modules/openca-db/DB.pm:176
+msgid "search_cacerts"
+msgstr ""
+
+#: modules/openca-db/DB.pm:178
+msgid "requests"
+msgstr ""
+
+#: modules/openca-db/DB.pm:179
+msgid "search_requests"
+msgstr ""
+
+#: modules/openca-db/DB.pm:181
+msgid "crrs"
+msgstr ""
+
+#: modules/openca-db/DB.pm:182
+msgid "search_crrs"
+msgstr ""
+
+#: modules/openca-db/DB.pm:184
+msgid "crls"
+msgstr ""
+
+#: modules/openca-db/DB.pm:185
+msgid "search_crls"
+msgstr ""#: modules/openca-db/DB.pm:243 modules/openca-db/DB.pm:293
+#: modules/openca-db/DB.pm:321 modules/openca-db/DB.pm:395
+#: modules/openca-db/DB.pm:453 modules/openca-db/DB.pm:570
+#: modules/openca-db/DB.pm:945
+msgid "_"
+msgstr ""
+#: modules/openca-db/DB.pm:245#: modules/openca-db/DB.pm:307 modules/openca-db/DB.pm:325
+msgid "FORCE"
+msgstr ""
+
+#: modules/openca-db/DB.pm:311 modules/openca-db/DB.pm:313
+msgid "compare"
+msgstr ""
+
+#: modules/openca-db/DB.pm:316 modules/openca-db/DB.pm:329
+#: modules/openca-log/Logger/XML.pm:366
+msgid "DB_File"
+msgstr ""
+
+#: modules/openca-db/DB.pm:328
+msgid "flags"
+msgstr ""
+
+#: modules/openca-db/DB.pm:412 modules/openca-db/DB.pm:413
+#: modules/openca-db/DB.pm:417 modules/openca-db/DB.pm:420
+#: modules/openca-db/DB.pm:423 modules/openca-db/DB.pm:636
+#: modules/openca-db/DB.pm:674 modules/openca-db/DB.pm:753
+#: modules/openca-db/DB.pm:754 modules/openca-db/DB.pm:755
+#: modules/openca-db/DB.pm:757 modules/openca-db/DB.pm:802
+#: modules/openca-db/DB.pm:965
+msgid "ELEMENTS"
+msgstr ""
+
+#: modules/openca-db/DB.pm:499 modules/openca-db/DB.pm:501
+#: modules/openca-db/DB.pm:503 modules/openca-db/DB.pm:513
+#: modules/openca-db/DB.pm:515 modules/openca-dbi/DBI.pm:150
+#: modules/openca-dbi/DBI.pm:187 modules/openca-dbi/DBI.pm:204
+#: modules/openca-dbi/DBI.pm:223 modules/openca-dbi/DBI.pm:236
+#: modules/openca-dbi/DBI.pm:2179 modules/openca-dbi/DBI.pm:2191
+#: modules/openca-dbi/DBI.pm:2198 modules/openca-dbi/DBI.pm:2209
+msgid "CN"
+msgstr ""
+
+#: modules/openca-db/DB.pm:499 modules/openca-db/DB.pm:501
+#: modules/openca-dbi/DBI.pm:152 modules/openca-dbi/DBI.pm:189
+#: modules/openca-dbi/DBI.pm:238 modules/openca-dbi/DBI.pm:483
+#: modules/openca-dbi/DBI.pm:2181 modules/openca-dbi/DBI.pm:2211
+msgid "RA"
+msgstr ""
+
+#: modules/openca-db/DB.pm:499 modules/openca-db/DB.pm:501
+#: modules/openca-db/DB.pm:503 modules/openca-dbi/DBI.pm:162
+#: modules/openca-dbi/DBI.pm:196 modules/openca-dbi/DBI.pm:2185
+msgid "SCEP_TID"
+msgstr ""
+
+#: modules/openca-db/DB.pm:501 modules/openca-dbi/DBI.pm:155
+#: modules/openca-dbi/DBI.pm:2182 modules/openca-dbi/DBI.pm:2212
+msgid "OPERATOR"
+msgstr ""
+
+#: modules/openca-db/DB.pm:507 modules/openca-db/DB.pm:510
+#: modules/openca-dbi/DBI.pm:135 modules/openca-dbi/DBI.pm:231
+#: modules/openca-dbi/DBI.pm:2207
+msgid "REVOKE_CERTIFICATE_SERIAL"
+msgstr ""
+
+#: modules/openca-db/DB.pm:507 modules/openca-db/DB.pm:510
+#: modules/openca-dbi/DBI.pm:149 modules/openca-dbi/DBI.pm:235
+#: modules/openca-dbi/DBI.pm:2208
+msgid "REVOKE_CERTIFICATE_DN"
+msgstr ""
+
+#: modules/openca-db/DB.pm:508
+msgid "REVOKE_CERTIFICATE_KEY_DIGEST"
+msgstr ""
+
+#: modules/openca-db/DB.pm:513 modules/openca-db/DB.pm:515
+msgid "KEY_DIGEST"
+msgstr ""
+
+#: modules/openca-db/DB.pm:515 modules/openca-dbi/DBI.pm:138
+#: modules/openca-dbi/DBI.pm:214 modules/openca-dbi/DBI.pm:2202
+msgid "CSR_SERIAL"
+msgstr ""
+
+#: modules/openca-db/DB.pm:587 modules/openca-db/DB.pm:718
+#: modules/openca-dbi/DBI.pm:167 modules/openca-dbi/DBI.pm:191
+#: modules/openca-dbi/DBI.pm:206 modules/openca-dbi/DBI.pm:225
+#: modules/openca-dbi/DBI.pm:240 modules/openca-dbi/DBI.pm:248
+#: modules/openca-dbi/DBI.pm:1040 modules/openca-dbi/DBI.pm:1929
+#: modules/openca-dbi/DBI.pm:2177 modules/openca-dbi/DBI.pm:2189
+#: modules/openca-dbi/DBI.pm:2196 modules/openca-dbi/DBI.pm:2206
+#: modules/openca-dbi/DBI.pm:2218 modules/openca-dbi/DBI.pm:2295
+#: modules/openca-ldap/LDAP.pm:260 modules/openca-ldap/LDAP.pm:272
+#: modules/openca-ldap/LDAP.pm:323 modules/openca-ldap/LDAP.pm:334
+#: modules/openca-ldap/LDAP.pm:342 modules/openca-ldap/LDAP.pm:437
+#: modules/openca-ldap/LDAP.pm:450 modules/openca-ldap/LDAP.pm:495
+#: modules/openca-ldap/LDAP.pm:502 modules/openca-ldap/LDAP.pm:533
+#: modules/openca-ldap/LDAP.pm:543 modules/openca-ldap/LDAP.pm:555
+#: modules/openca-ldap/LDAP.pm:565 modules/openca-ldap/LDAP.pm:618
+#: modules/openca-ldap/LDAP.pm:671 modules/openca-ldap/LDAP.pm:719
+#: modules/openca-ldap/LDAP.pm:726 modules/openca-ldap/LDAP.pm:764
+#: modules/openca-ldap/LDAP.pm:775 modules/openca-ldap/LDAP.pm:785
+#: modules/openca-ldap/LDAP.pm:834 modules/openca-ldap/LDAP.pm:882
+#: modules/openca-ldap/LDAP.pm:889 modules/openca-ldap/LDAP.pm:990
+#: modules/openca-ldap/LDAP.pm:995
+msgid "STATUS"
+msgstr ""
+
+#: modules/openca-db/DB.pm:595 modules/openca-db/DB.pm:798
+#: modules/openca-db/DB.pm:903 modules/openca-db/DB.pm:967
+#: modules/openca-dbi/DBI.pm:2041 modules/openca-dbi/DBI.pm:2614
+msgid "RAW"
+msgstr ""
+
+#: modules/openca-db/DB.pm:774 modules/openca-dbi/DBI.pm:1364
+msgid "OBJECT"
+msgstr ""
+
+#: modules/openca-db/DB.pm:823 modules/openca-dbi/DBI.pm:1918
+#: modules/openca-dbi/DBI.pm:2081
+msgid "ROWS"
+msgstr ""
+#: modules/openca-db/DB.pm:1052#: modules/openca-db/DB.pm:1054#: modules/openca-db/DB.pm:1056#: modules/openca-db/DB.pm:1072#: modules/openca-db/DB.pm:1072#: modules/openca-configuration/Configuration.pm:68
+msgid "1.5.3"
+msgstr ""
+
+#: modules/openca-configuration/Configuration.pm:74
+msgid "cnfLines"
+msgstr ""
+
+#: modules/openca-configuration/Configuration.pm:75
+msgid "cnfDB"
+msgstr ""
+#: modules/openca-configuration/Configuration.pm:197
+#: modules/openca-configuration/Configuration.pm:213
+msgid "LINE_NUMBER"
+msgstr ""
+
+#: modules/openca-configuration/Configuration.pm:198
+msgid "VALUES"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:31
+msgid "SETUID_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:32
+msgid "SETGID_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:33
+msgid "MKFIFO_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:34
+msgid "OPEN_FIFO_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:35
+msgid "OPEN_PIDFILE_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:36
+msgid "FORK_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:37
+msgid "MSGGET_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:38
+msgid "MSGRCV_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:39
+msgid "OPEN_SOCKET_FAILED"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:43
+msgid "/tmp/openca_xml_cache"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:46
+msgid "SOCKET_FILE"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:47
+msgid "IPC_USER"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:48
+msgid "IPC_GROUP"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:49
+msgid "IPC_UID"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:50
+msgid "IPC_GID"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:53
+msgid "USAGE_COUNTER"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:104
+msgid "_init: init of OpenCA::XML::Cache"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:117
+msgid "_init: general parts ..."
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:147
+msgid "_init: IPC_GID not given so "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:151
+msgid "_init: init of OpenCA::XML::Cache completed"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:159
+msgid ">>"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:160
+msgid "WARNING: cannot write logfile \""
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:160
+msgid "\"\n"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:161
+msgid "MESSAGE: "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:164
+msgid "LOGMESSAGE: "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:166
+msgid " message:\n"
+msgstr ""
+
+
+#: modules/openca-xml-cache/Cache.pm:185 modules/openca-xml-cache/Cache.pm:186
+msgid "OpenCA::XML::Cache->"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:190
+msgid "    FILENAME      "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:191
+msgid "    XPATH         "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:192
+msgid "    COUNTER       "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:193
+msgid "    SOCKET_FILE   "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:194
+msgid "    IPC_USER      "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:195
+msgid "    IPC_GROUP     "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:196
+msgid "    IPC_UID       "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:197
+msgid "    IPC_GID       "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:198
+msgid "    PIDFILE       "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:199
+msgid "    LOGFILE       "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:216
+msgid "startDaemon"
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:232
+msgid "startDaemon: maxconn: "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:237
+msgid "startDaemon: anonymous socket initialized"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:248
+msgid "startDaemon: try to open PIDFILE ..."
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:250
+msgid "WARNING: cannot write pidfile \""
+msgstr ""
+
+
+#: modules/openca-xml-cache/Cache.pm:255
+msgid "startDaemon: PID: "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:256 modules/openca-xml-cache/Cache.pm:262
+#: modules/openca-xml-cache/Cache.pm:336
+#, perl-format
+msgid "%d"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:261
+msgid "startSigningDaemon successfull at "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:262 modules/openca-xml-cache/Cache.pm:336
+msgid " PID: "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:295
+msgid "IPCLOOP: wait for clients"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:301
+msgid "IPCLOOP: accepted connection from client"
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:313
+msgid "IPCLOOP: message received"
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:323
+msgid "IPCLOOP: write answer to socket"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:328
+msgid "IPCLOOP: request completed"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:332
+msgid "startDaemon: daemon cannot fork so startup failed"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:335
+msgid "startDaemon failed at "
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:353#: modules/openca-xml-cache/Cache.pm:365#: modules/openca-xml-cache/Cache.pm:371#: modules/openca-xml-cache/Cache.pm:428
+msgid "VALUE"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:489 modules/openca-xml-cache/Cache.pm:696
+#: modules/openca-log/Log/Message.pm:217 modules/openca-log/Log/Message.pm:221
+msgid "<"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:508
+msgid "killing SigningDaemon with PID "
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:508
+msgid " at "
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:573#: modules/openca-xml-cache/Cache.pm:580
+msgid "get_xpath: sending message"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:588
+msgid "get_xpath: reading answer"
+msgstr ""
+#: modules/openca-xml-cache/Cache.pm:596
+msgid "all ok"
+msgstr ""
+
+#: modules/openca-xml-cache/Cache.pm:675
+msgid "-1"
+msgstr ""
+
+#: modules/openca-crypto/Token/Empty.pm:75
+msgid "PKI Master Alert: OpenCA::Token::Empty error\n"
+msgstr ""
+
+#: modules/openca-crypto/Token/Empty.pm:79
+#: modules/openca-crypto/Token/LunaCA3.pm:95
+msgid "PKI Master Alert: debugging messages of empty token follow\n"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:60
+msgid "new: class instantiated"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:79
+msgid "new: crypto and name present"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:86
+msgid "new: NAME "
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:87
+msgid "new: PASSWD_PARTS "
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:141
+msgid "PKI Debugging: OpenCA::Token::OpenSSL error\n"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:142
+msgid "PKI Debugging: Aborting all operations\n"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:143
+msgid "PKI Debugging: Error:   "
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:144
+msgid "PKI Debugging: Message: "
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:145
+msgid "PKI Debugging: debugging messages of OpenSSL token follow\n"
+msgstr ""
+#: modules/openca-crypto/Token/OpenSSL.pm:195
+msgid "standby"
+msgstr ""
+
+#: modules/openca-crypto/Token/OpenSSL.pm:204
+msgid "PKI Master Alert: OpenCA::OpenSSL is missing a function\n"
+msgstr ""#: modules/openca-crypto/Token/OpenSSL.pm:213
+msgid "OpenCA::Token::OpenSSL::DESTROY"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:66
+msgid "LunaCA3 -enginearg "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:67 modules/openca-dbi/DBI.pm:665
+#: modules/openca-ldap/LDAP.pm:965
+msgid ":"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:91
+msgid "PKI Master Alert: OpenCA::Token::LunaCA3 error\n"
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:120
+msgid " -o "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:121
+#: modules/openca-crypto/Token/LunaCA3.pm:147
+#: modules/openca-crypto/Token/LunaCA3.pm:197
+msgid " -s "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:122
+#: modules/openca-crypto/Token/LunaCA3.pm:148
+#: modules/openca-crypto/Token/LunaCA3.pm:198
+msgid " -i "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:133
+msgid "touch "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:146
+msgid " -c "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:199
+msgid " -g "
+msgstr ""
+
+#: modules/openca-crypto/Token/LunaCA3.pm:200
+msgid " -f "
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:62
+msgid "token_config/default_token"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:67#: modules/openca-crypto/Crypto.pm:130
+msgid "OpenCA::Crypto->"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:146
+msgid "OpenCA::Crypto->getToken"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:162
+msgid "OpenCA::Crypto->getToken: token added"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:167
+msgid "OpenCA::Crypto->getToken: token is present"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:172
+msgid "OpenCA::Crypto->getToken: token is usable"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:180
+msgid "OpenCA::Crypto->addToken"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:200
+msgid "OpenCA::Crypto->addToken: checking name"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:205
+msgid "OpenCA::Crypto->addToken: name ok"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:209
+msgid "OPENCA_CRYPTO"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:211
+msgid "OPENCA_TOKEN"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:212
+msgid "OpenCA::Crypto->addToken: loading mode"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:215 modules/openca-crypto/Crypto.pm:349
+msgid "mode"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:217
+msgid "TOKEN_MODE"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:220
+msgid "OpenCA::Crypto->addToken: loading options"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:223 modules/openca-crypto/Crypto.pm:229
+#: modules/openca-crypto/Crypto.pm:235
+msgid "option"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:237#: modules/openca-crypto/Crypto.pm:240
+msgid "OpenCA::Crypto->addToken: loaded options"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:245 modules/openca-log/Log.pm:151
+msgid "type"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:263
+msgid "OpenCA::Crypto->newToken"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:267#: modules/openca-crypto/Crypto.pm:270#: modules/openca-crypto/Crypto.pm:277
+msgid "OpenCA::Crypto->newToken: no error during new"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:280
+msgid "OpenCA::Crypto->newToken: new token present"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:667
+msgid "dbi:"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:670
+#, fuzzy
+msgid "dbname="
+msgstr "Name"
+
+#: modules/openca-dbi/DBI.pm:671 modules/openca-dbi/DBI.pm:676
+msgid ";host="
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:672 modules/openca-dbi/DBI.pm:677
+msgid ";port="
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:675
+#, fuzzy
+msgid "database="
+msgstr "Datenbank"
+
+#: modules/openca-dbi/DBI.pm:679
+msgid ";mysql_ssl=0"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:775 modules/openca-dbi/DBI.pm:777
+#: modules/openca-dbi/DBI.pm:790
+msgid "DO"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:775
+msgid "exist"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:777 modules/openca-dbi/DBI.pm:874
+msgid "drop"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:778
+msgid "CANNOT_REMOVE_"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:783
+msgid "_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:790 modules/openca-dbi/DBI.pm:872
+#, fuzzy
+msgid "create"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:791
+msgid "CANNOT_CREATE_"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:830
+#, fuzzy
+msgid "create table "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:845 modules/openca-dbi/DBI.pm:1217
+#: modules/openca-dbi/DBI.pm:1222 modules/openca-dbi/DBI.pm:1269
+#: modules/openca-dbi/DBI.pm:1270 modules/openca-dbi/DBI.pm:1273
+#: modules/openca-dbi/DBI.pm:1277 modules/openca-req/REQ.pm:523
+msgid ", "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:875
+msgid "drop table "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:877 modules/openca-dbi/DBI.pm:1142
+#: modules/openca-dbi/DBI.pm:1390 modules/openca-dbi/DBI.pm:1812
+#: modules/openca-dbi/DBI.pm:1981
+#, fuzzy
+msgid "select * from "
+msgstr "Aus dem LDAP löschen"
+
+#: modules/openca-dbi/DBI.pm:894 modules/openca-dbi/DBI.pm:1148
+#: modules/openca-dbi/DBI.pm:1237 modules/openca-dbi/DBI.pm:1308
+#: modules/openca-dbi/DBI.pm:1414 modules/openca-dbi/DBI.pm:1506
+#: modules/openca-dbi/DBI.pm:1599 modules/openca-dbi/DBI.pm:1683
+#: modules/openca-dbi/DBI.pm:1738 modules/openca-dbi/DBI.pm:1878
+#: modules/openca-dbi/DBI.pm:2013
+msgid "QUERY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1049
+msgid "  storeItem_getArguments: inform: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1060
+msgid "  storeItem_getArguments: converted: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1099 modules/openca-dbi/DBI.pm:1106
+#: modules/openca-dbi/DBI.pm:1113 modules/openca-dbi/DBI.pm:1163
+#: modules/openca-dbi/DBI.pm:1349
+#, fuzzy
+msgid "UPDATE"
+msgstr "Ein SQL-Update-Statement ist fehlgeschlagen."
+
+#: modules/openca-dbi/DBI.pm:1100 modules/openca-dbi/DBI.pm:1104
+#: modules/openca-dbi/DBI.pm:1111 modules/openca-dbi/DBI.pm:1171
+#, fuzzy
+msgid "INSERT"
+msgstr "Ein SQL-Insert-Statement ist fehlgeschlagen."
+
+#: modules/openca-dbi/DBI.pm:1121
+msgid " - UNKNOWN MODULETYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1123
+msgid "UNKNOWN MODULETYPE AND UNKNOWN MODULE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1128
+msgid "UNKNOWN MODULE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1142 modules/openca-dbi/DBI.pm:1227
+#: modules/openca-dbi/DBI.pm:1390 modules/openca-dbi/DBI.pm:1496
+#: modules/openca-dbi/DBI.pm:1589 modules/openca-dbi/DBI.pm:1677
+#: modules/openca-dbi/DBI.pm:1730 modules/openca-dbi/DBI.pm:1818
+#: modules/openca-dbi/DBI.pm:1841 modules/openca-dbi/DBI.pm:1993
+msgid " where "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1143 modules/openca-dbi/DBI.pm:1228
+#: modules/openca-dbi/DBI.pm:1269 modules/openca-dbi/DBI.pm:1394
+#: modules/openca-dbi/DBI.pm:1396 modules/openca-dbi/DBI.pm:1483
+#: modules/openca-dbi/DBI.pm:1487 modules/openca-dbi/DBI.pm:1572
+#: modules/openca-dbi/DBI.pm:1580 modules/openca-dbi/DBI.pm:1678
+#: modules/openca-dbi/DBI.pm:1846 modules/openca-dbi/DBI.pm:1871
+#: modules/openca-dbi/DBI.pm:1984 modules/openca-dbi/DBI.pm:2001
+msgid "_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1143 modules/openca-dbi/DBI.pm:1217
+#: modules/openca-dbi/DBI.pm:1222 modules/openca-dbi/DBI.pm:1228
+msgid "=?"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1148 modules/openca-dbi/DBI.pm:1237
+#: modules/openca-dbi/DBI.pm:1308 modules/openca-dbi/DBI.pm:1414
+#: modules/openca-dbi/DBI.pm:1506 modules/openca-dbi/DBI.pm:1599
+#: modules/openca-dbi/DBI.pm:1683 modules/openca-dbi/DBI.pm:1738
+#: modules/openca-dbi/DBI.pm:1878 modules/openca-dbi/DBI.pm:2013
+msgid "BIND_VALUES"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1399 modules/openca-dbi/DBI.pm:2796
+msgid " and ("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1399
+msgid " like '"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1399
+msgid "')"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1405
+msgid " like (select MAX("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1406 modules/openca-dbi/DBI.pm:1483
+#: modules/openca-dbi/DBI.pm:1572
+#, fuzzy
+msgid ") from "
+msgstr "Von: "
+
+#: modules/openca-dbi/DBI.pm:1439 modules/openca-dbi/DBI.pm:2021
+msgid "ARGUMENTS"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1439 modules/openca-dbi/DBI.pm:2021
+msgid "ARRAYREF"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1483
+msgid "select MIN("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1486 modules/openca-dbi/DBI.pm:1580
+#: modules/openca-dbi/DBI.pm:1983
+msgid " where ("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1487
+msgid " > ? )"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1494 modules/openca-dbi/DBI.pm:1587
+#: modules/openca-dbi/DBI.pm:1816 modules/openca-dbi/DBI.pm:1839
+#: modules/openca-dbi/DBI.pm:1991
+msgid " and "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1572
+msgid "select MAX("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1580
+msgid "< ? )"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1677
+#, fuzzy
+msgid "delete from "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1678
+msgid "= ? "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1726
+msgid "select count(*)  from "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1730
+msgid " like ?"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1848
+msgid "searchItems: BIGINT: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1849 modules/openca-dbi/DBI.pm:1854
+msgid " --&gt; "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1851
+msgid " = ?)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1853
+msgid "searchItems: TEXT: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1870 modules/openca-dbi/DBI.pm:2000
+msgid " order by "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1984
+msgid " >= ? )"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2029
+msgid "listItems: added item "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2078#: modules/openca-dbi/DBI.pm:2082#: modules/openca-dbi/DBI.pm:2214
+#, perl-format
+msgid "%4.4d-%2.2d-%2.2d %2.2d:%2.2d:%2.2d"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2250
+msgid "getArguments: TABLE:"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2251
+msgid "getArguments: MODE:"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2268
+msgid "getArguments: value: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2291
+msgid "getArguments: status: "
+msgstr ""
+
+
+#: modules/openca-dbi/DBI.pm:2732
+#, fuzzy
+msgid "__MESSAGE__ (error __OLD_ERRNO__: __OLD_ERRVAL__)"
+msgstr "Fehler __ERRNO__: __ERRVAL__"
+#: modules/openca-dbi/DBI.pm:2734#: modules/openca-dbi/DBI.pm:2735#: modules/openca-dbi/DBI.pm:1205
+msgid "update "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1205
+#, fuzzy
+msgid " set "
+msgstr "Zurücksetzen"
+
+#: modules/openca-dbi/DBI.pm:1207
+msgid "=?, "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1208
+msgid "=? "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1267
+#, fuzzy
+msgid "insert into "
+msgstr "Fingerprint"
+
+#: modules/openca-dbi/DBI.pm:1268
+msgid " ( "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1279
+msgid ") VALUES ("
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1281
+msgid " ?, ?, ?"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1293 modules/openca-dbi/DBI.pm:1298
+msgid ", ?"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1394 modules/openca-dbi/DBI.pm:1499
+#: modules/openca-dbi/DBI.pm:1591 modules/openca-dbi/DBI.pm:1856
+#: modules/openca-dbi/DBI.pm:1996
+msgid " like ?)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1396 modules/openca-dbi/DBI.pm:1821
+#: modules/openca-dbi/DBI.pm:1846
+msgid "=?)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:115 modules/openca-dbi/DBI.pm:783
+#: modules/openca-dbi/DBI.pm:785 modules/openca-dbi/DBI.pm:798
+#: modules/openca-dbi/DBI.pm:2601
+msgid "TABLE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:118
+msgid "ca_certificate"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:119
+msgid "crr"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:120 modules/openca-crl/CRL.pm:79
+msgid "crl"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:124
+msgid "VARIABLE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:125 modules/openca-dbi/DBI.pm:126
+msgid "submit_date"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:126 modules/openca-dbi/DBI.pm:232
+#: modules/openca-dbi/DBI.pm:2213
+msgid "SUBMIT_DATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:127
+msgid "format"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:128
+msgid "data"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:128 modules/openca-dbi/DBI.pm:502
+#: modules/openca-dbi/DBI.pm:517 modules/openca-dbi/DBI.pm:530
+#: modules/openca-dbi/DBI.pm:545
+msgid "LONGTEXT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:130
+msgid "serial"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:130 modules/openca-dbi/DBI.pm:133
+#: modules/openca-dbi/DBI.pm:135 modules/openca-dbi/DBI.pm:137
+#: modules/openca-dbi/DBI.pm:138 modules/openca-dbi/DBI.pm:139
+#: modules/openca-dbi/DBI.pm:142 modules/openca-dbi/DBI.pm:143
+#: modules/openca-dbi/DBI.pm:161 modules/openca-dbi/DBI.pm:169
+#: modules/openca-dbi/DBI.pm:504 modules/openca-dbi/DBI.pm:519
+#: modules/openca-dbi/DBI.pm:533 modules/openca-dbi/DBI.pm:548
+msgid "BIGINT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:131
+msgid "mykey"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:131 modules/openca-dbi/DBI.pm:136
+#: modules/openca-dbi/DBI.pm:140 modules/openca-dbi/DBI.pm:503
+#: modules/openca-dbi/DBI.pm:518 modules/openca-dbi/DBI.pm:532
+#: modules/openca-dbi/DBI.pm:547
+msgid "TEXT_KEY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:133 modules/openca-dbi/DBI.pm:200
+msgid "CERTIFICATE_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:133 modules/openca-dbi/DBI.pm:135
+msgid "cert_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:136 modules/openca-dbi/DBI.pm:219
+msgid "CA_CERTIFICATE_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:136
+msgid "ca_cert_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:137 modules/openca-dbi/DBI.pm:183
+msgid "REQUEST_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:137 modules/openca-dbi/DBI.pm:138
+msgid "req_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:139 modules/openca-dbi/DBI.pm:230
+msgid "CRR_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:139
+msgid "crr_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:140 modules/openca-dbi/DBI.pm:247
+msgid "CRL_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:140
+msgid "crl_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:142
+msgid "LOG_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:142 modules/openca-dbi/DBI.pm:143
+#: modules/openca-dbi/DBI.pm:169
+msgid "action_number"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:143
+msgid "SIGNATURE_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:147 modules/openca-dbi/DBI.pm:149
+#: modules/openca-ldap/LDAP.pm:397
+msgid "dn"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:152
+msgid "ra"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:153
+msgid "RAO"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:153 modules/openca-dbi/DBI.pm:154
+#: modules/openca-dbi/DBI.pm:155
+msgid "rao"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:156 modules/openca-dbi/DBI.pm:251
+#: modules/openca-dbi/DBI.pm:2219 modules/openca-crl/CRL.pm:267
+msgid "LAST_UPDATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:156
+msgid "last_update"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:157 modules/openca-dbi/DBI.pm:252
+#: modules/openca-dbi/DBI.pm:2220 modules/openca-crl/CRL.pm:268
+msgid "NEXT_UPDATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:157
+msgid "next_update"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:158 modules/openca-dbi/DBI.pm:166
+msgid "datatype"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:159 modules/openca-dbi/DBI.pm:192
+#: modules/openca-dbi/DBI.pm:207 modules/openca-dbi/DBI.pm:2183
+#: modules/openca-dbi/DBI.pm:2200
+msgid "ROLE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:160
+msgid "public_key"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:161
+msgid "notafter"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:162
+msgid "scep_tid"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:163 modules/openca-dbi/DBI.pm:197
+#: modules/openca-dbi/DBI.pm:215 modules/openca-dbi/DBI.pm:242
+#: modules/openca-dbi/DBI.pm:2186 modules/openca-dbi/DBI.pm:2203
+#: modules/openca-dbi/DBI.pm:2215
+msgid "LOA"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:163
+msgid "loa"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:168 modules/openca-dbi/DBI.pm:241
+#: modules/openca-dbi/DBI.pm:2214
+msgid "REASON"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:169
+msgid "ACTION_NUMBER"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:170
+msgid "MODULETYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:170
+msgid "moduletype"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:171
+msgid "MODULE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:172
+msgid "LOG_SUBMIT_DATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:172
+msgid "log_submit_date"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:173
+msgid "LOG_DO_DATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:173
+msgid "log_do_date"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:257
+msgid "EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:260
+msgid "UPDATED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:268
+msgid "NONEXISTENT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:269
+msgid "ANY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:284
+msgid "SUCCESS"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:285
+msgid "DO_NOT_COMMIT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:286
+msgid "UNEXPECTED_ERROR"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:287
+msgid "ATTACK"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:290 modules/openca-dbi/DBI.pm:382
+msgid "WRONG_DATATYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:291 modules/openca-dbi/DBI.pm:383
+msgid "NO_OBJECT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:292 modules/openca-dbi/DBI.pm:384
+msgid "GETBASETYPE_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:293 modules/openca-dbi/DBI.pm:294
+#: modules/openca-dbi/DBI.pm:385
+msgid "UPDATE_WITHOUT_KEY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:295 modules/openca-dbi/DBI.pm:386
+msgid "ENTRY_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:296 modules/openca-dbi/DBI.pm:387
+msgid "ENTRY_NOT_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:297 modules/openca-dbi/DBI.pm:388
+msgid "UNSUPPORTED_SEARCH_ATTRIBUTE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:298 modules/openca-dbi/DBI.pm:389
+msgid "DB_TYPE_UNKNOWN"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:299 modules/openca-dbi/DBI.pm:390
+msgid "SIGNING_LOG_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:300 modules/openca-dbi/DBI.pm:391
+msgid "ITEM_NOT_UNIQUE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:301
+msgid "FALSE_MODE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:302
+msgid "FALSE_FAILSAFE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:303
+msgid "FALSE_SECOND_CHANCE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:304 modules/openca-dbi/DBI.pm:396
+msgid "MISSING_PRIMARY_DATABASE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:305 modules/openca-dbi/DBI.pm:397
+msgid "MISSING_BACKUP_DATABASE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:306 modules/openca-dbi/DBI.pm:398
+msgid "MISSING_BACKEND"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:307 modules/openca-dbi/DBI.pm:399
+msgid "MISSING_TOOLS"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:308
+msgid "AUTOCOMMIT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:310
+msgid "CERTIFICATE_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:311
+msgid "CA_CERTIFICATE_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:312
+msgid "CRR_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:313
+msgid "CRL_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:314
+msgid "LOG_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:315
+msgid "SIGNATURE_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:316
+msgid "SEQUENCE_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:317
+msgid "RBAC_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:318
+msgid "REQUEST_TABLE_EXIST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:320
+msgid "CANNOT_REMOVE_CA_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:321
+msgid "CANNOT_REMOVE_CRR"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:322
+msgid "CANNOT_REMOVE_CRL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:323
+msgid "CANNOT_REMOVE_LOG"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:324
+msgid "CANNOT_REMOVE_SIGNATURE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:325
+msgid "CANNOT_REMOVE_SEQUENCE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:326
+msgid "CANNOT_REMOVE_RBAC"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:327
+msgid "CANNOT_REMOVE_REQUEST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:328
+msgid "CANNOT_REMOVE_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:330
+msgid "CANNOT_CREATE_CA_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:331
+msgid "CANNOT_CREATE_CRR"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:332
+msgid "CANNOT_CREATE_CRL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:333
+msgid "CANNOT_CREATE_LOG"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:334
+msgid "CANNOT_CREATE_SIGNATURE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:335
+msgid "CANNOT_CREATE_SEQUENCE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:336
+msgid "CANNOT_CREATE_RBAC"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:337
+msgid "CANNOT_CREATE_REQUEST"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:338
+msgid "CANNOT_CREATE_CERTIFICATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:340
+msgid "CANNOT_INIT_SEQUENCE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:342 modules/openca-dbi/DBI.pm:434
+msgid "CANNOT_CREATE_OBJECT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:343 modules/openca-dbi/DBI.pm:435
+msgid "MISSING_ARG_TABLE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:344 modules/openca-dbi/DBI.pm:436
+msgid "MISSING_ARG_SERIAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:345 modules/openca-dbi/DBI.pm:437
+msgid "MISSING_ARG_DATATYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:346 modules/openca-dbi/DBI.pm:438
+msgid "UNSUPPORTED_OBJECT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:347 modules/openca-dbi/DBI.pm:439
+msgid "ILLEGAL_STATUS"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:348 modules/openca-dbi/DBI.pm:440
+msgid "ILLEGAL_DATE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:349
+msgid "ILLEGAL_ARGUMENT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:350
+msgid "MISSING_DATABASE_PARAMETERS"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:351
+msgid "MISSING_GETTEXT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:358 modules/openca-dbi/DBI.pm:451
+msgid "SECOND_CONNECT_FAILED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:359 modules/openca-dbi/DBI.pm:452
+msgid "NO_BACKUP"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:378
+msgid "88888"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:379
+msgid "16666"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:382
+msgid "10001"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:383
+msgid "10002"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:384
+msgid "10003"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:385
+msgid "10004"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:386
+msgid "10006"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:387
+msgid "10007"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:388
+msgid "10008"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:389
+msgid "10009"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:390
+msgid "10010"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:391
+msgid "10011"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:392
+msgid "10012"
+msgstr ""
+
+
+#: modules/openca-dbi/DBI.pm:394
+msgid "10013"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:394
+msgid "FALSE_FAILSAFE - failsafe \"on|off\"."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:395
+msgid "10014"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:395
+msgid "FALSE_SECOND_CHANCE - second_chance \"yes|no\""
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:396
+msgid "10015"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:397
+msgid "10016"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:398
+msgid "10017"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:399
+msgid "10018"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:400
+msgid "10019"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:400
+msgid "AUTOCOMMMIT is on."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:402
+msgid "10020"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:403
+msgid "10021"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:404
+msgid "10022"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:405
+msgid "10023"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:406
+msgid "10024"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:407
+msgid "10025"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:408
+msgid "10026"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:409
+msgid "10027"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:410
+msgid "10028"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:412
+msgid "10030"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:413
+msgid "10031"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:414
+msgid "10032"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:415
+msgid "10033"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:416
+msgid "10034"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:417
+msgid "10035"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:418
+msgid "10036"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:419
+msgid "10037"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:420
+msgid "10038"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:422
+msgid "10040"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:423
+msgid "10041"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:424
+msgid "10042"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:425
+msgid "10043"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:426
+msgid "10044"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:427
+msgid "10045"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:428
+msgid "10046"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:429
+msgid "10047"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:430
+msgid "10048"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:432
+msgid "10050"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:434
+msgid "10060"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:435
+msgid "10061"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:436
+msgid "10062"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:437
+msgid "10063"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:438
+msgid "10064"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:439
+msgid "10065"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:440
+msgid "10067"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:441
+msgid "10068"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:442
+msgid "10070"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:443
+msgid "10071"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:445
+msgid "11111"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:450
+msgid "20001"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:451
+msgid "20002"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:452
+msgid "20004"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:454
+msgid "20008"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:455
+msgid "20016"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:457
+msgid "20032"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:458
+msgid "20064"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:459
+msgid "20128"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:460
+msgid "20256"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:461
+msgid "20512"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:462
+msgid "21024"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:463
+msgid "22048"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:464
+msgid "24096"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:480 modules/openca-dbi/DBI.pm:1132
+msgid "UNKNOWN"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:481
+msgid "CA"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:482
+msgid "PKIManager"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:484
+msgid "WebGateway"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:485
+msgid "RAServer"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:498 modules/openca-dbi/DBI.pm:666
+msgid "Pg"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:499 modules/openca-dbi/DBI.pm:514
+#: modules/openca-dbi/DBI.pm:528 modules/openca-dbi/DBI.pm:543
+#: modules/openca-log/Logger/XML.pm:183 modules/openca-log/Logger/XML.pm:189
+#: modules/openca-log/Logger/XML.pm:195 modules/openca-log/Logger/XML.pm:201
+#: modules/openca-log/Logger/XML.pm:208 modules/openca-log/Logger/XML.pm:265
+#: modules/openca-log/Logger/XML.pm:270 modules/openca-log/Logger/XML.pm:331
+#: modules/openca-log/Logger/XML.pm:505
+msgid "TYPE"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:504
+msgid "int8"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:505 modules/openca-dbi/DBI.pm:520
+#: modules/openca-dbi/DBI.pm:534 modules/openca-dbi/DBI.pm:549
+msgid "PRIMARYKEY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:505 modules/openca-dbi/DBI.pm:534
+#: modules/openca-dbi/DBI.pm:549
+msgid "PRIMARY KEY NOT NULL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:507 modules/openca-dbi/DBI.pm:522
+#: modules/openca-dbi/DBI.pm:536 modules/openca-dbi/DBI.pm:551
+msgid "DBI_OPTION"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:508 modules/openca-dbi/DBI.pm:522
+#: modules/openca-dbi/DBI.pm:537 modules/openca-dbi/DBI.pm:552
+msgid "RaiseError"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:509 modules/openca-dbi/DBI.pm:538
+#: modules/openca-dbi/DBI.pm:553
+msgid "Taint"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:510 modules/openca-dbi/DBI.pm:523
+#: modules/openca-dbi/DBI.pm:539 modules/openca-dbi/DBI.pm:554
+msgid "AutoCommit"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:511 modules/openca-dbi/DBI.pm:525
+#: modules/openca-dbi/DBI.pm:540 modules/openca-dbi/DBI.pm:556
+msgid "LIMIT"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:511 modules/openca-dbi/DBI.pm:525
+msgid "__QUERY__ LIMIT __MAXITEMS__"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:513 modules/openca-dbi/DBI.pm:671
+msgid "mysql"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:518
+msgid "VARCHAR (255)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:520
+msgid "NOT NULL PRIMARY KEY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:524
+msgid "CREATE_TABLE_OPTION"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:524
+msgid "TYPE=BDB"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:527
+msgid "DB2"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:529 modules/openca-dbi/DBI.pm:530
+msgid "long varchar"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:532
+msgid "varchar (255)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:533
+msgid "decimal (31, 0)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:540
+msgid "__QUERY__ FETCH FIRST __MAXITEMS__ ROWS ONLY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:542
+msgid "Oracle"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:544 modules/openca-dbi/DBI.pm:547
+msgid "varchar2 (1999)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:545
+msgid "LONG"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:548
+msgid "number (38)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:555
+msgid "LongReadLen"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:556
+msgid "select * from ( __QUERY__ ) where rownum <= __MAXITEMS__"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:577
+msgid "ERRNO"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:578
+msgid "ERRVAL"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:603
+msgid "new: Starting to init a new OpenCA::DBI"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:613
+msgid "new: checking for backend"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:621
+msgid "new: defining the class parameters"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:634
+msgid "new: checking the configuration for enough data"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:661
+msgid "new: preparing the database (vendor dependent)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:669
+msgid "new: Pg detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:674
+msgid "new: mysql detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:681
+msgid "new: DB2 detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:684
+msgid "new: Oracle detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:691
+msgid "new: DB: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:697
+msgid "new: OpenCA::DBI should now complete"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:708
+msgid "connect: connecting to database"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:713
+msgid "connect: try to connect"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:720
+msgid "connect: connect failed"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:725
+msgid "connect: Checking AutoCommit to be off ..."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:727
+msgid "connect: AutoCommit is on so I'm aborting ..."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:731
+msgid "connect: AutoCommit is off"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:751
+msgid "initDB: Entering sub initDB"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:764#: modules/openca-dbi/DBI.pm:767#: modules/openca-dbi/DBI.pm:769
+msgid "initDB: dsn: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:770
+msgid "initDB: the folloing debugging-output is for DB2"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:771
+msgid "initDB: ld_library_path: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:772
+msgid "initDB: path: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:773
+msgid "initDB: libpath"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:774
+msgid "initDB: classpath"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:788
+msgid "initDB: try to create table"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:795
+msgid "initDB: table created"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:803
+#, fuzzy
+msgid "initDB: initDB successful completed"
+msgstr "Attribut erfolgreich gelöscht."
+
+#: modules/openca-dbi/DBI.pm:817
+msgid "operateTable: Entering sub operateTable"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:822
+msgid "operateTable: build the create statements"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:829
+msgid "operateTable: table: "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:868
+msgid "operateTable: build the statement finally"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:886
+msgid "operateTable: run the statement"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:895
+msgid "operateTable: query failed return undef (EXCEPT OF NEGATOR)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:907
+msgid "operateTable: query succeeded return 1 (EXCEPT OF NEGATOR)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:937
+msgid "storeItem: Entering function storeItem"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:941
+msgid "storeItem: table: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:962
+msgid "storeItem: succeeded - KEY: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:978
+msgid "storeItem_getArguments: Entering storeItem_getArguments"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:986
+msgid "storeItem_getArguments: table: "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1004 modules/openca-dbi/DBI.pm:1009
+#: modules/openca-dbi/DBI.pm:1015 modules/openca-dbi/DBI.pm:1020
+msgid "storeItem_getArguments: value: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1037
+msgid "storeItem_getArguments: status: erased because empty"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1039
+msgid "storeItem_getArguments: status: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1058
+msgid "storeItem_getArguments: KEY:"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1059
+msgid "storeItem_getArguments: format: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1062
+msgid "storeItem_getArguments: object->getParsed hash:"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1065
+msgid "storeItem_getArguments: object-value: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1068
+msgid "storeItem_getArguments: function succesfully finished"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1084
+msgid "storeItem_checkData: Entering storeItem_checkData"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1141
+msgid "storeItem_checkData: check for existence of item"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1149
+msgid "storeItem_checkData: doQuery failure detected"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1159
+msgid "storeItem_checkData: illegal insert"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1167
+msgid "storeItem_checkData: illegal update"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1175
+msgid "storeItem_checkData: data is complete"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1176
+msgid "storeItem_checkData: leaving function successfully"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1192
+msgid "storeItem_upate: update mode"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1204
+msgid "storeItem_update: prepare query"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1235
+msgid "storeItem_update: query complete, call doQuery"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1256
+msgid "storeItem_insert: Entering storeItem_insert"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1266
+msgid "storeItem_insert: prepare query"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1286
+msgid "storeItem_insert: try to parse header"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1304#: modules/openca-dbi/DBI.pm:1306
+msgid "storeItem_insert: query complete, call doQuery"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1368
+msgid "getItem: Entering sub getItem"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1386
+#, fuzzy
+msgid "getItem: data complete"
+msgstr "Zertifizierungsantrag komplett."
+#: modules/openca-dbi/DBI.pm:1418
+#, fuzzy
+msgid "getItem: query completed"
+msgstr "Zertifizierungsantrag komplett."
+
+#: modules/openca-dbi/DBI.pm:1431
+msgid "getItem: check that there is a non-empty result"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1512
+msgid "getNextItem: arg: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1513 modules/openca-dbi/DBI.pm:1514
+msgid "getNextItem: result: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1524
+msgid "getNextItem: there is no next item"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1706
+msgid "elements: Entering function elements"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1756
+msgid "elements: leaving function successfully"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1766
+msgid "elements: next round - db-request failed"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1792
+msgid "searchItems: Entering function searchItems"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1798
+msgid "searchItems: dbi-status:"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1834#: modules/openca-dbi/DBI.pm:1836
+msgid "searchItems: attribute's content: "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:1886
+msgid "searchItems: state(false is OK): "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1888
+msgid "searchItems: rows (this is buggy in DBD::DB2 and DBD::Oracle)): "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1894
+msgid "searchItems: item: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1901 modules/openca-dbi/DBI.pm:1916
+msgid "searchItems: leaving function successfully"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1912
+msgid "searchItems: add an object to the returnlist"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:1942
+msgid "listItems: Entering function listItems"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2010#: modules/openca-dbi/DBI.pm:2029
+msgid " to result"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2032
+#, fuzzy
+msgid "listItems: completed successful"
+msgstr "Das Archiv wurde erfolgreich erstellt."
+#: modules/openca-dbi/DBI.pm:2237
+msgid "getArguments: entering function"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2275
+msgid "getArguments: handling EXPIRED"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2281
+msgid "getArguments: handling VALID_CERTIFICATE"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2288
+msgid "getArguments: no STATUS present"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2298
+msgid "getArguments: ILLEGAL ARGUMENT"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2307
+#, fuzzy
+msgid "getArguments: completed successful"
+msgstr "Das Archiv wurde erfolgreich erstellt."
+
+#: modules/openca-dbi/DBI.pm:2350
+msgid "getStatus: Entering function"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2356 modules/openca-dbi/DBI.pm:2381
+msgid "getStatus: legal status (leaving function)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2360 modules/openca-dbi/DBI.pm:2385
+msgid "getStatus: illegal status (leaving function)"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2373#: modules/openca-dbi/DBI.pm:2377
+msgid "getStatus: no status (leaving function)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2481
+msgid "doQuery: entering function"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2489#: modules/openca-dbi/DBI.pm:2496
+msgid "doQuery: prepare statement"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2497
+msgid "doQuery: statement nr.: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2500
+msgid "doQuery: prepare failed"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2508
+msgid "doQuery: execute statement"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2516
+msgid "doQuery: execute failed (leaving function)"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2530
+msgid "getResultHash: entring function"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2537
+msgid "getResultHash: column: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2539
+msgid "getResultHash: value: "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2542
+msgid "getResultHash: leaving function"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2561
+#, fuzzy
+msgid "getResultItem: entering function"
+msgstr "Rückkehrwert der Batchfunktion"
+
+#: modules/openca-dbi/DBI.pm:2569
+msgid "getResultItem: all params present"
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2576#: modules/openca-dbi/DBI.pm:2577
+msgid "getResultItem: have all data"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2582
+msgid "getResultItem: return data RAW"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2594
+msgid "getItem: try to create crl"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2599
+msgid "getResultItem: crl there"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2600
+msgid "ResultItem: crl failed"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2608
+msgid "getResultItem: cannot build object return void"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2617
+msgid "getResultItem: return item"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2630
+msgid "rollback: entering function"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2647
+msgid "commit: entering function"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2678
+msgid "DESTROY: automatic rollback by destructor DESTROY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2681
+msgid "DESTROY: automatic commit by destructor DESTROY"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2688
+msgid "DESTROY: call finish on all statement handles to avoid warnings by DBI"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2703
+msgid "Entering errno ..."
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2712
+msgid "errno: gettext is not defined - returning errorcode"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2716
+msgid "errno: gettext is defined"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2719
+#, fuzzy
+msgid "errno: new errorcode defined"
+msgstr "Es wurde keine Rolle definiert."
+#: modules/openca-dbi/DBI.pm:2741#: modules/openca-dbi/DBI.pm:2745
+msgid "errno: returning local errorcode "
+msgstr ""
+#: modules/openca-dbi/DBI.pm:2781
+msgid "DEBUG: OpenCA::DBI->"
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2803
+msgid " < "
+msgstr ""
+
+#: modules/openca-dbi/DBI.pm:2805
+msgid " > "
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:82
+msgid "crlFormat"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:83
+msgid "pemCRL"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:84
+msgid "derCRL"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:85
+msgid "txtCRL"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:163
+msgid "CAKEY"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:164
+msgid "USE_ENGINE"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:167
+msgid "DAYS"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:169
+msgid "EXTS"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:170
+msgid "NOUNIQUEDN"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:232
+msgid "NEXTUPDATE"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:232
+msgid "LASTUPDATE"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:265
+msgid "ALGORITHM"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:269
+msgid "BODY"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:271 modules/openca-req/REQ.pm:465
+msgid "HEADER"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:272
+msgid "LIST"
+msgstr ""
+
+#: modules/openca-crl/CRL.pm:273
+msgid "FLAG_EXPORT_STATE"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:44
+msgid "(DEBUG) OpenCA::LDAP->"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:87 modules/openca-log/Logger/Syslog/Net.pm:69
+msgid "debug"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:88
+msgid "suffix/dn"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:89
+msgid "excluded_roles/role"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:92 modules/openca-log/Logger/Syslog.pm:90
+msgid "host"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:93 modules/openca-ldap/LDAP.pm:967
+#: modules/openca-log/Logger/Syslog.pm:91
+msgid "port"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:94
+msgid "protocol_version"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:95
+msgid "tls"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:96 modules/openca-ldap/LDAP.pm:1014
+msgid "sasl"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:97
+msgid "chain"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:107
+msgid "get_config: xml path is "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:114 modules/openca-ldap/LDAP.pm:121
+#: modules/openca-ldap/LDAP.pm:129
+msgid "ldap/"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:123#: modules/openca-ldap/LDAP.pm:147
+msgid "ldap/schema"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:148 modules/openca-ldap/LDAP.pm:418
+msgid "default"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:148 modules/openca-ldap/LDAP.pm:417
+msgid "ca"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:154 modules/openca-ldap/LDAP.pm:162
+#: modules/openca-ldap/LDAP.pm:171 modules/openca-ldap/LDAP.pm:180
+#: modules/openca-ldap/LDAP.pm:188 modules/openca-ldap/LDAP.pm:197
+#: modules/openca-ldap/LDAP.pm:205 modules/openca-ldap/LDAP.pm:214
+#: modules/openca-ldap/LDAP.pm:222 modules/openca-ldap/LDAP.pm:231
+msgid "/rdn"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:162
+msgid "attributetype"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:164
+msgid "schema"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:171 modules/openca-ldap/LDAP.pm:180
+msgid "must/attributetype"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:182
+msgid "load_schema: must "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:188 modules/openca-ldap/LDAP.pm:197
+msgid "may/attributetype"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:199
+msgid "load_schema: may "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:205 modules/openca-ldap/LDAP.pm:214
+msgid "structural/objectclass"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:216
+msgid "load_schema: structural "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:222 modules/openca-ldap/LDAP.pm:231
+msgid "auxiliary/objectclass"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:233
+msgid "load_schema: auxiliary "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:256
+msgid "add_object: Started add_object ..."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:261 modules/openca-ldap/LDAP.pm:273
+#: modules/openca-ldap/LDAP.pm:324 modules/openca-ldap/LDAP.pm:334
+#: modules/openca-ldap/LDAP.pm:344 modules/openca-ldap/LDAP.pm:439
+#: modules/openca-ldap/LDAP.pm:453 modules/openca-ldap/LDAP.pm:498
+#: modules/openca-ldap/LDAP.pm:502 modules/openca-ldap/LDAP.pm:534
+#: modules/openca-ldap/LDAP.pm:544 modules/openca-ldap/LDAP.pm:556
+#: modules/openca-ldap/LDAP.pm:565 modules/openca-ldap/LDAP.pm:618
+#: modules/openca-ldap/LDAP.pm:671 modules/openca-ldap/LDAP.pm:719
+#: modules/openca-ldap/LDAP.pm:728 modules/openca-ldap/LDAP.pm:765
+#: modules/openca-ldap/LDAP.pm:776 modules/openca-ldap/LDAP.pm:785
+#: modules/openca-ldap/LDAP.pm:834 modules/openca-ldap/LDAP.pm:882
+#: modules/openca-ldap/LDAP.pm:891
+msgid "CODE"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:262 modules/openca-ldap/LDAP.pm:274
+#: modules/openca-ldap/LDAP.pm:325 modules/openca-ldap/LDAP.pm:334
+#: modules/openca-ldap/LDAP.pm:343 modules/openca-ldap/LDAP.pm:438
+#: modules/openca-ldap/LDAP.pm:451 modules/openca-ldap/LDAP.pm:496
+#: modules/openca-ldap/LDAP.pm:502 modules/openca-ldap/LDAP.pm:535
+#: modules/openca-ldap/LDAP.pm:545 modules/openca-ldap/LDAP.pm:557
+#: modules/openca-ldap/LDAP.pm:565 modules/openca-ldap/LDAP.pm:618
+#: modules/openca-ldap/LDAP.pm:671 modules/openca-ldap/LDAP.pm:719
+#: modules/openca-ldap/LDAP.pm:727 modules/openca-ldap/LDAP.pm:766
+#: modules/openca-ldap/LDAP.pm:777 modules/openca-ldap/LDAP.pm:785
+#: modules/openca-ldap/LDAP.pm:834 modules/openca-ldap/LDAP.pm:882
+#: modules/openca-ldap/LDAP.pm:890
+msgid "DESC"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:264
+msgid "add_object: certificate present ..."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:268
+msgid "add_object: no CA-cert ..."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:269
+msgid "add_object: IS_CA ..."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:270 modules/openca-ldap/LDAP.pm:541
+msgid "\\n"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:274 modules/openca-ldap/LDAP.pm:545
+msgid "Excluded because of the role."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:277
+msgid "add_object: role ok ..."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:292
+msgid "add_object: Information of the Object:"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:293
+msgid "add_object: dn    "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:294
+msgid "add_object: cn    "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:295
+msgid "add_object: serID "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:296
+msgid "add_object: email "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:297
+msgid "add_object: ou    "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:298
+msgid "add_object: o     "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:299
+msgid "add_object: l     "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:300
+msgid "add_object: st    "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:301
+msgid "add_object: c     "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:302
+msgid "add_object: End of the information of the Object"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:322
+msgid "add_object: Connection refused by server."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:333
+msgid "add_object: Cannot bind to server."
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:341
+msgid "add_object: dn conflicts with basedn(s)"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:352
+msgid "add_object: Building the missing nodes of the LDAP-tree ..."
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:396
+msgid "add_object: LDAP Schema DN: "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:400
+msgid "add_object: node doesn't exist"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:403
+msgid "add_object: node exists"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:406
+msgid "add_object: something is going wrong --> node doesn't exist?"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:407
+msgid "add_object: LDAP Schema-Code "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:413
+msgid "top"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:421
+msgid "add_object: fixing attributes"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:427 modules/openca-ldap/LDAP.pm:428
+#: modules/openca-ldap/LDAP.pm:429 modules/openca-ldap/LDAP.pm:430
+#: modules/openca-ldap/LDAP.pm:431 modules/openca-ldap/LDAP.pm:432
+#: modules/openca-ldap/LDAP.pm:433
+msgid "add_object: search for matching schema - "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:436
+msgid "add_object: no matching attributetype found"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:444
+msgid "add_object: schema validation"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:461#: modules/openca-ldap/LDAP.pm:466 modules/openca-ldap/LDAP.pm:471#: modules/openca-ldap/LDAP.pm:474
+msgid "objectclass"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:476
+msgid "Attributes for the insertion:<br>\n"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:482
+msgid "add_object: Must setup a CA-cert"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:484
+msgid "add_object: Must setup a normal cert"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:487 modules/openca-ldap/LDAP.pm:701
+#: modules/openca-ldap/LDAP.pm:706 modules/openca-ldap/LDAP.pm:841
+#: modules/openca-ldap/LDAP.pm:866
+msgid "attr"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:488
+msgid "add_object: The resultcode of the nodeinsertion was "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:521 modules/openca-ldap/LDAP.pm:752
+msgid "userCertificate"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:524 modules/openca-ldap/LDAP.pm:755
+msgid "cACertificate"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:527 modules/openca-ldap/LDAP.pm:758
+msgid "certificateRevocationList"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:530 modules/openca-ldap/LDAP.pm:761
+msgid "authorityRevocationList"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:532 modules/openca-ldap/LDAP.pm:763
+msgid ";binary"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:587
+msgid "add_attribute: DN= "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:588
+msgid "add_attribute: attr: "
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:596 modules/openca-ldap/LDAP.pm:649
+msgid "add_attribute: LDAP Searchfilter: "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:598 modules/openca-ldap/LDAP.pm:599
+#: modules/openca-ldap/LDAP.pm:651 modules/openca-ldap/LDAP.pm:652
+#: modules/openca-ldap/LDAP.pm:814 modules/openca-ldap/LDAP.pm:815
+msgid "base"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:599 modules/openca-ldap/LDAP.pm:652
+#: modules/openca-ldap/LDAP.pm:815
+msgid "scope"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:600 modules/openca-ldap/LDAP.pm:653
+#: modules/openca-ldap/LDAP.pm:816
+msgid "filter"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:601 modules/openca-ldap/LDAP.pm:654
+msgid "add_attribute: LDAP Search Mesg-Code "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:602 modules/openca-ldap/LDAP.pm:655
+msgid "add_attribute: LDAP Search Mesg-Count "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:648
+msgid "(mail=*)"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:679
+msgid "mail"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:697
+msgid "add_attribute: Starting LDAP-modify: dn is "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:699
+msgid "add_attribute: fixing mail too"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:700 modules/openca-ldap/LDAP.pm:705
+msgid "changes"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:701 modules/openca-ldap/LDAP.pm:706
+msgid "replace"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:807
+msgid "delete_attribute: DN= "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:808
+msgid "delete_attribute: attr: "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:812
+msgid "delete_attribute: LDAP Searchfilter: "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:817
+msgid "delete_attribute: LDAP Search Mesg-Code "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:818
+msgid "delete_attribute: LDAP Search Mesg-Count "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:871
+msgid "delete_attribute: Starting LDAP-modify: dn is "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:963
+msgid "connect: ldap"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:964
+msgid "://"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:968
+msgid "async"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:969
+msgid "version"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:977
+msgid "require"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:978
+msgid "capath"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1010 modules/openca-ldap/LDAP.pm:1013
+msgid "password"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1013
+msgid "CRAM-MD5"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1037
+msgid "get_dn called"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1038
+msgid "get_dn: dn: "
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1046
+msgid "get_dn: successfully finished"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:1057
+msgid "get_suffix: suffixes loaded"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1070
+msgid "get_suffix: successfully finished"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1079
+msgid "compare_dn: called"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1087
+msgid "compare_dn: looping"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1107
+msgid "compare_dn: successfully finished"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1118
+msgid "get_path: called"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1130
+msgid "get_path: successfully finished"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1147
+msgid "push_attribute: before attribute handling"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:1154 modules/openca-ldap/LDAP.pm:1182#: modules/openca-ldap/LDAP.pm:1158#: modules/openca-ldap/LDAP.pm:1160 modules/openca-ldap/LDAP.pm:1162
+msgid "attribute"
+msgstr ""
+
+#: modules/openca-ldap/LDAP.pm:1167
+msgid "push_attribute: after attribute handling"
+msgstr ""
+#: modules/openca-ldap/LDAP.pm:1173#: modules/openca-ldap/LDAP.pm:1178#: modules/openca-log/Log/Message.pm:114
+msgid "%Y-%b-%d %H:%M:%S"
+msgstr ""
+
+#: modules/openca-log/Log/Message.pm:115 modules/openca-log/Log/Message.pm:282
+msgid "%Y-%m-%d %H:%M:%S"
+msgstr ""
+
+#: modules/openca-log/Log/Message.pm:200
+msgid "<log_message>"
+msgstr ""
+
+#: modules/openca-log/Log/Message.pm:200 modules/openca-log/Log/Message.pm:207
+msgid "    "
+msgstr ""
+
+
+#: modules/openca-log/Log/Message.pm:219 modules/openca-log/Log/Message.pm:223
+msgid "</"
+msgstr ""
+
+#: modules/openca-log/Log/Message.pm:281
+msgid "%."
+msgstr ""
+
+#: modules/openca-log/Log/Message.pm:281
+msgid "s"
+msgstr ""
+
+#: modules/openca-log/Log.pm:50
+msgid "PKI Master Alert: Logging error\n"
+msgstr ""
+
+#: modules/openca-log/Log.pm:54
+msgid "PKI Master Alert: debugging messages of logging follow\n"
+msgstr ""
+
+#: modules/openca-log/Log.pm:107
+msgid "token loaded"
+msgstr ""
+
+#: modules/openca-log/Log.pm:111
+msgid "gettext loaded"
+msgstr ""
+
+#: modules/openca-log/Log.pm:116
+msgid "config ready"
+msgstr ""
+
+#: modules/openca-log/Log.pm:121 modules/openca-log/Log.pm:127
+#: modules/openca-log/Log.pm:131 modules/openca-log/Log.pm:135
+#: modules/openca-log/Log.pm:141 modules/openca-log/Log.pm:156
+msgid "log/slots/slot"
+msgstr ""
+
+#: modules/openca-log/Log.pm:124
+msgid "loading slot ..."
+msgstr ""
+
+#: modules/openca-log/Log.pm:131 modules/openca-log/Log.pm:150
+#: modules/openca-log/Logger/XML.pm:183
+msgid "class"
+msgstr ""
+
+#: modules/openca-log/Log.pm:135 modules/openca-log/Log.pm:150
+#: modules/openca-log/Logger/XML.pm:189
+msgid "level"
+msgstr ""
+
+#: modules/openca-log/Log.pm:141 modules/openca-log/Log.pm:150
+msgid "logger"
+msgstr ""
+
+#: modules/openca-log/Log.pm:151 modules/openca-log/Logger/Syslog.pm:89
+msgid "prefix"
+msgstr ""
+
+#: modules/openca-log/Log.pm:151 modules/openca-log/Logger/Syslog.pm:92
+msgid "facility"
+msgstr ""
+
+#: modules/openca-log/Log.pm:151 modules/openca-log/Logger/Syslog.pm:93
+msgid "socket_type"
+msgstr ""
+
+#: modules/openca-log/Log.pm:152
+msgid "dir"
+msgstr ""
+
+#: modules/openca-log/Log.pm:160
+msgid "    name="
+msgstr ""
+
+#: modules/openca-log/Log.pm:161
+msgid "    class="
+msgstr ""
+
+#: modules/openca-log/Log.pm:162
+msgid "    level="
+msgstr ""
+
+#: modules/openca-log/Log.pm:165
+msgid "OpenCA::Logger::"
+msgstr ""
+#: modules/openca-log/Log.pm:168
+msgid "    loaded class"
+msgstr ""
+
+#: modules/openca-log/Log.pm:171
+msgid "    object result: "
+msgstr ""
+
+#: modules/openca-log/Log.pm:172
+msgid "    object errno: "
+msgstr ""
+
+#: modules/openca-log/Log.pm:176
+msgid "    loaded object"
+msgstr ""
+
+#: modules/openca-log/Log.pm:178
+msgid "slots loaded"
+msgstr ""
+
+#: modules/openca-log/Log.pm:185
+msgid "slots sorted"
+msgstr ""
+#: modules/openca-log/Log.pm:285 modules/openca-log/Logger/XML.pm:265
+msgid "CLASS"
+msgstr ""
+
+#: modules/openca-log/Log.pm:286 modules/openca-log/Logger/XML.pm:270
+msgid "LEVEL"
+msgstr ""
+
+#: modules/openca-log/Log.pm:287
+msgid "SESSION_ID"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:45
+msgid "Name"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:46
+msgid "Host"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:47
+msgid "Port"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:48
+msgid "Facility"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:62
+msgid "emerg"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:63
+msgid "alert"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:64
+msgid "crit"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:66
+msgid "warning"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:67
+msgid "notice"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Net.pm:73
+msgid "Priority"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:44
+msgid "unix"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:52
+msgid "pid,perror,ndelay"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:67
+msgid "|emerg"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:68
+msgid "|alert"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:69
+msgid "|crit"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:70
+msgid "|err"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:71
+msgid "|warning"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:72
+msgid "|notice"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:73
+msgid "|info"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:74
+msgid "|debug"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:87#: modules/openca-log/Logger/XML.pm:129
+msgid "The logging directory doesn't exist."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:133 modules/openca-log/Logger/XML.pm:240
+#: modules/openca-log/Logger/XML.pm:597 modules/openca-log/Logger/XML.pm:626
+#: modules/openca-log/Logger/XML.pm:672
+msgid "/time"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:172
+msgid "/all"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:178 modules/openca-log/Logger/XML.pm:179
+msgid "/all/"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:185 modules/openca-log/Logger/XML.pm:191
+#: modules/openca-log/Logger/XML.pm:197 modules/openca-log/Logger/XML.pm:204
+#: modules/openca-log/Logger/XML.pm:210 modules/openca-log/Logger/XML.pm:337
+#: modules/openca-log/Logger/XML.pm:348 modules/openca-log/Logger/XML.pm:416
+msgid "ID"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:186 modules/openca-log/Logger/XML.pm:192
+#: modules/openca-log/Logger/XML.pm:198 modules/openca-log/Logger/XML.pm:205
+#: modules/openca-log/Logger/XML.pm:211 modules/openca-log/Logger/XML.pm:348
+msgid "REF"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:195 modules/openca-log/Logger/XML.pm:201
+msgid "session"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:202
+msgid "stop"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:203
+msgid "force"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:208
+msgid "time"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:209
+msgid "id2time"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:258
+msgid "search: entering search function"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:262 modules/openca-log/Logger/XML.pm:267
+#: modules/openca-log/Logger/XML.pm:272 modules/openca-log/Logger/XML.pm:277
+#: modules/openca-log/Logger/XML.pm:299 modules/openca-log/Logger/XML.pm:302
+msgid "search: scan_list length: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:263
+msgid "search: scanning classes"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:268
+msgid "search: scanning levels"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:273
+msgid "search: scanning sessions"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:275
+msgid "SESSION"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:280
+msgid "search: loading all messages if nothing was specified"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:285
+msgid "search: loading all messages"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:294
+msgid "search: loaded array"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:300
+msgid "search: reference "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:301
+msgid "search: array "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:303
+msgid "search: setting first result list"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:305
+msgid "search: merging results if necessary"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:310
+msgid "search: real merging"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:316
+msgid "search: returning results"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:337 modules/openca-log/Logger/XML.pm:348
+#: modules/openca-log/Logger/XML.pm:416
+msgid "HANDLE"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:359
+msgid ".dbm"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:369
+msgid "Cannot open database."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:412
+#, perl-format
+msgid "%s"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:452
+msgid "_merge_lists: result list"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:477
+msgid "_search_type: type: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:478
+msgid "_search_type: name: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:482
+msgid "_search_type: fixed name: "
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:502
+msgid "_search_type: loading file: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:504
+msgid "_search_type: loading database: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:508
+msgid "_search_type: database items "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:511
+msgid "_search_type: result undefined"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:514
+msgid "_search_type: result defined"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:518
+msgid "_search_type: result list "
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:524
+msgid "_search_type: returning"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:533
+msgid "_search_dynamic: starting dynamic attribute based search"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:534
+msgid "_search_dynamic: SESSION: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:540
+msgid "_search_dynamic: scanning message "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:552
+msgid "_search_dynamic: message scanned"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:556
+msgid "_search_dynamic: returning result"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:563
+msgid "_get_next_message: starting next"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:569
+msgid "_get_next_message: get and split iso time"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:575
+msgid "_get_next_message: try to find next in current dir"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:576 modules/openca-log/Logger/XML.pm:639
+msgid "/time/"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:577
+msgid "_get_next_message: current dir "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:578
+msgid "_get_next_message: current id "
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:586 modules/openca-log/Logger/XML.pm:618
+msgid "_get_next_message: actual dir"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:587
+msgid "_get_next_message: go up until newer dir found"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:593
+msgid "_get_next_message: old dir: "
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:611#: modules/openca-log/Logger/XML.pm:621
+msgid "_get_next_message: actual level "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:622
+msgid "_get_next_message: go down to oldest dir"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:638
+msgid "_get_next_message: get oldest file"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:682
+msgid "_get_first_message: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:699
+msgid "_get_numeric_directories: dir: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:721
+msgid "Cannot close file __FILENAME__."
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:726
+msgid "XML"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:739
+msgid "OpenCA::Logger::XML->"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:62
+msgid "127.0.0.1"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:63
+msgid "154"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:64
+msgid "local7"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:75
+msgid "Net"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:76
+msgid "Unix"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:77
+msgid "Sys"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog.pm:81
+msgid "OpenCA::Logger::Syslog::"
+msgstr ""
+#: modules/openca-req/REQ.pm:84
+msgid "req"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:86
+msgid "pemREQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:87
+msgid "derREQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:88
+msgid "txtREQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:89
+msgid "spkacREQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:90
+msgid "revokeREQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:91
+msgid "parsedSPKAC"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:92
+msgid "parsedCRR"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:97
+msgid "beginSignature"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:98
+msgid "endSignature"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:103
+msgid "reqFormat"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:134
+msgid "-----BEGIN PKCS7-----"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:135
+msgid "-----END PKCS7-----"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:163
+msgid "KEYFILE"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:165
+msgid "SUBJECT"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:196 modules/openca-req/REQ.pm:253
+#: modules/openca-req/REQ.pm:530 modules/openca-req/REQ.pm:533
+#: modules/openca-req/REQ.pm:701
+msgid "SPKAC"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:208 modules/openca-req/REQ.pm:229
+#: modules/openca-req/REQ.pm:241 modules/openca-req/REQ.pm:252
+#: modules/openca-req/REQ.pm:265 modules/openca-req/REQ.pm:881
+msgid "REQ"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:341
+msgid "SUBJ"
+msgstr ""
+#: modules/openca-req/REQ.pm:493
+msgid "OpenCA::REQ->parseReq: ATTRIBUTE: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:494
+msgid "OpenCA::REQ->parseReq: VALUE: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:567
+msgid "PKCS#10"
+msgstr ""
+
+#: modules/openca-req/REQ.pm:579
+msgid "OpenCA::REQ->parseReq: SUBJECT: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:582 modules/openca-req/REQ.pm:642
+msgid "OpenCA::REQ->parseReq: DN: "
+msgstr ""
+#: modules/openca-req/REQ.pm:641
+msgid "OpenCA::REQ->parseReq: TYPE: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:668
+msgid "OpenCA::REQ->parseReq: SUBJECT_ALT_NAME: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:669
+msgid "OpenCA::REQ->parseReq: EMAILADDRESS: "
+msgstr ""
+
+#: modules/openca-req/REQ.pm:676
+msgid " with PKCS#7 Signature"
+msgstr ""
+#: modules/openca-session/Session.pm:120 modules/openca-session/Session.pm:124
+#: modules/openca-session/Session.pm:127 modules/openca-session/Session.pm:131
+#: modules/openca-session/Session.pm:163 modules/openca-session/Session.pm:184
+msgid "CGISESSID"
+msgstr ""
+
+#: modules/openca-pkcs7/PKCS7.pm:216
+msgid "OpenCA::PKCS7->getParsed: OpenCA::OpenSSL->verify returns:<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:758
+msgid "<br>\n"
+msgstr ""#: modules/openca-ac/AC.pm:283#: modules/openca-ac/AC.pm:291#: modules/openca-ac/AC.pm:299#: modules/openca-ac/AC.pm:315 modules/openca-ac/AC.pm:331#: modules/openca-ac/AC.pm:1065#: modules/openca-ac/AC.pm:1066#: modules/openca-ac/AC.pm:787#: modules/openca-ac/AC.pm:788#: modules/openca-ac/AC.pm:974 modules/openca-ac/AC.pm:989#: modules/openca-ui-html/HTML.pm:393
+msgid "<th colspan=\"2\" class=\"info_list\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:274
+msgid "  <body class=\"back\" onLoad=\"InstallCertIE(document.OPENCA);\">"
+msgstr ""
+
+#: modules/openca-ui-html/HTML.pm:285 modules/openca-ui-html/HTML.pm:291
+msgid "OPENCA"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:130
+msgid "OpenCA::OpenSSL::SMIME->_setError: errval:"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:1898#: modules/openca-openssl/OpenSSL.pm:1901#: modules/openca-openssl/OpenSSL.pm:1902#: modules/openca-openssl/OpenSSL.pm:1910
+msgid "OpenCA::OpenSSL->encrypt: question mark: "
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2183
+msgid "notBefore"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2184
+msgid "notAfter"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2185
+#: modules/openca-openssl/OpenSSL.pm:2229
+msgid "subject"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2186
+msgid "subject_hash"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2272
+msgid "lastUpdate"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2273
+msgid "nextUpdate"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2274
+msgid "issuer"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2290
+msgid " pkcs7 -print_certs "
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2328#: modules/openca-openssl/OpenSSL.pm:2335
+msgid "OpenCA::OpenSSL->pkcs7Certs: error detected<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2336
+msgid "OpenCA::OpenSSL->pkcs7Certs: errno="
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2337
+msgid "OpenCA::OpenSSL->pkcs7Certs: errmsg="
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2360
+msgid "OpenCA::OpenSSL->pkcs7Certs: return undef because of an error<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2364
+msgid "OpenCA::OpenSSL->pkcs7Certs: finished successfully<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2465#: modules/openca-openssl/OpenSSL.pm:2467#: modules/openca-openssl/OpenSSL.pm:2468
+msgid "OpenCA::OpenSSL->getSMIME: the data is like follows<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2479#: modules/openca-openssl/OpenSSL.pm:2480#: modules/openca-openssl/OpenSSL.pm:2481#: modules/openca-openssl/OpenSSL.pm:2492
+msgid "_SMIME.msg"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2511
+msgid "OpenCA::OpenSSL->getSMIME: enccert object ready<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2525
+msgid "OpenCA::OpenSSL->getSMIME: signcert object ready<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2542
+msgid "OpenCA::OpenSSL->getSMIME: smime object failed<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2548
+msgid "OpenCA::OpenSSL->getSMIME: smime object ready<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2554
+#: modules/openca-openssl/OpenSSL.pm:2568
+msgid "KEY_PASSWORD"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2555
+#: modules/openca-openssl/OpenSSL.pm:2569
+msgid "PRIVATE_KEY"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2585
+msgid "OpenCA::OpenSSL->getSMIME: crypto operations completed<br>\n"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:2598
+msgid "OpenCA::OpenSSL: getSMIME: return data<br>\n"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2626#: modules/openca-openssl/OpenSSL.pm:2811
+#: modules/openca-openssl/OpenSSL.pm:2952
+msgid "all"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3105
+msgid "&OpenCA::OpenSSL::constant not defined"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3105
+msgid "constant"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3109
+msgid "refs"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:3122
+msgid "OpenCA::OpenSSL"
+msgstr ""
+#: modules/openca-openssl/OpenSSL.pm:2687
+msgid "Z"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:254
+msgid "OPENCA_AC_CHANNEL_SERVER_SOFTWARE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:264
+msgid "OPENCA_AC_CHANNEL_HTTPS_MODE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:268
+msgid "OPENCA_AC_CHANNEL_SSL_CIPHER"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:270
+msgid "OPENCA_AC_CHANNEL_SSL_CIPHER_USEKEYSIZE"
+msgstr ""
+
+#: modules/openca-ac/AC.pm:276
+msgid "OPENCA_AC_CHANNEL_REMOTE_ADDRESS"
+msgstr ""
+
+#: modules/openca-log/Logger/Syslog/Sys.pm:48
+msgid "OpenCA MASTER ALERT: OpenCA::Logger::Syslog::Sys"
+msgstr ""
+#: modules/openca-log/Logger/Syslog/Sys.pm:52
+msgid ")\n"
+msgstr ""#: modules/openca-tools/Tools.pm:100
+msgid " UTC"
+msgstr ""
+
+
+#: modules/openca-ac/AC.pm:1219#: modules/openca-db/DB.pm:235 modules/openca-db/DB.pm:316
+#: modules/openca-db/DB.pm:336
+msgid "FORCE_CREATE"
+msgstr ""
+
+#: modules/openca-db/DB.pm:237
+msgid "CREATE_OR_OPEN"
+msgstr ""
+#: modules/openca-crypto/Token/Empty.pm:94
+msgid "OpenCA::Token::EMPTY::DESTROY"
+msgstr ""
+#: modules/openca-crypto/Token/LunaCA3.pm:120
+msgid "OpenCA::Token::LunaCA3::DESTROY"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:78
+#, fuzzy
+msgid "new: crypto layer is ready"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:98#: modules/openca-crypto/Crypto.pm:147
+msgid "getToken: entering function"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:164
+msgid "getToken: token added"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:169
+msgid "getToken: token is present"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:174
+msgid "getToken: token is usable"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:182
+msgid "addToken: entering function"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:202
+msgid "addToken: checking name"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:207
+msgid "addToken: name ok"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:214
+msgid "addToken: loading mode"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:222
+msgid "addToken: loading options"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:239#: modules/openca-crypto/Crypto.pm:242
+msgid "addToken: loaded options"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:275
+msgid "addToken: fixed multivalued options"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:291#: modules/openca-crypto/Crypto.pm:303
+msgid "newToken: entering function"
+msgstr ""
+#: modules/openca-crypto/Crypto.pm:314#: modules/openca-crypto/Crypto.pm:317#: modules/openca-crypto/Crypto.pm:324#: modules/openca-crypto/Crypto.pm:327
+msgid "newToken: no error during new"
+msgstr ""
+
+#: modules/openca-crypto/Crypto.pm:330
+#, fuzzy
+msgid "newToken: new token present"
+msgstr ""
+#: modules/openca-log/Log.pm:257 modules/openca-log/Logger/XML.pm:106
+#: modules/openca-log/Logger/Syslog.pm:139
+msgid "LogDigest"
+msgstr ""
+
+#: modules/openca-log/Log.pm:258 modules/openca-log/Logger/XML.pm:105
+#: modules/openca-log/Logger/Syslog.pm:138
+msgid "LogSignature"
+msgstr "Signatur"
+
+#: modules/openca-log/Log.pm:322 modules/openca-log/Logger/XML.pm:107
+#: modules/openca-log/Logger/Syslog.pm:140
+msgid "GetMessage"
+msgstr "Meldung"
+
+#: modules/openca-log/Log.pm:348
+msgid "recovery: starting recovery"
+msgstr ""
+
+#: modules/openca-log/Log.pm:355
+msgid "recovery: determined log slots"
+msgstr ""
+#: modules/openca-log/Log.pm:370
+msgid "recovery: finished"
+msgstr ""
+
+#: modules/openca-log/Log.pm:375
+msgid "recovery: finished successfully"
+msgstr "."
+
+#: modules/openca-log/Logger/XML.pm:188
+msgid "addMessage: class: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:195
+msgid "addMessage: level: "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:744
+msgid "recovery: Starting recovery"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:753
+msgid "recovery: closed all database handles"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:757
+msgid "find "
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:757
+msgid " -name *.dbm -print"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:759#: modules/openca-log/Logger/XML.pm:765
+#, fuzzy
+msgid "recovery: removed all index databases"
+msgstr "Versuche OpenSSLs index.txt wiederherzustellen"
+
+#: modules/openca-log/Logger/XML.pm:774 modules/openca-log/Logger/XML.pm:848
+msgid "OUTPUT_FUNCTION"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:776
+#, fuzzy
+msgid "recovery: Finished successfully"
+msgstr "Das Archiv wurde erfolgreich erstellt."
+
+#: modules/openca-log/Logger/XML.pm:779
+#, fuzzy
+msgid "recovery: Recovery finally failed"
+msgstr "Wiederherstellung abgeschlossen"
+#: modules/openca-log/Logger/XML.pm:799#: modules/openca-log/Logger/XML.pm:805 modules/openca-log/Logger/XML.pm:806
+msgid "-"
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:811
+msgid "recover_dir: output function initialized"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:819
+msgid "recover_dir: Scanned directory"
+msgstr ""
+
+#: modules/openca-log/Logger/XML.pm:825
+msgid "recover_dir: recover messages ..."
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:839
+msgid "recover_dir: recover directories ..."
+msgstr ""
+#: modules/openca-log/Logger/XML.pm:847#: modules/openca-log/Logger/XML.pm:852#: modules/openca-ui-html/HTML.pm:51
+msgid "DEAD_ON_ERROR"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:129#: modules/openca-openssl/OpenSSL/SMIME.pm:229
+msgid "_exec: resetting errorcode"
+msgstr ""
+#: modules/openca-openssl/OpenSSL/SMIME.pm:237
+#: modules/openca-openssl/OpenSSL.pm:339 modules/openca-openssl/OpenSSL.pm:454
+#: modules/openca-openssl/OpenSSL.pm:564 modules/openca-openssl/OpenSSL.pm:644
+#: modules/openca-openssl/OpenSSL.pm:932
+#: modules/openca-openssl/OpenSSL.pm:1147
+#: modules/openca-openssl/OpenSSL.pm:1219
+#: modules/openca-openssl/OpenSSL.pm:1287
+#: modules/openca-openssl/OpenSSL.pm:1367
+#: modules/openca-openssl/OpenSSL.pm:1437
+#, fuzzy
+msgid "COMMAND"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:238
+#: modules/openca-openssl/OpenSSL.pm:247 modules/openca-openssl/OpenSSL.pm:339
+#: modules/openca-openssl/OpenSSL.pm:454 modules/openca-openssl/OpenSSL.pm:564
+#: modules/openca-openssl/OpenSSL.pm:1147
+#: modules/openca-openssl/OpenSSL.pm:1219
+#: modules/openca-openssl/OpenSSL.pm:1287
+#: modules/openca-openssl/OpenSSL.pm:2680
+#: modules/openca-openssl/OpenSSL.pm:2719
+msgid "KEY_USAGE"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:535
+#: modules/openca-openssl/OpenSSL/SMIME.pm:630
+#: modules/openca-openssl/OpenSSL/SMIME.pm:761
+#: modules/openca-openssl/OpenSSL/SMIME.pm:851
+msgid "-keyform"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL/SMIME.pm:535
+#: modules/openca-openssl/OpenSSL/SMIME.pm:630
+#: modules/openca-openssl/OpenSSL/SMIME.pm:761
+#: modules/openca-openssl/OpenSSL/SMIME.pm:851
+msgid "e"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:122
+msgid "OPENSSL"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:123
+#, fuzzy
+msgid "CALLBACK_HANDLER"
+msgstr "Das Rollback für eine Datenbanktransaktion ist fehlgeschlagen."
+
+#: modules/openca-openssl/OpenSSL.pm:124
+msgid "PIN_CALLBACK"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:125
+msgid "STDERR_CALLBACK"
+msgstr ""
+
+#: modules/openca-openssl/OpenSSL.pm:126
+msgid "STDOUT_CALLBACK"
+msgstr ""
+

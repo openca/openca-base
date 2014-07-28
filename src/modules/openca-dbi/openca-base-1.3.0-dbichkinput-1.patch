@@ -1,0 +1,22 @@
+diff -ru a/src/modules/openca-dbi/DBI.pm b/src/modules/openca-dbi/DBI.pm
+--- a/src/modules/openca-dbi/DBI.pm	2012-04-05 20:54:10.000000000 +0200
++++ b/src/modules/openca-dbi/DBI.pm	2012-12-04 03:46:34.155808815 +0100
+@@ -3312,12 +3312,17 @@
+   foreach my $q_value (@bind_values) {
+     $q_count ++;
+     my $q_type = shift(@bind_types);
+-    if ( $q_type =~ /DECIMAL/ ) {
++    ## if is number
++    if ( $q_value =~ /^-?(?:\d+\.?|\.\d)\d*\z/ ) {
++      if ( $q_type =~ /DECIMAL/ ) {
+         $self->{STH}->bind_param( $q_count, $q_value, SQL_DECIMAL );
+       } elsif ( $q_type =~ /BIGINT/ ) {
+         $self->{STH}->bind_param( $q_count, $q_value, SQL_BIGINT );
+       } else {
+         $self->{STH}->bind_param( $q_count, $q_value, SQL_UNKNOWN_TYPE );
++      }
++    } else {
++      $self->{STH}->bind_param( $q_count, $q_value, SQL_UNKNOWN_TYPE );
+     }
+   }
+ 

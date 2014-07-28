@@ -1,0 +1,35 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: stopAutoCA
+##       Brief: stop Auto (On-Line) CA Daemon
+##     Version: $Revision: 1.5 $
+## Description: this script stops the On-Line CA Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStopAutoCA
+{
+	my $pidfile = undef;
+	my $pid = undef;
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autoca.pid";
+	$pid = libGetPidProcessStatus("$pidfile");
+
+	if ($pid > 0)
+	{
+		if (POSIX::kill( $pid, 1) gt 0)
+		{
+			success (400, "The On-Line Daemon is now disabled!");
+		}
+		else
+		{
+			generalError("Can not kill the AutoCA daemon ($!)");
+		}
+	}
+
+	return(1);
+}
+
+1;

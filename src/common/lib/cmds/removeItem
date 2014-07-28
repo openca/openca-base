@@ -1,0 +1,28 @@
+## OpenCA - CA Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: removeItem
+##       Brief: Remove (delete) item from dB
+## Description: Remove an Item from the dB
+##  Parameters: dataType, key
+
+use strict;
+
+sub cmdRemoveItem {
+
+	my $dataType = $query->param( 'dataType' );
+	my $key      = $query->param( 'key' );
+
+	configError ( gettext ("Missing needed parametes (dataType and/or key)!"))
+				if ( ( not $dataType) or (not $key));
+
+	if ( not $db->deleteItem( DATATYPE=>$dataType, KEY=>$key ) ) {
+		configError (i18nGettext ("Error while removing Item from __DATATYPE__ dB!", "__DATATYPE__", $dataType));
+	}
+
+	success(gettext ("Item Removed"), gettext ("Item Removed Successfully from dB."));
+}
+
+1;
+

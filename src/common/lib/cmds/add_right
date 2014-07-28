@@ -1,0 +1,68 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: add_right
+##       Brief: add a new right
+## Description: shows a html-form where you can enter the data
+##              of the new right
+##  Parameters: none
+
+use strict;
+
+sub cmdAdd_right {
+
+    my $info_list = undef;
+
+    ## load modules
+    my %values = loadModules();
+    $info_list->{BODY}->[0]->[1] = "<select name=module>\n";
+    $info_list->{BODY}->[0]->[1] .= "<option value=\"\">\n";
+    for my $h (keys %values) {
+       $info_list->{BODY}->[0]->[1] .= "<option value=\"".$h."\">$h - ".$values{$h}."\n";
+    }
+    $info_list->{BODY}->[0]->[1] .= "</select>\n";
+
+    ## load operations
+    my @values = loadOperations();
+    $info_list->{BODY}->[1]->[1] = "<select name=operation>\n";
+    $info_list->{BODY}->[1]->[1] .= "<option value=\"\">\n";
+    for my $h (@values) {
+        $info_list->{BODY}->[1]->[1] .= "<option value=\"".$h."\">".$h."\n";
+    }
+    $info_list->{BODY}->[1]->[1] .= "</select>\n";
+
+    ## load operator and owner from roles
+    @values = loadRoles();
+    $info_list->{BODY}->[2]->[1] = "<select name=role>\n";
+    $info_list->{BODY}->[3]->[1] = "<select name=owner>\n";
+    $info_list->{BODY}->[2]->[1] .= "<option value=\"\">".gettext ("&lt;new user&gt;")."\n";
+    $info_list->{BODY}->[3]->[1] .= "<option value=\"\">".gettext ("&lt;CA itself or any role&gt;")."\n";
+    for my $h (@values) {
+        $info_list->{BODY}->[2]->[1] .= "<option value=\"".$h."\">".$h."\n";
+        $info_list->{BODY}->[3]->[1] .= "<option value=\"".$h."\">".$h."\n";
+    }
+    $info_list->{BODY}->[2]->[1] .= "</select>\n";
+    $info_list->{BODY}->[3]->[1] .= "</select>\n";
+
+    ## Substitute the Variables in the $page
+    my $hidden_list = undef;
+    $hidden_list->{"cmd"} = "show_prepared_right";
+    $info_list->{BODY}->[0]->[0] = gettext ("Module");
+    $info_list->{BODY}->[1]->[0] = gettext ("Operation");
+    $info_list->{BODY}->[2]->[0] = gettext ("Operator");
+    $info_list->{BODY}->[3]->[0] = gettext ("Owner");
+    my $cmd_panel = undef;
+    $cmd_panel->[0] = '<input type="submit" value="OK">';
+
+    return libSendReply (
+                         "TIMESTAMP"   => 1,
+                         "NAME"        => gettext ("Add a new Right"),
+                         "EXPLANATION" => gettext ("Please enter the data of the new right!"),
+                         "HIDDEN_LIST" => $hidden_list,
+                         "INFO_LIST"   => $info_list,
+                         "CMD_PANEL"   => $cmd_panel
+                        );
+}
+
+1;

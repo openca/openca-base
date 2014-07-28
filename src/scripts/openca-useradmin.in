@@ -1,0 +1,57 @@
+#! @PERL@
+
+$VER = '0.1.0';
+
+## User Management Tool for OpenCA 1.2.0+
+## (c) 1999-2010 by Massimiliano Pala and OpenCA Labs
+##     All Rights Reserved
+##
+## Description:
+## ============
+##
+##
+
+@perl_use_lib@
+
+use OpenCA::User;
+
+print "\n  OpenCA User Management - Version $VER\n";
+print "  (c) 1999-2010 by Massimiliano Pala and OpenCA Labs\n";
+print "  OpenCA Licensed software\n\n";
+
+my @keys = @ARGV;
+
+my $db_type = "@db_type@";
+my $db_user = "@db_user@";
+my $db_name = "@db_name@";
+my $db_host = "@db_host@";
+my $db_port = "@db_port@";
+my $db_passwd = "@db_passwd@";
+my $db_namespace = "@db_namespace@";
+
+my $usr = OpenCA::User->new (
+	DB_Type => $db_type,
+	DB_User => $db_user,
+	DB_Host => $db_host,
+	DB_Port => $db_port,
+	DB_Name => $db_name,
+	DB_Passwd => $db_passwd,
+	DB_Namespace => $db_namespace,
+	DEBUG => 1,
+);
+
+my $user = {
+	USER_ID => "pala@cs.dartmouth.edu",
+	STATUS  => "VALID",
+	NOTBEFORE => "201003162143",
+};
+
+$usr->add ( USER => $user );
+
+my $p = $usr->get ( USER_ID => $user->{USER_ID} );
+
+$usr->debug("DB=>" . $p->{USER_ID});
+
+
+
+exit 0;

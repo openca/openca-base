@@ -1,0 +1,271 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project 2004
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: bpDoStep
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: run the state machine
+## Description: do the specififed steps with the statemachine
+##  Parameters: steps
+
+use strict;
+
+sub cmdBpDoStep {
+
+    our ($query, $crypto_layer, $xml_cache, $tools);
+    our ($errno, $errval);
+    my $steps      = $query->param ('steps');
+    my $use_ca_key = $query->param ('use_ca_key');
+    my $use_bp_key = $query->param ('use_bp_key');
+
+    print startLogPage (gettext ("Running statemachine based workflow engine"));
+
+    ## loading cryptographic tokens
+
+    print addLogSection (gettext ("Loading cryptographic tokens ..."));
+    print addPreLogLine (gettext ("Loading batch system token ... "));
+    our $bp_token        = $crypto_layer->getToken ('BP');
+    if (not $bp_token)
+    {
+        print addPreLogLine (gettext ("The initialization of the cryptographic token failed."));
+        print addErrorLog ($crypto_layer->errval, $crypto_layer->errno);
+        print closeLogSection();
+        print closeLogPage();
+        return undef;
+    }
+    print addPreLogLine (gettext ("Loading key backup token ... "));
+    our $keybackup_token = $crypto_layer->getToken ('KEYBACKUP');
+    if (not $keybackup_token)
+    {
+        print addPreLogLine (gettext ("The initialization of the cryptographic token failed."));
+        print addErrorLog ($crypto_layer->errval, $crypto_layer->errno);
+        print closeLogSection();
+        print closeLogPage();
+        return undef;
+    }
+    print addPreLogLine (gettext ("Loading CA token ... "));
+    our $ca_token        = $crypto_layer->getToken ('CA');
+    if (not $ca_token)
+    {
+        print addPreLogLine (gettext ("The initialization of the cryptographic token failed."));
+        print addErrorLog ($crypto_layer->errval, $crypto_layer->errno);
+        print closeLogSection();
+        print closeLogPage();
+        return undef;
+    }
+    print closeLogSection ();
+
+    ## loading required private keys
+
+    if ($use_bp_key or $use_ca_key)
+    {
+        print addLogSection (gettext ("Loading required private keys ..."));
+        if ($use_bp_key)
+        {
+            print addPreLogLine (gettext ("Loading batch system private key ... "));
+            $bp_token->login if (not $bp_token->keyOnline);
+            if (not $bp_token->keyOnline)
+            {
+                print addPreLogLine (gettext ("The loading of the private key failed."));
+                print addErrorLog ($bp_token->errval, $bp_token->errno);
+                print closeLogSection();
+                print closeLogPage();
+                return undef;
+            }
+        }
+        if ($use_ca_key)
+        {
+            print addPreLogLine (gettext ("Loading CA private key ... "));
+            $ca_token->login if (not $ca_token->keyOnline);
+            if (not $ca_token->keyOnline)
+            {
+                print addPreLogLine (gettext ("The loading of the private key failed."));
+                print addErrorLog ($ca_token->errval, $ca_token->errno);
+                print closeLogSection();
+                print closeLogPage();
+                return undef;
+            }
+        }
+        print closeLogSection ();
+    }
+
+    print addLogSection (gettext ("Reading configuration ..."));
+
+    ## configuration for workflowengine
+    my $bp_subs = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/subs_directory" ],
+           COUNTER  => [ 0 ]);
+
+    print addLogLine (gettext ("done."));
+    print closeLogSection ();
+
+    ## initialize state machine
+
+    print addLogSection (gettext ("Initializing statemachine ..."));
+    our $state_machine = libGetStateMachine();
+
+    if (not $state_machine)
+    {
+        print addLogLine (gettext ("FAILED."));
+        print addErrorLog ($errval, $errno);
+        print closeLogSection ();
+        exit 1;
+    }
+    print addLogLine (gettext ("done."));
+    print closeLogSection ();
+
+    for (my $i=0; $i<$steps; $i++)
+    {
+        print addLogSection (i18nGettext ("New statemachine cycle at __TIME__ ...",
+                                          "__TIME__", $tools->getDate()));
+        print addLogLine ();
+        my @workflows = $state_machine->run();
+        if ($state_machine->errno())
+        {
+            print addPreLogLine (gettext ("Statemachine failed."));
+            print addErrorLog ($state_machine->errval,
+                               $state_machine->errno);
+            print closeLogSection ();
+            last;
+        }
+        print addPreLogLine (gettext ("Automatic operations determined."));
+
+        print addLogLine (gettext ("Starting automatic operations."));
+	if (not scalar @workflows)
+        {
+            print addPreLogLine (gettext ("No automatic operations required."));
+            print closeLogSection ();
+            next;
+        }
+        print addLogLine ("Workflows: ".scalar @workflows);
+        foreach my $workflow (@workflows)
+        {
+            my $function = $workflow->[2];
+            my $user     = $workflow->[0];
+            my $process  = $workflow->[1];
+
+            if (not -e "$bp_subs/$function.sub")
+            {
+                print addPreLogLine (i18nGettext ("There is a problem with function __FUNCTION__ for process __PROCESS__ of user __USER__.",
+                                   "__FUNCTION__", $function,
+                                   "__PROCESS__",  $process,
+                                   "__USER__",     $user));
+                print addErrorLog (
+                          i18nGettext ("File __FILE__ with function __FUNCTION__ does not exist.",
+                                       "__FILE__", "$bp_subs/$function.sub",
+                                       "__FUNCTION__", $function),
+                          116);
+                next;
+            }
+
+            require "$bp_subs/$function.sub";
+            my $return = eval "workflow_$function (USER => '$user', WORKFLOW => '$process')";
+            if ($@)
+            {
+                print addPreLogLine (i18nGettext ("The workflow function __FUNCTION__ crashs for process __PROCESS__ of user __USER__. __ERRVAL__",
+                                   "__FUNCTION__", $function,
+                                   "__PROCESS__",  $process,
+                                   "__USER__",     $user,
+                                   "__ERRVAL__",   $@));
+                print addErrorLog ($@, $?);
+                $return = undef;
+                $return->[0] = $?;
+                $return->[1] = $@;
+            }
+
+            if ($return->[0] == 0 or $return->[0] == 1)
+            {
+                print addPreLogLine (i18nGettext ("The function __FUNCTION__ for process __PROCESS__ of user __USER__ succeeded.",
+                                   "__FUNCTION__", $function,
+                                   "__PROCESS__",  $process,
+                                   "__USER__",     $user));
+                print addPreLogLine (i18nGettext ("Message: __MESSAGE__",
+                                               "__MESSAGE__", $return->[1]));
+            } else {
+                print addPreLogLine (i18nGettext ("There is a problem with function __FUNCTION__ for process __PROCESS__ of user __USER__.",
+                                   "__FUNCTION__", $function,
+                                   "__PROCESS__",  $process,
+                                   "__USER__",     $user));
+                print addErrorLog ($return->[1], $return->[0]);
+            }
+
+        }
+        print closeLogSection ();
+    }
+
+    print addLogSection (i18nGettext ("Workflow system finished at __TIME__.",
+                                        "__TIME__", $tools->getDate()));
+    print closeLogSection();
+    closeLogPage();
+}
+
+sub getParamsBpDoStep
+{
+
+    my $result = "";
+
+    if (not $_[0]) ## 0 or empty
+    {
+        my $message = gettext ("Please enter the number of iterations which the batch system should perform for every workflow.");
+
+        $result = "<table>\n";
+        $result .= "  <tr><td colspan=2>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("Number of iterations of the batch system")."</td>\n".
+                   '    <td><select name="steps">'."\n".
+                   "        <option>1</option>\n".
+                   "        <option>2</option>\n".
+                   "        <option>3</option>\n".
+                   "        <option>4</option>\n".
+                   "        <option>5</option>\n".
+                   "        <option>6</option>\n".
+                   "        <option>7</option>\n".
+                   "        <option>8</option>\n".
+                   "        <option>9</option>\n".
+                   "        <option>10</option>\n".
+                   "        <option>11</option>\n".
+                   "        <option>12</option>\n".
+                   "        <option>13</option>\n".
+                   "        <option>14</option>\n".
+                   "        <option>15</option>\n".
+                   "        <option>16</option>\n".
+                   "        </select>\n".
+                   "    </td>\n".
+                   "  </tr>\n";
+
+        $message = gettext ("Please choose the necessary private keys.");
+
+        $result .= "  <tr><td colspan=3>".$message."</td></tr>\n";
+
+        ## different items
+
+        $result .= "  <tr>\n".
+                   "    <td>".gettext ("CA key")."</td>\n".
+                   "    <td>\n".
+                   '      <input type="radio" name="use_ca_key" value="1"/>'.gettext("yes").
+                   "\n    </td>\n".
+                   "    <td>\n".
+                   '      <input type="radio" name="use_ca_key" value="0" checked/>'.gettext("no").
+                   "\n    </td>\n".
+                   "\n  </tr>\n".
+                   "  <tr>\n".
+                   "    <td>".gettext ("Key of the batch system")."</td>\n".
+                   "    <td>\n".
+                   '      <input type="radio" name="use_bp_key" value="1"/>'.gettext("yes").
+                   "\n    </td>\n".
+                   "    <td>\n".
+                   '      <input type="radio" name="use_bp_key" value="0" checked/>'.gettext("no").
+                   "\n    </td>\n".
+                   "\n  </tr>\n";
+
+        $result .= "</table>\n";
+    }
+
+    return $result;
+}
+
+1;

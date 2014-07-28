@@ -1,0 +1,92 @@
+## OpenCA - Command
+## (c) 1998-2002 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2003-2004 The OpenCA Project
+##
+##   File Name: setupInitialCert
+##       Brief: manage the links for the intializationphases
+##     Version: $Revision: 1.5 $
+## Description: create the links and call the scripts
+##  Parameters: dest
+
+use strict;
+
+sub cmdSetupInitialCert {
+
+    my $tmpObj = undef;
+    my $datatype = undef;
+
+    if ($query->param ('dest') !~ 
+             /^advanced_csr|basic_csr|pkcs10_req|editCSR|viewCSR|viewCert$/) {
+    	generalError (gettext ("Unknown destination command"))
+    }
+
+    if ($query->param ('dest') =~ /basic_csr/) {
+
+        $query->param (-name => "CSR_TYPE", -value => "basic");
+
+    } elsif ($query->param ('dest') =~ /editCSR/) {
+
+	$datatype = "NEW_REQUEST";
+
+	if( not ($tmpObj = libDBGetLastDefinedItem ( $datatype )) ) {
+		$datatype = "PENDING_REQUEST";
+		$tmpObj = libDBGetLastDefinedItem ( $datatype );
+	};
+
+	if( not $tmpObj ) {
+        	$query->param (-name => "key", -value => "" );
+	} else {
+        	$query->param (-name => "key", -value => $tmpObj->getSerial());
+	}
+
+        $query->param (-name => "dataType", -value => $datatype );
+
+    } elsif ($query->param ('dest') =~ /viewCSR/) {
+
+	$datatype = "NEW_REQUEST";
+
+	if( not ($tmpObj = libDBGetLastDefinedItem ( $datatype )) ) {
+		$datatype = "PENDING_REQUEST";
+		$tmpObj = libDBGetLastDefinedItem ( $datatype );
+	};
+
+	if( not $tmpObj ) {
+        	$query->param (-name => "key", -value => "" );
+	} else {
+        	$query->param (-name => "key", -value => $tmpObj->getSerial());
+	}
+
+        $query->param (-name => "dataType", -value => $datatype );
+
+    } else {
+	my $cert = libDBGetLastDefinedItem ("VALID_CERTIFICATE");
+	my $key = 0;
+
+	if( not $cert ) {
+		$key = 0;
+	} else {
+		$key = $cert->getSerial();
+	}
+
+        $query->param (-name => "key", -value => $key );
+        $query->param (-name => "dataType", -value => "VALID_CERTIFICATE");
+    }
+
+    libExecuteCommand ($query->param ('dest'));
+
+}
+
+sub libDBGetLastDefinedItem
+{
+    my $object = libDBGetLastItem ( @_ );
+    if (not $object)
+    {
+	return undef;
+
+        # generalError (i18nGettext ("The database contains no object of the requested datatype (__DATATYPE__).",
+        #                           "__DATATYPE__", $_[0]));
+    }
+    return $object;
+}
+
+1;

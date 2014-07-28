@@ -1,0 +1,76 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: search_rights
+##       Brief: search rights
+## Description: shows a html-form where you can enter the data
+##              of the rights
+##  Parameters: none
+
+use strict;
+
+sub cmdSearch_rights {
+
+## the data which is stored in the configurationfile of a script
+my $operation;
+my $module;
+my $role;
+
+## load modules
+my %values = loadModules;
+$module = "<select name=module>\n";
+$module .= "<option value=\"\">\n";
+for my $h (keys %values) {
+   $module .= "<option value=\"".$h."\">$h - ".$values{$h}."\n";
+}
+$module .= "</select>\n";
+
+## load operations
+my @values = loadOperations;
+$operation = "<select name=operation>\n";
+$operation .= "<option value=\"\">\n";
+for my $h (@values) {
+    $operation .= "<option value=\"".$h."\">".$h."\n";
+}
+$operation .= "</select>\n";
+
+## load operator and owner from roles
+@values = loadRoles;
+my $operator = "<select name=role>\n";
+my $owner    = "<select name=owner>\n";
+$operator .= "<option value=\"\">".gettext ("&lt;new user&gt;")."\n";
+$owner    .= "<option value=\"\">".gettext ("&lt;CA itself or any role&gt;")."\n";
+for my $h (@values) {
+    $operator .= "<option value=\"".$h."\">".$h."\n";
+    $owner    .= "<option value=\"".$h."\">".$h."\n";
+}
+$operator .= "</select>\n";
+$owner    .= "</select>\n";
+
+my ($info_list, $cmd_panel, $hidden_list) = (undef, undef, undef);
+
+$info_list->{BODY}->[0]->[0] = gettext ("Module");
+$info_list->{BODY}->[0]->[1] = $module;
+$info_list->{BODY}->[1]->[0] = gettext ("Operation");
+$info_list->{BODY}->[1]->[1] = $operation;
+$info_list->{BODY}->[2]->[0] = gettext ("Operator");
+$info_list->{BODY}->[2]->[1] = $operator;
+$info_list->{BODY}->[3]->[0] = gettext ("Owner");
+$info_list->{BODY}->[3]->[1] = $owner;
+
+$cmd_panel->[0] ='<input type="submit" value="'.gettext ("OK").'">';
+
+$hidden_list->{"cmd"} = "show_rights";
+
+return libSendReply (
+                     "NAME"        => gettext("Search Rights"),
+                     "EXPLANATION" => gettext ("Please enter the data of the rights you are searching!"),
+                     "CMD_PANEL"   => $cmd_panel,
+                     "HIDDEN_LIST" => $hidden_list,
+                     "INFO_LIST"   => $info_list
+                    );
+}
+
+1;
+

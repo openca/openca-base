@@ -1,0 +1,52 @@
+## OpenCA - Command
+## (c) 2002-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: scepGetCACert
+##     Version: $Revision : 0.1 $
+##       Brief: send certs
+## Description: send certificates over http (used for certificate
+##              enrollment) 
+##  Parameters: operation, message
+
+use strict;
+
+sub cmdScepGetCACert {
+
+  my ( $operation, $message, $cert );
+  my ( $h, $i, $p7_file, @certsList );
+  my $chainDir;
+
+  ##// Let's get parameters
+  $operation = $query->param('operation');
+  $message = $query->param('message');
+
+  $chainDir   = getRequired ( 'ChainDir' );
+  $p7_file   = getRequired ( 'tempdir' ) . "/scep_authenticate_$$.p7";
+
+  ## Get all the certificates in the chainDir
+  opendir DIR, $chainDir;
+  my @cert_chain = grep ( /^.*\.crt$/, readdir DIR);
+  closedir DIR;
+
+  ## Init the certsList with the RA certificate
+  @certsList = ( getRequired("ScepRACert"));
+
+  ## Add all certificates
+  for $h (@cert_chain) {
+	push( @certsList, "$chainDir/" . $h );
+  }
+
+  ## we now convert into a simple pkcs7 data file
+  $cryptoShell->crl2pkcs7 ( INFORM=>"PEM", OUTFORM=>"DER",
+		CERTSLIST=>[ @certsList ], OUTFILE=>"$p7_file");
+
+  ## Send the response to the SCEP client
+  print "Content-type: application/x-x509-ca-ra-cert\n\n";
+  print $tools->getFile( "$p7_file");
+
+  ## unlink the p7_temp file
+  unlink( "$p7_file" );
+
+}
+1;

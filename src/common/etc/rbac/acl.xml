@@ -1,0 +1,774 @@
+<openca>
+  <access_control>
+    <acl>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>CRR list</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>CSR list</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>Cleanup Sessions</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>status OnLine CA</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>start OnLine CA component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>stop OnLine CA component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>status OnLine Revokation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>start OnLine Revokation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>stop OnLine Revokation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>status OnLine CRL</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>start OnLine CRL component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>stop OnLine CRL component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>access control configure</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>access control show configuration</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>access control sign configuration</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>all ldap update</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@pub_module_id@</module>
+        <role>.*</role>
+        <operation>all list</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>all search</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>backup</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(@node_module_id@|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>status OnLine Email</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>start OnLine Email component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>generates CA stats</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>stop OnLine Email component</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor delete pin</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor export pins</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor import new data in compact form</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor import new processes</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor import new users</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor import process data</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor import update of user data</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@batch_module_id@)</module>
+        <role>.*</role>
+        <operation>batchprocessor issue certificate</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor list users</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor recover key</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@batch_module_id@)</module>
+        <role>.*</role>
+        <operation>batchprocessor revoke certificate</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor state configuration</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>batchprocessor view user</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>ca-cert send</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>ca-cert update ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>certficate send with key</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>passphrase handling for objects</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>certificate change passphrase of key</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>certificate delete from ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>certificate expiration warning</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>certificate issue</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@|@ldap_module_id@|@batch_module_id@)</module>
+        <role>.*</role>
+        <operation>certificate list</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>certificate mail</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>certificate remove key</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>certificate revoke</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>ca certificate send</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>certificate send</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>add user</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>certificate test</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>certificate to ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>certificate to ldap with changed dn</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>certificate view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>certificate full view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>certificates to ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>certificates updates ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>crl generation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>crl generation from file</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>crl list</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>crl to ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>crl to ldap with changed dn</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ldap_module_id@</module>
+        <role>.*</role>
+        <operation>crl update ldap</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>LOA view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>crl view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>crr approve</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>crr approve without signature</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>crr delete</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>crr edit</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@|@pub_module_id@)</module>
+        <role>.*</role>
+        <operation>crr new</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@|@batch_module_id@)</module>
+        <role>.*</role>
+        <operation>crr view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>csr approve</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>csr approve without signature</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>csr delete</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>list of csr delete</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@)</module>
+        <role>.*</role>
+        <operation>csr edit</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@pub_module_id@)</module>
+        <role>.*</role>
+        <operation>csr new auth</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@pub_module_id@)</module>
+        <role>.*</role>
+        <operation>csr new adv</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@pub_module_id@)</module>
+        <role>.*</role>
+        <operation>csr new</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>csr renew</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@ra_module_id@|@batch_module_id@)</module>
+        <role>.*</role>
+        <operation>csr view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>database update</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>hsm login</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>hsm logout</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>initialization first certificates</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>initialization of ca-certificate</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>initialization of ca-key</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>0</module>
+        <role>.*</role>
+        <operation>initialization of ca-request</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>initialization of database</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>upgrade database</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>log view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(@ra_module_id@|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>mail send</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>manual PIN check</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@pub_module_id@)</module>
+        <role>.*</role>
+        <operation>verify email</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>menu generation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>menu retrieve</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>module information</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>module initialization</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node download all</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node download batchprocessors</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node download cert</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node download configuration</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node download crl</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll all</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll batchprocessors</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll ca-certificate</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll cert</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll configuration</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node enroll crl</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node receive all</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node receive crr</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node receive csr</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node upload all</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node upload crr</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>node upload csr</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>unused functionality</module>
+        <role>.*</role>
+        <operation>object remove</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>ocsp database update</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>parameters_get</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@ra_module_id@</module>
+        <role>.*</role>
+        <operation>passphrase handling for objects</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>recover log</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@node_module_id@</module>
+        <role>.*</role>
+        <operation>recovery</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@scep_module_id@</module>
+        <role>.*</role>
+        <operation>scep operation</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>set language</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>signature verify</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>.*</module>
+        <role>.*</role>
+        <operation>signature view</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>@batch_module_id@</module>
+        <role>.*</role>
+        <operation>statemachine use</operation>
+        <owner>.*</owner>
+      </permission>
+      <permission>
+        <module>(0|@node_module_id@)</module>
+        <role>.*</role>
+        <operation>stop daemons of crypto tokens</operation>
+        <owner>.*</owner>
+      </permission>
+    </acl>
+  </access_control>
+</openca>

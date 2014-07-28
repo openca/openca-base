@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openca base="/pki/node">
+  <menu name="PKI Init &amp; Config" img="images/info-key.png">
+    <item name="Home" img="" lnk="?cmd=getStaticPage;name=homePage" />
+    <item name="Server Info" img="" lnk="?cmd=serverInfo" />
+    <item />
+    <submenu name="Configuration.." img="">
+      <item name="Import Configuration" img="" lnk="?cmd=getStaticPage;name=initNode" />
+      <item />
+      <item name="Node Initialization" img="" lnk="?cmd=getStaticPage;name=initNode" />
+      <item />
+      <submenu name="HSM Management.." img="">
+        <item name="Stop HSM Tokens" img="" lnk="?cmd=stopDaemon" />
+      </submenu>
+      <submenu name="Database Management.. " img="" >
+        <item name="Update DB Searchable Attributes" img="" lnk="?cmd=updateSearchAttributes" />
+      </submenu>
+      <item name="Rebuild CA Chain" img="" lnk="?cmd=rebuildChain" />
+    </submenu>
+    <item />
+    <submenu name="Go To..." img="">
+      <item name="CA Interface" img="" lnk="/pki/ca?" />
+      <item name="RA Interface" img="" lnk="/pki/ra?" />
+      <item name="Batch Interface" img="" lnk="/pki/batch?" />
+      <item name="Public Interface" img="" lnk="/pki/pub?" />
+      <item />
+      <item name="LDAP Management" img="" lnk="/pki/ldap?" />
+    </submenu>
+    <item />
+    <item name="Logout" img="" lnk="?cmd=logout" />
+  </menu>
+  <menu name="Node Ops" img="">
+    <item name="Import/Export Data" img="" lnk="?cmd=getStaticPage;name=dataexchange" />
+    <item />
+    <item name="Backup and Recovery" img="" lnk="?cmd=getStaticPage;name=safety" />
+    <item />
+    <item name="Auto Import Data" img="" lnk="" />
+    <item name="Auto Export Data" img="" lnk="" />
+    <item />
+    <item name="Cleanup Sessions" img="" lnk="?cmd=cleanupSessions" />
+    <item name="Delete Temp Files" img="" lnk="?cmd=removeFiles" />
+  </menu>
+  <menu name="Log" img="">
+    <item name="Search Logs" img="" lnk="?cmd=getStaticPage;name=search_log" />
+    <item name="Recovery Log Indexes" img="" lnk="?cmd=logRecovery" />
+  </menu>
+  <menu name="Help" img="">
+    <item name="OpenCA PKI Guide" img="" lnk="http://www.openca.org/projects/openca/docs.shtml?" />
+    <item name="OpenCA PKI Home" img="" lnk="http://www.openca.org/projects/openca?" />
+    <item />
+    <item name="OpenCA Labs" img="" lnk="http://www.openca.org/?" />
+    <item name="OpenCA PKI Project" img="" lnk="http://www.openca.org/projects/openca?" />
+  </menu>
+  <menu name="Languages" img="" >
+    <item name="English" img=""
+		lnk="?cmd=setLanguage;lang=en_GB;charset=UTF-8" />
+    <item name="Spanish" img=""
+		lnk="?cmd=setLanguage;lang=es_ES;charset=UTF-8" />
+    <item name="Italian" img=""
+		lnk="?cmd=setLanguage;lang=it_IT;charset=UTF-8" />
+    <item name="French" img=""
+		lnk="?cmd=setLanguage;lang=fr_FR;charset=UTF-8" />
+    <item name="Japanese" img=""
+		lnk="?cmd=setLanguage;lang=ja_JP;charset=UTF-8" />
+    <item name="Greek" img=""
+		lnk="?cmd=setLanguage;lang=el_GR;charset=UTF-8" />
+    <item name="Polish" img=""
+		lnk="?cmd=setLanguage;lang=pl_PL;charset=UTF-8" />
+    <item name="Slovene" img=""
+		lnk="?cmd=setLanguage;lang=sl_SI;charset=UTF-8" />
+    <item name="Russian" img=""
+		lnk="?cmd=setLanguage;lang=ru_RU;charset=UTF-8" />
+    <item name="German" img=""
+		lnk="?cmd=setLanguage;lang=de_DE;charset=UTF-8" />
+  </menu>
+  <item name="Home" img="images/home.png"
+  		lnk="?cmd=getStaticPage;name=homePage" />
+</openca>

@@ -1,0 +1,106 @@
+<openca>
+  <request>
+  <!--
+    ## ========== [ PKCS #10 Request DN Policy Section ] =================
+    ##
+    ## You  may subtitute the value of any Attribute with "ANY" 
+    ## to make it accept any value
+    ## but it will still check for the existance of the attribute
+    ##
+  -->
+  <requires>
+    <element>
+      <name>CN</name>
+    </element>
+    <element>
+      <name>OU</name>
+    </element>
+    <element>
+      <name>O</name>
+      <value>@ca_organization@</value>
+    <element>
+    <element>
+      <name>C</name>
+      <value>@ca_country@</value>
+    <element>
+  <requires>
+  <!-- Now the Input Section - here you will define all of the
+       Inputs that are presented to the User -->
+  <user>
+    <enable>YES</enable>
+    <basic>
+       <name>Basic Information</name>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_FIRSTNAME</name>
+          <label>First Name</label>
+          <type>textfield</type>
+          <charset>UTF8_LETTERS</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>YES</required>
+       </input>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_LASTNAME</name>
+          <label>Last Name</label>
+          <type>textfield</type>
+          <charset>UTF8_LETTERS</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>YES</required>
+       </input>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_EMAIL</name>
+          <label>E-Mail</label>
+          <type>textfield</type>
+          <charset>EMAIL</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>YES</required>
+       </input>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_DEPARTMENT</name>
+          <label>Department</label>
+          <type>textfield</type>
+          <charset>UTF8_LETTERS</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>NO</required>
+       </input>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_TELEPHONE</name>
+          <label>Phone Number</label>
+          <type>textfield</type>
+          <charset>UTF8_LETTERS</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>NO</required>
+       </input>
+    </basic>
+    <request>
+       <input>
+          <name>ADDITIONAL_ATTRIBUTE_REQUESTERCN</name>
+          <label>Phone Number</label>
+          <type>textfield</type>
+          <charset>UTF8_LETTERS</charset>
+          <value></value>
+          <minlen>2</minlen>
+          <required>NO</required>
+       </input>
+    </request>
+  <user>
+</openca>
+
+<!--
+DN_TYPE_PKCS10_REQUIRED_ELEMENTS "CN" "OU" "O" "C"
+DN_TYPE_PKCS10_BASE     "O" "C"
+
+## YES, EXIST, NO
+DN_TYPE_PKCS10_ENFORCE_BASE "EXIST"
+
+DN_TYPE_PKCS10_BASE_1 "@ca_organization@"
+DN_TYPE_PKCS10_BASE_2 "@ca_country@"
+
+ADDITIONAL_REQUEST_ATTRIBUTES   "requestercn" "email" "department" "telephone"
+ADDITIONAL_ATTRIBUTES_DISPLAY_VALUE     "Name (first and Last name)" "Email" "Department"  "Telephone"
+ADDITIONAL_REQUEST_ATTRIBUTES_STRING_TYPE "LATIN1_LETTERS" "EMAIL" "LATIN1_LETTERS" "LATIN1_LETTERS"
+-->

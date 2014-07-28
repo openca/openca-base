@@ -1,0 +1,115 @@
+#! @PERL@
+
+@perl_use_lib@
+
+($VERSION = '$Revision: 1.3 $' )=~ s/(?:^.*: (\d+))|(?:\s+\$$)/defined $1?"0\.9":""/eg;
+
+$ENV{'LD_LIBRARY_PATH'} = "@openssl_prefix@/lib:" . $ENV{'LD_LIBRARY_PATH'};
+
+## create digest for passwd
+my $type = "sha1";
+my $passwd = "";
+my $verbose = 0;
+my $target = "@etc_prefix@/config.xml";
+
+while( $#ARGV > -1 ) {
+        if ( $ARGV[0] =~ /-dgst/ ) {
+                $type = $ARGV[1];
+		if( $type eq "" ) {
+			print "ERROR::Needed type of digest!\n\n";
+			die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+				"text-to-digest\n\n";
+		}
+		shift( @ARGV );
+		shift( @ARGV );
+		next;
+	}
+        if ( $ARGV[0] =~ /-target/ ) {
+                $target = $ARGV[1];
+		if( $target eq "" ) {
+			print "ERROR::Needed target file!\n\n";
+			die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+				"[-target file] text-to-digest\n\n";
+		}
+		shift( @ARGV );
+		shift( @ARGV );
+		next;
+	}
+        if ( $ARGV[0] =~ /-v/ ) {
+                $verbose = 1;
+		shift( @ARGV );
+		next;
+	}
+
+	if ( $#ARGV == 0 ) {
+		$text = $ARGV[0];
+		shift( @ARGV );
+		next;
+	} else {
+		print "ERROR::Option '".$ARGV[0]."' not understood!\n\n";
+		die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+			"text-to-digest\n\n";
+	}
+};
+
+if ( $type !~ /^(sha1|md5|crypt)$/i ) {
+	print "ERROR::Digest '$type' is not supported!\n\n";
+	die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+		"text-to-digest\n\n";
+}
+
+if ( $text eq "" ) {
+	print "ERROR::Needed some input to compute digest!\n\n";
+	die "\tUSAGE: openca-digest [-v] [-dgst sha1|md5|crypt] " .
+		"text-to-digest\n\n";
+}
+
+if ($type =~ /sha1/i) {
+    use Digest::SHA1;
+    my $digest = Digest::SHA1->new;
+    $digest->add ($text);
+    $result = $digest->b64digest;
+} elsif ($type =~ /md5/i) {
+    use Digest::MD5;
+    my $digest = Digest::MD5->new;
+    $digest->add ($text);
+    $result = $digest->b64digest;
+} elsif ($type =~ /crypt/i) {
+    my $salt = join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
+    $result = crypt ($text, $salt);
+}
+
+if ( $verbose > 0 ) {
+    print "Digest: $type\n";
+    print "String: ".$text."\n";
+    print "$type: ".$result."\n";
+}
+
+my $line = "";
+
+open( FD, "<$target" ) or die "ERROR::File not present $target!\n\n";
+while( $line = <FD> ) {
+	$file .= $line;
+}
+close( FD );
+
+if ( $file =~ /\@default_web_password\@/gi ) {
+	$file =~ s/\@default_web_password\@/$result/gi;
+	system("mv $target $target.bak");
+
+	if( $? > 0 ) {
+		die "ERROR::Can not create backup file $target.bak!\n\n";
+	}
+
+	open( FD, ">$target" ) or die "ERROR::Can not write to file $target!\n\n";
+	print FD "$file";
+	close(FD);
+
+	print "Done.\n\n";
+} else {
+	print "WARNING::Password not changed, no \@default_web_password\@ found!\n\n";
+}
+
+
+exit 0;
+

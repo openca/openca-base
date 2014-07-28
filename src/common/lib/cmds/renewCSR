@@ -1,0 +1,121 @@
+## OpenCA - RA Server Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: renewCSR
+##       Brief: renew Request
+## Description: renew an approved request
+##  Parameters: key
+
+use strict;
+
+sub cmdRenewCSR {
+
+## To aprove a Request, we need it signed by the RA operator
+my $beginHeader = "-----BEGIN HEADER-----";
+my $endHeader = "-----END HEADER-----";
+
+## Get the parameters
+my $key		= $query->param('key');
+
+my $req		= $db->getItem( DATATYPE=>"REQUEST", KEY=>$key);
+##// If it doesn't exists the file, report error
+if( not $req ) {
+	configError(i18nGettext ("Error: Request (__CSR_SERIAL__) Not found (database errorcode __ERRNO__)! __ERRVAL",
+                             "__CSR_SERIAL__", $key,
+                             "__ERRNO__", $db->errno(),
+                             "__ERRVAL__", $db->errval()));
+}
+
+my $parsed	= $req->getParsed();
+
+my ( $head, $text, $newREQ, $tmp, $format, $tmpSubj );
+
+## Get the Operator Serial Number ( Whatch out, only authorized
+## people should get here in, please verify your web configuration,
+## this is not matter of this program but access control )
+$parsed->{HEADER}->{OPERATOR} = 
+( $ENV{'SSL_CLIENT_CERT_SERIAL'} or $ENV{'SSL_CLIENT_M_SERIAL'});
+
+if( $parsed->{HEADER}->{OPERATOR} eq "" ) {
+	$parsed->{HEADER}->{OPERATOR} = undef;
+} else {
+	if ( length( $parsed->{HEADER}->{OPERATOR} ) % 2 ) {
+		$parsed->{HEADER}->{OPERATOR} = "0" . 
+					$parsed->{HEADER}->{OPERATOR};
+	}
+}
+
+my $last_req = libDBGetLastItem ("REQUEST");
+my $req_elements = 0;
+$req_elements    = $last_req->getSerial("REQUEST") if ($last_req);
+$req_elements  >>= getRequired ("ModuleShift");
+if ((not defined $req_elements) or ($req_elements < 0)) {
+	generalError (gettext ("Database fails during counting the already existing requests!"), 669);
+} else {
+	$req_elements++;
+}
+my $new_serial = ($req_elements << getRequired ("ModuleShift")) | getRequired ("ModuleID");
+
+## Set new header
+$head  = "$beginHeader\n";
+$head .= "TYPE = $parsed->{TYPE}\n";
+$head .= "RA = $parsed->{HEADER}->{RA}\n";
+$head .= "SERIAL = ".$new_serial."\n";
+$head .= "RENEW = ".$req->getSerial()."\n";
+$head .= "OPERATOR = $parsed->{HEADER}->{OPERATOR}\n"
+	if ($parsed->{HEADER}->{OPERATOR});
+$head .= "NOTBEFORE = ".$tools->getDate()."\n";
+$head .= "PIN = $parsed->{HEADER}->{PIN}\n";
+$head .= "SUBJECT = $parsed->{HEADER}->{SUBJECT}\n"
+	if ($parsed->{HEADER}->{SUBJECT});
+$head .= "SUBJECT_ALT_NAME = $parsed->{HEADER}->{SUBJECT_ALT_NAME}\n"
+	if ($parsed->{HEADER}->{SUBJECT_ALT_NAME});
+$head .= "ROLE = $parsed->{HEADER}->{ROLE}\n";
+$head .= "SCEP_TID = $parsed->{HEADER}->{SCEP_TID}\n";
+$head .= "LOA = $parsed->{HEADER}->{LOA}\n"
+	if (exists $parsed->{HEADER}->{LOA});
+
+my @additionalAttributes = getRequiredList('ADDITIONAL_REQUEST_ATTRIBUTES');
+foreach my $attr (@additionalAttributes)
+{
+    $head .= "ADDITIONAL_ATTRIBUTE_".uc ($attr)." = ".
+             $parsed->{HEADER}->{'ADDITIONAL_ATTRIBUTE_'.uc ($attr)}."\n"
+        if (exists $parsed->{HEADER}->{'ADDITIONAL_ATTRIBUTE_'.uc ($attr)});
+}
+
+$head .= "$endHeader\n";
+
+if ( $parsed->{TYPE} =~ /(PKCS#10|IE)/ ) {
+	$format = "PEM";
+} else {
+	$format = "SPKAC";
+}
+
+my $text = $req->getParsed()->{BODY};
+my $keypair = $req->getKey();
+
+## Create a new REQ object (if we modified something we should
+## store modifications) and save the value.
+$newREQ = $head . $text . $keypair;
+
+my $item = new OpenCA::REQ( SHELL   => $cryptoShell,
+                            DATA    => $newREQ,
+                            GETTEXT => \&i18nGettext,
+			    INFORM  => $format);
+if( not $item ) {
+       	configError( gettext("Cannot create a new REQ object.") );
+}
+
+if( not $db->storeItem( DATATYPE=>"RENEW_REQUEST", MODE=>"INSERT",
+				KEY=>$new_serial, OBJECT=>$item ) ) {
+       	configError( gettext ("Error while storing REQ!") );
+}
+
+$query->param ('key', $new_serial);
+$query->param ('dataType', "RENEW_REQUEST");
+libExecuteCommand ("viewCSR");
+
+}
+
+1;

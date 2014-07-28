@@ -1,0 +1,189 @@
+## OpenCA - Public Web-Gateway Command
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+##
+##   File Name: statusAutoCRL
+##       Brief: Checks the status of the Auto (On-Line) CRL Daemon
+##     Version: $Revision: 1.4 $
+## Description: Checks the status of the Auto (On-Line) CRL Daemon
+##  Parameters: 
+
+use strict;
+
+sub cmdStatusAutoCRL {
+
+	my $pidfile = undef;
+	my $pid = undef;
+	my $info_list = undef;
+	my $status = undef;
+	my $pos = 0;
+	my @stats = ();
+	my @stats2 = ();
+
+	my $params = undef;
+
+	our ( $DEBUG );
+
+	$pidfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl.pid";
+	if (libGetPidProcessStatus($pidfile))
+	{
+		$status = "Enabled";
+	}
+	else
+	{
+		$status = "Disabled";
+	}
+
+	$info_list->{CLASS} = "info_list";
+
+	$info_list->{BODY}->[$pos++]->[0] = "<h3>Daemon Status</h3>";
+
+	$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+						gettext ( "Status" ) .
+					  "</div>";
+	$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>" . 
+						gettext ( $status ) .
+					  "</div>";
+
+	if( $status =~ /Enabled/ ) {
+
+		@stats = stat( $pidfile );
+
+		$params = startAutoCRL_loadParams();
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Started On" ) . 
+					  "</div>";
+
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext( "Issuing CRL Every") .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext ( libGetHtmlValues($params->{'period'})) . " " .
+					gettext ( libGetHtmlValues($params->{'period_type'}) ) .
+					"</div>";
+
+		$info_list->{BODY}->[$pos++]->[0] = "<h3>Technical Details</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext( "CRL Validity") .
+					"</div>";
+		$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext ( libGetHtmlValues($params->{'validity'})) . " " .
+					gettext ( libGetHtmlValues($params->{'validity_type'}) ) .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					gettext( "CRL Extensions") .
+					"</div>";
+		if( $params->{'crl_ext'} =~ /^crl_ext/ ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext ( 'Default' ) .
+					"</div>";
+		} elsif ( $params->{'crl_ext'} =~ /^(none|off)$/i ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext ( 'None' ) .
+					"</div>";
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					$params->{'crl_ext'} .
+					"</div>";
+		}
+
+		$info_list->{BODY}->[$pos++]->[0] = "<h3>Advanced (Development)</h3>";
+
+		$info_list->{BODY}->[$pos]->[0] =
+					"<div class='desclabel'>" .
+					"Extended Logging (DEBUG)" .
+					"</div>";
+
+		if ( $params->{'debug'} eq "1" ) {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("Yes") .
+					"</div>";
+		} else {
+			$info_list->{BODY}->[$pos++]->[1] =
+					"<div class='descvalue'>" .
+					gettext("No") .
+					"</div>";
+		}
+
+
+	} else {
+		my $statusfile = undef;
+		my $reason = undef;
+		my @stats2 = ();
+		my @stats = ();
+		my $started = undef;
+		my $stopped = undef;
+
+		$statusfile = $AUTOCONF{"var_prefix"}."/tmp/openca_autocrl_status.txt";
+		if( -f $pidfile ) {
+			@stats = stat ( $pidfile );
+			$started = scalar localtime $stats[10];
+		} else {
+			$started = gettext( "Unknown" );
+		}
+
+		if( -f $statusfile ) {
+			@stats2 = stat( $statusfile );
+			$stopped = scalar localtime $stats2[10];
+		} else {
+			print STDERR "ERROR::Can not find $statusfile!\n"
+				if( $DEBUG );
+			$stopped = gettext( "Unknown" );
+		}
+
+		if( not open( FD, "<$statusfile" ) ) {
+			$reason = "Undefined";
+		} else {
+			$reason = <FD>;
+			close ( FD );
+		}
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Last Started On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					$started .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "Stopped On" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					scalar localtime $stats2[10] .
+					"</div>";
+
+		$info_list->{BODY}->[$pos]->[0] = "<div class='desclabel'>".
+					gettext ( "End Status" ) . 
+					  "</div>";
+		$info_list->{BODY}->[$pos++]->[1] = "<div class='descvalue'>". 
+					gettext ( $reason ) .
+					"</div>";
+
+	}
+
+	return libSendReply (
+                         "NAME"        => i18nGettext ("On-Line CRL Daemon"),
+                         "EXPLANATION" => 
+				gettext ("Details about the On-Line CRL Daemon"),
+                         "TIMESTAMP"   => 0,
+                         "INFO_LIST"   => $info_list,
+                        );
+
+}
+
+1;

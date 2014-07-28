@@ -1,0 +1,2461 @@
+## Certification Authority (HTML Interface)
+## (c) 1999 by Massimiliano Pala and OpenCA Group
+## (c) 2000-2004 by The OpenCA Project
+## All Rights Reserved
+##
+## Program currently tested with Perl5 Linux, Solaris and Apache.
+##
+## DISC CLAIMER: THIS SOFTWARE IS GIVEN AS IS WITHOUT ANY WARRANTIES
+## ABOUT ANY DAMAGE DERIVED BY THE USE ( CORRECT OR NOT ) OF THIS
+## SOFTWARE. THE AUTHOR IS THEREFORE NOT RESPONSABLE IN ANY WAY OF
+## DAMAGES RELATED IN ANY WAY TO THIS OR SUPPORTED SOFTWARE AS WELL.
+##
+## Thank you for using this software, and remember that Open Projects
+## are the future of mankind. Do not sleep, partecipate to world wide
+## efforts to make life easier for all!
+##
+## $Revision: 1.37 $
+##
+
+use strict;
+use Locale::Messages (':libintl_h');
+use Fcntl ':flock';
+use MIME::Base64;
+
+# local *OPENSSL_LOCKFILE;
+
+##
+## following you can find the defined errorcodes of this library
+## please take in mind that this is THE crypto-library of OpenCA
+##
+## functions and their domains
+## ===========================
+##
+## general error		6000-6099
+## libCheckSignature		6101-6199
+## libGetSignatureObject	6201-6299
+## libGetSignerCertificateDB	6301-6399
+## export_openssl_db		6401-6499
+## updateOCSPdata		6501-6599
+## master alert			6600-6699
+## libIssueCertificate          6701-6799
+## libRevokeCertificate         6801-6899
+##
+## functions and their errorcodes
+## ==============================
+##
+## libCheckSignature
+## -----------------
+## 6101	Parameters error, needed at least item or object
+## 6102 The PKCS#7-object signals an error. The signature is not valid.
+##// 6103 Signer's certificate is corrupt!
+## 6104 Signer's Certificate and DB's Certificate do not match.
+##
+## libGetSignatureObject
+## ---------------------
+## 6201	Cannot determine signature from non-existent object!
+## 6202	The body of the request is empty!
+## 6203	The request is not signed!
+## 6204	Cannot store the body of the request in the file ...
+## 6205	Cannot store the signature of the request in the file ...
+## 6206 Cannot build PKCS#7-object from extracted signature!
+##
+## libGetSignerCertificateDB
+## -------------------------
+## 6301	Cannot determine signer because there is no signature present!
+## 6302	Cannot create X509-object from the certificate of the signer!
+## 6303	Cannot find the certificate with the matching serial in the database!
+##
+## export_openssl_db
+## -----------------
+## 6401	Cannot open databasefile of OpenSSL for writing.
+## 6402 Cannot open file with the next serial of OpenSSL for writing.
+## 6403 Cannot open file with the next crlnumber of OpenSSL for writing.
+##
+## updateOCSPdata
+## --------------
+## 6501	No database was submitted.
+## 6502 Cannot link to new index.txt for OCSP daemon.
+## 6503 Cannot remove temp-file.
+##
+## libIssueCertificate
+## -------------------
+## 6701 Needed key to access database!
+## 6702 Needed passwd!
+## 6703 SERVICE_MAIL_ACCOUNT not defined in configfile
+## 6710 Cannot open LockFile
+## 6711 Cannot Access Request!
+## 6711 Another cert with the same key detected
+## 6721 Cannot write to tempfile
+## 6731 Cannot get a DN from the request!
+## 6735 A Valid Certificate with same DN exists!
+##// 6741 Cannot create backup for OpenSSL's indexfile!
+##// 6742 Cannot create backup for OpenSSL's serialfile!
+## 6751 openssl->issueCert failed
+## 6755 objectcreation from new cert failed
+##// 6757 Error while storing the request's serial in cert-object
+## 6761 Error while signing Role
+## 6762 Error while storing role in cert-object
+## 6763 Error while storing role-signature in cert-object
+## 6771 The parameter of the PIN are unknown!
+## 6779 Cannot create PIN!
+## 6772 Cannot hash PIN!
+## 6773 PIN-mail cannot be created!
+## 6774 Cannot encrypt PIN-mail!
+## 6775 Cannot store the PIN-mail in the directory for the mails!
+## 6776 Error while signing PIN
+## 6777 Error while storing role in cert-object
+## 6778 Error while storing role-signature in cert-object
+## 6781 Error while storing cert in database
+## 6783 Error while storing req to archived requests!
+##
+## libRevokeCertificate
+## --------------------
+## 6801 Needed key to access database!
+## 6802 Needed passwd!
+## 6811 Cannot Access CRR in the database!
+## 6821 The certificate is always revoked so please delete the CRR!
+## 6831 Certificate was not found in the database!
+## 6841 Error while revoking Certificate!
+## 6851 Error changing status from certificate
+## 6861 Error changing status from crr to Revoked dB
+
+use constant {
+        CRYPTO_SIGNATURE_OK             => 1,
+        CRYPTO_SIGNATURE_ERROR          => 6101,
+        CRYPTO_SIGNATURE_ERROR_DB       => 6102,
+        CRYPTO_SIGNATURE_ERROR_STATUS   => 6103,
+        CRYPTO_SIGNER_NOT_IN_DB         => 6111,
+        CRYPTO_SIGNER_EXPIRED           => 6112,
+        CRYPTO_SIGNER_REVOKED           => 6113,
+        CRYPTO_SIGNER_SUSPENDED         => 6114,
+        CRYPTO_SIGNER_CORRUPTED         => 6115,
+};
+
+sub getCryptoShell
+{
+    my $ret = undef;
+    my $crypto_layer = undef;
+
+    our ($xml_cache, $DEBUG);
+    my $token_xml = getRequired( 'TokenConfiguration');
+
+    ## Get the Crypto Layer
+    $crypto_layer = new OpenCA::Crypto (CONFIG  => $token_xml,
+                                        GETTEXT => \&i18nGettext,
+                                        CACHE   => $xml_cache,
+                                        DEBUG   => $DEBUG);
+    if ( not $crypto_layer ) 
+    {
+      print STDERR "getCryptoShell()->Error::Can not get crypto layer!\n";
+      return undef;
+    }
+
+    ## Get the CryptoShell
+    $ret = $crypto_layer->getToken ();
+    if (not $ret)
+    {
+      print STDERR "getCryptoShell()->Error::Can not get cryptoShell from crypto layer!\n";
+      return undef;
+    }
+
+    ## Returns the Crypto Shell
+    return $ret;
+}
+
+sub libCheckSignature
+{
+  our ($errno, $errval, $cryptoShell, $db);
+	my $keys 	= { @_ };
+
+	my $item 	= $keys->{OBJECT};
+	my $sig		= $keys->{SIGNATURE};
+	my $locDB	= ( $keys->{DB} or $db );
+
+	my ($sigCert, $dbCert);
+
+	if((not $item) and (not $sig))
+  {
+		$errno	= CRYPTO_SIGNATURE_ERROR;
+		$errval	= "Parameters error, needed at least item or object";
+		return $errno;
+	};
+
+	## Get the signature Object if not already given
+	if ($item)
+  {
+		$sig = libGetSignatureObject(OBJECT=>$item);
+
+		if (not defined($sig)) {
+			## take errorcode and errorvalue from the 
+      ## called function
+      $errno	= CRYPTO_SIGNATURE_ERROR_DB;
+			return $errno;
+		}
+	}
+
+	if ($sig->status() != 0)
+  {
+		$errno	= CRYPTO_SIGNATURE_ERROR_STATUS;
+		$errval	= i18nGettext ("The PKCS#7-object signals an error. The signature is not valid.<br>\nPKCS#7-Error __ERRNO__: __ERRVAL__",
+		                       "__ERRNO__", $OpenCA::PKCS7::errno,
+		                       "__ERRVAL__", $OpenCA::PKCS7::errval);
+		return $errno;
+	}
+  else
+  {
+		$errval = gettext ("Signature Correctly Verified");
+	}
+
+	## Get signer certificate (or it should be - serial oriented)
+	## form the local dB
+	my $tmpCert = libGetSignerCertificateDB(SIGNATURE=> $sig);
+
+	if(not $tmpCert)
+  {
+		## take the errorcode and errorvalue from the called function
+    $errno = CRYPTO_SIGNER_NOT_IN_DB;
+		return $errno;
+	}
+ 
+  if(($dbCert = $locDB->getItem( DATATYPE=>"CERTIFICATE",
+        KEY => $tmpCert->getSerial() )) == undef)
+  {
+    $errno = CRYPTO_SIGNER_NOT_IN_DB;
+    $errval = i18nGettext ( "The signer's certificate [__SERIAL__] is not in the DB!", 
+                            "__SERIAL__", $tmpCert->getSerial());
+		return $errno;
+  }
+
+  if ( $dbCert->getStatus =~ /REVOKED/i )
+  {
+		$errno  = CRYPTO_SIGNER_REVOKED;
+    $errval = i18nGettext ("The signer's certificate [__SERIAL__] was revoked.",
+                           "__SERIAL__", $tmpCert->getSerial());
+		return $errno;
+  }
+  elsif ($dbCert->getStatus =~ /SUSPENDED/i)
+  {
+		$errno  = CRYPTO_SIGNER_SUSPENDED;
+    $errval = i18nGettext ("The signer's certificate [__SERIAL__] is suspended.",
+                           "__SERIAL__", $tmpCert->getSerial());
+		return $errno;
+  }
+  elsif ($dbCert->getStatus =~ /EXPIRED/i)
+  {
+    $errno  = CRYPTO_SIGNER_EXPIRED;
+    $errval = i18nGettext ("The signer's certificate [ __SERIAL__ ] is expired.",
+                           "__SERIAL__", $tmpCert->getSerial());
+    return $errno;
+  }
+	
+	## Get signer certificate chain from the pkcs7 structure
+	my @chain = split /-----END CERTIFICATE-----/,
+	            $sig->getSigner()->{CERTIFICATE};
+	for (my $i=0; $i < scalar @chain; $i++) {
+		if (not $chain[$i]) {
+			delete $chain[$i];
+			next;
+		}
+		$chain[$i] .= "-----END CERTIFICATE-----";
+		$chain[$i] =~ s/^.*-----BEGIN CERTIFICATE-----/-----BEGIN CERTIFICATE-----/s;
+	}
+	$sigCert = undef;
+	for (my $i=0; $i < scalar @chain; $i++) {
+		$sigCert = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                              GETTEXT => \&i18nGettext,
+				              DATA    => $chain[$i]);
+		if( not $sigCert ) {
+			$errno	= CRYPTO_SIGNER_CORRUPTED;
+			$errval	= i18nGettext ("Signer's certificate is corrupt!\nOpenCA::X509 returns errorcode __ERRNO__ (__ERRVAL__).",
+		        	               "__ERRNO__", $OpenCA::X509::errno,
+		                	       "__ERRVAL__", $OpenCA::X509::errval);
+		        return $errno;
+		}
+		last if ( $tmpCert->getPEM() eq $sigCert->getPEM() );
+		$sigCert = undef;
+	}
+
+	if( not $sigCert ) {
+		$errno	= CRYPTO_SIGNER_NOT_IN_DB;
+		$errval	= gettext ("Signer's Certificate and DB's Certificate do not match");
+                return $errno;
+	}
+
+	return CRYPTO_SIGNATURE_OK;
+}
+		
+sub libGetSignatureObject {
+        our ($errno, $errval, $tools, $cryptoShell);
+	my $keys = { @_ };
+
+	my $item 	= $keys->{OBJECT};
+
+	my $tempDir     = getRequired('tempDir');
+	my $chainDir   = getRequired('ChainDir');
+
+	my ( $sig, $parsed, $success, $counter );
+
+	if (not $item) {
+		$errno	= 6201;
+		$errval	= gettext ("Cannot determine signature from non-existent object!");
+		return undef;
+	}
+
+	## Get Parsed Object
+	$parsed = $item->getParsed();
+
+	if (not $parsed->{BODY} and not $parsed->{RAWHEADER}) {
+		$errno	= 6202;
+		$errval	= gettext ("The body of the request is empty!");
+		return undef;
+	}
+
+	if (not $parsed->{SIGNATURE}) {
+		$errno	= 6203;
+		$errval	= gettext ("The request is not signed!");
+		return undef;
+	}
+
+        $success = 0;
+        $counter = 0;
+        my @msg_formats = ( $parsed->{BODY},
+                            $parsed->{BODY} . "\r\n" .
+                            $parsed->{RAWHEADER},
+                            $parsed->{BODY} . $parsed->{RAWHEADER} );
+
+	## my $message = $parsed->{RAWHEADER}."\r\n".$parsed->{BODY};
+	foreach my $message ( @msg_formats ) {
+
+                $counter++;
+
+                # print STDERR "libCheckSignature::Checking Type $counter\n";
+
+	        ## Save signature and check it
+	        if (not $tools->saveFile( FILENAME=>"${tempDir}/${$}.req",
+                                  DATA=>$message )) {
+		        $errno	= 6204;
+		        $errval	= i18nGettext ("Cannot store the body of the ".
+                                        "request in the file __FILE__.",
+		                       "__FILE__", "${tempDir}/${$}.req");
+		        unlink( "${tempDir}/${$}.req" );
+		        return undef;
+	        }
+
+	        if (not $tools->saveFile( FILENAME=>"${tempDir}/${$}.sig",
+                                  DATA=>$parsed->{SIGNATURE} )) {
+		        $errno	= 6205;
+		        $errval	= i18nGettext ("Cannot store the signature " .
+                                        "of the request in the file __FILE__.",
+		                        "__FILE__", "${tempDir}/${$}.sig");
+		        unlink( "${tempDir}/${$}.sig" );
+		        unlink( "${tempDir}/${$}.req" );
+		        return undef;
+	        }
+
+        	## Build a new PKCS7 object
+	        $sig = new OpenCA::PKCS7( SHELL    => $cryptoShell,
+                                  GETTEXT  => \&i18nGettext,
+                                  INFILE   => "${tempDir}/${$}.sig",
+                                  DATAFILE => "${tempDir}/${$}.req",
+                                  CA_DIR   => "${chainDir}" );
+
+	        if (not $sig) {
+                        #print STDERR "libCheckSignature::Type $counter Err!\n";
+
+		        $errno	= 6206;
+		        $errval	= i18nGettext ("Cannot build PKCS#7-object " .
+                                "from extracted signature!\n\n" .
+                                "OpenCA::PKCS7 returns errorcode __ERRNO__ " .
+                                "\n\n__ERRVAL__",
+		                       "__ERRNO__", $OpenCA::PKCS7::errno,
+		                       "__ERRVAL__", $OpenCA::PKCS7::errval);
+	        } else {
+	                unlink( "${tempDir}/${$}.sig" );
+	                unlink( "${tempDir}/${$}.req" );
+
+                        #print STDERR "libCheckSignature::Type $counter OK!\n";
+
+                        $errno = 0;
+                        $errval = undef;
+                        $success = 1;
+                        last;
+                }
+        }
+
+        # If no valid signature is found
+        return undef if ( $success eq 0 );
+                
+	return $sig;
+}
+
+sub libGetSignerCertificateDB
+{
+  our ($errno, $errval, $db);
+	my $keys = { @_ };
+
+	my $sig = $keys->{SIGNATURE};
+	my $locDB = ($keys->{DB} or $db );
+  my $db_cert = undef;
+  my $signerSerial = undef;
+
+	if ((not defined ($keys->{SIGNATURE} )) or 
+      (not $sig ) or ( $sig eq "" ))
+  {
+		$errno	= 6301;
+		$errval	= gettext ("Cannot determine signer because there " .
+                "is no signature present!");
+		return undef;
+	};
+
+  ## MADWOLF: Debug Info
+  print STDERR "libGetSignerCertificateDB:: Signature => $sig\n";
+  print STDERR "libGetSignerCertificateDB:: Signature Signer => " . $sig->getSigner() . "\n";
+
+  if ($sig and $sig->getSigner())
+  {
+    my $signer = $sig->getSigner();
+    print STDERR "libGetSignerCertificateDB:: Signature HAS a signer!\n";
+    if ((not defined($signer->{SERIAL})) or ($signer->{SERIAL} eq ""))
+    {
+      print STDERR "libGetSignerCertificateDB:: Signature DOES NOT HAVE A VALID SIGNER -> No SERIAL!\n";
+      return undef;
+    }
+    else
+    {
+      $signerSerial = $signer->{SERIAL};
+    }
+  }
+
+  ## At this point we should have this
+  print STDERR "libGetSignerCertificateDB:: Signer's SERIAL => $signerSerial\n";
+
+	$db_cert = $locDB->getItem(DATATYPE => 'CERTIFICATE', KEY => $signerSerial);
+	if (not $db_cert)
+	{
+		## perhaps it is a CA cert?
+		my @cacerts = $locDB->searchItems(DATATYPE => 'CA_CERTIFICATE');
+		foreach my $cert (@cacerts)
+    {
+      print STDERR "libGetSignerCertificateDB::Checking for a CA certificate => $cert\n";
+      if ($cert)
+      {
+			  if ($cert->getSerial() == $signerSerial)
+        {
+				  $db_cert = $cert;
+				  last;
+			  }
+      }
+		}
+	}
+
+	if(not $db_cert)
+  {
+		$errno	= 6303;
+		$errval	= gettext ("Cannot find the certificate with the matching serial in the database!");
+		return undef;
+	}
+  else
+  {
+		return $db_cert;
+	}
+}
+
+################################################
+## recover index.txt and serial from database ##
+################################################
+## begin of recovery code                     ##
+################################################
+
+sub export_openssl_db {
+  our ($errno, $errval, $cryptoShell, $db);
+  my $keys = { @_ };
+  ## $keys->{DB};
+  ## $keys->{SERIAL};
+  ## $keys->{OCSP};
+  ##   if defined and (Y|ON) then SUSPENDED will be interpreted like REVOKED
+
+  my @index = ();
+  my $max = 0;
+  my @list;
+  ## all entries are hashes with the following format
+  ## STATUS V,E,R
+  ## DATE_1
+  ## DATE_2
+  ## SERIAL
+  ## DN
+  ## OPENSSL_SUBJECT
+
+  print addLogSection (gettext ("Loading the Objects ..."));
+
+  ## get all valid_certificates
+  @list = $db->searchItems ( DATATYPE => "VALID_CERTIFICATE" );
+  foreach my $value (@list) {
+    my %hash;
+    $hash {STATUS} = "V";
+    $hash {DATE_1} = $cryptoShell->getOpenSSLDate ($value->getParsed
+()->{NOTBEFORE});
+    $hash {DATE_2} = "";
+    $hash {SERIAL} = sprintf ("%lX", $value->getSerial());
+    $hash {SERIAL} = "0".$hash {SERIAL} if (length ($hash {SERIAL}) %
+2);
+    $hash {DN}     = $value->getParsed ()->{DN};
+    $hash {OPENSSL_SUBJECT}     = $value->getParsed
+()->{OPENSSL_SUBJECT};
+    print addPreLogLine (i18nGettext ("VALID_CERTIFICATE:
+__CERT_SERIAL__", "__CERT_SERIAL__", $hash{SERIAL}));
+    $index [$value->getSerial()] = \%hash;
+    $max = $value->getSerial() if ($value->getSerial() > $max);
+  }
+
+  ## get all expired_certificates
+  @list = $db->searchItems ( DATATYPE => "EXPIRED_CERTIFICATE" );
+  foreach my $value (@list) {
+    my %hash;
+    $hash {STATUS} = "E";
+    $hash {DATE_1} = $cryptoShell->getOpenSSLDate ($value->getParsed
+()->{NOTBEFORE});
+    $hash {DATE_2} = "";
+    $hash {SERIAL} = sprintf ("%lX", $value->getSerial());
+    $hash {SERIAL} = "0".$hash {SERIAL} if (length ($hash {SERIAL}) %
+2);
+    $hash {DN}     = $value->getParsed ()->{DN};
+    $hash {OPENSSL_SUBJECT}     = $value->getParsed
+()->{OPENSSL_SUBJECT};
+    print addPreLogLine (i18nGettext ("EXPIRED_CERTIFICATE:
+__CERT_SERIAL__", "__CERT_SERIAL__", $hash{SERIAL}));
+    $index [$value->getSerial()] = \%hash;
+    $max = $value->getSerial() if ($value->getSerial() > $max);
+  }
+
+  ## get all suspended_certificates
+  @list = $db->searchItems ( DATATYPE => "SUSPENDED_CERTIFICATE" );
+  foreach my $value (@list) {
+    my %hash;
+    if (defined $keys->{OCSP} and ($keys->{OCSP} =~ /Y|ON/i)) {
+      $hash {STATUS} = "R";
+    } else {
+      $hash {STATUS} = "V";
+    }
+    $hash {DATE_1} = $cryptoShell->getOpenSSLDate ($value->getParsed
+()->{NOTBEFORE});
+    $hash {DATE_2} = "";
+    $hash {SERIAL} = sprintf ("%lX", $value->getSerial());
+    $hash {SERIAL} = "0".$hash {SERIAL} if (length ($hash {SERIAL}) %
+2);
+    $hash {DN}     = $value->getParsed ()->{DN};
+    $hash {OPENSSL_SUBJECT}     = $value->getParsed
+()->{OPENSSL_SUBJECT};
+    print addPreLogLine (i18nGettext ("SUSPENDED_CERTIFICATE:
+__CERT_SERIAL__", "__CERT_SERIAL__", $hash{SERIAL}));
+    $index [$value->getSerial()] = \%hash;
+    $max = $value->getSerial() if ($value->getSerial() > $max);
+  }
+
+  ## get all revoked_certificates
+  @list = $db->searchItems ( DATATYPE => "REVOKED_CERTIFICATE" );
+  foreach my $value (@list) {
+    my %hash;
+    $hash {STATUS} = "R";
+    $hash {DATE_1} = $cryptoShell->getOpenSSLDate ($value->getParsed
+()->{NOTBEFORE});
+    my $serial = $value->getSerial();
+    $hash {SERIAL} = sprintf ("%lX", $serial);
+    $hash {SERIAL} = "0".$hash {SERIAL} if (length ($hash {SERIAL}) %
+2);
+    $hash {DN}     = $value->getParsed ()->{DN};
+    $hash {OPENSSL_SUBJECT}     = $value->getParsed
+()->{OPENSSL_SUBJECT};
+    
+    my @result = $db->searchItems ( DATATYPE => "ARCHIVED_CRR",
+                                    REVOKE_CERTIFICATE_SERIAL => $serial
+);
+    $hash {DATE_2} = "991231235959Z";
+    my $h = 99991231235959;
+    foreach my $value (@result) {
+        my $submitdate = $cryptoShell->getNumericDate ($value->getParsed
+()->{SUBMIT_DATE});
+      if ($h > $cryptoShell->getNumericDate ($value->getParsed
+()->{SUBMIT_DATE})) {
+        $h = $cryptoShell->getNumericDate ($value->getParsed
+()->{SUBMIT_DATE});
+        $hash {DATE_2} = $cryptoShell->getOpenSSLDate ($value->getParsed
+()->{SUBMIT_DATE});
+        $hash {REASON} = $value->getParsed ()->{REVOKE_REASON};
+      }
+    }
+    print addPreLogLine (i18nGettext ("REVOKED_CERTIFICATE:
+__CERT_SERIAL__", "__CERT_SERIAL__", $hash{SERIAL}));
+    print addPreLogLine ( "Reason:" . $hash {REASON});
+    $index [$value->getSerial()] = \%hash;
+    $max = $value->getSerial() if ($value->getSerial() > $max);
+  }
+
+  print closeLogSection ();
+
+  ## write index database of openssl
+  if (defined $keys->{OCSP} and ($keys->{OCSP} =~ /Y|ON/i)) {
+    print addLogSection (i18nGettext ("Writing index.txt for the OCSP
+daemon (__FILE__) ...",
+                                      "__FILE__", $keys->{DB}));
+  } else {
+    print addLogSection (i18nGettext ("Writing index.txt (__FILE__)
+...", "__FILE__", $keys->{DB}));
+  }
+
+  if (not open( FD, ">$keys->{DB}" )) {
+        $errno  = 6401;
+        $errval = i18nGettext ("Cannot open databasefile __FILE__ of
+OpenSSL for writing.",
+                           "__FILE__", $keys->{DB});
+
+    print addLogSection ( "\n" . $errno . " " . $errval);
+  print closeLogSection ();
+
+        return undef;
+  }
+
+  my $i;
+  foreach $i (@index) {
+    next if (not $i);
+    $i->{OPENSSL_SUBJECT} =~ s/, *(?=[A-Za-z0-9\-]+=)/\//g;
+    $i->{OPENSSL_SUBJECT} = "/".$i->{OPENSSL_SUBJECT};
+
+                if( $i->{REASON} ne "unspecified" and 
+                                $i->{REASON} ne "keyCompromise" and
+                                $i->{REASON} ne "CACompromise" and
+                                $i->{REASON} ne "affiliationChanged" and
+                                $i->{REASON} ne "superseded" and
+                                $i->{REASON} ne "cessationOfOperation"
+and
+                                $i->{REASON} ne "certificateHold" and
+                                $i->{REASON} ne "removeFromCRL" and
+                                $i->{REASON} ne "holdInstruction" and
+                                $i->{REASON} ne "keyTime" and
+                                $i->{REASON} ne "CAkeyTime" ) {
+
+      print FD $i->{STATUS}."\t".
+               $i->{DATE_1}."\t".
+               $i->{DATE_2}."\t".
+               $i->{SERIAL}."\tunknown\t".
+               $i->{OPENSSL_SUBJECT}."\n";
+      print addPreLogLine ( $i->{STATUS}." ".
+                            $i->{DATE_1}." ".
+                            $i->{DATE_2}." ".
+                            $i->{SERIAL}." unknown ".
+                            $i->{OPENSSL_SUBJECT} );
+
+    }
+    else {
+      print FD $i->{STATUS}."\t".
+               $i->{DATE_1}."\t".
+               $i->{DATE_2}.",".$i->{REASON}."\t".
+               $i->{SERIAL}."\tunknown\t".
+               $i->{OPENSSL_SUBJECT}."\n";
+      print addPreLogLine ( $i->{STATUS}." ".
+                            $i->{DATE_1}." ".
+                            $i->{DATE_2}.",".$i->{REASON}." ".
+                            $i->{SERIAL}." unknown ".
+                            $i->{OPENSSL_SUBJECT} );
+    }
+
+  }
+  close(FD);
+  print closeLogSection ();
+
+  if (not (defined $keys->{OCSP} and ($keys->{OCSP} =~ /Y|ON/i))) {
+    ## write serial
+    print addLogSection ( i18nGettext ("Writing serial __CERT_SERIAL__
+...", "__CERT_SERIAL__", $keys->{SERIAL}));
+    if (not open( FD, ">$keys->{SERIAL}" )) {
+        $errno  = 6402;
+        $errval = i18nGettext ("Cannot open file __FILE__ with the next
+serial of OpenSSL for writing.",
+                           "__FILE__", $keys->{SERIAL});
+        return undef;
+    }
+    $max++;
+    $max = sprintf ("%lX", $max);
+    $max = "0".$max if (length ($max) % 2);
+    print FD $max;
+    close(FD);
+    print addLogLine (gettext($max));
+    print closeLogSection ();
+
+    ## recreate CRL number
+    if (exists $keys->{CRLNUMBER}) {
+        print addLogSection ( i18nGettext ("Writing crlnumber file
+__CRLNUMBER__ ...", "__CRLNUMBER__", $keys->{CRLNUMBER}));
+        if (not open( FD, ">$keys->{CRLNUMBER}" )) {
+            $errno      = 6403;
+            $errval     = i18nGettext ("Cannot open file __FILE__ with
+the next crlnumber of OpenSSL for writing.",
+                                       "__FILE__", $keys->{CRLNUMBER});
+            return undef;
+        }
+        my $crlnumber = $db->elements( DATATYPE => 'CRL' ) + 1;
+        $crlnumber = sprintf ("%lX", $crlnumber);
+        $crlnumber = "0".$crlnumber if (length ($crlnumber) % 2);
+        print FD $crlnumber;
+        close(FD);
+        print addLogLine (gettext($crlnumber));
+        print closeLogSection ();
+    }
+  }
+
+  return 1;
+
+}
+
+################################################
+## recover index.txt and serial from database ##
+################################################
+## end of recovery code                       ##
+################################################
+
+
+
+############################################
+## sync the update of the index.txt which ##
+## is needed by the OCSP daemon           ##
+############################################
+##      BEGIN of OCSP realted stuff       ##
+############################################
+
+sub updateOCSPdata {
+        our ($errno, $errval, $tools);
+	my $keys = { @_ };
+	## $keys->{DB};
+
+	## check the data
+	if (not defined $keys->{DB}) {
+		$errval	= gettext ("No database was submitted.");
+		$errno	= 6501;
+		return undef;
+	}
+
+	## build and write the index.txt
+	if (not export_openssl_db (
+			DB => getRequired ('TempDir')."/ocsp_".$$,
+			OCSP => "YES")) {
+		## use errno and errval of called function
+		return undef;
+	}
+
+	## create new link
+	my $command = "rm ".$keys->{DB}.
+			";ln ".getRequired ('TempDir')."/ocsp_".$$." ".$keys->{DB};
+	my $ret = `$command`;
+	if ( $? ) {
+		$errval	= gettext ("Cannot link to new index.txt for OCSP daemon.");
+		$errno	= 6502;
+		return undef;
+	}
+
+	## remove temp-file
+	if (not $tools->deleteFiles (DIR => getRequired ('TempDir'), FILTER => "ocsp_".$$)) {
+		$errval	= gettext ("Cannot remove temp-file.");
+		$errno	= 6503;
+		return undef;
+	}
+
+	return 1;
+}
+
+############################################
+##       END of OCSP related stuff        ##
+############################################
+
+############################################
+##     begin of certificate creation      ##
+############################################
+
+sub crypto_get_ca_token
+{
+    our ($errno, $errval, $crypto_layer, $ca_token);
+
+    my $passwd = shift;
+
+    ## this is necessary for the batch system
+    ## we can activate a token once and use it for several actions
+    $ca_token = $crypto_layer->getToken ('CA') if (not $ca_token);
+
+    if (not $ca_token)
+    {
+        $errno  = 6701;
+        $errval = i18nGettext ("Cannot get CA token (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $crypto_layer->errno(),
+                               "__ERRVAL__", $crypto_layer->errval());
+        return undef;
+    }
+
+
+    if (not ($ca_token->keyOnline || $ca_token->login($passwd)))
+    {
+        $errno  = 6702;
+        $errval = i18nGettext ("Cannot use the private key of the CA (__ERRNO__). __ERRVAL__",
+                               "__ERRNO__", $ca_token->errno(),
+                               "__ERRVAL__", $ca_token->errval());
+
+        return undef;
+    }
+
+    return $ca_token;
+}
+
+sub crypto_get_csr {
+    our ($errno, $errval, $db);
+    my $keys = { @_ };
+    my $locDB = ( $keys->{DB} or $db );
+
+    if ( not $keys->{KEY}) {
+        $errno  = 6706;
+        $errval = gettext ("Need key of request to access database!");
+        return undef;
+    }
+    if ( not $keys->{DATATYPE})
+    {
+        $errno  = 6707;
+        $errval = gettext ("Need datatype of request to access database!");
+        return undef;
+    }
+
+    my $csr = $locDB->getItem ( DATATYPE => $keys->{DATATYPE},
+                             KEY      => $keys->{KEY} );
+    if( not $csr ) {
+        $errno  = 6708;
+        $errval = i18nGettext("Cannot access request __CSR_SERIAL__! Database returns errorcode __ERRNO__. __ERRVAL__.",
+                              "__CSR_SERIAL__", $keys->{KEY},
+                              "__ERRNO__", $db->errno(),
+                              "__ERRVAL__", $db->errval);
+        return undef;
+    }
+    return $csr;
+}
+
+sub crypto_get_csr_format
+{
+    my $csr = $_[0];
+
+    if ( $csr->getParsed()->{TYPE} =~ /IE/ ) {
+        return "PEM";
+    } elsif ( $csr->getParsed()->{TYPE} =~ /SPKAC|MOZILLA|NETSCAPE/ ) {
+        return "SPKAC";
+    } else {
+        return "PEM";
+    };
+}
+
+sub crypto_get_csr_role
+{
+    my $csr = $_[0];
+    return $csr->getParsed()->{HEADER}->{ROLE};
+}
+
+sub crypto_get_csr_loa
+{
+    my $csr = $_[0];
+    return $csr->getParsed()->{HEADER}->{LOA};
+}
+
+sub crypto_get_next_cert_serial
+{
+    our $tools;
+    my ( $ser );
+
+    ( $ser ) = ( $tools->getFile (getRequired ('sslserial')) =~ 
+                                                        /([0-9a-f]+)/i );
+    return uc($ser);
+}
+
+sub crypto_get_actual_cert_serial {
+    our $tools;
+    my $tmpdir = getRequired ('TempDir');
+    my ( $ser ) = ($tools->getFile($tmpdir."/openssl_backup_".$$."_serial") =~ 
+                                                        /([0-9a-f]+)/i );
+    return uc($ser);
+}
+
+sub crypto_is_unique_subject
+{
+    if (getRequired ('UNIQUE_DN') =~ /NO|N|OFF/i) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub crypto_get_csr_subject
+{
+    our ($DEBUG, $errno, $errval, $db);
+    my $keys = { @_ };
+    my $csr = $keys->{CSR};
+    my $locDB = ( $keys->{DB} or $db );
+
+    my $cert_subject = "";
+    my $ser = $keys->{CERT_SERIAL};
+    $ser = crypto_get_next_cert_serial() if (not exists $keys->{CERT_SERIAL});
+
+    #// perhaps the request's serial must be stored in the dn
+    my $use_request_serial = getRequired ('SET_REQUEST_SERIAL_IN_DN');
+    if ($use_request_serial =~ /^(Y|YES|ON)$/i) {
+        $cert_subject .= getRequired ('REQUEST_SERIAL_NAME')."=".$ser.",";
+    }
+
+    #// perhaps the cert's serial must be stored in the dn
+    my $use_cert_serial = getRequired ('SET_CERTIFICATE_SERIAL_IN_DN');
+    if ($use_cert_serial =~ /^(Y|YES|ON)$/i) {
+        $cert_subject = getRequired ('CERTIFICATE_SERIAL_NAME')."=".hex($ser).",";
+    }
+
+    if ($csr->getParsed()->{HEADER}->{SUBJECT}) {
+        $cert_subject .= $csr->getParsed()->{HEADER}->{SUBJECT};
+    } elsif (defined $csr->getParsed()->{DN} and $csr->getParsed()->{DN}) {
+        $cert_subject .= $csr->getParsed()->{DN};
+    } else {
+        $errno  = 6721;
+        $errval = gettext ("Cannot get a subject from the request!");
+        return undef;
+    }
+
+    ## filter email if necessary
+    if ( getRequired ('DN_WITHOUT_EMAIL') =~ /Y|YES|ON/i ) {
+        $cert_subject =~ s/^\s*EMAIL\s*=[^,]*,\s*//i;
+        $cert_subject =~ s/^\s*EMAILADDRESS\s*=[^,]*,\s*//i;
+        $cert_subject =~ s/,\s*EMAIL\s*=[^,]*//i;
+        $cert_subject =~ s/,\s*EMAILADDRESS\s*=[^,]*//i;
+    } else {
+        $cert_subject =~ s/^\s*EMAILADDRESS\s*=/emailAddress=/i;
+        $cert_subject =~ s/^\s*EMAIL\s*=/emailAddress=/i;
+        $cert_subject =~ s/,\s*EMAILADDRESS\s*=/,emailAddress=/i;
+        $cert_subject =~ s/,\s*EMAIL\s*=/,emailAddress=/i;
+    }
+
+    debug ("crypto-utils.lib: crypto_get_csr_subject: \$cert_subject: $cert_subject");
+
+    if ( crypto_is_unique_subject() ) {
+        ## Check if there are certificates with the same DN
+        my @certList = $locDB->searchItems( DATATYPE => "VALID_CERTIFICATE",
+                                      DN       => $cert_subject );
+
+        if($#certList > -1) {
+            $errno  = 6725;
+            $errval = gettext ("A Valid Certificate with same subject exists!");
+            return undef;
+        }
+    }
+
+    return $cert_subject;
+}
+
+sub crypto_get_csr_subject_alt_name
+{
+    my $csr = $_[0];
+    my $subject_alt_name = "";
+
+    my $automatic_subject_alt_name = getRequired ('AUTOMATIC_SUBJECT_ALT_NAME');
+    my $default_subject_alt_name   = getRequired ('DEFAULT_SUBJECT_ALT_NAME');
+
+    # set the subjectAlternativeName
+    #// * we don't use email:copy to be able to support PKIX-recommendations
+    #   and S/MIME v3
+    # * Email should not be in the DN so email:copy is senseless
+    # * preserveDN is not recommended by openssl develeopers
+    if ( $csr->getParsed()->{HEADER}->{SUBJECT_ALT_NAME} ) {
+         $subject_alt_name = $csr->getParsed()->{HEADER}->{SUBJECT_ALT_NAME};
+    } elsif ( $automatic_subject_alt_name =~ /(Y|YES|ON)/i ) {
+        ## perhaps we support DNS and IP in the future too
+        if ( ($default_subject_alt_name =~ /Email/i) and
+             $csr->getParsed()->{DN_HASH}->{EMAILADDRESS})
+        {
+             $subject_alt_name = "email:".$csr->getParsed()->{DN_HASH}->{EMAILADDRESS}[0];
+        } else {
+             return "";
+        }
+    } else {
+        return "";
+    }
+
+    ## if the emailaddresses from the subject will be removed
+    ## then add them from DN to the subject alt name
+
+    if ( getRequired ('DN_WITHOUT_EMAIL') =~ /Y|YES|ON/i ) {
+        my $cert_subject;
+        if ($csr->getParsed()->{HEADER}->{SUBJECT}) {
+            $cert_subject .= $csr->getParsed()->{HEADER}->{SUBJECT};
+        } else {
+            $cert_subject .= $csr->getParsed()->{DN};
+        }
+        my $regex1 = '^\s*(EMAIL|EMAILADDRESS)\s*=\s*([^,]*),\s*';
+        my $regex2 = ',\s*(EMAIL|EMAILADDRESS)\s*=\s*([^,]*)';
+        my $email = "";
+        my $attr = "";
+        do
+        {
+            ($attr, $email) = ($cert_subject =~ /$regex1/i);
+            if ($email)
+            {
+                $cert_subject =~ s/$regex1//i;
+            } else {
+                ($attr, $email) = ($cert_subject =~ /$regex2/i);
+                $cert_subject =~ s/$regex2//i;
+            }
+            if ($email)
+            {
+                ## do not add an already existing emailaddress
+                ## this can happen when the subject_alt_name was
+                ## dynamically generated from the subject
+                ##
+                ## the regex is not 100 percent correct because the
+                ## leading [^\\] does not match all cases but it should
+                ## do the job
+                if ($subject_alt_name !~ /^(|.*[^\\],)\s*email:${email}(,.*|)$/)
+                {
+                    $subject_alt_name .= "," if ($subject_alt_name);
+                    $subject_alt_name .= "email:$email";
+                }
+            }
+        } while ($email);
+    }
+
+    my @list = crypto_get_subject_alt_names ($subject_alt_name);
+    my $section = "";
+    foreach my $item (@list)
+    {
+        $section .= crypto_get_openssl_subject_alt_name ($item)."\n";
+    }
+    return $section;
+}
+
+sub crypto_get_subject_alt_names
+{
+    my $oneline = $_[0];
+    return undef if (not $_[0]);
+
+    $oneline =~ s/([^\\])((\\\\)*),/$1$2,,/g;
+    my @list = split /,,\s*/, $oneline;
+    my @result = ();
+    my $counter = 0;
+    foreach my $item (@list)
+    {
+        my $name = $item;
+        $name =~ s/:.*$//;
+        my $value = $item;
+        $value =~ s/^[^:]*://;
+        $value =~ s/^\\,/,/;
+        $value =~ s/([^\\])((\\\\)*)\\,/$1$2,/g;
+        $result[$counter++] = "$name.$counter=$value";
+    }
+    return @result;
+}
+
+sub crypto_get_openssl_subject_alt_name
+{
+    my $line  = $_[0];
+    my $name  = $line;
+    my $value = $line;
+
+    $name  =~ s/=.*$//;
+    $value =~ s/^[^=]*=//;
+
+    $_ = $name;
+    SWITCH: {
+        if (/(MS_UPN|Microsoft_UPN)/i)
+        {
+            $name  = "otherName";
+            $value = "1.3.6.1.4.1.311.20.2.3;UTF8:".$value;
+        }
+        if (/(MS_GUID|Microsoft_GUID)/i)
+        {
+            $name  = "otherName";
+            $value = "1.3.6.1.4.1.311.25.1;FORMAT:HEX,OCT:".$value;
+        }
+    }
+    return "$name=$value";
+}
+
+sub crypto_get_admin_account
+{
+    our ($errno, $errval);
+    my $account           = getRequired ('SERVICE_MAIL_ACCOUNT');
+    if ( not $account ) {
+        $errno  = 6728;
+        $errval = gettext ("You must specify at minimum a mail account for the CA (SERVICE_MAIL_ACCOUNT)!");
+        return undef;
+    }
+    return $account;
+}
+
+sub crypto_use_loa
+{
+    my $csr = $_[0];
+    my $loaOption = getRequired('USE_LOAS');
+    if ($loaOption =~ m/yes/i and 
+        (not exists $csr->getParsed()->{HEADER}->{LOA_MODE} or
+         $csr->getParsed()->{HEADER}->{LOA_MODE} !~ /IGNORE/i))
+    {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub crypto_get_csr_loa_policy 
+{
+  our ($errno, $errval, $DEBUG);
+  my $csr = $_[0];
+
+  my ($loaTwig, $policyString, $policyOidVal) = (undef, "", "");
+
+  if (crypto_use_loa ($csr))
+  {
+      my $loa = $csr->getParsed()->{HEADER}->{LOA};
+
+      debug ("crypto-utils.lib: crypto_get_csr_loa_policy: loa = $loa");
+      if (not defined ($loa))
+      {
+        $errno  = 6731;
+        $errval = gettext("This request has no Level of Assurance specified.");
+        return undef;
+      }
+
+      $loaTwig = loadConfigXML ('LOAConfiguration');
+      if (not $loaTwig)
+      {
+        $errno  = 6732;
+        $errval = gettext ('Cannot load loa configuration');
+        return undef;
+      }
+
+      my @loaList ;
+      my ($al, $level, $loaName, $found );
+
+      my @xmlObject = $loaTwig->get_xpath("loa");
+
+      $found = 0;
+      for $al ($loaTwig->get_xpath("loa"))
+      {
+        if ( $found == 1 ) 
+        {
+          # Let's break if already found
+          last;
+        }
+
+        $level = getField( $al, 'level' );
+        $loaName = getField( $al, 'name' );
+
+        debug ( "crypto-utils.lib: " .
+                "crypto_get_csr_loa_policy: level = $loaName ($level)");
+
+        ## find the required level for this req
+        if ( "$level" eq "$loa")
+        {
+          my (@cert, @ext, $certPolicy, @policySec , $loaOID);
+          my ($section, @CP, $policyID);
+
+          $found= 1;
+          @ext = $al->get_xpath("cert/ext");
+          $certPolicy = gettext( getField( $ext[0], 'name' ) );
+          debug ("crypto-utils.lib: " . 
+                 "crypto_get_csr_loa_policy: certPolicy = $certPolicy");
+
+          ## start building the string to insert in the OpenSSL
+          ## extenssion file
+          $policyOidVal = $certPolicy."=";
+
+          ## add all the OIDs
+          @CP = $al->get_xpath("cert/ext/CP/value");
+          debug ("crypto-utils.lib: crypto_get_csr_loa_policy: Length of CP = $#CP");
+
+          my @OID;
+          foreach my $line (@CP)
+          {
+            my $cpOID=gettext($line->field);
+            debug ("crypto-utils.lib: crypto_get_csr_loa_policy: $cpOID");
+            push(@OID,$cpOID);
+          }
+
+          debug ("crypto-utils.lib: crypto_get_csr_loa_policy: policyString = $policyString");
+
+          ## Add the @section to it
+          @policySec =  $al->get_xpath("cert/ext/section");
+
+          # $section=gettext($policySec[0]->first_child('name')->field);
+          $section=gettext(getField( $policySec[0], 'name' ));
+          $loaOID = pop (@OID);
+          push (@OID, "\@".$section);
+
+          ## Add the OIDs and the section id to the policy string
+          $policyOidVal .= join(",", @OID);
+
+          ## add the policy section
+          $policyID =gettext( getField($policySec[0], 'policy_ID_tag') );
+
+          chomp $policyID ;
+          $policyString .= "\n\n\n[".$section."]\n";
+          $policyString .= "\n".$policyID ."=".$loaOID. "\n";
+
+          debug ("crypto-utils.lib: crypto_get_csr_loa_policy: " .
+                 "policyString = $policyString");
+
+          ## Add the the URIs for the CPSs the certificate operate under
+          foreach my $certCPSURI ($policySec[0]->get_xpath('CPS/URI'))
+          {
+            $policyString .= gettext($certCPSURI->field);
+            $policyString .= "\n";
+          }
+        }
+      }
+
+      ## we have a string of this format now
+      ##
+      ## certificatePoliceis=1.2.2.2.2,...n ,@psec
+      ## [psec]
+      ## policyIdentifier=1.2.2.2.3
+      ## CPS.1 ="http://some.url.org/cps"
+      ## ...
+      ## CPS.N =http://some.url.org/cpsn
+
+      debug ("crypto-utils.lib: crypto_get_csr_loa_policy: $policyString");
+  };
+
+  return ($policyString, $policyOidVal);
+}
+
+sub crypto_get_extfile {
+    our ($tools, $DEBUG);
+
+    my $keys             = { @_ };
+    my $csr              = $keys->{CSR};
+    my $loa_oid          = $keys->{LOA_OID};
+    my $loa_policy       = $keys->{LOA_POLICY};
+    my $subject_alt_name = $keys->{SUBJECT_ALT_NAME};
+
+    my $role       = ( $keys->{ROLE} or crypto_get_csr_role ($csr));
+    my $extfile    = $role;
+
+    $extfile =~ s/ /_/g;
+    $extfile .= ".ext";
+    if ($extfile) {
+        ## handle subject alternative name
+        my $tempExt = getRequired ( 'TempDir')."/${extfile}";
+        my $extfile = getRequired ( 'EXT_DIR')."/${extfile}";
+        my $file = $tools->getFile ($extfile);
+        # 2005-06-15 Martin Bartosch: fixed SF bug #1122343
+        if (!defined $subject_alt_name or ($subject_alt_name eq "")) {
+                # comment out SAN extension reference
+                $file =~ s/[\r\n](subjectAltName\s*=.*?)[\r\n]/\#$1/;
+        }
+        $file =~ s/__SUBJECT_ALT_NAME__/${subject_alt_name}/g;
+        $tools->saveFile (FILENAME => $tempExt, DATA => $file);
+
+        if (crypto_use_loa ($csr))
+        {
+            my @ext_array;
+            ## insert the policy string into the temp ext file
+            ## by reading it in then add the string and write it
+            ## back out;
+            open(FILE, "< $tempExt") or die  "ERROR: $?<BR>";
+            @ext_array =<FILE>;
+            close FILE;
+
+            ##
+            ## find the line in the extention file the has 
+            ##"basicConstraints" in it
+            ## the reason for that is that I assume that all ext files will
+            ## have this key word. I will append the
+            ## line that has @sec to the
+            ## "basicConstraints" line, so openssl will not complain.
+            ##
+            foreach my $line (@ext_array)
+            {
+                if ($line =~ /basicConstraints/)
+                {
+                    $line .="\n".$loa_oid."\n";
+                    debug ("crypto-utils.lib: crypto_get_extfile: line = $line");
+                }
+            }
+
+            push (@ext_array , $loa_policy);
+            open(FILE, "> $tempExt") or die  "ERROR: $?<BR>";
+            print FILE @ext_array;
+            close FILE;
+        }
+        return $tempExt;
+    }
+    return undef;
+}
+
+sub crypto_get_opensslfile
+{
+    my $csr  = $_[0];
+    my $role = crypto_get_csr_role ($csr);
+
+    my $opensslfile = $role;
+    $opensslfile =~ s/ /_/g;
+    $opensslfile .= ".conf";
+    if ($opensslfile) {
+        $opensslfile = getRequired ( 'OpenSSL_DIR' )."/${opensslfile}";
+    }
+
+    return $opensslfile;
+}
+
+sub crypto_check_lifetime {
+
+    use Time::Local;
+    our ($errno, $errval, $cryptoShell);
+    my $csr  = $_[0];
+    my $role = $_[1];
+
+    ## check that not before is smaller than not after
+
+    debug("crypto-tools.lib::crypto_check_lifetime start");
+    if ($csr->getParsed()->{HEADER}->{CERT_NOTAFTER} and
+        $csr->getParsed()->{HEADER}->{CERT_NOTBEFORE}) {
+        if ($csr->getParsed()->{HEADER}->{CERT_NOTAFTER} !~ /^[0-9]{12}$/) {
+            $errno  = 6742;
+            $errval = i18nGettext("The value of notafter must have the format YYMMDDhhmmss.");
+            return undef;
+        }
+        if ($csr->getParsed()->{HEADER}->{CERT_NOTBEFORE} !~ /^[0-9]{12}$/) {
+            $errno  = 6743;
+            $errval = i18nGettext("The value of notbefore must have the format YYMMDDhhmmss.");
+            return undef;
+        }
+        if ($csr->getParsed()->{HEADER}->{CERT_NOTBEFORE} >
+                                $csr->getParsed()->{HEADER}->{CERT_NOTAFTER}) {
+            $errno  = 6744;
+            $errval = i18nGettext("The value of notbefore must be smaller than the value of notafter.");
+            return undef;
+        }
+    }
+    
+    ## determine the expiration date
+
+    my $expire = 0;
+    if ($csr->getParsed()->{HEADER}->{CERT_NOTAFTER}) {
+        my $notafter = $csr->getParsed()->{HEADER}->{CERT_NOTAFTER};
+        if ($notafter !~ /^[0-9]{12}$/) {
+            $errno  = 6742;
+            $errval = i18nGettext("The value of notafter must have the format YYMMDDhhmmss.");
+            return undef;
+        }
+        my ($yy,$mm,$dd,$HH,$MM,$SS) =
+           ( $notafter =~ m/(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+        $expire = timegm($SS,$MM,$HH,$dd,$mm-1,$yy+100);
+
+    } else {
+
+        my $days = 0;
+        $days = $csr->getParsed()->{HEADER}->{DAYS};
+	if( not $days and $role ) {
+		my $tmp = libLoadOpenSSLconfig( $role );
+		if ( $tmp and defined $tmp->{DAYS} ) {
+			$days = $tmp->{DAYS};
+		}
+	}
+        # $days = libLoadOpenSSLconfig($role)->{DAYS} if (not $days and $role);  
+        my $now = time ();
+
+        $expire = $now + $days * 86400;
+    }
+
+    my $buffer = 5; ## these are seconds
+    $expire += $buffer;
+
+    my $cafile = getRequired ('CACertificate');
+
+    debug("crypto-tools.lib::crypto_check_lifetime::" .
+                        "get CA Certificate ($cafile - " .
+                                      "$cryptoShell");
+
+    my $cacert = new OpenCA::X509 (SHELL   => $cryptoShell,
+                                   GETTEXT => \&i18nGettext,
+                                   INFILE  => $cafile);
+
+    debug("crypto-tools.lib::crypto_check_lifetime::got CA Certificate " .
+                                                        "($cacert)");
+
+    if (not $cacert) {
+        $errno  = 6740;
+        $errval = i18nGettext("Cannot create X.509 object from CA certificate (__ERRNO__). __ERRVAL__",
+                              "__ERRNO__", $OpenCA::X509::errno,
+                              "__ERRVAL__", $OpenCA::X509::errval);
+        debug("crypto-tools.lib::crypto_check_lifetime::ERROR in X509 Mod" .
+                        $OpenCA::X509::errno . "::" . $OpenCA::X509::errval );
+        return undef;
+    }
+
+    debug("crypto-tools.lib::crypto_check_lifetime convert time to seconds");
+
+    ## convert all to seconds
+    my $expire_ca = $cryptoShell->getNumericDate(
+                                        $cacert->getParsed()->{NOTAFTER});
+    my ($yyyy,$mm,$dd,$HH,$MM,$SS) =
+        ( $expire_ca =~ m/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ );
+    my $ca_notafter = timegm($SS,$MM,$HH,$dd,$mm-1,$yyyy-1900);
+
+    debug("crypto-tools.lib::crypto_check_lifetime final steps");
+
+    if ($expire > $ca_notafter) {
+        $errno  = 6741;
+        $errval = gettext(
+                "New certificate would exceed CA-certificate lifetime.");
+        return undef;
+    } else {
+        return 1;
+    }
+}
+
+sub crypto_check_key
+{
+    our ($errno, $errval, $db, $DEBUG);
+    my $csr = $_[0];
+    my $locDB = ( $_[1] or $db );
+
+    print STDERR "crypto_check_key: locDB = $locDB (" .  $_[1] .")\n"
+		if ( $DEBUG );
+
+    if (not $csr->getParsed()->{HEADER}->{RENEW}) {
+        ## Check if there are certificates with the same keys
+        my @certList = $locDB->searchItems( 
+				DATATYPE =>    "CERTIFICATE",
+				PUBKEY   => $csr->getParsed()->{PUBKEY});
+
+        my $errorString = gettext ("A Certificate with the same public key exists! <br>\nThis is a keycompromise of the certificates with the serial:")."\n<ul>\n";
+        foreach my $h (@certList) {
+            $errorString .= "<li>".$h->getSerial()."</li>\n";
+        }
+        $errorString .= gettext ("Please revoke the certificates and delete the request.")."\n";
+
+        if ($#certList > -1) {
+            $errno  = 6746;
+            $errval = $errorString;
+            return undef;
+        }
+    }
+    return 1;
+}
+
+sub crypto_write_tmp_csr
+{
+    our ($errno, $errval, $tools);
+    my $csr = $_[0];
+
+    my $tmpdir = getRequired ('TempDir');
+    my $ser    = crypto_get_next_cert_serial ();
+
+    ##// Let's save the request body to a temp file
+    if (not $tools->saveFile( FILENAME => "$tmpdir/${ser}.req", 
+                              DATA     => $csr->getParsed()->{BODY}."\n" )) {
+        $errno  = 6751;
+        $errval = i18nGettext ("Cannot write to __FILE__.",
+                               "__FILE__", "$tmpdir/${ser}.req");
+        return undef;
+    }
+    return 1;
+}
+
+sub crypto_backup_openssl
+{
+    our ($errno, $errval, $tools);
+    my $tmpdir = getRequired ('TempDir');
+
+    if ( not $tools->copyFiles (SRC  => getRequired ('sslindex'),
+                                DEST => $tmpdir."/openssl_backup_".$$."_index.txt"))
+    {
+        $errno  = 6756;
+        $errval = gettext("Cannot create backup for OpenSSL's indexfile!");
+        return undef;
+    }
+
+    if (not $tools->copyFiles (SRC  => getRequired ('sslserial'),
+                               DEST => $tmpdir."/openssl_backup_".$$."_serial"))
+    {
+        $errno  = 6757;
+        $errval = gettext("Cannot create backup for OpenSSL's serialfile!");
+        return undef;
+    }
+
+    return 1;
+}
+
+sub crypto_create_cert
+{
+    our ($errno, $errval, $tools, $cryptoShell, $DEBUG);
+    my $keys = { @_ };
+    my $tmpdir      = getRequired ('TempDir');
+    my $newCertsDir = getRequired('NewCertsDir');
+    my $ser         = crypto_get_next_cert_serial ();
+    my $token       = $keys->{TOKEN};
+    my $csr         = $keys->{CSR};
+    my $days	    = $csr->getParsed()->{HEADER}->{DAYS};
+    my $notafter    = $csr->getParsed()->{HEADER}->{CERT_NOTAFTER};
+    my $notbefore   = $csr->getParsed()->{HEADER}->{CERT_NOTBEFORE};
+    $days = 0 if (length ($notafter));
+    $notafter  .= "Z" if (length ($notafter));
+    $notbefore .= "Z" if (length ($notbefore));
+
+    if ($days or $notafter or $notbefore) {
+    	## Issue the Certificate with individual lifetime
+    	if ( not $token->issueCert(
+                         REQFILE     => "$tmpdir/${ser}.req",
+                         SUBJECT     => $keys->{SUBJECT},
+                         INFORM      => $keys->{FORMAT},
+                         EXTFILE     => $keys->{EXTFILE},
+			 DAYS	     => $days,
+                         START_DATE  => $notbefore,
+                         END_DATE    => $notafter,
+                         PRESERVE_DN => "Y",
+                         NOUNIQUEDN  => crypto_is_unique_subject()) )
+    	{
+        	libIssueCertificateRestoreOpensslState ();
+        	$errno  = 6761;
+        	$errval = i18nGettext ("Error while issuing Certificate(ilt) to __NAME__ (filename: __FILE__). <br><br>\nOpenCA::OpenSSL returns errocode __ERRNO__ (__ERRVAL__).",
+                               "__NAME__", $csr->getParsed->{DN_HASH}->{CN}[0],
+                               "__FILE__", "$tmpdir/${ser}.req",
+                               "__ERRNO__", $token->errno,
+                               "__ERRVAL__", $token->errval);
+        	return undef;
+    	}
+    } else {
+    	## Issue the Certificate with configfile lifetime
+    	if ( not $token->issueCert(
+                         REQFILE     => "$tmpdir/${ser}.req",
+                         SUBJECT     => $keys->{SUBJECT},
+                         INFORM      => $keys->{FORMAT},
+                         EXTFILE     => $keys->{EXTFILE},
+                         PRESERVE_DN => "Y",
+                         NOUNIQUEDN  => crypto_is_unique_subject()) )
+    	{
+        	libIssueCertificateRestoreOpensslState ();
+        	$errno  = 6761;
+        	$errval = i18nGettext ("Error while issuing Certificate to __NAME__ (filename: __FILE__). <br><br>\nOpenCA::OpenSSL returns errocode __ERRNO__ (__ERRVAL__).",
+                               "__NAME__", $csr->getParsed->{DN_HASH}->{CN}[0],
+                               "__FILE__", "$tmpdir/${ser}.req",
+                               "__ERRNO__", $token->errno,
+                               "__ERRVAL__", $token->errval);
+        	return undef;
+    	}
+    } ## end of else
+
+    ## Unlinking Temporary File
+    unlink( "$tmpdir/${ser}.req" );
+
+    ## add a possible keypair to the cert
+    my $certdata = $tools->getFile ("${newCertsDir}/${ser}.pem");
+    $certdata   .= $csr->getKey();
+    $tools->saveFile (FILENAME => "${newCertsDir}/${ser}.pem", 
+                                                DATA => $certdata);
+    if ( $DEBUG ) {
+    	print STDERR "DEBUG::CERTDATA=>$certdata\n";
+    	print STDERR "DEBUG::FILENAME=>${newCertsDir}/${ser}.pem\n";
+    }
+
+    ## Put the certificate in the certificate DB
+    my $cert = new OpenCA::X509 ( SHELL   => $cryptoShell,
+                                  GETTEXT => \&i18nGettext,
+                                  INFILE  => "${newCertsDir}/${ser}.pem" );
+
+    if (not $cert) { 
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6765;
+        $errval = i18nGettext ("Error while opening __FILE__.\nOpenCA::X509 returns errorcode __ERRNO__ (__ERRVAL__).",
+                               "__FILE__", "${newCertsDir}/${ser}.pem",
+                               "__ERRNO__", $OpenCA::X509::errno,
+                               "__ERRVAL__", $OpenCA::X509::errval);
+        return undef;
+    }
+
+    ## remove dynamic extfile
+    unlink $keys->{EXTFILE};
+
+    return $cert;
+}
+
+sub crypto_add_serial_to_header
+{
+    our ($errno, $errval);
+    my $keys = { @_ };
+    my $cert = $keys->{CERT};
+    my $csr  = $keys->{CSR};
+
+    # print STDERR "csr->getSerial() => " . $csr->getSerial() . "\n";
+
+    if ( not $cert->setHeaderAttribute (CSR_SERIAL => $csr->getSerial())) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6767;
+        $errval = gettext ("Error while storing the request's serial in cert-object");
+        return undef;
+    }
+    return 1;
+}
+
+sub crypto_add_role_to_header
+{
+    our ($errno, $errval, $tools);
+    my $keys = { @_ };
+    my $cert = $keys->{CERT};
+    my $csr  = $keys->{CSR};
+    my $role = crypto_get_csr_role ($csr);
+    my $tmpdir  = getRequired ('TempDir');
+
+    if ( not $cert->setHeaderAttribute (ROLE => $role)) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6772;
+        $errval = gettext ("Error while storing role in cert-object");
+        return undef;
+     }
+
+     return 1;
+}
+
+sub crypto_add_loa_to_header
+{
+    our ($errno, $errval, $tools);
+    my $keys = { @_ };
+    my $cert = $keys->{CERT};
+    my $csr  = $keys->{CSR};
+    my $loa = crypto_get_csr_loa ($csr);
+    my $tmpdir  = getRequired ('TempDir');
+
+    if ( not $cert->setHeaderAttribute (LOA => $loa)) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6775;
+        $errval = gettext ("Error while storing loa in cert-object");
+        return undef;
+     }
+
+     return 1;
+}
+
+sub crypto_add_pin_to_header
+{
+    our ($errno, $errval, $cryptoShell, $tools, $query, $LANGUAGE);
+    my $keys  = { @_ };
+    my $cert  = $keys->{CERT};
+    my $csr   = $keys->{CSR};
+
+    my $msg;
+    my $hashed_pin;
+
+    my $use_req_pin       = getRequired ('USE_REQUEST_PIN');
+    my $secure_pin_length = getRequired ('SECURE_PIN_LENGTH');
+    my $secure_pin_random = getRequired ('SECURE_PIN_RANDOM');
+    my $mail_dir          = getRequired ('CRIN_MAIL_DIR');
+    my $newCertsDir = getRequired('NewCertsDir');
+    my $tmpdir  = getRequired ('TempDir');
+    my $ser = crypto_get_actual_cert_serial();
+
+    ## check that this is an RSA key
+    ## if the user key is no RSA key
+    ## then we cannot encrypt the mail and we should abort here
+
+    debug ("crypto-utils.lib: cert->PUBKEY_ALGORITHM: " . 
+                        $cert->getParsed()->{PUBKEY_ALGORITHM});
+    if ($cert->getParsed()->{PUBKEY_ALGORITHM} !~ /RSA|DSA|ECDSA/i) {
+        # print STDERR "crypto-utils.lib: error, supported " .
+        #         "algorithms are RSA, DSA, and ECDSA only!\n";
+        debug( "crypto-utils.lib: error, supported " .
+                "algorithms are RSA, DSA, and ECDSA only!" );
+    }
+
+    ## which PIN should be used ?
+    if ($use_req_pin and ($use_req_pin =~ /^YES$/i)) {
+        ##// use request's PIN
+        ## load prepared mail
+        $msg = $tools->getFile ($query->subVar(getRequired ('REQUEST_PIN_MAIL'), "__LANGUAGE__", $LANGUAGE));
+	$hashed_pin= $csr->getParsed()->{PIN};
+        debug( "crypto-utils.lib: hashed pin in req ($hashed_pin)");
+    } else {
+        ## generate new PIN
+        my $pin;
+        ## get PIN
+        debug( "crypto-utils.lib: generating a new pin " .
+                                "(len=$secure_pin_length/$secure_pin_random)");
+        if ($secure_pin_length) {
+            if ($secure_pin_random) {
+                $pin = $cryptoShell->getPIN (
+                            PIN_LENGTH    => $secure_pin_length,
+                            RANDOM_LENGTH => $secure_pin_random
+                                      );
+            } else {
+                $pin = $cryptoShell->getPIN (PIN_LENGTH => $secure_pin_length);
+            }
+        } elsif ($secure_pin_random) {
+            $pin = $cryptoShell->getPIN (RANDOM_LENGTH => $secure_pin_random);
+        } else {
+            debug( "crypto-utils.lib: ERROR in generating a new pin ");
+            libIssueCertificateRestoreOpensslState ();
+            $errno  = 6781;
+            $errval = gettext ("The parameter of the PIN are unknown!");
+            return undef;
+        }
+        if (not $pin) {
+            debug( "crypto-utils.lib: ERROR no pin found/generated!");
+            libIssueCertificateRestoreOpensslState ();
+            $errno  = 6789;
+            $errval = i18nGettext ("Cannot create PIN!\nOpenCA::OpenSSL returns errorcode __ERRNO__ (__ERRVAL__).",
+                                   "__ERRNO__", $cryptoShell->errno,
+                                   "__ERRVAL__", $cryptoShell->errval);
+            return undef;
+        }
+        ## load prepared mail
+        $msg = $tools->getFile ($query->subVar(getRequired ('SECURE_PIN_MAIL'), "__LANGUAGE__", $LANGUAGE));
+        if (not $msg) {
+                libIssueCertificateRestoreOpensslState ();
+                $errno  = 6791;
+                $errval = gettext ("PIN-mail cannot be loaded! Used Language: ".$LANGUAGE);
+                return undef;
+	}
+
+	## replace the PIN in the mail
+        $msg = $query->subVar( $msg, '$PIN', $pin );
+        $msg = $query->subVar( $msg, '@__SERIAL__@', $cert->getSerial() );
+        $msg = $query->subVar( $msg, '@__DN__@' , $cert->getParsed()->{DN});
+	## hash the PIN
+        $hashed_pin = $cryptoShell->getDigest (
+                           DATA =>      $pin,
+                           ALGORITHM => "sha1");
+        if (not $hashed_pin) {
+            libIssueCertificateRestoreOpensslState ();
+            $errno  = 6792;
+            $errval = i18nGettext ("Cannot hash PIN! OpenCA::OpenSSL returns errorcode __ERRNO__ (__ERRVAL__).",
+                                   "__ERRNO__", $cryptoShell->errno,
+                                   "__ERRVAL__", $cryptoShell->errval);
+            return undef;
+        }
+    }
+
+    ## replace the standad variables in the mail
+    ## actully there are no such variables
+    ## later there should be mail, dn, serial and cn used
+    ## check msg
+    ## only print an general error if no previews error has been triggerd
+    if (not $msg) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6793;
+        $errval = gettext ("PIN-mail cannot be created!");
+        return undef;
+    }
+
+    ## encrypt the mail
+    my $encrypt = 1;
+    my $enc_msg;
+    my $no_enc_msg;
+   
+    my $encoding = setlocale (LC_MESSAGES);
+    if ($encoding eq "C")
+    {
+        $encoding = 'UTF-8';
+    } else {
+        $encoding =~ s/^.*\.// if ($encoding ne "C"); ## remove language
+        $encoding =~ s/(UTF|ISO|EUC)([^-]{1})/$1-$2/i;  ## on FreeBSD "locale" returns charset names
+                                                        ## which do not comply with IANA standard for
+                                                        ## MIME
+    }
+
+    if ( defined $cert->getParsed()->{EMAILADDRESS} and 
+                                        $cert->getParsed()->{EMAILADDRESS} ) {
+        my $subject = gettext ("OpenCA Certificate and PIN information");
+        my $enc_subject = MIME::Base64::encode($subject,"");
+        $subject = "=?" . $encoding . "?B?" . $enc_subject . "?=";
+        my @cc = @{$cert->getParsed()->{EMAILADDRESSES}};
+        shift @cc;
+
+        if( $cert->getParsed()->{PUBKEY_ALGORITHM} !~ /RSA/i ) {
+                $encrypt = 0;
+        } else {
+                $encrypt = 1;
+        }
+
+        debug("crypto-utils.lib: generating SMIME (encrypt is $encrypt)");
+        $enc_msg = $cryptoShell->getSMIME (
+                       ENCRYPT      => $encrypt,
+                       SIGN         => 1,
+                       ENCRYPT_CERT => "${newCertsDir}/".$ser.".pem",
+                       MESSAGE      => $msg,
+                       TO           => $cert->getParsed()->{EMAILADDRESS},
+                       CC           => \@cc,
+                       FROM         => crypto_get_admin_account(),
+                       SUBJECT      => $subject);
+
+        debug("crypto-utils.lib: SMIME generated (::\n$enc_msg::\n)");
+
+            if (not $enc_msg) {
+                libIssueCertificateRestoreOpensslState ();
+                $errno  = 6794;
+                $errval = i18nGettext ("Cannot encrypt PIN-mail! Aborting!\nOpenCA::OpenSSL returns errorcode __ERRNO__ (__ERRVAL__).",
+                               "__ERRNO__", $cryptoShell->errno,
+                               "__ERRVAL__", $cryptoShell->errval);
+                return undef;
+                }
+
+    } else {
+        ## send to the admin itself and print a warning
+        my $subject = i18nGettext ("OpenCA Certificate and PIN information for certificate __CERT_SERIAL__" ,
+                                                    "__CERT_SERIAL__", $cert->getSerial());
+        my $enc_subject = MIME::Base64::encode($subject,"");
+        $subject = "=?" . $encoding . "?B?" . $enc_subject . "?=";
+
+        # if( $cert->getParsed()->{PUBKEY_ALGORITHM} !~ /RSA/i ) {
+        #         $encrypt = 0;
+        # } else {
+        #         $encrypt = 1;
+        # }
+
+        debug("crypto-utils.lib: generating SMIME for admin (encrypt is 0)");
+        debug("crypto-utils.lib: feature disabled (dsa compatibility");
+
+        # $enc_msg = $cryptoShell->getSMIME (
+        #                ENCRYPT      => 0,
+        #                SIGN         => 0,
+        #                MESSAGE      => $msg,
+        #                TO           => crypto_get_admin_account(),
+        #                FROM         => crypto_get_admin_account(),
+        #                SUBJECT      => $subject);
+    }
+
+    ## store the mail in the maildirectory
+    my $mail_ser = $cert->getSerial();
+    $mail_ser =~ s/^0*//;
+    if( $enc_msg ) {
+        my $filename = $mail_dir."/".$mail_ser.".msg";
+
+        debug("crypto-utils.lib: saving generated SMIME ($filename)");
+
+        if (not $tools->saveFile ( FILENAME => "$filename",
+                                                DATA     => $enc_msg)) {
+
+                libIssueCertificateRestoreOpensslState ();
+
+                $errno  = 6795;
+                $errval = i18nGettext ("Cannot store the PIN-mail in the directory for the mails!");
+                return undef;
+        }
+    }
+
+    ## store the PIN in the header
+    if ( not $cert->setHeaderAttribute (PIN => $hashed_pin)) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6797;
+        $errval = i18nGettext ("Error while storing role in cert-object.\nOpenCA::X509 returns errorcode __ERRNO__ (__ERRVAL__).",
+                               "__ERRNO__", $OpenCA::X509::errno,
+                               "__ERRVAL__", $OpenCA::X509::errval);
+        return undef;
+    }
+    return 1;
+}
+
+sub crypto_send_info_mail {
+    our ($errno, $errval, $tools, $query, $LANGUAGE);
+    my $cert = $_[0];
+    my $new_msg;
+    my $default_mail_dir  = getRequired ('DEFAULT_MAIL_DIR');
+
+    ## load prepared mail for confirm a signed certificate
+    $new_msg = $tools->getFile ($query->subVar(getRequired ('CONFIRM_CERT_SIGN'), "__LANGUAGE__", $LANGUAGE));
+    if (not $new_msg) {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6799;
+        $errval = i18nGettext ("Cannot load file __FILE__!",
+                               "__FILE__", getRequired ('CONFIRM_CERT_SIGN'));
+        return undef;
+    }
+
+    $new_msg = $query->subVar( $new_msg, '@__SERIAL__@', $cert->getSerial() );
+    $new_msg = $query->subVar( $new_msg, '@__DN__@' , $cert->getParsed()->{DN});
+
+    my $no_enc_msg = "";
+    my $encoding = setlocale (LC_MESSAGES);
+    
+    if ($encoding eq "C")
+    {
+        $encoding = 'UTF-8';
+    } else {
+        $encoding =~ s/^.*\.// if ($encoding ne "C"); ## remove language
+        $encoding =~ s/(UTF|ISO|EUC)([^-]{1})/$1-$2/i;  ## on FreeBSD "locale" returns charset names
+                                                        ## which do not comply with IANA standard for
+                                                        ## MIME
+        $no_enc_msg = "Content-Type: text/plain; charset=$encoding; format=flowed\n".
+                      "Content-Transfer-Encoding: 8bit\n";
+    }
+
+    my $subject = gettext ("OpenCA Certificate information");
+    my $enc_subject = MIME::Base64::encode($subject,""); 
+    $subject = "=?" . $encoding . "?B?" . $enc_subject . "?=";
+    my $to = crypto_get_admin_account();
+       $to = $cert->getParsed()->{EMAILADDRESS} 
+          if ( defined $cert->getParsed()->{EMAILADDRESS} and $cert->getParsed()->{EMAILADDRESS} );
+
+    $no_enc_msg .= "To: $to\n".
+                   "From: ".crypto_get_admin_account()."\n".
+                   "Subject: $subject\n".
+                   "\n$new_msg\n";
+
+    if (not $tools->saveFile ( FILENAME => $default_mail_dir."/".$cert->getSerial().".msg",
+                               DATA     => $no_enc_msg))
+    {
+        libIssueCertificateRestoreOpensslState ();
+        $errno  = 6800;
+        $errval = i18nGettext ("Cannot store the CONFIRM-mail __FILE__ in the directory for the mails!",
+                               "__FILE__", $default_mail_dir."/".$cert->getSerial().".msg");
+        return undef;
+    }
+
+    return 1;
+}
+
+sub crypto_copy_key_from_csr {
+
+    our ($cryptoShell, $errno, $errval, $DEBUG);
+    my $keys = { @_ };
+    my $csr = $keys->{CSR};
+    my $cert = $keys->{CERT};
+
+    if ( (not $csr) or (not $cert) ) {
+	print STDERR "copy_key_from_csr: ERROR:: CSR=$csr; CERT=$cert\n";
+	return 0;
+    }
+
+    my $key = $csr->getKey( REQUEST=>$csr->{item} );
+
+    if( $key eq "" ) {
+	print STDERR "copy_key_from_csr: no Key in CSR\n" if ( $DEBUG );
+	return 1;
+    }
+
+    my $plain = $cert->{item};
+    my $text  = $cert->getRawHeader (ITEM => $plain)."\n".
+                $cert->getBody      (ITEM => $plain)."\n".
+                $csr->getKey        (REQUEST => $csr->{item});
+
+    ## FIXME: there should be a setItem function
+    $cert->{item} = $text;
+    $cert->init();
+
+    return 1;
+}
+
+sub crypto_delete_key_from_csr
+{
+    our ($cryptoShell, $errno, $errval);
+    my $csr = shift;
+
+    return 1 if (not $csr->getParsed()->{PRIVKEY});
+
+    my $plain = $csr->{item};
+    my $text = $csr->getRawHeader (REQUEST => $plain)."\n".
+               $csr->getBody      (REQUEST => $plain)."\n".
+               $csr->getSignature (REQUEST => $plain);
+    ## FIXME: there should be a setItem function
+    $csr->{item} = $text;
+
+    return 1;
+}
+
+sub crypto_update_database {
+    our ($errno, $errval, $db, $tools, $DEBUG);
+    my $keys = { @_ };
+    my $cert = $keys->{CERT};
+    my $csr  = $keys->{CSR};
+    my $locDB = ( $keys->{DB} or $db );
+    my $tmpdir = getRequired ('TempDir');
+
+    print STDERR "crypto_update_database::Storing certificate [".
+                        $cert->getSerial() . "]\n" if ( $DEBUG );
+
+    if ( not defined $locDB->storeItem (DATATYPE => "VALID_CERTIFICATE",
+                                     OBJECT   => $cert,
+                                     MODE     => "INSERT" )) {
+        $errno  = 6801;
+        $errval = i18nGettext ("Error while storing __CERT_SERIAL__ cert in database! The database returns errorcode __ERRNO__ (__ERRVAL__).",
+                      "__CERT_SERIAL__", $cert->getSerial(),
+                      "__ERRNO__", $locDB->errno(),
+                      "__ERRVAL__", $locDB->errval());
+        return undef;
+    }
+
+    ## destroying backupfiles from openssl
+    $tools->deleteFiles (DIR => $tmpdir, FILTER => "openssl_backup_".$$."_*");
+
+    ## Put the Request in the archived requests DBM. This is built
+    ## as $serial=>$req where the serial is the certificate's
+    ## serial number and the req is the request file
+    if( not $locDB->updateItem  ( OBJECT => $csr, 
+				  DATATYPE => "ARCHIVED_REQUEST" )) {
+
+        $errno  = 6803;
+        $errval = i18nGettext ("Error while storing req to archived requests!\nThe database returns errorcode __ERRNO__ (__ERRVAL__)." . "<br />" .
+		"CSR SERIAL ($csr): " . $csr->getSerial() . 
+		"<br />\n" .  "<pre>" . $csr->{req} . 
+					"</pre><br />",
+                               "__ERRNO__", $locDB->errno(),
+                               "__ERRVAL__", $locDB->errval());
+        return undef;
+    }
+
+    return 1;
+}
+
+sub libLockOpenSSL {
+        our $errno;
+        our $errval;
+
+        my $keys = {@_};
+
+        if (not open(OPENSSL_LOCKFILE, ">>" . getRequired("lockFile"))) {
+                $errno  = 6710; 
+                $errval = gettext("Cannot open lockfile.");
+                return undef;
+        }
+    
+        flock OPENSSL_LOCKFILE, LOCK_EX;
+        return 1;
+}
+
+sub libFreeOpenSSL {
+        flock OPENSSL_LOCKFILE, LOCK_UN;
+        close OPENSSL_LOCKFILE;
+
+        return 1;
+}
+
+# wrapper for libIssueCertificate that locks OpenSSL database before
+# issuing the certificate
+sub libIssueCertificate {
+    our ( $cryptoShell, $tools );
+
+    our $errno;
+    our $errval;
+
+    my $keys = { @_ };
+    my $ret = undef;
+
+    local *LOCKFILE;
+    if (not open(LOCKFILE, ">>" . getRequired("lockFile"))) {
+	$errno  = 6710; 
+	$errval = gettext("Cannot open lockfile.");
+	return undef;
+    }
+    
+    flock LOCKFILE, LOCK_EX;
+    # libLockOpenSSL();
+
+    libNewRandomSerial ( @_ );
+
+    # Now Issue the certificate
+    $ret = libIssueCertificate_notLocked( @_ );
+
+    # Free the Lock
+    # libFreeOpenSSL();
+
+    flock LOCKFILE, LOCK_UN;
+    close LOCKFILE;
+    
+    return $ret;
+}
+
+
+## 1. load ca_token
+## 2. load request
+## 3. load parameters
+##   format of csr
+##   role
+##   subject
+##   subject_alt_name
+## 4. load configuration
+##   extfile
+##   openssl
+## 5. check parameters
+##   lifetime
+##   key
+## 6. issue cert
+##   write req to tempfile
+##   backup openssl data
+##   issue cert
+## 7. add header attributes
+##   add serial to header
+##   add role to header
+##   add pin to header and mail it (if configured)
+## 8. update database
+## tempfile cleanup
+
+sub libIssueCertificate_notLocked {
+
+    our ($errno, $errval, $ca_token, $DEBUG );
+    my $keys = { @_ };
+
+    if( not defined ( $keys->{CA_TOKEN}) or
+                                ( $keys->{CA_TOKEN} eq "" ) ) {
+        $ca_token = crypto_get_ca_token();
+    } elsif ( not $ca_token ) {
+           $ca_token = $keys->{CA_TOKEN};
+    }
+
+    ## 1. load ca_token
+
+    if ( not $ca_token ) {
+        return undef;
+    } else {
+        print STDERR "libIssueCertificate::CA_TOKEN retrieved OK!\n"
+		if ( $DEBUG );
+    }
+
+    ## 2. load request
+
+    my $csr = crypto_get_csr (KEY      => $keys->{KEY},
+                              DATATYPE => $keys->{DATATYPE},
+			      DB       => $keys->{DB} );
+    return undef if (not $csr);
+
+    ## 3. load parameters
+
+    my $format  = crypto_get_csr_format           ($csr);
+    my $role    = crypto_get_csr_role             ($csr);
+    my $subject = crypto_get_csr_subject          (CSR => $csr, $keys->{DB});
+
+    return undef if (not $subject);
+
+    my $subject_alt_name = crypto_get_csr_subject_alt_name ($csr);
+    return undef if (not crypto_get_admin_account());
+
+    ## 4. load configuration
+
+    my ($loa_policy, $loa_oid) = crypto_get_csr_loa_policy ($csr);
+
+    return undef if (not defined $loa_policy and $errno);
+    my $extfile = crypto_get_extfile (CSR              => $csr,
+                                      LOA_OID          => $loa_oid,
+                                      LOA_POLICY       => $loa_policy,
+                                      SUBJECT_ALT_NAME => $subject_alt_name);
+
+    my $opensslfile = crypto_get_opensslfile ($csr);
+
+    ## 5. check parameters
+
+    return undef if (not crypto_check_lifetime ($csr,$role));
+    return undef if (not crypto_check_key ($csr, $keys->{DB} ));
+
+    ## 6. issue cert
+
+    return undef if (not crypto_write_tmp_csr ($csr));
+    $ca_token->setParams( CONFIG=> $opensslfile);
+    return undef if (not crypto_backup_openssl());
+    my $cert = crypto_create_cert (
+                   SUBJECT => $subject,
+                   FORMAT  => $format,
+                   EXTFILE => $extfile,
+                   TOKEN   => $ca_token,
+                   CSR     => $csr);
+    return undef if (not $cert);
+
+    ## 7. add header attributes
+
+    print STDERR "CERT => $cert\n";
+
+    return undef if (not crypto_add_serial_to_header(
+                             CERT => $cert,
+                             CSR  => $csr));
+    return undef if (not crypto_add_role_to_header(
+                             CERT => $cert,
+                             CSR  => $csr));
+    return undef if (not crypto_add_pin_to_header(
+                             CERT => $cert,
+                             CSR  => $csr));
+    return undef if (not crypto_add_loa_to_header(
+                             CERT => $cert,
+                             CSR  => $csr));
+    return undef if (not crypto_copy_key_from_csr(
+			     CERT => $cert,
+			     CSR  => $csr ));
+
+    return undef if (not crypto_delete_key_from_csr($csr));
+
+    return undef if (not crypto_send_info_mail($cert));
+
+    ## 8. update database
+
+    return undef if (not crypto_update_database (
+			     DB   => $keys->{DB},
+                             CERT => $cert,
+                             CSR  => $csr));
+
+    return $cert;
+}
+
+sub libNewRandomSerial {
+
+        our ( $db, $tools, $cryptoShell );
+
+	my $keys = { @_ };
+
+	my $locDB = ( $keys->{DB} or $db );
+
+        my $useRandSerial = getRequired ('USE_RANDOM_SERIAL');
+        my $rand_len      = getRequired ('RANDOM_SERIAL_SIZE');
+        my $fileName      = getRequired ('sslserial');
+
+        my $ser = undef;
+        my $vec = undef;
+        my $vecAbs = undef;
+        my $dec = undef;
+        my $counter = 0;
+        my $certDB = undef;
+
+        if ( $useRandSerial !~ /Y|1/i ) {
+                return 1;
+        }
+
+        $rand_len = 10 if ( $rand_len < 10 );
+
+        # print STDERR "libIssueCert::Rand Len => $rand_len\n";
+
+        $counter = 0;
+        do { 
+                if ( $counter > 100 ) {
+                        ## If we need more random, we shall increase
+                        ## if too many certs in the default rand_len
+                        ## space
+                        $rand_len++;
+                        $counter = 0;
+                }
+
+                $ser = $cryptoShell->getRandomBytes ( $rand_len );
+                $vec = Bit::Vector->new_Hex( $rand_len * 8, "$ser");
+                $vecAbs = Bit::Vector->new ( $rand_len * 8 );
+                $vecAbs->Abs($vec);
+                $dec = $vecAbs->to_Dec();
+                $counter++;
+
+                # print STDERR "libIssueCert::vec =>" . $vec->Size(). 
+                #          " vecAbs => " . $vecAbs->Size() . " (dec $dec)\n";
+                # print STDERR "libIssueCert::ser => $ser ($dec) [$counter]\n";
+
+                $certDB = $locDB->getItem ( DATATYPE=>"CERTIFICATE", 
+                                         KEY => $dec);
+        } while ( $certDB );
+
+        # print STDERR "DATA=>" . uc($ser) . " [$fileName]\n";
+
+        $tools->saveFile ( DATA=>uc($ser), FILENAME => $fileName );
+
+        return 1;
+}
+
+sub libIssueCertificateRestoreOpensslState {
+
+        our ($tools);
+
+        my $tmpdir = getRequired ('TempDir');
+
+	$tools->moveFiles (DEST => getRequired ('sslindex'),
+			SRC => $tmpdir."/openssl_backup_".$$."_index.txt");
+	$tools->moveFiles (DEST => getRequired ('sslserial'),
+			SRC => $tmpdir."/openssl_backup_".$$."_serial");
+
+}
+
+sub libLoadOpenSSLconfig {
+
+        our ($role_config, $tools);
+	my $role = $_[0];
+
+	## avoid multiple fileloadings
+	if( $role_config and $role_config->{$role} ) {
+		return $role_config->{$role};
+	}
+
+	my $opensslfile = $role;
+	$opensslfile =~ s/ /_/g;
+	$opensslfile .= ".conf";
+	if( $opensslfile ) {
+		$opensslfile = getRequired ( 'OpenSSL_DIR' )."/${opensslfile}";
+	}
+
+        my $content = $tools->getFile ($opensslfile);
+	my @lines   = split '\n', $content;
+
+	foreach my $line (@lines) {
+		if ($line =~ /default_days/) {
+			$role_config->{$role}->{DAYS} = $line;
+			$role_config->{$role}->{DAYS} =~ s/\s*default_days\s*=\s*//;
+			$role_config->{$role}->{DAYS} =~ s/[^0-9].*$//;
+		}
+	}
+
+	if ( not $role_config->{$role}->{DAYS} ) {
+		$role_config->{$role}->{DAYS} = 365;
+	}
+
+	return $role_config->{$role};
+}
+
+############################################
+##      end of certificate creation       ##
+############################################
+
+############################################
+##     begin of certificate revocation    ##
+############################################
+
+sub libRevokeCertificate 
+{
+  our ($errno, $errval, $db, $crypto_layer, $tools, $DEBUG);
+	my $keys = { @_ };
+
+	## Get Configuration needed parameters ...
+	my $tmpdir      = getRequired('TempDir');
+
+	## unique DN?
+	my $nouniqueDN = 0;
+	if (getRequired ('UNIQUE_DN') =~ /NO|N|OFF/i)
+  {
+		$nouniqueDN = 1;
+	}
+
+	## Get the parameters
+	my $key	       = $keys->{KEY};
+  my $crl_reason = $keys->{CRL_REASON};
+  my $descr      = $keys->{DESCRIPTION};
+  my $ca_token   = $keys->{CA_TOKEN};
+  my $revDate    = gmtime();
+
+  ## Use a passed DB or the global DB object
+  my $locDB      = $keys->{DB};
+
+	## the first CRR is 1
+	if (not $key) {
+		$errno  = 6801;
+		$errval = gettext ("Needed key to access database!");
+		return undef;
+	}
+
+  ## Ceck for the DB object to use
+  if ((not defined ($locDB)) or ($locDB eq ""))
+  {
+    $locDB = $db;
+    print STDERR "libRevokeCertificate()->Using Global DB object.\n" if ($DEBUG);
+  }
+  else
+  {
+    print STDERR "libRevokeCertificate()->Using LOCAL DB object.\n" if ($DEBUG);
+  }
+
+  ## Check for the CA token object to use
+  if ((not defined($ca_token)) or ($ca_token eq ""))
+  {
+    print STDERR "libRevokeCertificate()->Using Global CA_TOKEN object.\n" if ($DEBUG);
+	  $ca_token = $crypto_layer->getToken ('CA');
+	  if (not ($ca_token->keyOnline || $ca_token->login))
+    {
+		  $errno  = 6702;
+		  $errval = gettext ("Cannot use the private key of the CA!");
+		  return undef;
+	  }
+  }
+  else
+  {
+    print STDERR "libRevokeCertificate()->Using LOCAL CA_TOKEN object.\n" if ($DEBUG);
+  }
+
+	my $crr = $locDB->getItem (DATATYPE => "CRR", KEY => $key);
+	if( not $crr ) 
+  {
+		$errno  = 6811;
+		$errval = i18nGettext ("Cannot Access CRR __CRR_SERIAL__ in the database!\nDatabase returns errorcode __ERRNO__ (__ERRVAL__).",
+		                       "__CRR_SERIAL__", $key,
+		                       "__ERRNO__", $locDB->errno(),
+		                       "__ERRVAL__", $locDB->errval);
+		return undef;
+	}
+
+	my $serial = $crr->getParsed()->{REVOKE_CERTIFICATE_SERIAL};
+
+	## try to get the state of the certificate
+  my $cert = $locDB->getItem ( DATATYPE => "CERTIFICATE",  KEY => $serial);
+  if (not defined $cert)
+  {
+    $errno = 6812;
+    $errval = i18nGettext ("Cannot Access Certifficate __SERIAL__ in the database (__ERRVAL__ )",
+        "__SERIAL__", $serial,
+        "__ERRVAL__", $locDB->errval());
+        return undef;
+  };
+
+  ## Set the Certificate Status
+  $cert->setStatus ( "REVOKED" );
+
+	my $fileName = "$tmpdir/${$}_${serial}_cert.pem";
+	$tools->saveFile( FILENAME=>$fileName, DATA=>$cert->getPEM() );
+
+	## Revoke Certificate
+	if (not $ca_token->revoke(INFILE => "$fileName",
+          CRL_REASON => "$crl_reason", CRL_DESCRIPTION => "$descr", NOUNIQUEDN => $nouniqueDN))
+  {
+		unlink( $fileName );
+		$errno  = 6841;
+		$errval = i18nGettext ("Error while revoking Certificate!\nOpenCA::OpenSSL returns errorcode __ERRNO__ (__ERRVAL__).",
+		                       "__ERRNO__", $OpenCA::OpenSSL::errno,
+		                       "__ERRVAL__", $OpenCA::OpenSSL::errval);
+		return undef;
+	};
+
+  ## Do we need this ?
+  ## $cert->setStatus ( "REVOKED" );
+
+  ## Updates the object in the Database
+	if (not $locDB->updateItem(OBJECT => $cert))
+  {
+    $errno = 6851;
+		$errval = i18nGettext ("Error changing status from certificate __CERT_SERIAL__ ".
+      "(you should recover OpenSSL's index.txt).\nDatabase returns errorcode __ERRNO__ (__ERRVAL__).",
+		  "__CERT_SERIAL__", $serial,
+		  "__ERRNO__", $locDB->errno(),
+		  "__ERRVAL__", $locDB->errval());
+    return undef;
+	};
+
+  ## Set the status of the request to be an "Archived" one
+  $crr->setStatus( "ARCHIVED_CRR" );
+  if (not $locDB->updateItem (OBJECT => $crr, DATATYPE => "ARCHIVED_CRR"))
+  {
+		$errno  = 6861;
+		$errval = i18nGettext ("Error changing status from crr __CRR_SERIAL__ to Revoked dB ".
+      "(you should recover OpenSSL's index.txt)\nDatabase returns errorcode __ERRNO__ (__ERRVAL__).",
+		  "__CRR_SERIAL__", $key,
+		  "__ERRNO__", $locDB->errno(),
+		  "__ERRVAL__", $locDB->errval());
+		return undef;
+  };
+
+	return $cert;
+}
+
+## Converts from HEX to DEC
+sub getDec 
+{
+  my $hex = shift;
+
+  if ($hex = "" )
+  {
+    return 0;
+  }
+
+  $hex =~ s/://g;
+  $hex = lc ( $hex );
+
+  my $vec = Bit::Vector->new_Hex( length( $hex ) * 8, "$hex");
+  my $vecAbs = Bit::Vector->new ( length( $hex ) * 8 );
+
+  $vecAbs->Abs($vec);
+  return $vecAbs->to_Dec();
+}
+
+
+############################################
+##      end of certificate revocation     ##
+############################################
+1;
+

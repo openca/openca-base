@@ -1,0 +1,435 @@
+## OpenCA - Datasource Utils
+## (c) 1999-2009 by Massimiliano Pala and OpenCA Group
+
+use strict;
+
+use Net::LDAP;
+
+our ( $query );
+
+sub loadDataSources {
+
+        my $dsTwig = undef;
+        my @ret = ();
+
+       	$dsTwig = loadConfigXML ('DataSourcesConfig');
+    	if (not $dsTwig) {
+                debug ("loadDataSources()::ERROR::Can't load $dsTwig file!");
+                return undef;
+       	}
+
+       	for my $al ( $dsTwig->get_xpath("datasources/item") ) {
+                push (@ret, getField( $al, 'name'));
+	}
+
+	return ( @ret );
+}
+
+sub getDataSource {
+        my $name = shift;
+        my $ret = undef;
+
+        if( $name eq "" ) {
+                return undef;
+        };
+
+       	my $dsTwig = loadConfigXML ('DataSourcesConfig');
+
+    	if (not $dsTwig) {
+                return undef;
+       	};
+
+        foreach my $ds ( $dsTwig->get_xpath("datasources/item" )) {
+                my $dsName = getField ( $ds, 'name' );
+
+                if ( $dsName eq $name ) {
+                        $ret->{name} = getField( $ds, 'name' );
+                        $ret->{type} = getField( $ds, 'type' );
+                        $ret->{loa} = getField( $ds, 'loa' );
+                        $ret->{protocol} = getField( $ds, 'protocol' );
+                        $ret->{address} = getField( $ds, 'address' );
+                        $ret->{port} = getField( $ds, 'port' );
+
+                        # Now we want to look at all the attributes;
+                        foreach my $att ( $ds->get_xpath("attributes/item") ) {
+                                $ret->{attributes}->{getField($att,'name')} = 
+                                        getField( $att, 'value' );
+                        }
+
+                        # Now we want to look at all the mapping
+                        foreach my $att ( $ds->get_xpath("map/entry") ) {
+                                $ret->{mapping}->{getField($att,'name')} = 
+                                        getField( $att, 'value' );
+                        }
+
+                        last;
+                }
+
+        }
+        
+        return $ret;
+}
+
+# Tries to login by using the datasource
+sub checkDataSourceLogin {
+        my $username = shift;
+        my $password = shift;
+        my $institution = shift;
+
+        my $ds = undef;
+        my $ret = undef;
+
+        if( ($username eq "" ) or ( $password eq "" ) or
+                        ( $institution eq "" )) {
+                return undef;
+        }
+
+        $ds = getDataSource ( $institution );
+        if( not $ds ) {
+                print STDERR "checkDataSourceLogin()::ERROR::Can not get DS!";
+                return undef;
+        }
+
+        if( $ds->{type} =~ /ldap/i ) {
+                my $mesg = undef;
+                my $bind_dn = undef;
+                my $filter = undef;
+                my $success = 0;
+
+                my $ldap = dsLdapConnect ( $ds );
+
+                if( not $ldap ) {
+                        # Can not connect to the data source
+                        return undef;
+                }
+
+                # Let's search the entry so we can get the right DN
+                $filter = "(".$ds->{attributes}->{loginattribute} .
+                                "=$username)";
+
+                debug("checkDataSourceLogin()::DEBUG::filter=>$filter");
+                $mesg = $ldap->search(filter=>$filter,
+                                        base=>$ds->{attributes}->{basedn},
+                                        scope=>"one");
+
+                debug ("checkDataSourceLogin()::DEBUG::got entrties =>" . 
+                                $mesg->count);
+
+                if( $mesg->count lt 1 ) {
+                        print STDERR "checkDataSourceLogin()::ERROR::No " .
+                                                        "Entries Found!";
+                        $ldap->unbind;
+                        return undef;
+                }
+
+                foreach my $entry ($mesg->entries ) {
+                        debug ("checkDataSourceLogin()::DEBUG::" .
+                                 "Checking Entry " . $entry->dn);
+
+                        $mesg = $ldap->bind( $entry->dn(), password=>$password);
+                        if( $mesg->code != 0 ) {
+                                print STDERR "checkDataSourceLogin()::ERROR::" .
+                                 "Can not bind to $filter\n";
+                                next;
+                        } else {
+                                $bind_dn = $entry->dn();
+                                $success = 1;
+                                last;
+                        }
+
+                }
+
+                $mesg = $ldap->unbind;
+                if( $success lt 1 ) {
+                        return undef;
+                }
+
+                $ret->{username} = $username;
+                $ret->{password} = $password;
+                $ret->{institution} = $institution;
+                $ret->{ldap}->{dn} = $bind_dn;
+
+                return $ret;
+        } 
+        
+        return undef;
+}
+
+# Get Attributes from the Data Source
+sub getDataSourceAttributesNOT {
+
+        my $cred = shift;
+
+        my $ds = undef;
+        my $ret = undef;
+
+        if( not $cred ) {
+                debug ("getDataSourceAttributes()::ERROR::No Cred!");
+                return undef;
+        }
+
+        $ds = getDataSource ( $cred->{institution} );
+        if( not $ds ) {
+                debug ("getDataSourceAttributes()::ERROR::No Data Source!");
+                return undef;
+        }
+
+        if( $ds->{type} =~ /ldap/i ) {
+                my $mesg = undef;
+                my $bind_dn = undef;
+                my $filter = undef;
+                my $success = 0;
+
+                my $ldap = dsLdapConnect ( $ds );
+
+                if( not $ldap ) {
+                        return undef;
+                }
+
+                $mesg = $ldap->bind( $cred->{ldap}->{dn}, 
+                                                password=>$cred->{password});
+
+                if( $mesg->code != 0 ) {
+                        # We can no more bind to the LDAP ??? Error!
+                        print STDERR "getDataSourceAttributes()::ERROR::Can not bind to LDAP!";
+                        return undef;
+                }
+
+                $mesg = $ldap->search(
+                                      filter=>"(objectClass=*)",
+                                      base=>$cred->{ldap}->{dn},
+                                      scope=>"base"
+                                        );
+
+                if( $mesg->count != 1 ) {
+                        print STDERR "getDataSourceAttributes()::ERROR::SEARCH ATTRS::No (or Multiple) Entries Found! " . $mesg->count . " found for $filter!";
+                        $ldap->unbind;
+                        return undef;
+                }
+
+                my $entry = $mesg->entry(0);
+                foreach my $att ( $entry->attributes() ) {
+                        $ret->{$att} = $entry->get_value( "$att" );
+                }
+
+                $mesg = $ldap->unbind;
+
+                return $ret;
+        } 
+        
+        print STDERR "getDataSourceAttributes()::ERROR::" .
+                                $ds->{type} . " DSource not supported!";
+
+        return undef;
+}
+
+# Get Attributes from the Data Source
+sub getDataSourceAttributes {
+
+        my $cred = shift;
+
+        my $ds = undef;
+        my $ret = undef;
+
+        if( not $cred ) {
+                debug ("getDataSourceAttributes()::ERROR::No Cred!");
+                return undef;
+        }
+
+        $ds = getDataSource ( $cred->{institution} );
+        if( not $ds ) {
+                debug ("getDataSourceAttributes()::ERROR::No Data Source!");
+                return undef;
+        }
+
+        if( $ds->{type} =~ /ldap/i ) {
+                my $mesg = undef;
+                my $bind_dn = undef;
+                my $filter = undef;
+                my $success = 0;
+
+                debug ("getDataSourceAttributes()::Data Source Type is".
+                        " LDAP!");
+
+                my $ldap = dsLdapConnect ( $ds );
+                if( not $ldap ) {
+                        return undef;
+                }
+
+                $mesg = $ldap->bind( $cred->{ldap}->{dn}, 
+                                                password=>$cred->{password});
+
+                if( $mesg->code != 0 ) {
+                        # We can no more bind to the LDAP ??? Error!
+                        debug ("getDataSourceAttributes()::ERROR::Can not bind to LDAP!");
+                        return undef;
+                }
+
+                # Let's search the entry so we can get the right DN
+                $filter = "(dn=".$cred->{ldap}->{dn}.")";
+
+                $mesg = $ldap->search(
+                                      filter=>"(objectClass=*)",
+                                      base=>$cred->{ldap}->{dn},
+                                      scope=>"base"
+                                        );
+
+                if( $mesg->count != 1 ) {
+                        debug ("getDataSourceAttributes()::ERROR::SEARCH ATTRS::No (or Multiple) Entries Found! " . $mesg->count . " found for $filter!");
+                        $ldap->unbind;
+                        return undef;
+                }
+
+                my $entry = $mesg->entry(0);
+                foreach my $att ( $entry->attributes() ) {
+                        $ret->{$att} = $entry->get_value( "$att" );
+                }
+
+                $mesg = $ldap->unbind;
+                $ret = dsGetMappedValues( $ds, $ret );
+
+                return $ret;
+        } 
+        
+        debug ("getDataSourceAttributes()::ERROR::Unknown Data Source Type!");
+
+        return undef;
+}
+ 
+# Tries to login by using the datasource
+sub dsLdapConnect {
+        my $ds = shift;
+        my $mesg = undef;
+        my $success = 0;
+
+        my $ldap = undef;
+
+        my $verify  = undef;
+        my $ver     = undef;
+        my $ciphers = undef;
+        my $cafile  = undef;
+        my $capath  = undef;
+
+        my $protocol  = undef;
+
+        if ( not $ds ) {
+                print STDERR "dsLdapConnect::ERROR::Can not get DS!\n";
+                return undef;
+        }
+
+        debug ("dsLdapConnect()::DEBUG::DS type is " . $ds->{type});
+        if( $ds->{type} !~ /ldap/i ) {
+                return undef;
+        }
+
+        $protocol = $ds->{attributes}->{protocol};
+
+        if ( $protocol eq "" ) {
+                $protocol = "ldap";
+        }
+
+        if ( $protocol =~ /ldaps|starttls/i ) {
+                $verify  = $ds->{attributes}->{sslverify};
+                $ver     = $ds->{attributes}->{sslversion};
+                $ciphers = $ds->{attributes}->{sslciphers};
+                $cafile  = $ds->{attributes}->{sslcafile};
+                $capath  = $ds->{attributes}->{sslcapath};
+
+                if ( $verify eq "" ) {
+                        $verify = 'none';
+                }
+
+                if ( $ver eq "" ) {
+                        $ver = 'tlsv1';
+                }
+
+                if ( $ciphers eq "" ) { 
+                        $ciphers = 'ALL';
+                }
+
+                if ( ( $verify ne 'none' ) and 
+                                (($cafile eq "") and ($capath eq "" )) ) {
+                        # No defaults for CApath or CAfile, anyway it returns
+                        # an error if verify is set and both CApath and CAfile
+                        # are empty
+
+                        print STDERR "dsLdapConnect()::ERROR::LDAPS is ". 
+                                "selected with sslverify ($verify), ".
+                                "but not CApath or CAfile is provided!\n";
+
+                        return undef;
+                }
+
+        }
+
+        debug ("dsLdapConnect()::DEBUG::protocol is $protocol");
+
+        if ( $protocol =~ /ldap/i) {
+
+          $ldap = Net::LDAP->new($ds->{address}, port => $ds->{port});
+          return $ldap;
+
+        } elsif ( $protocol =~ /starttls/i ) {
+
+                $ldap = Net::LDAP->new($ds->{address}, port=>$ds->{port});
+                if( not $ldap ) {
+                        # Can not connect to the data source
+                        return undef;
+                }
+
+                $mesg = $ldap->start_tls (
+                                verify => $verify,
+                                sslversion => $ver,
+                                ciphers => $ciphers,
+                                capath => $ds->{attributes}->{capath},
+                                cafile => $ds->{attributes}->{cafile}
+                                );
+
+                if( $mesg->code != 0 ) {
+                        print STDERR "dsLdapConnect()::ERROR::" .
+                                "Can not seutp SSL/TLS connection!";
+                        return undef;
+                }
+        } elsif ( $protocol =~ /ldaps/i ) {
+                debug ("dsLdapConnect()::DEBUG::Setting up connection to " . 
+                        $ds->{address} . ":" . $ds->{port} . 
+                                " with $verify verify option.");
+
+                $ldap = Net::LDAPS->new( $ds->{address},
+                                port => $ds->{port},
+                                verify => $verify,
+                                capath => $ds->{attributes}->{capath}
+                                );
+
+                if(not $ldap ) {
+                        print STDERR "dsLdapConnect()::ERROR::" .
+                                "Can not setup SSL/TLS connection (ldaps)!";
+                        return undef;
+                }
+                debug ("dsLadpConnect()::DEBUG::Connected!");
+        }
+
+        return $ldap;
+}
+
+sub dsGetMappedValues {
+        my $ds = shift;
+        my $ret = shift;
+        my $ks = shift;
+
+        if( (not $ds) or (not $ret)) {
+                print STDERR "dsGetMappedValues()::Missing needed params!\n";
+                return $ret;
+        }
+
+        $ks = $ds->{mapping};
+
+        foreach my $att (keys %$ks) {
+                $ret->{$ds->{mapping}->{$att}} = $ret->{$att};
+        }
+
+        return $ret;
+}
+
+1;
+

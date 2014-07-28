@@ -1,0 +1,40 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: show_modules
+##       Brief: show the available modules
+## Description: show the available modules
+##  Parameters: RBAC_DIR, MODULES_DIR
+
+use strict;
+
+sub cmdShow_modules {
+
+my %values = loadModules ();
+
+my $item_list = undef;
+
+## create table
+$item_list->{HEAD}->[0] = gettext("Module");
+$item_list->{HEAD}->[1] = gettext("Description");
+$item_list->{HEAD}->[2] = gettext("Delete");
+
+my $pos = 0;
+for my $dir (keys %values) {
+    $item_list->{BODY}->[$pos]->[0] = $dir;
+    $item_list->{BODY}->[$pos]->[1] = gettext($values{$dir});
+    $item_list->{BODY}->[$pos]->[2] = "<a href=\"$self?cmd=show_prepared_module&id=".
+      $dir."&description=".$values{$dir}."&next_cmd=delete\">".gettext("DELETE")."</a>";
+    $pos++;
+}
+
+return libSendReply (
+                     "NAME"        => gettext ("Show Modules"),
+                     "EXPLANATION" => gettext ("Following you can find the available modules in this PKI."),
+                     "ITEM_LIST"   => $item_list,
+                     "TIMESTAMP"   => 1
+                    );
+}
+
+1;

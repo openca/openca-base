@@ -1,0 +1,48 @@
+## OpenCA - Command
+## Written by Michael Bell for the OpenCA project 2001
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: new_right
+##       Brief: create a new right
+## Description: create a new rght finally and then call show_rights
+##  Parameters: module, operation, operator, owner
+
+use strict;
+
+sub cmdNew_right {
+
+    my $twig = $access_control->{twig_acl};
+    my $update = 0;
+
+    ## search for a module with a matching id
+    foreach my $perm (($twig->get_xpath ('access_control/acl/permission')))
+    {
+        if ( ($perm->first_child ('module'))->field    eq $query->param ('module') and
+             ($perm->first_child ('role'))->field      eq $query->param ('role')   and
+             ($perm->first_child ('operation'))->field eq $query->param ('operation') and
+             ($perm->first_child ('owner'))->field     eq $query->param ('owner') )
+        {
+            ## update permission !?
+            $update = 1;
+            last;
+        }
+    }
+
+    ## add permission
+    if (not $update)
+    {
+        my $module    = XML::Twig::Elt->new( 'module',    $query->param ('module'));
+        my $role      = XML::Twig::Elt->new( 'role',      $query->param ('role'));
+        my $operation = XML::Twig::Elt->new( 'operation', $query->param ('operation'));
+        my $owner     = XML::Twig::Elt->new( 'owner',     $query->param ('owner'));
+        my $perm      = XML::Twig::Elt->new( 'permission', $module, $role, $operation, $owner);
+        $perm->paste (($twig->get_xpath ('access_control/acl'))[0]);
+    }
+
+    ## write the configuration
+    writeConfigXML (TWIG => $twig, FILENAME => ($access_control->{twig}->get_xpath ('access_control/acl_config/list'))[0]->field);
+
+    libExecuteCommand ("show_rights");
+}
+
+1;

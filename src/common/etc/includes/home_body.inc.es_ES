@@ -1,0 +1,48 @@
+<div class="home_content">
+<!-- Spanish version by jgomez@azuan.com 12/2010 -->
+  <p class="title" @TITLE_STYLE@ >
+	<!-- 
+     <span style="font-size: 0.8em;">
+       Bienvenido a 
+     </span><br />
+	-->
+     @ORGANIZATION@  PKI
+  </p>
+  <div style="padding: 10px; text-align: justify; margin-bottom: 15px;">
+  <p>
+	<h3>!Bienvenidos a @ORGANIZATION@!</h3>
+	@ORGANIZATION@ es una organizaci&oacute;n de voluntarios que proporcionan sofware libre para el manejo de identidades digitales. @ORGANIZATION@ aloja
+	muchos proyectos relacionados con la seguridad como
+	<a href="http://www.openca.org/projects/libpki">LibPKI</a>,
+	<a href="http://www.openca.org/projects/prqpd">PRQP server</a>,
+	<a href="http://www.openca.org/projects/ocspd">OCSP server</a>, and
+	<a href="http://www.openca.org/projects/openca">OpenCA PKI</a>.
+	Nuestra
+	<a href="http://en.wikipedia.org/wiki/Certificate_authority">
+	Autoridad de Certificaci&oacute;n</a> proporciona servcios para la generar y gestionar tus
+	<a href="http://en.wikipedia.org/wiki/Digital_Certificate">
+	certificados digitales</a>.
+	<br /><br />
+	<h3>Qu&eacute; son los certificados digitales?</h3>
+	Tus certificados son identidades digitales que son equivalentes a un carnet convencional
+	(p.e., tu carnet de conducir, pasarporte, o carnet de estudiante), pero en un formato digital que puede ser empleado por los ordenadores en Internet.
+	Los certificados digitales pueden ser expedidos a individuos y/o servidores y se utilizan com&uacute;nmente para muchos prop&oacute;sitos:
+<ul>
+<li><b>Correo electr&oacute;nico seguro</b> - para firma y cifrado de correos electr&oacute;nicos</li>
+<li><b>Firma de documentos</b> - incluyendo documentos PDF y Office </li>
+<li><b>Acceso seguro a la red</b> - para proporcionar un nivel de seguridad mucho m&aacute;s elevado que las contrase&ntilde;as habituales(p.e., para redes inal&aacute;mbricas)</li>
+<li><b>Autenticaci&oacute;n de servidores(https)</b> - para proteger la comunicaci&oacute;n con un servidor web(p.e., para banca por Internet o comercio electr&oacute;nico)</li>
+</ul>
+  </p>
+  <p>
+  <h3>C&oacute;mo consigo un certificado digital?</h3>
+  Obtener un certificado digital es tan sencillo como decir 1..2..3..! Sigue los pasos y utiliza tu nueva identidad digital para asegurar tus datos y comunicaciones en Internet
+  </p>
+  </div>
+
+  @CONTROL_PANEL@
+
+</div> 
+
+@NOTICES_PANEL@
+

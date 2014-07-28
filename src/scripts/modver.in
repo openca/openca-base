@@ -1,0 +1,13 @@
+#@SHELL@
+
+mod=$1
+
+if test "x$mod" = "x"; then
+    echo "Usage: $0 <module>"
+    exit
+fi
+
+@PERL@ -M$mod -e "print ( \$$mod::VERSION =~ /(\d)\.(\d\d)/ )" 2>/dev/null || echo "000"
+
+exit 0
+

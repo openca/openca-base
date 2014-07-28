@@ -1,0 +1,66 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2002-2004 The OpenCA Project
+##
+##   File Name: writeCertMail
+##       Brief: write a mail
+##     Version: $Revision: 1.2 $
+## Description: write a mail preformatted by certsMail.txt
+##  Parameters: key
+
+use strict;
+
+sub cmdWriteCertMail {
+
+        our ($query, $db, $tools, $LANGUAGE);
+
+	my $key = $query->param ('key');
+	configError (gettext ("You must specify a certificate before you can use this function"))
+		if (not $key);
+
+	my $cert = $db->getItem ( DATATYPE => "CERTIFICATE", KEY => $key);
+	configError (i18nGettext ("Cannot load certificate (__ERRNO__).", "__ERRNO__", $db->errno()).
+                 "<br>\n".$db->errval())
+		if (not $cert);
+
+	## load mail
+	my $mail = $tools->getFile ($query->subVar (getRequired ('basemailfile'), "__LANGUAGE__", $LANGUAGE));
+	configError (gettext("Cannot load prepared mail"))
+		if (not $mail);
+
+	## fix mail
+	$mail = $query->subVar ($mail, '@USER@', $cert->getParsed()->{DN_HASH}->{CN}[0]);
+	$mail = $query->subVar ($mail, '@SERIAL@', $cert->getSerial());
+
+        my $info_list = undef;
+        $info_list->{BODY}->[0]->[0] = gettext ("Emailaddress");
+        $info_list->{BODY}->[0]->[1] = '<input style="width: 550px;" type="text" name="emailaddress" value="'.
+                                       $cert->getParsed()->{EMAILADDRESS}.'">';
+        $info_list->{BODY}->[1]->[0] = gettext ("Subject of the mail");
+        $info_list->{BODY}->[1]->[1] = '<input style="width: 550px;" type="text" name="subject" value="'.
+                                       i18nGettext (
+                                           "PKI Information for Certificate __CERT_SERIAL__",
+                                           "__CERT_SERIAL__", $cert->getSerial()
+                                                   ).'">';
+        $info_list->{BODY}->[2]->[0] = gettext ("Content of the mail");
+        $info_list->{BODY}->[2]->[1] = '<textarea rows="20" name="body" style="width: 550px;">';
+        $info_list->{BODY}->[2]->[1] .= $mail;
+        $info_list->{BODY}->[2]->[1] .= '</textarea>';
+
+        my $cmd_panel = undef;
+        $cmd_panel->[0] = '<input type="submit" name="Submit" value="'.
+                     gettext ("Send").'">';
+
+        my $hidden_list = undef;
+        $hidden_list->{"cmd"} = "sendMail";
+
+        return libSendReply (
+                             "NAME"        => gettext ("Write Mail"),
+                             "INFO_LIST"   => $info_list,
+                             "HIDDEN_LIST" => $hidden_list,
+                             "CMD_PANEL"   => $cmd_panel
+                            );
+}
+
+1;
+

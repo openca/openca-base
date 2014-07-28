@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>setupInitialCert</name>
+            <operation>initialization first certificates</operation>
+            <owner_method>ANY</owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

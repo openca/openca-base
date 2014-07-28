@@ -1,0 +1,10 @@
+<openca>
+    <command_config>
+        <command>
+            <name>lists</name>
+            <operation>all list</operation>
+            <owner_method>any</owner_method>
+            <owner_argument></owner_argument>
+        </command>
+    </command_config>
+</openca>

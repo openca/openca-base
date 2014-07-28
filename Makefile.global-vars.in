@@ -1,0 +1,183 @@
+# file: Makefile.global-vars(.in)
+# contains all the configured settings
+#
+# © 2001-2013 by Massimiliano Pala and OpenCA Labs
+
+VERSION			= @VERSION@
+RC					= @RC@
+TODAY				= @TODAY@
+TRANSLATIONS	= de_DE el_GR en_GB es_ES fr_FR it_IT ja_JP pl_PL sl_SI ru_RU
+LOCALES			= C $(TRANSLATIONS)
+
+DIST_NAME		= @DIST_NAME@
+DIST_VERSION	= @DIST_VERSION@
+
+DEST_DIR		= @build_dir@
+BUILD_ROOT		= @build_dir@
+
+PACKAGE_NAME	= @PACKAGE_NAME@
+PACKAGE_VERSION	= @PACKAGE_VERSION@
+
+BUILD_OS		= @build_os@
+BUILD_ARCH		= @myarch@
+ARCH_TARGET		= @arch_target@
+BUILD_TARGET	= @arch_target@
+
+#-------- installation paths: --------
+
+ca_organization		= @ca_organization@
+ca_locality		= @ca_locality@
+ca_state		= @ca_state@
+ca_country		= @ca_country@
+service_mail_account	= @service_mail_account@
+support_mail_address	= @support_mail_address@
+
+prefix			= $(DEST_DIR)@prefix@
+exec_prefix		= @exec_prefix@
+openca_tools_prefix	= @openca_tools_prefix@
+
+perl_modules_prefix	= $(DEST_DIR)@module_prefix@
+
+httpd_fs_prefix		= @httpd_fs_prefix@
+
+batch_htdocs_fs_prefix	= $(DEST_DIR)@batch_htdocs_fs_prefix@
+batch_htdocs_url_prefix	= @batch_htdocs_url_prefix@
+batch_cgi_fs_prefix	= $(DEST_DIR)@batch_cgi_fs_prefix@
+batch_cgi_url_prefix	= @batch_cgi_url_prefix@
+
+ca_htdocs_fs_prefix	= $(DEST_DIR)@ca_htdocs_fs_prefix@
+ca_htdocs_url_prefix	= @ca_htdocs_url_prefix@
+ca_cgi_fs_prefix	= $(DEST_DIR)@ca_cgi_fs_prefix@
+ca_cgi_url_prefix	= @ca_cgi_url_prefix@
+
+node_htdocs_fs_prefix	= $(DEST_DIR)@node_htdocs_fs_prefix@
+node_htdocs_url_prefix	= @node_htdocs_url_prefix@
+node_cgi_fs_prefix	= $(DEST_DIR)@node_cgi_fs_prefix@
+node_cgi_url_prefix	= @node_cgi_url_prefix@
+ 
+ra_htdocs_fs_prefix	= $(DEST_DIR)@ra_htdocs_fs_prefix@
+ra_htdocs_url_prefix	= @ra_htdocs_url_prefix@
+ra_cgi_fs_prefix	= $(DEST_DIR)@ra_cgi_fs_prefix@
+ra_cgi_url_prefix	= @ra_cgi_url_prefix@
+ 
+ldap_htdocs_fs_prefix	= $(DEST_DIR)@ldap_htdocs_fs_prefix@
+ldap_htdocs_url_prefix	= @ldap_htdocs_url_prefix@
+ldap_cgi_fs_prefix	= $(DEST_DIR)@ldap_cgi_fs_prefix@
+ldap_cgi_url_prefix	= @ldap_cgi_url_prefix@
+ 
+pub_htdocs_fs_prefix	= $(DEST_DIR)@pub_htdocs_fs_prefix@
+pub_htdocs_url_prefix	= @pub_htdocs_url_prefix@
+pub_cgi_fs_prefix	= $(DEST_DIR)@pub_cgi_fs_prefix@
+pub_cgi_url_prefix	= @pub_cgi_url_prefix@
+
+scep_cgi_fs_prefix	= $(DEST_DIR)@scep_cgi_fs_prefix@
+scep_cgi_url_prefix     = @scep_cgi_url_prefix@
+
+# New PRQP support
+prqp_server_uri		= @prqp_server_uri@
+ocsp_server_uri		= @ocsp_server_uri@
+
+batch_prefix		= @batch_prefix@
+ca_prefix		= @ca_prefix@
+node_prefix		= @node_prefix@
+ra_prefix		= @ra_prefix@
+ldap_prefix		= @ldap_prefix@
+pub_prefix		= @pub_prefix@
+scep_prefix		= @scep_prefix@
+
+init_dir		= $(DEST_DIR)@init_prefix@
+etc_prefix		= $(DEST_DIR)@etc_prefix@
+lib_prefix		= $(DEST_DIR)@lib_prefix@
+var_prefix		= $(DEST_DIR)@var_prefix@
+
+db_type			= @db_type@
+
+DEST_BINDIR		= $(DEST_DIR)@bindir@
+DEST_DATADIR		= $(DEST_DIR)@datadir@
+DEST_INFODIR		= $(DEST_DIR)@infodir@
+DEST_LIBDIR		= $(DEST_DIR)@libdir@/openca
+DEST_MANDIR		= $(DEST_DIR)@mandir@
+DEST_SBINDIR		= $(DEST_DIR)@sbindir@
+
+doc_prefix		= $(DEST_DATADIR)/doc/openca
+
+#-------- for installation as writable by the httpd: --------
+
+httpd_user		= @httpd_user@
+httpd_group		= @httpd_group@
+
+#-------- for installation as not writable by the httpd: --------
+
+openca_user		= @openca_user@
+openca_group		= @openca_group@
+
+#-------- for distribution building: --------
+
+dist_user		= @dist_user@
+dist_group		= @dist_group@
+package_build		= @package_build@
+enable_mysql		= @enable_mysql@
+enable_pg		= @enable_pg@
+
+#-------- build and utility programs: --------
+
+MY_HOME		= @myhome@
+MAKE			= @MAKE@
+SHELL			= @SHELL@
+GZIP			= @GZIP@
+TAR			= @TAR@
+PWD			= @PWD@
+## sometimes "-D -c" must be added here
+INSTALL			= @INSTALL@
+MKDIR			= @MKDIR@
+CHMOD			= @CHMOD@
+CHOWN			= @CHOWN@
+ECHO			= @ECHO@
+SED			= @SED@
+CAT			= @CAT@
+MV			= @MV@
+CP			= @CP@
+LN_S			= @LN_S@
+AWK			= @AWK@
+CC			= @CC@
+RM			= rm
+
+OPENCA_SV		= @OPENCA_SV@
+OPENCA_SCEP		= @OPENCA_SCEP@
+
+PERL			= @PERL@
+OPENSSL			= @OPENSSL@
+OPENSSL_PREFIX		= @openssl_prefix@
+
+POD2MAN			= @POD2MAN@
+
+EXTERNAL_MODULES	= @EXTERNAL_MODULES@
+# OPTIONAL_C_MODULES	= @OPTIONAL_C_MODULES@
+PERL_MAKEFILE_OPTS	= @PERL_MAKEFILE_OPTS@
+INSTALL_BUILDER		= @INSTALL_BUILDER@
+
+## this is an implementation of GNU's "install -D"
+__install_dir::
+	@if test -z "$(DIR)"; then $(MAKE) default; \
+	else \
+	    if test ! -d $(DIR); then \
+		$(MAKE) __install_dir DIR=`dirname $(DIR)`; \
+		if test -n "$(MODE)"; then \
+			set -x; \
+			$(INSTALL) -d -o $(USER) -g $(GROUP) -m $(MODE) $(DIR); \
+		else \
+			set -x; \
+			$(INSTALL) -d -o $(USER) -g $(GROUP) $(DIR); \
+		fi; \
+	    fi; \
+	fi;
+
+## this is an implementation of relative linking
+## it is required to support symlink during installs
+## with DEST_DIR in use (package builds)
+__install_ln_s::
+	if test -z "$(TARGET)"; then $(MAKE) default; \
+	else \
+	    $(TOP)/relative_ln_s.sh $(TARGET) $(LINK); \
+	fi;
+

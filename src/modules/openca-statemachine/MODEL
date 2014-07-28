@@ -1,0 +1,99 @@
+This is a workflow definition for a normal user certificate without renewal,
+revocation and all the other important questions. It's just a starting point.
+
+functions
+---------
+gen_user (this is only implicit because users will be generated outside the
+          processor on import or manual)
+create_key
+load_data
+complete_data
+validate_data
+create_csr
+complete_csr
+validate_csr
+issue_cert
+enroll_cert
+
+states
+------
+new_workflow
+key_present
+no_data
+data
+enough_data
+valid_data
+csr
+complete_csr
+approved_csr
+cert
+enrolled_cert
+
+escalation states
+-----------------
+These states are normal states but we notice them seperately to express it's
+special (usually manual) handling. The most batch or workflow systems maintain
+alert lists where such states are displayed to signal management personal that
+there is a problem.
+
+keygen_failed
+missing_data
+cannot_complete_data
+corrupted_data
+gencsr_failed
+missing_csr_info
+corrupted_csr
+approved_csr issue_cert_failure
+cert enrollment_failure
+
+transition rules
+----------------
+These rules will be defined by the functions itself. A rule has three parts:
+
+0. function name
+1. state configuration for use
+2. success state configuration
+3. failure state configuration(s)
+
+create_key
+    1. new_workflow
+    2. key_present (remove keygen_failed)
+    3. keygen_failed
+load_data
+    1. key_present no_data
+    2. key_present data (remove cannot_load_data)
+    3. key_present no_data cannot_load_data
+complete_data
+    1. data
+    2. enough_data (remove missing_data)
+    3. data missing_data
+validate_data
+    1. enough_data
+    2. valid_data
+    3. corrupted_data
+create_csr
+    1. valid_data
+    2. csr (remove gencsr_failed)
+    3. valid_data gencsr_failed
+complete_csr
+    1. csr
+    2. complete_csr (remove missing_csr_info)
+    3. complete_csr missing_csr_info
+validate_csr
+    1. complete_csr
+    2. approved_csr
+    3. corrupted_csr
+issue_cert
+    1. approved_csr
+    2. cert
+    3. approved_csr issue_cert_failure
+enroll_cert
+    1. cert
+    2. enrolled_cert (remove enrollment_failure)
+    3. cert enrollment_failure
+
+The statehandling should be a function in OpenCA::StateMachine.
+set_user_states (
+    USER  => "testuser",
+    SET   => [ "state_1", "state_2" ],
+    UNSET => [ "state_3", "state_4" ] );

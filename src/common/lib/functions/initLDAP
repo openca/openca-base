@@ -1,0 +1,25 @@
+## LDAP (perl-ldap) support
+
+use strict;
+use OpenCA::LDAP;
+
+our $versions;
+our ($xml_cache, $ui_html, $query);
+our $DEBUG;
+
+$versions->{"PERL-LDAP"}  = Net::LDAP->VERSION;
+our $ldap = OpenCA::LDAP->new (
+                XML_CACHE   => $xml_cache,
+                LDAP_CONFIG => getRequired ('LDAPConfiguration'),
+                GUI         => $ui_html,
+                GETTEXT     => \&i18nGettext,
+                CGI         => $query,
+                DEBUG       => $DEBUG
+                               );
+
+configError (i18nGettext("Cannot initialize LDAP management (__ERRNO__). __ERRVAL__",
+                         "__ERRNO__", $OpenCA::LDAP::errno,
+                         "__ERRVAL__", $OpenCA::LDAP::errval))
+    if (not $ldap);
+
+1;

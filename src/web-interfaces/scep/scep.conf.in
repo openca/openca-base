@@ -1,0 +1,117 @@
+## Secure Server Configuration File
+## (c) 1999 by Massimiliano Pala and the OpenCA Group
+##
+## Please Refer to the Documentation for a full detailed
+## description of params. Read the README file in this dir
+## for more infos on programs accessing this file.
+
+## ============== [ General Section ] =========================
+
+DEFAULT_LANGUAGE "@default_language@"
+DEFAULT_CHARSET  "@default_charset@"
+SUPPORT_EMAIL    "@support_mail_address@"
+
+DBmodule "@dbmodule@"
+
+CgiLibPath		"@lib_prefix@/functions"
+CgiServerType		"scep"
+CgiServerName		"@scep_prefix@"
+
+HtdocsUrlPrefix		""
+
+## The Login feature is not supported by the interface yet, anyhow
+## this config keyword will enable the login fields to appear in the
+## top part of the UI. Enable it to see how the login fields will
+## appear in the next versions of OpenCA. To enable it, set it to
+## "Y" or "1".
+EnableLogin		"N"
+Organization		"@ca_organization@"
+
+## The Page body is included to generate the HomePage for the server
+## to support internationalization, we look for the file with the
+## suffix for the supported language (eg., if the filename is
+## home_body.in - we look for home_body.in.en_GB if the language is
+## set to english, for home_body.in.it_IT if italian is selected, etc.)
+HOME_PAGE_BODY_INCLUDE		"@etc_prefix@/includes/home_body.inc"
+HOME_PAGE_DISPLAY_TITLE		"N"
+HOME_PAGE_DISPLAY_EASY_PANEL	"N"
+HOME_PAGE_DISPLAY_NOTICES_PANEL	"N"
+
+
+SessionDir      @var_prefix@/session/cookie
+SessionLifetime 1200
+
+ModuleID		@scep_module_id@
+ModuleShift		@module_shift@
+AccessControlConfiguration "@etc_prefix@/access_control/@scep_prefix@.xml"
+SoftwareConfiguration      "@etc_prefix@/config.xml"
+RoleConfiguration          "@etc_prefix@/rbac/roles.xml"
+ModuleConfiguration        "@etc_prefix@/rbac/modules.xml"
+TokenConfiguration         "@etc_prefix@/token.xml"
+LogConfiguration           "@etc_prefix@/log.xml"
+
+CertsDir 		"@var_prefix@/crypto/certs"
+CACertificate		"@var_prefix@/crypto/cacerts/cacert.pem"
+ChainDir		"@var_prefix@/crypto/chain"
+CRLDir			"@var_prefix@/crypto/crls"
+
+## Paths
+openssl 	"@OPENSSL@"
+sslconfig 	"@etc_prefix@/openssl/openssl.cnf"
+scepPath	"@OPENCA_SCEP@"
+tempdir 	"@var_prefix@/tmp"
+
+crlfile 	"@var_prefix@/crypto/crls/cacrl.crl"
+
+## ==================== [ LOA Support ] =========================
+## USE_LOAS takes either YES or NO
+USE_LOAS                "@USE_LOAS@"
+
+## ==================== [ SCEP Section ] ======================
+
+## It is just an example, you should change the 03.pem and/or
+## the path pointing to the right key/cert pair
+ScepRACert	"@SCEP_RA_CERT@"
+ScepRAKey	"@SCEP_RA_KEY@"
+ScepRAPasswd	"@SCEP_RA_PASSWD@"
+
+##
+## SCEP Policy definition
+##
+
+# ScepAllowEnrollment: if set to "NO" the SCEP server will not accept 
+#  requests for certificate DNs that don't exist yet.
+ScepAllowEnrollment     "YES"
+
+# ScepAllowRenewal: if set to "YES" the SCEP server will allow renewal
+#  requests for existing certificates.
+ScepAllowRenewal        "YES"
+
+# ScepKeepSubjectAltName: parse incoming request and keep supplied 
+#  SubjectAltName
+ScepKeepSubjectAltName  "YES"
+
+# ScepRenewRDNMatch: List of request RDNs that must match an 
+#  existing certificate to identify the request as a renewal
+#  Example: "CN,O,C"
+#  Please note that CN might not be enough for your case if your CNs
+#  are not unique. In this case add additional RDN components, such
+#  as OU, O or DC in order to allow a match.
+ScepRenewalRDNMatch     "CN"
+
+# Defaults for initial enrollment
+#  Change these according to your setup
+ScepDefaultRole         "VPN Server"
+ScepDefaultRA           "Trustcenter itself"
+
+# ScepAutoApprove: if set to "YES" and the incoming SCEP request is signed 
+#  with the already existing end entity certificate (newer SCEP drafts only!)
+#  the request is automatically approved in the RA.
+ScepAutoApprove         "NO"
+################################
+
+
+
+
+
+## ================== [ End SCEP Section ] ====================

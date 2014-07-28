@@ -1,0 +1,239 @@
+## OpenCA - Command
+## (c) 1998-2001 by Massimiliano Pala and OpenCA Group
+## (c) 2002-2004 by The OpenCA Project
+##
+##   File Name: search
+##       Brief: Search Items
+##     Version: $Revision: 1.4 $
+## Description: Search Items ad list results found
+##  Parameters: dataType, viewFrom, rows
+
+use strict;
+
+
+sub cmdSearch {
+
+my @searchParams = ( 'key', 'cn', 'role', 'dn', 'emailaddress' );
+
+## Reserved variables
+my ( $page, $certData, $sheet );
+
+## We need some parameters to generate the list because of
+## we do not want to generate a list of ALL issued certificates
+## so get the numer of results we should give away, then the
+## starting serial number.
+my $from     = $query->param( 'viewFrom' );
+my $dataType = $query->param( 'dataType' );
+my $parName  = $query->param( 'name'     );
+my $parVal   = $query->param( 'value'    );
+my $pcounter = $query->param( 'pcounter' );
+my $server   = getRequired ( 'CgiServerType' );
+my $search   = undef;
+
+## Get required parameters ( return only the value string )
+my $maxItems = getRequired( 'MaxReturnedItems' );
+
+my $title = gettext ("Search Results")." - ";
+
+my @itemsList;
+my $table;
+
+generalError (gettext ("Permission denied! It is not allowed to search for other objects than certificates on this server."))
+    if (not (
+             $dataType =~ /CERTIFICATE/  or
+             $dataType =~ /REQUEST/  or
+             $server =~ /^(RA|CA|LDAP)$/ or
+             ($dataType =~ /LOG/ and $server =~ /^node$/i)
+            ));
+
+if( $dataType =~ /CERTIFICATE/ ) {
+   $title .= gettext ("Certificates Search");
+} elsif ( $dataType =~ /REQUEST/ ) {
+   $title .= gettext ("Requests Search");
+} elsif ( $dataType =~ /CRR/ ) {
+   $title .= gettext ("Certificate Revocation Requests Search");
+} elsif ( $dataType =~ /RENEW/ ) {
+   $title .= gettext ("Certificate Renewal Requests Search");
+} elsif ( $dataType =~ /LOG/ ) {
+   $title .= gettext ("Logging Messages Search");
+} else {
+   $title .= gettext ("Unknown Search");
+}   
+
+my ($item_list, $cmd_panel) = (undef, undef);
+
+$item_list->{CLASS} = "lists";
+if( $dataType =~ /(CERTIFICATE|REQUEST|CRR)/ ) {
+        $item_list->{HEAD}->[0] = gettext("Serial");
+        $item_list->{HEAD}->[1] = gettext("Common Name");
+        $item_list->{HEAD}->[2] = gettext("Email");
+} elsif ( $dataType =~ /LOG/ ) {
+        $item_list->{HEAD}->[0] = gettext("Message");
+        $item_list->{HEAD}->[1] = gettext("Session");
+        $item_list->{HEAD}->[2] = gettext("Timestamp");
+        $item_list->{HEAD}->[3] = gettext("Class");
+        $item_list->{HEAD}->[4] = gettext("Level");
+} else {
+	configError( i18nGettext("Datatype __DATATYPE__ not supported!", "__DATATYPE__", $dataType) );
+}
+
+if (not $pcounter) {
+    $parVal =~ s/([^\\])\*/${1}%/g;
+    $parVal =~ s/^\*/%/;
+
+    if ( $parName ) {
+    	$search->{$parName} = $parVal;
+    } else {
+	foreach $parName ( @searchParams ) {
+		$parVal = $query->param( "$parName" );
+		if ( $parVal ne "" ) {
+			$parName = uc ( $parName );
+			$search->{$parName} = $parVal;
+		}
+	}
+    }
+
+
+    if ($dataType =~ /LOG/i) {
+        @itemsList = reverse $log->search ($parName => $parVal);
+    } else {
+        @itemsList = $db->searchItems( DATATYPE => $dataType, 
+				       FROM     => $from,
+                                       $parName => $parVal );
+    }
+
+} else {
+    my %para;
+    $para{DATATYPE} = $dataType;
+    my $filled = 0;
+    ## 10 is for DoS-defence
+    for (my $i = 1; $i <= $pcounter and $i <= 10; $i++) {
+        my $h = $query->param ("value_$i");
+        $h =~ s/([^\\])\*/${1}%/g;
+        $h =~ s/^\*/%/;
+        $para { uc($query->param ("name_$i")) } = $h;
+        $filled = 1 if ($h !~ /^[%\?]*$/);
+    }
+
+    if (not $filled) {
+   	 generalError (gettext ("You must enter at minimum one real " .
+					"search string."))
+    }
+
+    if ($dataType =~ /LOG/i) {
+        @itemsList = reverse $log->search (%para);
+    } else {
+        @itemsList = $db->searchItems ( %para );
+    }
+
+    $search = \%para;
+
+}
+
+if ($db->errno()) {
+	generalError (gettext ("The search in the database failed.").
+              "<br>".$db->errval(),
+              $db->errno())
+}
+
+# if ( not $matched ) { $matched  = $#itemsList; };
+
+if ($dataType =~ /LOG/i) {
+	$table = "";
+} else {
+	my $newCGI = new CGI;
+
+	delete $search->{FROM};
+
+	$newCGI->append( -name=>"cmd", -values=>[ $query->param("cmd")] );
+	foreach my $par ( $query->param() ) {
+		my $val;
+
+		$val = $query->param("$par");
+		if( ($par =~ /(value|name)\_/ ) and ($val ne "") ) {
+			$newCGI->append( -name=>"$par", 
+				-values=>[ $query->param("$par")] );
+		}
+	}
+
+	$cmd_panel->[0]  = libBuildRefs( 
+				DATATYPE=>$dataType, 
+				FROM    =>$from,
+				MAXITEMS=>$maxItems,
+				BASELINK=>"?".$newCGI->query_string(),
+				SEARCH => $search  );
+
+}
+
+## Process all Files
+my $pos = 0;
+foreach my $item ( @itemsList ) {
+
+    if ($dataType =~ /LOG/i) {
+        my $lnk = new CGI({ cmd=>"viewLog", key=>$item });
+        my $serCol = $lnk->a( {-href=>"?".$lnk->query_string()}, gettext ("details") );
+        $item_list->{BODY}->[$pos]->[0] = $serCol;
+
+        my $obj = $log->getMessage ($item);
+        if (not $obj)
+        {
+            $item_list->{BODY}->[$pos]->[1] = gettext ("unknown session");
+            $item_list->{BODY}->[$pos]->[2] = i18nGettext ("Cannot load message __ITEM__.",
+                                                           "__ITEM__",   $item);
+            $item_list->{BODY}->[$pos]->[3] = i18nGettext ("Logging module returns error __ERRNO__.",
+                                                           "__ERRNO__",  $log->errno());
+            $item_list->{BODY}->[$pos]->[4] = $log->errval();
+        } else {
+            $lnk = new CGI({ cmd      => "search",
+                             dataType => "LOG",
+                             pcounter => "1",
+                             name_1   => "SESSION_ID",
+                             value_1  => $obj->getSessionID });
+            $serCol = $lnk->a( {-href=>"?".$lnk->query_string()}, $obj->getSessionID );
+            $item_list->{BODY}->[$pos]->[1] = $serCol;
+            $item_list->{BODY}->[$pos]->[2] = $obj->getTimestamp;
+            $item_list->{BODY}->[$pos]->[3] = $obj->getClass;
+            $item_list->{BODY}->[$pos]->[4] = $obj->getLevel;
+        }
+    } else {
+	my ( $lnk, $cmd, $key, $mySer, $myCN, $myEmail, $serCol );
+
+	$key     = $item->getSerial();
+
+	$mySer   = ( $item->getParsed()->{HEX_SERIAL} or 
+			$item->getSerial() or 
+				"<CENTER>".gettext("n/a")."</CENTER>");
+	$myCN    = ( $item->getParsed()->{DN_HASH}->{CN}[0] or 
+				"<CENTER>".gettext("n/a")."</CENTER>" );
+	$myEmail = ( $item->getParsed()->{EMAILADDRESS} or 
+				"<CENTER>".gettext("n/a")."</CENTER>" );
+
+	if( $dataType =~ /CERTIFICATE/ ) {
+		$cmd = "viewCert";
+	} elsif ( $dataType =~ /REQUEST/ ) {
+		$cmd = "viewCSR";
+	} elsif ( $dataType =~ /CRR/ ) {
+		$cmd = "viewCRR";
+	} else {
+		$cmd = "$dataType";
+	}
+
+	$lnk = new CGI({ cmd=>"$cmd", dataType=>$dataType, key=>$key });
+	$serCol = $lnk->a( {-href=>"?".$lnk->query_string()}, "$mySer" );
+        $item_list->{BODY}->[$pos]->[0] = $serCol;
+        $item_list->{BODY}->[$pos]->[1] = $myCN;
+        $item_list->{BODY}->[$pos]->[2] = $myEmail;
+    }
+    $pos++;
+}
+
+return libSendReply (
+                     "NAME"        => $title,
+                     "ITEM_LIST"   => $item_list,
+                     "TIMESTAMP"   => 1,
+                     "CMD_PANEL"   => $cmd_panel
+                    );
+}
+
+1;
+

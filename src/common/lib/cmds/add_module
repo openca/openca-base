@@ -1,0 +1,35 @@
+## OpenCA - CA Command
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 2001-2004 The OpenCA Project
+##
+##   File Name: add_module
+##       Brief: add a new module
+## Description: shows a html-form where you can enter the name
+##              of the new module
+##  Parameters: none
+
+use strict;
+
+sub cmdAdd_module {
+
+    my ($info_list, $hidden_list, $cmd_panel) = (undef, undef, undef);
+    $hidden_list->{"name"} = "show_prepared_module";
+    $info_list->{BODY}->[0]->[0] = gettext ("ID");
+    $info_list->{BODY}->[0]->[1] = '<input type="text" value="" name="id">';
+    $info_list->{BODY}->[1]->[0] = gettext ("Description");
+    $info_list->{BODY}->[1]->[1] = '<input type="text" value="" name="description">';
+    $cmd_panel->[0] = '<input type="submit" value="OK">';
+
+    ## Substitute the Variables in the $page
+    return libSendReply (
+                         "TIMESTAMP"   => 1,
+                         "NAME"        => gettext ("Add a new Module"),
+                         "EXPLANATION" => gettext ("Please enter the name of the new module!"),
+                         "INFO_LIST"   => $info_list,
+                         "HIDDEN_LIST" => $hidden_list,
+                         "CMD_PANEL"   => $cmd_panel
+                        );
+}
+
+1;
+

@@ -1,0 +1,115 @@
+## OpenCA - Command
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## (c) Copyright 2004 The OpenCA Project
+##
+##   File Name: viewCRL
+##       Brief: Display CRL
+##     Version: $Revision: 1.4 $
+## Description: Display requested CRL
+##  Parameters: dataType, key
+
+use strict;
+
+sub cmdViewCRL {
+
+    ## Get passed parameters
+    my $dataType = $query->param('dataType');
+    my $key = $query->param('key');
+    my $server   = getRequired ('CgiServerType');
+
+    configError( gettext ("Missing required parametes (dataType/key)!") )
+        if( not ( $dataType and $key ) );
+    
+    ## Get the CRL from the DB.
+    my $crl = $db->getItem( DATATYPE=>$dataType, KEY=>$key);
+
+    generalError( i18nGettext ("Cannot retrieve __KEY__ object from __DATATYPE__ dB!",
+                               "__KEY__", $key,
+                               "__DATATYPE__", $dataType) )
+        if( not $crl );
+
+    my $parsed = $crl->getParsed();
+    my $issuer = $parsed->{ISSUER};
+    my $serial = $parsed->{SERIAL};
+
+    $issuer =~ s/^\///;
+    $issuer =~ s/\//<BR>\n/g;
+    $serial = gettext ("n/a") if (not defined $serial or $serial < 0);
+
+    my ($item_list, $info_list, $cmd_list, $hidden_list) = (undef, undef, undef, undef);
+
+    $hidden_list->{"cmd"}    = "";
+    $hidden_list->{"key"}    = $key;
+    $hidden_list->{"dn"}     = $issuer;
+    $hidden_list->{"new_dn"} = "";
+
+    ## prepare the actualization of the LDAP
+    if (($server =~ /^(LDAP)$/i) and (getRequired ('LDAP') =~ /y/i)) {
+        $cmd_list->{BODY}->[0]->[0] = gettext("WARNING: The LDAP only has one CRL so if you add this CRL to LDAP then you will overwrite every other CRL.");
+        $cmd_list->{BODY}->[1]->[0] = gettext("Add the CRL to LDAP");
+        $cmd_list->{BODY}->[1]->[1] = '<input type="submit" value="'.
+                                      gettext("Add to LDAP").
+                                      '" onClick="cmd.value='."'ldapAddCRL'".'">';
+        ## update cert on LDAP with modified DN
+        $cmd_list->{BODY}->[2]->[0] = gettext("Add the CRL to LDAP but with changed issuer");
+        $cmd_list->{BODY}->[2]->[1] = '<input type="submit" value="'.
+                                      gettext("Add to LDAP with modified DN").
+                                      '" onClick="cmd.value='."'getParams'".
+                                      ';GET_PARAMS_CMD.value='."'ldapAddCRLbyName'".';">';
+    }
+
+    $info_list->{BODY}->[0]->[0] = gettext ("CRL Serial");
+    $info_list->{BODY}->[0]->[1] = ( $serial );
+    $info_list->{BODY}->[0]->[0] = gettext ("CRL Version");
+    $info_list->{BODY}->[0]->[1] = ( $parsed->{VERSION} or gettext("n/a") );
+    $info_list->{BODY}->[1]->[0] = gettext ("CRL Algorithm");
+    $info_list->{BODY}->[1]->[1] = ( $parsed->{ALGORITHM} or gettext("n/a") );
+    $info_list->{BODY}->[2]->[0] = gettext ("Issuer");
+    $info_list->{BODY}->[2]->[1] = ( $issuer or gettext("n/a") );
+    $info_list->{BODY}->[3]->[0] = gettext ("Last Update");
+    $info_list->{BODY}->[3]->[1] = ( $parsed->{LAST_UPDATE} or gettext("n/a") );
+    $info_list->{BODY}->[4]->[0] = gettext ("Next Update");
+    $info_list->{BODY}->[4]->[1] = ( $parsed->{NEXT_UPDATE} or gettext("n/a") );
+
+    my $pos = 0;
+    $item_list->{CLASS} = "crlEntryList";
+    $item_list->{HEAD}->[0] = gettext ("Serial");
+    $item_list->{HEAD}->[1] = gettext ("Revoked On");
+    foreach my $rev ( @{$parsed->{LIST}} ) {
+        if( $rev->{SERIAL} ) {
+	    my $vec = Bit::Vector->new_Hex(length($rev->{SERIAL})*8, 
+						  $rev->{SERIAL} );
+            my $vecAbs = Bit::Vector->new ( length( $rev->{SERIAL} ) * 8 );
+
+	    $vecAbs->Abs($vec);
+	    my $ser = $vecAbs->to_Dec();
+	    my $hexSer = lc($rev->{SERIAL});
+
+	    $hexSer =~ s/([0-9a-f][0-9a-f])/$1:/g;
+	    $hexSer =~ s/:$//;
+
+            # my $ser = hex($rev->{SERIAL});
+            $item_list->{BODY}->[$pos]->[0] = '<a href="'.
+			'?cmd=viewCert;dataType=REVOKED_CERTIFICATE;key=' .
+			$ser . '">' . '0x' . ($hexSer) .
+			'</a>';
+        } else {
+            $item_list->{BODY}->[$pos]->[0] = gettext("n/a");
+        }
+        $item_list->{BODY}->[$pos]->[1] =  ($rev->{DATE} or gettext("n/a"));
+        $pos++;
+    }
+
+    return libSendReply (
+                         "NAME"        => gettext ("View CRL"),
+                         "EXPLANATION" => gettext ("Following you can find the CRL of the CA. You can see the certificate's details by simple clicking on the serial number."),
+                         "TIMESTAMP"   => 1,
+                         "INFO_LIST"   => $info_list,
+                         "ITEM_LIST"   => $item_list,
+                         "CMD_LIST"    => $cmd_list,
+                         "HIDDEN_LIST" => $hidden_list
+                        );
+}
+
+1;
+

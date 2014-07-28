@@ -1,0 +1,36 @@
+## Log Utilities.
+## (c) 1998-2003 by Massimiliano Pala and OpenCA Group
+## Open Source Released Software
+
+## only for testing the library
+#use strict;
+
+sub startLogPage {
+    return $ui_html->startLogPage (@_);
+}
+
+sub closeLogPage {
+    return $ui_html->closeLogPage (@_);
+}
+
+sub addLogSection {
+    return $ui_html->addLogSection (@_);
+}
+
+sub closeLogSection {
+    return $ui_html->closeLogSection (@_);
+}
+
+sub addErrorLog {
+    return $ui_html->addErrorLog (@_);
+}
+
+sub addLogLine {
+    return $ui_html->addLogLine (@_);
+}
+
+sub addPreLogLine {
+    return $ui_html->addPreLogLine (@_);
+}
+
+1;

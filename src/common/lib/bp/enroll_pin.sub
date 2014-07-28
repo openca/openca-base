@@ -1,0 +1,102 @@
+## OpenCA - batch function
+## Written by Michael Bell for the OpenCA project
+## (c) Copyright 1998-2004 The OpenCA Project
+##
+##   File Name: enroll_pin.sub
+##     Version: $Revision: 1.1.1.1 $
+##       Brief: enroll a pin
+## Description: 
+
+use strict;
+
+sub workflow_enroll_pin
+{
+    ## general global stuff
+    our $state_machine;
+    our $xml_cache;
+
+    ## global logging system
+    our $log;
+    my $journal = undef;
+
+    my $keys     = { @_ };
+    my $user     = $keys->{USER};
+    my $workflow = $keys->{WORKFLOW};
+    my $home = $state_machine->get_workflow_path($user, $workflow);
+
+    ## initialize new log message
+    $journal->{CLASS}    = "batch_system";
+    $journal->{LEVEL}    = "info";
+    $journal->{message}  = "";
+    $journal->{function} = "enroll_pin";
+    $journal->{user}     = $user;
+    $journal->{workflow} = $workflow;
+
+    ## is there already a pin ?
+
+    if (not -f $home."/private/purePIN")
+    {
+        my $msg = gettext ("There is no PIN.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -120, $msg ];
+    }
+
+    ## create reference
+
+    my $ref = "\n${user}\n${workflow}\n";
+
+    ## get filename for central reference file
+
+    my $filename = $xml_cache->get_xpath(
+           FILENAME => getRequired ('StateMachineConfiguration'),
+           XPATH    => [ "statemachine/functions/enrollment/pin/waiting" ],
+           COUNTER  => [ 0 ]);
+    if (not $filename)
+    {
+        my $msg = gettext ("Cannot get filename for file with PIN references.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -130, $msg ];
+    }
+
+    ## write reference to file
+
+    if (not open FD, ">> $filename")
+    {
+        my $msg = gettext ("Cannot open file __FILENAME__ for attaching new data.");
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -140, $msg ];
+    }
+    print FD $ref;
+    close FD;
+
+    $journal->{message} .= gettext ("Write reference to file with PINs waiting for export.");
+
+    ## set the new state
+
+    if (not $state_machine->set_user_states (
+                                "USER"    => $user,
+                                "PROCESS" => $workflow,
+                                "SET"     => [ "enrolled_pin" ],
+                                "UNSET"   => [ "new_cert" ]))
+    {
+        my $msg = i18nGettext ( 
+                      "Cannot set new state configuration (__ERRNO__).",
+                      "__ERRNO__", $state_machine->errno).
+                  $state_machine->errval;
+        $journal->{message} .= $msg;
+        $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+        return [ -190, $msg ];
+    }
+    $journal->{message} .= gettext ("State configuration was changed.");
+
+    ## log the complete stuff
+    $log->addMessage (OpenCA::Log::Message->new (HASHREF => $journal));
+
+    ## finished
+    return [ 0, gettext ("Enrolled PIN.") ];
+}
+
+1;

@@ -1,0 +1,5 @@
+Warning: prerequisite OpenCA::CRL 0.9 not found.
+Warning: prerequisite OpenCA::OpenSSL 0.9 not found.
+Warning: prerequisite OpenCA::REQ 0.9 not found.
+Warning: prerequisite OpenCA::Tools 0.4 not found.
+Warning: prerequisite OpenCA::X509 0.9 not found.
