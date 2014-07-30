@@ -53,7 +53,9 @@ TEMPLATE_FILES = \
 	auth_browser_req.xml.template	\
 	server_req.xml.template	\
 	datasources.xml.template	\
-	ldap.xml.template \
+	ldap.xml.template
+
+DERIVED_TEMPLATE_FILES = \
 	common.conf.template
 
 APACHE_FILES = \
@@ -66,7 +68,7 @@ OPENLDAP_FILES = \
 	slapd.conf
 	
 
-FILES = $(STATIC_FILES) $(AC_FILES) $(TEMPLATE_FILES) 
+FILES = $(STATIC_FILES) $(AC_FILES) $(TEMPLATE_FILES) $(DERIVED_TEMPLATE_FILES)
 
 PROGS	= \
 	configure_etc.sh	\
@@ -135,7 +137,7 @@ $(PROGS)::
 clean::
 distclean::
 	$(MAKE) $(SUBDIRS) SUBTARGET=$@
-	@for i in $(AC_FILES) $(INIT_FILES); do \
+	@for i in $(AC_FILES) $(INIT_FILES) $(DERIVED_TEMPLATE_FILES) $(INIT_FILE); do \
 		if test -e $$i ; then $(RM) "$$i" ; fi ;\
 	done
 

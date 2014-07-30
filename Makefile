@@ -122,8 +122,11 @@ distclean::
 		if test -e $i ; then rm -rf $i ; fi; \
 	done ; \
 	$(RM) -f contrib/apache/*.conf ; \
+	$(RM) -f contrib/install-builder/openca/*.xml ; \
+	$(RM) -f contrib/install-builder/openca-base.xml ; \
 	$(RM) -f config.status config.cache config.log ; \
-	$(RM) -rf autom4te.cache
+	$(RM) -rf autom4te.cache ; \
+	$(RM) -f Makefile.global-vars
 
 ########################################################
 ##                END CLEANUP STUFF                   ##

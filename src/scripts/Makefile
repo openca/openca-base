@@ -23,6 +23,7 @@ AC_SCRIPTS	= \
 	openca-getitem		\
 	openca-unrevoke         \
 	openca-addreq		\
+  openca-useradmin \
 	openca-setpasswd	\
 	openca-menu-translate	\
 	modver			\
