@@ -17,6 +17,7 @@ set -e
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
+var_prefix=@var_prefix@
 
 if [ `uname | grep -i "BSD"` ] ; then
    STAT=0;
@@ -92,6 +93,10 @@ done
 # Now we translate the menus
 
 @bindir@/openca-menu-translate
+
+# Now we need to be sure that no issue is present for log writing
+
+@CHOWN@ -R "@httpd_user@:@httpd_group@" "@var_prefix@/log/xml/"
 
 exit 0;
 

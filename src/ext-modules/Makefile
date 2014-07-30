@@ -11,11 +11,11 @@ MODULES.pm.3rd-party	= \
 	CGI-Session-4.48	\
 	Bit-Vector-7.3		\
 	MIME-Base64-3.14	\
-	DB_File-1.830			\
-	DBI-1.628					\
-	DBD-mysql-4.023		\
-	DBD-Pg-2.19.2			\
-	Digest-SHA-5.71		\
+	DB_File-1.831			\
+	DBI-1.631					\
+	DBD-mysql-4.027		\
+	DBD-Pg-3.3.0 			\
+	Digest-SHA-5.92		\
 	Digest-HMAC-1.03	\
 	Digest-SHA1-2.13	\
 	Digest-MD5-2.51 	\
@@ -34,8 +34,8 @@ MODULES.pm.3rd-party	= \
 	X500-DN-0.29			\
 	XML-SAX-Base-1.08	\
 	perl-ldap-0.43		\
-	FCGI-0.74					\
-	CGI.pm-3.59				\
+	FCGI-0.75					\
+	CGI.pm-4.03				\
 	XML-Twig-3.39-1
 
 MODULES	= \
