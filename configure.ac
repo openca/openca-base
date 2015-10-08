@@ -445,12 +445,12 @@ dnl AC_MSG_ERROR( [****** ($DIST_NAME) IBUILDER is : $ibuilder and INSTALL_BUILD
 	dnl fi
 
 	AC_ARG_WITH( openca-tools-prefix,
-		AC_HELP_STRING( [--with-openca-tools-prefix=PREFIX/bin], [Prefix for openca-sv and openca-scep commands (default PREFIX/bin)]),
+		AC_HELP_STRING( [--with-openca-tools-prefix=PREFIX], [Prefix for openca-sv and openca-scep commands (this will search PREFIX/bin)]),
 		openca_tools_prefix=$withval, openca_tools_prefix= )
 	AC_SUBST(openca_tools_prefix)
 
 	dnl Check for OpenCA Tools Installed
-	openca_tools_path="$openca_tools_prefix:$PATH:/bin:/usr/bin"
+	eval openca_tools_path="${bindir}:${exec_prefix}/bin:${prefix}/bin:${PATH}:/bin:/usr/bin"
 	if [[ "x${openca_tools_prefix}" != "x" ]]; then
 		openca_tools_path="${openca_tools_prefix}/bin"
 	fi

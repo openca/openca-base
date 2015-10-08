@@ -1652,9 +1652,9 @@ Optional Packages:
   --with-ldap-prefix=DIR  sets LDAP prefix (default is ldap)
   --with-pub-prefix=DIR   sets public gateway prefix (default is pub)
   --with-scep-prefix=DIR  sets SCEP prefix (default is scep)
-  --with-openca-tools-prefix=PREFIX/bin
-                          Prefix for openca-sv and openca-scep commands
-                          (default PREFIX/bin)
+  --with-openca-tools-prefix=PREFIX
+                          Prefix for openca-sv and openca-scep commands (this
+                          will search PREFIX/bin)
   --with-web-host=WEBHOST sets web hostname (http, ldap, ...)
   --with-prqp-server=URI  sets the PRQP server URI (default is
                           http://WEBHOST:830/)
@@ -13307,7 +13307,7 @@ fi
 
 
 
-		openca_tools_path="$openca_tools_prefix:$PATH:/bin:/usr/bin"
+		eval openca_tools_path="${bindir}:${exec_prefix}/bin:${prefix}/bin:${PATH}:/bin:/usr/bin"
 	if [ "x${openca_tools_prefix}" != "x" ]; then
 		openca_tools_path="${openca_tools_prefix}/bin"
 	fi
