@@ -622,7 +622,7 @@ $OpenCA::DBI::MODULETYPE = {
 ## how much spped costs this for 10 databases (compared with 2 databases)?
 $OpenCA::DBI::DB = {
                     Pg => {
-                           TYPE => {
+                          TYPE => {
                                     ## numeric available but not documented
                                     TEXT       => "text",
                                     LONGTEXT   => "text",
@@ -635,12 +635,11 @@ $OpenCA::DBI::DB = {
 				    				OWNER      => "VARCHAR(255)",
                                     PRIMARYKEY => "PRIMARY KEY NOT NULL",
                                    },
-                           DBI_OPTION => {
+                          DBI_OPTION => {
                                     RaiseError => 0, 
-                                    Taint => 0, 
                                     AutoCommit => 0},
-                           			LIMIT => "__QUERY__ LIMIT __MAXITEMS__",
-			   						FOREIGN_KEY => "ALTER TABLE __TABLE__ ADD CONSTRAINT __COL__REF__TARGET_COL__ FOREIGN KEY (__COL__) REFERENCES __TARGET_TABLE__(__TARGET_COL__)",
+                          LIMIT => "__QUERY__ LIMIT __MAXITEMS__",
+			  FOREIGN_KEY => "ALTER TABLE __TABLE__ ADD CONSTRAINT __COL__REF__TARGET_COL__ FOREIGN KEY (__COL__) REFERENCES __TARGET_TABLE__(__TARGET_COL__)",
                           },
                     mysql => {
                               TYPE => {
@@ -907,8 +906,8 @@ sub connect
 	}
   $self->{STH} = undef;
 
-	## Now, re-connect
- 	$self->{DBH} = DBI->connect_cached ($self->{DSN},
+  ## Now, re-connect
+  $self->{DBH} = DBI->connect_cached ($self->{DSN},
                                $self->{DB_User},
                                $self->{DB_Passwd}, 
                                \%{$OpenCA::DBI::DB->{$self->{DB_Type}}->{DBI_OPTION}});

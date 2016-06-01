@@ -228,14 +228,18 @@ Final Steps:
 
 	# su - postgres
 	$ psql template1
-	> CREATE USER ...
+	> CREATE USER openca WITH PASSWORD 'openca';
 
   then you should create the DATABASE by using credentials now created:
 
 	# psql -U <user> -W template1
-	> CREATE DATABASE ...
+	> CREATE DATABASE openca;
+        > GRANT ALL PRIVILEGES ON DATABASE openca to openca;
 
-  now you should be able to access the webserver (remember to configure the
+  you might also want to enable password authentication for postgresql by
+  editing the postgresql.conf file (usually in /var/lib/pgsql/data dir).
+
+  Now you should be able to access the webserver (remember to configure the
   webserver).
 
 

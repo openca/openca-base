@@ -5,16 +5,17 @@
 TOP	= ../..
 include $(TOP)/Makefile.global-vars
 
-MODULES.pm.3rd-party	= \
+MODULES.pm.3rd-party	= 	\
+        version-0.9917          \
 	Authen-SASL-2.15	\
-	Convert-ASN1-0.22 \
+	Convert-ASN1-0.22 	\
 	CGI-Session-4.48	\
 	Bit-Vector-7.3		\
 	MIME-Base64-3.14	\
-	DB_File-1.831			\
-	DBI-1.631					\
+	DB_File-1.831		\
+	DBI-1.636		\
 	DBD-mysql-4.027		\
-	DBD-Pg-3.3.0 			\
+	DBD-Pg-3.5.3 		\
 	Digest-SHA-5.92		\
 	Digest-HMAC-1.03	\
 	Digest-SHA1-2.13	\
@@ -28,14 +29,14 @@ MODULES.pm.3rd-party	= \
 	MailTools-2.09		\
 	MIME-Lite-3.027		\
 	Net-Server-2.007	\
-	URI-1.52					\
+	URI-1.52		\
 	XML-Parser-2.41		\
 	Parse-RecDescent-1.94   \
-	X500-DN-0.29			\
+	X500-DN-0.29		\
 	XML-SAX-Base-1.08	\
 	perl-ldap-0.43		\
-	FCGI-0.75					\
-	CGI.pm-4.03				\
+	FCGI-0.75		\
+	CGI.pm-4.03		\
 	XML-Twig-3.39-1
 
 MODULES	= \

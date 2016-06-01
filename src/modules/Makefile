@@ -97,9 +97,12 @@ clean distclean:
 		echo -n "Cleaning ($$o) ... " ; \
 		if [ -e $$module/Makefile ]; then \
 			cd $$module; make clean 2>/dev/null >log; \
-			rm -f Makefile; \
+			rm -f Makefile ; \
 			cd ..; \
 		fi; \
+		[ -f "$$module/Makefile.old" ] && rm -rf "$$module/Makefile.old" ; \
+		[ -f "$$module/log" ] && rm -rf "$$module/log" ; \
+		[ -f "$$module/log.err" ] && rm -rf "$$module/log.err" ; \
 		if [ -d $$module ] ; then \
 			if [ -d $$module/tmp ] ; then \
 				cd $$module; rm -rf tmp; \
